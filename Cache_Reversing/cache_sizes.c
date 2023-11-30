@@ -68,6 +68,10 @@ int L1_control()
 	return 0;
 }
 
+void main()
+{
+	
+}
 
 // determine L1 cache hit access time 
 
