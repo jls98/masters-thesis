@@ -65,7 +65,7 @@ void *map(char *file_name, uint64_t offset)
 // determines L1 cache access time, determines L1 cache size, returns estimated L1 cache size
 int L1_control()
 {
-	
+	return 0;
 }
 
 

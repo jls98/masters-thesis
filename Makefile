@@ -1,7 +1,7 @@
 CC = gcc
 CFLAGS = -Wall -Wextra -masm=intel
 
-all: workshop3 cache_sizes
+all: workshop3 cache_sizes file_generator execute pxecute
 
 workshop3: Cache_Reversing/workshop3.c
 	$(CC) $(CFLAGS) -o build/workshop3  Cache_Reversing/workshop3.c
