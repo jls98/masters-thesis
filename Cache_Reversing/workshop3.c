@@ -339,9 +339,12 @@ void L1_line_detection(){
 
 
 int main(int ac, char**av){
-	printf("task 1\n");
-	if (ac==2) for (int i=0;i<10;i++) L1_detection(atoi(av[1])<<i); 
-	if (ac==1) for (int i=1;i<1<<7;i++) L1_detection(ADRS_AMOUNT11*i);
+	printf("check L1d and L2 sizes on the e core\n");
+	// check for time dimensions
+	for (int i=0;i<20;i++) L1_detection(1<<i); 
+	
+	// 
+	//for (int i=1;i<1<<7;i++) L1_detection(ADRS_AMOUNT11*i);
 
 	//L1_detection(ADRS_AMOUNT8);
 	//L1_detection(ADRS_AMOUNT9);

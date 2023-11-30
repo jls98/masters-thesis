@@ -62,7 +62,6 @@ void *map(char *file_name, uint64_t offset)
 	return (void *)(((uint64_t) mapping) + offset);  // mapping will be implicitly unmapped when calling function will be exited
 }
 
-// determines L1 cache access time, determines L1 cache size, returns estimated L1 cache size
 int L1_control()
 {
 	return 0;
