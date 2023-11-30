@@ -342,7 +342,7 @@ void L1_line_detection(){
 int main(int ac, char**av){
 	printf("check L1d and L2 sizes on the e core\n");
 	// check for time dimensions
-	for (int i=4;i<28;i++) L1_detection(1<<i); 
+	//for (int i=4;i<28;i++) L1_detection(1<<i); 
 	
 	// theres a jump from 32kb to 64 kb for L1d on the e core
 	for (int i=1;i<1<<5;i++) L1_detection(ADRS_AMOUNT11*i);
