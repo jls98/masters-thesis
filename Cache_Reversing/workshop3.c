@@ -210,7 +210,7 @@ void L1_line_detection(){
 	while(rdtsc()-c < ACCELERATOR);
 	
 	// mmap zero file and cast to uint64_t array
-	char *p = (char *)map("./zero_file.txt", 0);
+	char *p = (char *)map("./zero_file", 0);
 	
 	uint64_t *tmp_val = (uint64_t *)malloc(sizeof(uint64_t));
 	for (int i=0;i<100;i++) load(p, tmp_val);
@@ -344,8 +344,8 @@ int main(int ac, char**av){
 	// check for time dimensions
 	for (int i=4;i<28;i++) L1_detection(1<<i); 
 	
-	// 
-	//for (int i=1;i<1<<7;i++) L1_detection(ADRS_AMOUNT11*i);
+	// theres a jump from 32kb to 64 kb for L1d on the e core
+	for (int i=1;i<1<<5;i++) L1_detection(ADRS_AMOUNT11*i);
 
 	//L1_detection(ADRS_AMOUNT8);
 	//L1_detection(ADRS_AMOUNT9);
