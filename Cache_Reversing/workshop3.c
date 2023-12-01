@@ -355,7 +355,7 @@ int main(){
 	// check for time dimensions
 	for (int i=4;i<20;i++) L1_detection(1<<i); 
 	
-	printf("\nnow more fine tuned:\n\n")
+	printf("\nnow more fine tuned:\n\n");
 	// theres a jump from 32kb to 64 kb for L1d on the e core
 	for (int i=1;i<1<<5;i++) L1_detection(ADRS_AMOUNT10*i);
 
