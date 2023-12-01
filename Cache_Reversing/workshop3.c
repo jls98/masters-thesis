@@ -82,10 +82,10 @@ static __inline__ uint64_t rdtsc(void)
 void *map(char *file_name, uint64_t offset)
 {
     int file_descriptor = open(file_name, O_RDONLY); 
-    if (file_descriptor == -1) return NULL;
-    struct stat st_buf;
-    if (fstat(file_descriptor, &st_buf) == -1) return NULL;
-    size_t map_len = st_buf.st_size;
+    //if (file_descriptor == -1) return NULL;
+    //struct stat st_buf;
+    //if (fstat(file_descriptor, &st_buf) == -1) return NULL;
+    //size_t map_len = st_buf.st_size;
 	//void *mapping = mmap(NULL, map_len, PROT_READ, MAP_PRIVATE, file_descriptor, 0);
 	//void *mapping = malloc(4096 * 4096*4);
 	void *mapping = mmap(NULL, 4096 * 4096, PROT_READ, MAP_PRIVATE | MAP_ANON, -1, 0);
@@ -93,7 +93,7 @@ void *map(char *file_name, uint64_t offset)
 		printf("mmap fail with errno %d\n", errno); // fix problems with mmap
 		return NULL;
 	}
-	close(file_descriptor);
+	//close(file_descriptor);
 	return (void *)(((uint64_t) mapping) + offset);  // mapping will be implicitly unmapped when calling function will be exited
 }
 
