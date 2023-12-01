@@ -350,7 +350,7 @@ void L1_line_detection(){
 }
 
 
-int main(int ac, char**av){
+int main(){
 	printf("check L1d and L2 sizes on the e core\n");
 	// check for time dimensions
 	//for (int i=4;i<28;i++) L1_detection(1<<i); 
