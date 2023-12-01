@@ -202,12 +202,12 @@ void set_n_ways_detection(uint64_t n, uint64_t double_cache_size)
 		tmp_time = load(p+(sizeof(uint64_t)*(lfsr%(double_cache_size))), tmp_val);
 		lfsr ^= *tmp_val; // = lfsr since values are all 0
 		lfsr = step(lfsr);
-		avg_acs_time = (counter==0) ? (double) tmp_time : (avg_acs_time*counter + (double) tmp_time)/(counter+1);
+		avg_acs_time = (c==0) ? (double) tmp_time : (avg_acs_time*c + (double) tmp_time)/(c+1);
 		counter++;
 		if (tmp_time > 40) misses++; 
 		
 	}
-	printf("values tmp_time (last measured timestamp) %lu, amount of ways %u, cache ways if pcore %i, cache ways if ecore %i\n", tmp_time, 1<<n, 32768/(1<<n), 49152/(1<<n)); // reading 8 '0's brings odd values (0x3030303030303030)
+	printf("values tmp_time (last measured timestamp) %lu, amount of sets %u, cache ways if pcore %i, cache ways if ecore %i\n", tmp_time, 1<<n/64, 32768/(1<<n), 49152/(1<<n)); // reading 8 '0's brings odd values (0x3030303030303030)
 	printf("average access time was %f\namount misses %i, counter %i\n", avg_acs_time, misses, counter);
 	
 	free(tmp_val);
@@ -243,7 +243,7 @@ void set_n_ways_detection2(uint64_t n, uint64_t double_cache_size, int cache_siz
 		tmp_time = load(p+(sizeof(uint64_t)*(lfsr%(double_cache_size))), tmp_val);
 		lfsr ^= *tmp_val; // = lfsr since values are all 0
 		lfsr = step(lfsr);
-		avg_acs_time = (counter==0) ? (double) tmp_time : (avg_acs_time*counter + (double) tmp_time)/(counter+1);	
+		avg_acs_time = (c==0) ? (double) tmp_time : (avg_acs_time*c + (double) tmp_time)/(c+1);	
 		counter++;
 		if (tmp_time > 40) misses++; 
 		
