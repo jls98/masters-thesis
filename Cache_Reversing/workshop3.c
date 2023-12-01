@@ -207,7 +207,7 @@ void set_n_ways_detection(uint64_t n, uint64_t double_cache_size)
 		
 	}
 	printf("values tmp_time (last measured timestamp) %lu, amount of ways %u, cache ways if pcore %i, cache ways if ecore %i\n", tmp_time, 1<<n, 32768/(1<<n), 49152/(1<<n)); // reading 8 '0's brings odd values (0x3030303030303030)
-	printf("average access time was %f\namount misses %i\n", avg_acs_time, misses);
+	printf("average access time was %f\namount misses %i, counter %i\n", avg_acs_time, misses, counter);
 	
 	free(tmp_val);
 }
