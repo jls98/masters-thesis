@@ -140,7 +140,7 @@ void L1_detection(uint64_t adrs_amount){
 		// go
 		avg_acs_time = detection_intern(adrs_amount);
 	}while(avg_acs_time > 2000.0); // avoid odd measurements and repeat
-	printf("%7lu: avg access time %f\n", adrs_amount*8, avg_acs_time);
+	printf("%9lu: avg access time %f\n", adrs_amount*8, avg_acs_time);
 }
 
 
@@ -356,7 +356,7 @@ int main(){
 	for (int i=4;i<28;i++) L1_detection(1<<i); 
 	
 	// theres a jump from 32kb to 64 kb for L1d on the e core
-	//for (int i=1;i<1<<5;i++) L1_detection(ADRS_AMOUNT11*i);
+	for (int i=1;i<1<<5;i++) L1_detection(ADRS_AMOUNT11*i);
 
 	//L1_detection(ADRS_AMOUNT8);
 	//L1_detection(ADRS_AMOUNT9);
