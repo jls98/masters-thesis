@@ -268,7 +268,7 @@ void L1_line_detection(){
 	char *p = (char *)map("./zero_file", 0);
 	
 	uint64_t *tmp_val = (uint64_t *)malloc(sizeof(uint64_t));
-	for (int i=0;i<100;i++) load(p, tmp_val);
+	for (int i=0;i<ACCESS_AMOUNT;i++) load(p, tmp_val);
 	
 	// prepare lfsr
 	uint64_t lfsr;
@@ -280,7 +280,7 @@ void L1_line_detection(){
 	printf("offset %u\n", offset);
 	uint64_t tmp_time=1;
 	double avg_acs_time = 1.0;
-	for (int i=0;i<100;i++){
+	for (int i=0;i<ACCESS_AMOUNT;i++){
 		load(p, tmp_val);
 		tmp_time = flush_load(p+lfsr%(offset+1), p, tmp_val);
 		lfsr ^= *tmp_val;
@@ -295,7 +295,7 @@ void L1_line_detection(){
 	printf("offset %u\n", offset);
 	tmp_time=1;
 	avg_acs_time = 1.0;
-	for (int i=0;i<100;i++){
+	for (int i=0;i<ACCESS_AMOUNT;i++){
 		load(p, tmp_val);
 		tmp_time = flush_load(p+lfsr%(offset+1), p, tmp_val);
 		lfsr ^= *tmp_val;
@@ -310,7 +310,7 @@ void L1_line_detection(){
 	printf("offset %u\n", offset);
 	tmp_time=1;
 	avg_acs_time = 1.0;
-	for (int i=0;i<100;i++){
+	for (int i=0;i<ACCESS_AMOUNT;i++){
 		load(p, tmp_val);
 		tmp_time = flush_load(p+lfsr%(offset+1), p, tmp_val);
 		lfsr ^= *tmp_val;
@@ -325,7 +325,7 @@ void L1_line_detection(){
 	printf("offset %u\n", offset);
 	tmp_time=1;
 	avg_acs_time = 1.0;
-	for (int i=0;i<100;i++){
+	for (int i=0;i<ACCESS_AMOUNT;i++){
 		load(p, tmp_val);
 		tmp_time = flush_load(p+lfsr%(offset+1), p, tmp_val);
 		lfsr ^= *tmp_val;
@@ -340,7 +340,7 @@ void L1_line_detection(){
 	printf("offset %u\n", offset);
 	tmp_time=1;
 	avg_acs_time = 1.0;
-	for (int i=0;i<100;i++){
+	for (int i=0;i<ACCESS_AMOUNT;i++){
 		load(p, tmp_val);
 		tmp_time = flush_load(p+lfsr%(offset+1), p, tmp_val);
 		lfsr ^= *tmp_val;
@@ -355,7 +355,7 @@ void L1_line_detection(){
 	printf("offset %u\n", offset);
 	tmp_time=1;
 	avg_acs_time = 1.0;
-	for (int i=0;i<100;i++){
+	for (int i=0;i<ACCESS_AMOUNT;i++){
 		load(p, tmp_val);
 		tmp_time = flush_load(p+lfsr%(offset+1), p, tmp_val);
 		lfsr ^= *tmp_val;
@@ -371,7 +371,7 @@ void L1_line_detection(){
 	printf("offset %u\n", offset);
 	tmp_time=1;
 	avg_acs_time = 1.0;
-	for (int i=0;i<100;i++){
+	for (int i=0;i<ACCESS_AMOUNT;i++){
 		load(p, tmp_val);
 		tmp_time = flush_load(p+lfsr%(offset+1), p, tmp_val);
 		lfsr ^= *tmp_val;
@@ -387,7 +387,7 @@ void L1_line_detection(){
 	printf("offset %u\n", offset);
 	tmp_time=1;
 	avg_acs_time = 1.0;
-	for (int i=0;i<100;i++){
+	for (int i=0;i<ACCESS_AMOUNT;i++){
 		load(p, tmp_val);
 		tmp_time = flush_load(p+lfsr%(offset+1), p, tmp_val);
 		lfsr ^= *tmp_val;
@@ -402,7 +402,65 @@ void L1_line_detection(){
 	printf("offset %u\n", offset);
 	tmp_time=1;
 	avg_acs_time = 1.0;
-	for (int i=0;i<100;i++){
+	for (int i=0;i<ACCESS_AMOUNT;i++){
+		load(p, tmp_val);
+		tmp_time = flush_load(p+lfsr%(offset+1), p, tmp_val);
+		lfsr ^= *tmp_val;
+		lfsr = step(lfsr);
+		avg_acs_time = (i==0) ? (double) tmp_time : (avg_acs_time*i + (double) tmp_time)/(i+1);			
+	} 
+	printf("values tmp_time %lu, tmp_val %lu\n", tmp_time, *tmp_val); // reading 8 '0's brings odd values (0x3030303030303030)
+	printf("average access time was %f\n", avg_acs_time);		
+		// 10th char
+	offset=9;
+	printf("offset %u\n", offset);
+	tmp_time=1;
+	avg_acs_time = 1.0;
+	for (int i=0;i<ACCESS_AMOUNT;i++){
+		load(p, tmp_val);
+		tmp_time = flush_load(p+lfsr%(offset+1), p, tmp_val);
+		lfsr ^= *tmp_val;
+		lfsr = step(lfsr);
+		avg_acs_time = (i==0) ? (double) tmp_time : (avg_acs_time*i + (double) tmp_time)/(i+1);			
+	} 
+	printf("values tmp_time %lu, tmp_val %lu\n", tmp_time, *tmp_val); // reading 8 '0's brings odd values (0x3030303030303030)
+	printf("average access time was %f\n", avg_acs_time);		
+		// 11th char
+	offset=10;
+	printf("offset %u\n", offset);
+	tmp_time=1;
+	avg_acs_time = 1.0;
+	for (int i=0;i<ACCESS_AMOUNT;i++){
+		load(p, tmp_val);
+		tmp_time = flush_load(p+lfsr%(offset+1), p, tmp_val);
+		lfsr ^= *tmp_val;
+		lfsr = step(lfsr);
+		avg_acs_time = (i==0) ? (double) tmp_time : (avg_acs_time*i + (double) tmp_time)/(i+1);			
+	} 
+	printf("values tmp_time %lu, tmp_val %lu\n", tmp_time, *tmp_val); // reading 8 '0's brings odd values (0x3030303030303030)
+	printf("average access time was %f\n", avg_acs_time);
+	
+			// 12th char
+	offset=11;
+	printf("offset %u\n", offset);
+	tmp_time=1;
+	avg_acs_time = 1.0;
+	for (int i=0;i<ACCESS_AMOUNT;i++){
+		load(p, tmp_val);
+		tmp_time = flush_load(p+lfsr%(offset+1), p, tmp_val);
+		lfsr ^= *tmp_val;
+		lfsr = step(lfsr);
+		avg_acs_time = (i==0) ? (double) tmp_time : (avg_acs_time*i + (double) tmp_time)/(i+1);			
+	} 
+	printf("values tmp_time %lu, tmp_val %lu\n", tmp_time, *tmp_val); // reading 8 '0's brings odd values (0x3030303030303030)
+	printf("average access time was %f\n", avg_acs_time);
+	
+			// 17th char
+	offset=16;
+	printf("offset %u\n", offset);
+	tmp_time=1;
+	avg_acs_time = 1.0;
+	for (int i=0;i<ACCESS_AMOUNT;i++){
 		load(p, tmp_val);
 		tmp_time = flush_load(p+lfsr%(offset+1), p, tmp_val);
 		lfsr ^= *tmp_val;
