@@ -111,7 +111,7 @@ double detection_intern(uint64_t adrs_amount)
 	double avg_acs_time = 1.0;
 	int misses = 0;
 	
-	for(c=0; c<ACCESS_AMOUNT; c++)
+	for(uint64_t c=0; c<ACCESS_AMOUNT; c++)
 	{
 		tmp_time = load(p+(sizeof(uint64_t)*(lfsr%(adrs_amount))), tmp_val);
 		lfsr ^= *tmp_val; // = lfsr since values are all 0
