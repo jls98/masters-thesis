@@ -204,7 +204,7 @@ void set_n_ways_detection(uint64_t n, uint64_t double_cache_size)
 		sum+=tmp_time;
 		lfsr ^= *tmp_val; // = lfsr since values are all 0
 		lfsr = step(lfsr);
-		avg_acs_time = (counter==0) ? (double) tmp_time : (avg_acs_time*counter + (double) tmp_time)/(counter+1);
+		avg_acs_time = (c==0) ? (double) tmp_time : (avg_acs_time*c + (double) tmp_time)/(c+1);
 		counter++;
 		if (tmp_time > 40) misses++; 
 		
