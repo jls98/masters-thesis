@@ -88,7 +88,7 @@ void *map(char *file_name, uint64_t offset)
     //size_t map_len = st_buf.st_size;
 	//void *mapping = mmap(NULL, map_len, PROT_READ, MAP_PRIVATE, file_descriptor, 0);
 	//void *mapping = malloc(4096 * 4096*4);
-	void *mapping = mmap(NULL, 4096 * 4096, PROT_READ, MAP_PRIVATE | MAP_ANON, -1, 0);
+	void *mapping = mmap(NULL, 4096 * 4096, PROT_READ, MAP_PRIVATE | MAP_ANON, -1, 0); 
 	if (mapping == MAP_FAILED){
 		printf("mmap fail with errno %d\n", errno); // fix problems with mmap
 		return NULL;
@@ -178,7 +178,7 @@ void set_n_ways_detection(uint64_t n, uint64_t double_cache_size)
 	uint64_t c = rdtsc();
 	while(rdtsc()-c < ACCELERATOR);
 	
-	// mmap zero file and cast to uint64_t array
+	// mmap zero file and cast to uint64_t array (file name is not used anymore)
 	void *p = map("./zero_file", 0);
 	
 	// generate random access order
@@ -195,16 +195,59 @@ void set_n_ways_detection(uint64_t n, uint64_t double_cache_size)
 		tmp_time = load(p+(sizeof(uint64_t)*(lfsr%(double_cache_size))), tmp_val);		
 	}
 	
+	int counter=0;
 	for(c=0; c<ACCESS_AMOUNT; c+=(1<<n))
 	{
+		
 		tmp_time = load(p+(sizeof(uint64_t)*(lfsr%(double_cache_size))), tmp_val);
 		lfsr ^= *tmp_val; // = lfsr since values are all 0
 		lfsr = step(lfsr);
-		avg_acs_time = (c==0) ? (double) tmp_time : (avg_acs_time*c + (double) tmp_time)/(c+1);	
+		avg_acs_time = (counter==0) ? (double) tmp_time : (avg_acs_time*counter + (double) tmp_time)/(counter+1);	
 		if (tmp_time > 40) misses++; 
 		
 	}
-	printf("values tmp_time (last measured timestamp) %lu, amount of ways %u, cache ways if pcore %icache ways if ecore %i\n", tmp_time, 1<<n, 32768/(1<<n), 49152/(1<<n)); // reading 8 '0's brings odd values (0x3030303030303030)
+	printf("values tmp_time (last measured timestamp) %lu, amount of ways %u, cache ways if pcore %i, cache ways if ecore %i\n", tmp_time, 1<<n, 32768/(1<<n), 49152/(1<<n)); // reading 8 '0's brings odd values (0x3030303030303030)
+	printf("average access time was %f\namount misses %i\n", avg_acs_time, misses);
+	
+	free(tmp_val);
+}
+
+void set_n_ways_detection2(uint64_t n, uint64_t double_cache_size, int cache_size)
+{
+
+	// start caching
+	uint64_t c = rdtsc();
+	while(rdtsc()-c < ACCELERATOR);
+	
+	// mmap zero file and cast to uint64_t array (file name is not used anymore)
+	void *p = map("./zero_file", 0);
+	
+	// generate random access order
+	uint64_t lfsr;
+	uint64_t tmp_time=1;
+	uint64_t *tmp_val = (uint64_t *)malloc(sizeof(uint64_t));
+	__asm__ volatile("rdrand %0": "=r" (lfsr)::"flags");
+	lfsr = step(lfsr);
+	double avg_acs_time = 1.0;
+	int misses = 0;
+	
+	for(c=0; c<ACCESS_AMOUNT; c++)
+	{
+		tmp_time = load(p+(sizeof(uint64_t)*(lfsr%(double_cache_size))), tmp_val);		
+	}
+	int counter=0;
+	for(c=0; c<ACCESS_AMOUNT; c+=(1<<n))
+	{
+		for(int i=0;i<cache_size;i++) load(p+(sizeof(uint64_t)*(lfsr%(cache_size))), tmp_val); // load something in L1 to possibly evict from L1
+		tmp_time = load(p+(sizeof(uint64_t)*(lfsr%(double_cache_size))), tmp_val);
+		lfsr ^= *tmp_val; // = lfsr since values are all 0
+		lfsr = step(lfsr);
+		avg_acs_time = (counter==0) ? (double) tmp_time : (avg_acs_time*counter + (double) tmp_time)/(counter+1);	
+		counter++;
+		if (tmp_time > 40) misses++; 
+		
+	}
+	printf("values tmp_time (last measured timestamp) %lu, amount of ways %u, cache ways if pcore %i, cache ways if ecore %i\n", tmp_time, 1<<n, 32768/(1<<n), 49152/(1<<n)); // reading 8 '0's brings odd values (0x3030303030303030)
 	printf("average access time was %f\namount misses %i\n", avg_acs_time, misses);
 	
 	free(tmp_val);
@@ -348,7 +391,7 @@ void L1_line_detection(){
 }
 
 
-int main(){
+int main(int ac, char**av){
 	/*printf("check L1d and L2 sizes on the e core\n\n");
 	// check for time dimensions
 	for (int i=4;i<20;i++) L1_detection(1<<i); 
@@ -374,7 +417,7 @@ int main(){
 	L1_detection(ADRS_AMOUNT18); // 
 	*/
 	
-	printf("detect ways\n\n");
+	printf("detect ways on L1\n\n");
 	//set_n_ways_detection(0);
 	//set_n_ways_detection(1);
 	//set_n_ways_detection(2);
@@ -383,15 +426,32 @@ int main(){
 	//set_n_ways_detection(5);
 	//set_n_ways_detection(6);
 	uint64_t double_cache_size = 131072;
-	set_n_ways_detection(7, double_cache_size);
-	set_n_ways_detection(8, double_cache_size);
-	set_n_ways_detection(9, double_cache_size);
-	set_n_ways_detection(10, double_cache_size);
-	set_n_ways_detection(11, double_cache_size);
-	set_n_ways_detection(12, double_cache_size);
-	set_n_ways_detection(13, double_cache_size);
-	set_n_ways_detection(14, double_cache_size);
-	set_n_ways_detection(15, double_cache_size);
+	if (ac==2){
+		set_n_ways_detection(7, double_cache_size);
+		set_n_ways_detection(8, double_cache_size);
+		set_n_ways_detection(9, double_cache_size);
+		set_n_ways_detection(10, double_cache_size);
+		set_n_ways_detection(11, double_cache_size);
+		set_n_ways_detection(12, double_cache_size);
+		set_n_ways_detection(13, double_cache_size);
+		set_n_ways_detection(14, double_cache_size);
+		set_n_ways_detection(15, double_cache_size);
+	}else{
+	
+		set_n_ways_detection(7, double_cache_size);
+		set_n_ways_detection(8, double_cache_size);
+		set_n_ways_detection(9, double_cache_size);
+		set_n_ways_detection(10, double_cache_size);
+		set_n_ways_detection(11, double_cache_size);
+		set_n_ways_detection(12, double_cache_size);
+		set_n_ways_detection(13, double_cache_size);
+		set_n_ways_detection(14, double_cache_size);
+		set_n_ways_detection(15, double_cache_size);
+	
+	}
+	
+	
+	
 	//L1_line_detection();*/
 	return 0;
 }
