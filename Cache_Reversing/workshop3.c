@@ -351,12 +351,13 @@ void L1_line_detection(){
 
 
 int main(){
-	printf("check L1d and L2 sizes on the e core\n");
+	printf("check L1d and L2 sizes on the e core\n\n");
 	// check for time dimensions
 	for (int i=4;i<20;i++) L1_detection(1<<i); 
 	
+	printf("\nnow more fine tuned:\n\n")
 	// theres a jump from 32kb to 64 kb for L1d on the e core
-	for (int i=1;i<1<<5;i++) L1_detection(ADRS_AMOUNT11*i);
+	for (int i=1;i<1<<5;i++) L1_detection(ADRS_AMOUNT10*i);
 
 	//L1_detection(ADRS_AMOUNT8);
 	//L1_detection(ADRS_AMOUNT9);
