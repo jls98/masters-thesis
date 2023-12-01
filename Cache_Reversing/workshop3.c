@@ -113,7 +113,7 @@ double detection_intern(uint64_t adrs_amount)
 	
 	for(uint64_t c=0; c<ACCESS_AMOUNT; c++)
 	{
-		tmp_time = load(p+(sizeof(uint64_t)*(lfsr%(adrs_amount))), tmp_val);
+		tmp_time = load(p+(sizeof(uint64_t)*(lfsr%(adrs_amount))), tmp_val); // load p+8 byte * 
 		lfsr ^= *tmp_val; // = lfsr since values are all 0
 		lfsr = step(lfsr);
 		avg_acs_time = (c==0) ? (double) tmp_time : (avg_acs_time*c + (double) tmp_time)/(c+1);	
@@ -140,7 +140,7 @@ void L1_detection(uint64_t adrs_amount){
 		// go
 		avg_acs_time = detection_intern(adrs_amount);
 	}while(avg_acs_time > 2000.0); // avoid odd measurements and repeat
-	printf("%7lu: avg access time %f\n", adrs_amount, avg_acs_time);
+	printf("%7lu: avg access time %f\n", adrs_amount*8, avg_acs_time);
 }
 
 
