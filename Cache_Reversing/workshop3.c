@@ -376,7 +376,7 @@ int main(){
 	L1_detection(ADRS_AMOUNT18); // 
 	*/
 	
-	/*printf("task 2\n");
+	printf("detect ways\n\n");
 	//set_n_ways_detection(0);
 	//set_n_ways_detection(1);
 	//set_n_ways_detection(2);
