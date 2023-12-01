@@ -86,8 +86,9 @@ void *map(char *file_name, uint64_t offset)
     struct stat st_buf;
     if (fstat(file_descriptor, &st_buf) == -1) return NULL;
     size_t map_len = st_buf.st_size;
-	void *mapping = mmap(NULL, map_len, PROT_READ, MAP_PRIVATE, file_descriptor, 0);
+	//void *mapping = mmap(NULL, map_len, PROT_READ, MAP_PRIVATE, file_descriptor, 0);
 	//void *mapping = malloc(4096 * 4096*4);
+	void *mapping = mmap(NULL, 4096 * 4096, PROT_READ, MAP_PRIVATE | MAP_ANON, -1, 0);
 	if (mapping == MAP_FAILED){
 		printf("mmap fail with errno %d\n", errno); // fix problems with mmap
 		return NULL;
@@ -96,14 +97,8 @@ void *map(char *file_name, uint64_t offset)
 	return (void *)(((uint64_t) mapping) + offset);  // mapping will be implicitly unmapped when calling function will be exited
 }
 
-// task 1
-// To guarantee this we suggest incorporating dependency between each of these operations, e.g. each random generation takes a combination of the previous random value and the value accessed from the random address as input. 
-void L1_detection(uint64_t adrs_amount){
-	
-	// start caching
-	uint64_t c = rdtsc();
-	while(rdtsc()-c < ACCELERATOR);
-	
+double detection_intern(uint64_t adrs_amount)
+{
 	// mmap zero file and cast to uint64_t array
 	void *p = map("./zero_file", 0);
 	
@@ -127,9 +122,25 @@ void L1_detection(uint64_t adrs_amount){
 	}
 	//printf("bytes amount %lu, values tmp_time %lu, tmp_val %lu\n", adrs_amount*8, tmp_time, *tmp_val); // reading 8 '0's brings odd values (0x3030303030303030)
 	//printf("average access time was %f\namount misses %i\n", avg_acs_time, misses);
-	printf("%7lu: avg access time %f\n", adrs_amount, avg_acs_time);
+	//printf("%7lu: avg access time %f\n", adrs_amount, avg_acs_time);
 	free(tmp_val);
+	return avg_acs_time;
+}
 
+// task 1
+// To guarantee this we suggest incorporating dependency between each of these operations, e.g. each random generation takes a combination of the previous random value and the value accessed from the random address as input. 
+void L1_detection(uint64_t adrs_amount){
+	
+	double avg_acs_time;
+	do{
+		// activate cache
+		uint64_t c = rdtsc();
+		while(rdtsc()-c < ACCELERATOR);
+		
+		// go
+		avg_acs_time = detection_intern(adrs_amount);
+	}while(avg_acs_time > 2000.0); // avoid odd measurements and repeat
+	printf("%7lu: avg access time %f\n", adrs_amount, avg_acs_time);
 }
 
 
