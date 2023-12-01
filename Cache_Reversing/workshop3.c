@@ -204,7 +204,7 @@ void set_n_ways_detection(uint64_t n, uint64_t double_cache_size)
 		if (tmp_time > 40) misses++; 
 		
 	}
-	printf("amount uint64_t %lu, values tmp_time %lu, tmp_val %lu, stride %u, cache set size %lu\n", double_cache_size, tmp_time, *tmp_val, 1<<n, double_cache_size/(1<<n)); // reading 8 '0's brings odd values (0x3030303030303030)
+	printf("values tmp_time (last measured timestamp) %lu, amount of ways %u, cache ways if pcore %lucache ways if ecore %lu\n", tmp_time, 1<<n, 49152/(1<<n)); // reading 8 '0's brings odd values (0x3030303030303030)
 	printf("average access time was %f\namount misses %i\n", avg_acs_time, misses);
 	
 	free(tmp_val);
