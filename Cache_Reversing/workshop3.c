@@ -171,10 +171,8 @@ the entire access set will fit in the cache and we will only have cache hits.
 Your task is to use access times observed in this manner to determine the cache 
 stride and therefore also the no. of ways.*/
 
-void set_n_ways_detection(uint64_t n)
+void set_n_ways_detection(uint64_t n, uint64_t double_cache_size)
 {
-	uint64_t double_cache_size = ADRS_AMOUNT15;
-	
 
 	// start caching
 	uint64_t c = rdtsc();
@@ -384,15 +382,16 @@ int main(){
 	//set_n_ways_detection(4);
 	//set_n_ways_detection(5);
 	//set_n_ways_detection(6);
-	set_n_ways_detection(7);
-	set_n_ways_detection(8);
-	set_n_ways_detection(9);
-	set_n_ways_detection(10); // stop here
-	set_n_ways_detection(11);
-	set_n_ways_detection(12);
-	set_n_ways_detection(13);
-	set_n_ways_detection(14);
-	set_n_ways_detection(15);
+	uint64_t double_cache_size = 131072;
+	set_n_ways_detection(7, double_cache_size);
+	set_n_ways_detection(8, double_cache_size);
+	set_n_ways_detection(9, double_cache_size);
+	set_n_ways_detection(10, double_cache_size);
+	set_n_ways_detection(11, double_cache_size);
+	set_n_ways_detection(12, double_cache_size);
+	set_n_ways_detection(13, double_cache_size);
+	set_n_ways_detection(14, double_cache_size);
+	set_n_ways_detection(15, double_cache_size);
 	//L1_line_detection();*/
 	return 0;
 }
