@@ -270,6 +270,11 @@ void L1_line_detection(){
 	uint64_t *tmp_val = (uint64_t *)malloc(sizeof(uint64_t));
 	for (int i=0;i<100;i++) load(p, tmp_val);
 	
+	// prepare lfsr
+	uint64_t lfsr;
+	__asm__ volatile("rdrand %0": "=r" (lfsr)::"flags");
+	lfsr = step(lfsr);
+	
 	// first char
 	int offset=0;
 	printf("offset %u\n", offset);
@@ -277,7 +282,9 @@ void L1_line_detection(){
 	double avg_acs_time = 1.0;
 	for (int i=0;i<100;i++){
 		load(p, tmp_val);
-		tmp_time = flush_load(p+offset, p, tmp_val);
+		tmp_time = flush_load(p+lfsr%(offset+1), p, tmp_val);
+		lfsr ^= *tmp_val;
+		lfsr = step(lfsr);
 		avg_acs_time = (i==0) ? (double) tmp_time : (avg_acs_time*i + (double) tmp_time)/(i+1);			
 	} 
 	printf("values tmp_time %lu, tmp_val %lu\n", tmp_time, *tmp_val); // reading 8 '0's brings odd values (0x3030303030303030)
@@ -290,7 +297,9 @@ void L1_line_detection(){
 	avg_acs_time = 1.0;
 	for (int i=0;i<100;i++){
 		load(p, tmp_val);
-		tmp_time = flush_load(p+offset, p, tmp_val);
+		tmp_time = flush_load(p+lfsr%(offset+1), p, tmp_val);
+		lfsr ^= *tmp_val;
+		lfsr = step(lfsr);
 		avg_acs_time = (i==0) ? (double) tmp_time : (avg_acs_time*i + (double) tmp_time)/(i+1);			
 	} 
 	printf("values tmp_time %lu, tmp_val %lu\n", tmp_time, *tmp_val); // reading 8 '0's brings odd values (0x3030303030303030)
@@ -302,8 +311,10 @@ void L1_line_detection(){
 	tmp_time=1;
 	avg_acs_time = 1.0;
 	for (int i=0;i<100;i++){
-		//load(p, tmp_val);
-		tmp_time = flush_load(p+offset, p, tmp_val);
+		load(p, tmp_val);
+		tmp_time = flush_load(p+lfsr%(offset+1), p, tmp_val);
+		lfsr ^= *tmp_val;
+		lfsr = step(lfsr);
 		avg_acs_time = (i==0) ? (double) tmp_time : (avg_acs_time*i + (double) tmp_time)/(i+1);			
 	} 
 	printf("values tmp_time %lu, tmp_val %lu\n", tmp_time, *tmp_val); // reading 8 '0's brings odd values (0x3030303030303030)
@@ -316,7 +327,9 @@ void L1_line_detection(){
 	avg_acs_time = 1.0;
 	for (int i=0;i<100;i++){
 		load(p, tmp_val);
-		tmp_time = flush_load(p+offset, p, tmp_val);
+		tmp_time = flush_load(p+lfsr%(offset+1), p, tmp_val);
+		lfsr ^= *tmp_val;
+		lfsr = step(lfsr);
 		avg_acs_time = (i==0) ? (double) tmp_time : (avg_acs_time*i + (double) tmp_time)/(i+1);			
 	} 
 	printf("values tmp_time %lu, tmp_val %lu\n", tmp_time, *tmp_val); // reading 8 '0's brings odd values (0x3030303030303030)
@@ -329,7 +342,9 @@ void L1_line_detection(){
 	avg_acs_time = 1.0;
 	for (int i=0;i<100;i++){
 		load(p, tmp_val);
-		tmp_time = flush_load(p+offset, p, tmp_val);
+		tmp_time = flush_load(p+lfsr%(offset+1), p, tmp_val);
+		lfsr ^= *tmp_val;
+		lfsr = step(lfsr);
 		avg_acs_time = (i==0) ? (double) tmp_time : (avg_acs_time*i + (double) tmp_time)/(i+1);			
 	} 
 	printf("values tmp_time %lu, tmp_val %lu\n", tmp_time, *tmp_val); // reading 8 '0's brings odd values (0x3030303030303030)
@@ -342,7 +357,9 @@ void L1_line_detection(){
 	avg_acs_time = 1.0;
 	for (int i=0;i<100;i++){
 		load(p, tmp_val);
-		tmp_time = flush_load(p+offset, p, tmp_val);
+		tmp_time = flush_load(p+lfsr%(offset+1), p, tmp_val);
+		lfsr ^= *tmp_val;
+		lfsr = step(lfsr);
 		avg_acs_time = (i==0) ? (double) tmp_time : (avg_acs_time*i + (double) tmp_time)/(i+1);			
 	} 
 	printf("values tmp_time %lu, tmp_val %lu\n", tmp_time, *tmp_val); // reading 8 '0's brings odd values (0x3030303030303030)
@@ -356,7 +373,9 @@ void L1_line_detection(){
 	avg_acs_time = 1.0;
 	for (int i=0;i<100;i++){
 		load(p, tmp_val);
-		tmp_time = flush_load(p+offset, p, tmp_val);
+		tmp_time = flush_load(p+lfsr%(offset+1), p, tmp_val);
+		lfsr ^= *tmp_val;
+		lfsr = step(lfsr);
 		avg_acs_time = (i==0) ? (double) tmp_time : (avg_acs_time*i + (double) tmp_time)/(i+1);			
 	} 
 	printf("values tmp_time %lu, tmp_val %lu\n", tmp_time, *tmp_val); // reading 8 '0's brings odd values (0x3030303030303030)
@@ -370,7 +389,9 @@ void L1_line_detection(){
 	avg_acs_time = 1.0;
 	for (int i=0;i<100;i++){
 		load(p, tmp_val);
-		tmp_time = flush_load(p+offset, p, tmp_val);
+		tmp_time = flush_load(p+lfsr%(offset+1), p, tmp_val);
+		lfsr ^= *tmp_val;
+		lfsr = step(lfsr);
 		avg_acs_time = (i==0) ? (double) tmp_time : (avg_acs_time*i + (double) tmp_time)/(i+1);			
 	} 
 	printf("values tmp_time %lu, tmp_val %lu\n", tmp_time, *tmp_val); // reading 8 '0's brings odd values (0x3030303030303030)
@@ -383,7 +404,9 @@ void L1_line_detection(){
 	avg_acs_time = 1.0;
 	for (int i=0;i<100;i++){
 		load(p, tmp_val);
-		tmp_time = flush_load(p+offset, p, tmp_val);
+		tmp_time = flush_load(p+lfsr%(offset+1), p, tmp_val);
+		lfsr ^= *tmp_val;
+		lfsr = step(lfsr);
 		avg_acs_time = (i==0) ? (double) tmp_time : (avg_acs_time*i + (double) tmp_time)/(i+1);			
 	} 
 	printf("values tmp_time %lu, tmp_val %lu\n", tmp_time, *tmp_val); // reading 8 '0's brings odd values (0x3030303030303030)
@@ -455,7 +478,7 @@ int main(int ac, char**av){
 	
 	
 	
-	//L1_line_detection();*/
+	L1_line_detection();
 	return 0;
 }
 
