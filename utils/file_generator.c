@@ -16,9 +16,10 @@ void generateZeroFile(const char *file_name, size_t file_size) {
     fclose(file);
 }
 
-int main() {
+int main(int ac, char**av) {
+	
     const char *file_name = "zero_file";
-    size_t file_size = 1074000000;  // Size in bytes
+    size_t file_size = ac==2 ? atoi(av[1]) : 1074000000;  // Size in bytes
 
     generateZeroFile(file_name, file_size);
 
