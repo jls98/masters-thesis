@@ -82,7 +82,7 @@ static __inline__ uint64_t rdtsc(void)
 void *map(char *file_name, uint64_t offset)
 {
     int file_descriptor = open(file_name, O_RDONLY); 
-    //if (file_descriptor == -1) return NULL;
+    if (file_descriptor == -1) return NULL;
     //struct stat st_buf;
     //if (fstat(file_descriptor, &st_buf) == -1) return NULL;
     //size_t map_len = st_buf.st_size;
@@ -93,7 +93,7 @@ void *map(char *file_name, uint64_t offset)
 		printf("mmap fail with errno %d\n", errno); // fix problems with mmap
 		return NULL;
 	}
-	//close(file_descriptor);
+	close(file_descriptor);
 	return (void *)(((uint64_t) mapping) + offset);  // mapping will be implicitly unmapped when calling function will be exited
 }
 
