@@ -16,6 +16,7 @@ static uint64_t lfsr_create(void);
 static uint64_t lfsr_rand(uint64_t* lfsr);
 static uint64_t lfsr_step(uint64_t lfsr);
 static uint64_t probe_stride_loop(const void *addr, const uint64_t addr_len, const uint64_t reps, const uint64_t stride);
+static unsigned int log2_floor(unsigned int val);
 static void create_pointer_chase(void** addr, const uint64_t size);
 int get_ways(int cache_size);
 
@@ -38,7 +39,7 @@ int get_ways(int cache_size) {
     // check stride in power of two
     for (int stride = 0; stride < log2_floor(double_cache_size); stride++) {
         uint64_t millicycles = probe_stride_loop(buffer, double_cache_size, PROBE_REPS, stride);
-        printf("memsize: %10d bits; time: %7.3f cycles; k: %2d\n", size, (double)millicycles/(1<<10), k);
+        printf("stride: %5d; time: %7.3f cycles; k: %2d\n", stride, (double)millicycles/(1<<10), k);
 
         munmap(buffer, size);
         
