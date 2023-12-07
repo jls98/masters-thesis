@@ -510,17 +510,6 @@ int main(){
 	//set_n_ways_detection(5);
 	//set_n_ways_detection(6);
 	uint64_t double_cache_size = 131072;
-	if (ac==2){
-		set_n_ways_detection(7, double_cache_size);
-		set_n_ways_detection(8, double_cache_size);
-		set_n_ways_detection(9, double_cache_size);
-		set_n_ways_detection(10, double_cache_size);
-		set_n_ways_detection(11, double_cache_size);
-		set_n_ways_detection(12, double_cache_size);
-		set_n_ways_detection(13, double_cache_size);
-		set_n_ways_detection(14, double_cache_size);
-		set_n_ways_detection(15, double_cache_size);
-	}else{
 	
 		set_n_ways_detection(7, double_cache_size);
 		set_n_ways_detection(8, double_cache_size);
@@ -531,8 +520,7 @@ int main(){
 		set_n_ways_detection(13, double_cache_size);
 		set_n_ways_detection(14, double_cache_size);
 		set_n_ways_detection(15, double_cache_size);
-	
-	}
+
 	
 	
 	
