@@ -75,7 +75,7 @@ static uint64_t probe_stride_loop(const void *addr, const uint64_t addr_len, con
 	volatile uint64_t time;
 	uint64_t stride_size = stride*sizeof(void*);
 	asm __volatile__ (
-        "mov r10, %3"
+        "mov r10, %3;"
         // measure
 		"mfence;"
 		"lfence;"
