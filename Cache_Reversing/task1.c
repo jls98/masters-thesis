@@ -26,13 +26,15 @@ int main(int ac, char **av) {
 
         munmap(buffer, size);
         
-        size += size>>1; // add half step
-        *buffer = mmap(NULL, size, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB, -1, 0);
-        create_pointer_chase(buffer, size / sizeof(void*));
-        millicycles = probe_chase_loop(buffer, PROBE_REPS);
-        printf("memsize: %10d bits; time: %7.3f cycles\n", size, (double)millicycles/(1<<10));
+        for (int s = 1; s < 4; s++){
+            size += s*(size>>2); // add quarter step
+            *buffer = mmap(NULL, size, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB, -1, 0);
+            create_pointer_chase(buffer, size / sizeof(void*));
+            millicycles = probe_chase_loop(buffer, PROBE_REPS);
+            printf("memsize: %10d bits; time: %7.3f cycles\n", size, (double)millicycles/(1<<10));
 
-        munmap(buffer, size);
+            munmap(buffer, size);
+        }
     }
     return 0;
 }
