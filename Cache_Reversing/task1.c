@@ -5,7 +5,8 @@
 #include <x86intrin.h>
 
 #define PROBE_REPS (1<<25)
-
+#define MEMSIZE_EXP_MIN 14
+#define MEMSIZE_EXP_MAX 23
 static void wait(const uint64_t cycles);
 static uint64_t lfsr_create(void);
 static uint64_t lfsr_rand(uint64_t* lfsr);
@@ -17,7 +18,7 @@ int main(int ac, char **av) {
     wait(1E9);
 
     // check cache size in power of two
-    for (int k = 12; k < 25; k++) {
+    for (int k = MEMSIZE_EXP_MIN; k < MEMSIZE_EXP_MAX; k++) {
         int size = 1 << k;
         void* buffer = mmap(NULL, size, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB, -1, 0);
         create_pointer_chase(buffer, size / sizeof(void*));
