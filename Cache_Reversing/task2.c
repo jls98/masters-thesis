@@ -108,7 +108,7 @@ static uint64_t probe_stride_loop(const void *addr, const uint64_t addr_len, con
         // end - high precision
 		"sub rax, rsi;"
 		: "=a" (time)
-		: "11" (addr), "b" (addr_len), "r" (reps), "r" (stride_size)
+		: "r11" (addr), "b" (addr_len), "r" (reps), "r" (stride_size)
 		: "rsi", "rdx", "r8", "r9", "r10" // rsi and rdx used by rdtsc, r8 holds loaded value, r9 holds current adrs (base+index), rdx holds (current) index
 	);
 	return time / (uint64_t)(reps >> 10);
