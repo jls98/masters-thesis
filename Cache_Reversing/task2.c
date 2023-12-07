@@ -73,7 +73,7 @@ static uint64_t lfsr_step(uint64_t lfsr) {
 
 static uint64_t probe_stride_loop(const void *addr, const uint64_t addr_len, const uint64_t reps, const uint64_t stride) {
 	volatile uint64_t time;
-	uint64_t stride_size = stride*sizeof(void*);
+	uint64_t stride_size = stride;
 	asm __volatile__ (
         // measure
 		"mfence;"
