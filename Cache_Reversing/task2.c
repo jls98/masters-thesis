@@ -32,7 +32,7 @@ int get_ways(int cache_size) {
     for (uint32_t stride = 1; stride < 20; stride++) {
         void* buffer = mmap(NULL, double_cache_size, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB, -1, 0);
         create_pointer_stride_chase(buffer, double_cache_size / sizeof(void*), stride);        
-        uint64_t millicycles = probe_stride_loop(double_cache_size, PROBE_REPS, stride);
+        uint64_t millicycles = probe_stride_loop(buffer, PROBE_REPS);
         printf("stride: %5d; time: %7.3f cycles\n", stride, (double)millicycles/(1<<10));
 
         munmap(buffer, double_cache_size);
