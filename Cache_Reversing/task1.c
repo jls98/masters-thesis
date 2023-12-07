@@ -26,7 +26,7 @@ int main(int ac, char **av) {
 
         munmap(buffer, size);
         
-        for (int s = 1; s < 4; s++){
+        /*for (int s = 1; s < 4; s++){
             int temp_size = size + s*(size>>2); // add quarter step
             *buffer = mmap(NULL, temp_size, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB, -1, 0);
             create_pointer_chase(buffer, temp_size / sizeof(void*));
@@ -34,7 +34,7 @@ int main(int ac, char **av) {
             printf("memsize: %10d bits; time: %7.3f cycles\n", temp_size, (double)millicycles/(1<<10));
 
             munmap(buffer, temp_size);
-        }
+        }*/
     }
     return 0;
 }
