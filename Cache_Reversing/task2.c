@@ -16,21 +16,13 @@ static uint64_t lfsr_create(void);
 static uint64_t lfsr_rand(uint64_t* lfsr);
 static uint64_t lfsr_step(uint64_t lfsr);
 static uint64_t probe_stride_loop(const void *addr, const uint64_t addr_len, const uint64_t reps);
-static unsigned int log2_floor(unsigned int val);
-static void create_pointer_stride_chase(void** addr, const uint64_t size, const uint64_t stride);
+static void create_pointer_stride_chase(void** addr, const uint64_t size, const uint32_t stride);
 int get_ways(int cache_size);
-static __inline__ uint64_t rdtsc(void);
 
 int main(int ac, char **av){
     return ac==2 ? get_ways(atoi(av[1])) : get_ways(CACHE_SIZE_DEFAULT);
 }
 
-// compute log of 2 floored to get possible amount of divisions by 2
-static unsigned int log2_floor(unsigned int val) {
-    unsigned int count = 0;
-    while (val >>= 1) ++count;
-    return count;
-}
 
 
 int get_ways(int cache_size) {
@@ -111,7 +103,6 @@ static uint64_t probe_stride_loop(const void *addr, const uint64_t addr_len, con
 	);
 	return time / (uint64_t)(reps >> 10);
 }
-
 
 static void create_pointer_stride_chase(void** addr, const uint64_t size, const uint32_t stride) {
     for (uint64_t i = 0; i < size; i++) {
