@@ -8,16 +8,19 @@
 #define PROBE_REPS (1<<25)
 #define MEMSIZE_EXP_MIN 14
 #define MEMSIZE_EXP_MAX 23
+#define CACHE_SIZE_DEFAULT 32770
+
+
 static void wait(const uint64_t cycles);
 static uint64_t lfsr_create(void);
 static uint64_t lfsr_rand(uint64_t* lfsr);
 static uint64_t lfsr_step(uint64_t lfsr);
 static uint64_t probe_chase_loop(const void *addr, const uint64_t reps);
 static void create_pointer_chase(void** addr, const uint64_t size);
-int get_cache_size();
+int get_ways(int cache_size);
 
 int main(int ac, char **av){
-    return get_cache_size();
+    return ac==2 ? get_ways(atoi(av[1]) : get_ways(CACHE_SIZE_DEFAULT);
 }
 
 // compute log of 2 floored to get possible amount of divisions by 2
