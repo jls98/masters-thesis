@@ -44,7 +44,7 @@ static uint64_t lfsr_create(void) {
 }
 
 static uint64_t lfsr_rand(uint64_t* lfsr) {
-    for (int i = 0; i < 8*sizeof(uint64_t); i++) {
+    for (uint64_t i = 0; i < 8*sizeof(uint64_t); i++) {
         *lfsr = lfsr_step(*lfsr);
     }
     return *lfsr;
@@ -90,12 +90,12 @@ static uint64_t probe_chase_loop(const void *addr, const uint64_t reps) {
 }
 
 static void create_pointer_chase(void** addr, const uint64_t size) {
-    for (int i = 0; i < size; i++) {
+    for (uint64_t i = 0; i < size; i++) {
         addr[i] = NULL; // set all entries inn addr to NULL
     }
     uint64_t lfsr = lfsr_create(); // start random lfsr
     uint64_t offset, curr = 0; // offset = 0
-    for (int i = 0; i < size - 1; i++) {
+    for (uint64_t i = 0; i < size - 1; i++) {
         do {
             offset = lfsr_rand(&lfsr) % size; // random number mod size 
         } while (offset == curr || addr[offset] != NULL); // ensure that offset !=curr and addr[offset]==NULL
