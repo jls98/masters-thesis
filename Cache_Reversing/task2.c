@@ -29,7 +29,7 @@ int get_ways(int cache_size) {
     wait(1E9);
     uint64_t double_cache_size = 2*cache_size;
     // check stride in power of two
-    for (uint32_t stride = 1; stride < 20; stride++) {
+    for (uint32_t stride = 1; stride < 128; stride++) {
         void* buffer = mmap(NULL, double_cache_size, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB, -1, 0);
         create_pointer_stride_chase(buffer, double_cache_size / sizeof(void*), stride);        
         uint64_t millicycles = probe_stride_loop(buffer, PROBE_REPS);
