@@ -82,9 +82,12 @@ static uint64_t lfsr_step(uint64_t lfsr) {
 static uint64_t probe_stride_loop(const void **addr, const uint64_t addr_len, const uint64_t reps, const uint64_t stride){
     volatile void *ignore;
     uint64_t lfsr = lfsr_create();
-    uint64_t lfsr_vals = malloc(reps * sizeof(uint64_t));
+    uint64_t *lfsr_vals = (uint64_t *) malloc(reps * sizeof(uint64_t));
     for (uint64_t i=0;i<reps;i++){
-        lfsr_vals[i] = lfsr = lfsr_rand(&lfsr) % addr_len;
+        for (uint64_t j = 0; j< stride; j++){
+            lfsr = lfsr_rand(&lfsr) % addr_len;
+        }
+        lfsr_vals[i] = lfsr;
     }
     
     uint64_t start = rdtsc();
