@@ -88,11 +88,11 @@ static uint64_t probe_stride_loop(const void *addr, const uint64_t addr_len, con
         "xor edx, edx;" // zero, r8 index counter
         "loop:"
         "mov r9, edx;"
-        "add r9, r10;"
+        "add r9, %k1;"
 		"mov r8, [r9];" // load
-        "add edx, r12;"   // compute new index (old_index+stride)
+        "add edx, %k4;"   // compute new index (old_index+stride)
         "div ebx;" // eax contains quotient, edx contains remainder 
-        "dec r11;" // decrement counter reps
+        "dec %k3;" // decrement counter reps
         "jnz loop;"
 		// END - probe address
 		"lfence;"
