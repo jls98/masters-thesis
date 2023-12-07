@@ -19,6 +19,7 @@ static uint64_t probe_stride_loop(const void *addr, const uint64_t addr_len, con
 static unsigned int log2_floor(unsigned int val);
 static void create_pointer_chase(void** addr, const uint64_t size);
 int get_ways(int cache_size);
+static __inline__ uint64_t rdtsc(void);
 
 int main(int ac, char **av){
     return ac==2 ? get_ways(atoi(av[1])) : get_ways(CACHE_SIZE_DEFAULT);
@@ -29,6 +30,13 @@ static unsigned int log2_floor(unsigned int val) {
     unsigned int count = 0;
     while (val >>= 1) ++count;
     return count;
+}
+
+static __inline__ uint64_t rdtsc(void)
+{
+    uint32_t lo, hi;
+    __asm__ volatile ("rdtscp" : "=a" (lo), "=d" (hi) : : "ecx");
+    return ((uint64_t)hi<<32)|lo;
 }
 
 int get_ways(int cache_size) {
@@ -71,7 +79,20 @@ static uint64_t lfsr_step(uint64_t lfsr) {
   return (lfsr & 1) ? (lfsr >> 1) ^ FEEDBACK : (lfsr >> 1);
 }
 
-static uint64_t probe_stride_loop(const void *addr, const uint64_t addr_len, const uint64_t reps, const uint64_t stride) {
+static uint64_t probe_stride_loop(const void *addr, const uint64_t addr_len, const uint64_t reps, const uint64_t stride){
+    // linear access 
+    uint64_t start = rdtsc();
+    uint64_t index=0;
+    uint64_t ignore;
+    for(uint64_t i = reps; i>0; i--){
+        ignore |= addr[index];
+        index = (index+stride) % addr_len;
+    }
+    uint64_t diff = rdtsc() - start;
+    ignore = 10;
+    return diff / (uint64_t)(reps >> ignore);
+}
+/*static uint64_t probe_stride_loop(const void *addr, const uint64_t addr_len, const uint64_t reps, const uint64_t stride) {
 	volatile uint64_t time;
 	uint64_t stride_size = stride*sizeof(void*);
 	asm __volatile__ (
@@ -114,7 +135,7 @@ static uint64_t probe_stride_loop(const void *addr, const uint64_t addr_len, con
 		: "rsi", "rdx", "r8", "r9", "r10" // rsi and rdx used by rdtsc, r8 holds loaded value, r9 holds current adrs (base+index), rdx holds (current) index
 	);
 	return time / (uint64_t)(reps >> 10);
-}
+}*/
 
 static void create_pointer_chase(void** addr, const uint64_t size) {
     for (uint64_t i = 0; i < size; i++) {
