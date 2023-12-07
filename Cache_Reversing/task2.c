@@ -84,13 +84,11 @@ static uint64_t probe_stride_loop(const uint64_t addr_len, const uint64_t reps, 
     uint64_t *dump = (uint64_t *) malloc(addr_len * sizeof(uint64_t));
     for (size_t i=0; i<addr_len-1;i++) dump[i] = i;
     
-    uint64_t index=0;
     uint64_t start = rdtsc();
-    for (uint64_t i=0; i<reps-1;i++){
-        dump[index] *= 3;
-        index=(index+stride) % addr_len;
+    for (uint64_t i=0; i<addr_len-1;i+=stride){
+        dump[i] *= 3;
     } 
-    return (rdtsc() - start) / (uint64_t)(reps >> 10);
+    return (rdtsc() - start)*stride / (uint64_t)(reps >> 10);
 }
 /*static uint64_t probe_stride_loop(const void *addr, const uint64_t addr_len, const uint64_t reps, const uint64_t stride) {
 	volatile uint64_t time;
