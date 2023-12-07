@@ -87,7 +87,9 @@ static uint64_t probe_stride_loop(const void *addr, const uint64_t addr_len, con
 		"or rsi, rdx;"
 		// BEGIN - probe address
         "xor r9, r9;" // zero, r9 index
+        "xor rax, rax;"
         "mov rdx, rcx;" // first access at base
+        
         "loop:"
 		"mov r8, [rdx];" // load
         
