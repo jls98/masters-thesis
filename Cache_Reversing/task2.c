@@ -15,7 +15,7 @@ static void wait(const uint64_t cycles);
 static uint64_t lfsr_create(void);
 static uint64_t lfsr_rand(uint64_t* lfsr);
 static uint64_t lfsr_step(uint64_t lfsr);
-static uint64_t probe_stride_loop(const void *addr, const uint64_t addr_len, const uint64_t reps);
+static uint64_t probe_stride_loop(const void *addr, const uint64_t reps);
 static void create_pointer_stride_chase(void** addr, const uint64_t size, const uint32_t stride);
 int get_ways(int cache_size);
 
@@ -65,7 +65,7 @@ static uint64_t lfsr_step(uint64_t lfsr) {
   return (lfsr & 1) ? (lfsr >> 1) ^ FEEDBACK : (lfsr >> 1);
 }
 
-static uint64_t probe_stride_loop(const void *addr, const uint64_t addr_len, const uint64_t reps) {
+static uint64_t probe_stride_loop(const void *addr, const uint64_t reps) {
 	volatile uint64_t time;
 	asm __volatile__ (
         // measure
