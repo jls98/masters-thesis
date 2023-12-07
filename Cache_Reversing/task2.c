@@ -81,7 +81,7 @@ static uint64_t lfsr_step(uint64_t lfsr) {
 
 static uint64_t probe_stride_loop(const uint64_t addr_len, const uint64_t reps, const uint64_t stride){
     volatile void *ignore;
-    uint64_t *dump = (uint64_t) malloc(addr_len * sizeof(uint64_t));
+    uint64_t *dump = (uint64_t *) malloc(addr_len * sizeof(uint64_t));
     for (size_t i=0; i<addr_len-1;i++) dump[i] = i;
     
     uint64_t index=0;
