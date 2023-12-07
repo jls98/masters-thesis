@@ -41,7 +41,7 @@ int get_ways(int cache_size) {
         uint64_t millicycles = probe_stride_loop(buffer, double_cache_size, PROBE_REPS, stride);
         printf("stride: %5d; time: %7.3f cycles; k: %2d\n", stride, (double)millicycles/(1<<10));
 
-        munmap(buffer, size);
+        munmap(buffer, double_cache_size);
         
     }
     return 0;
