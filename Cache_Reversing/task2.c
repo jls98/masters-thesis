@@ -33,12 +33,12 @@ static unsigned int log2_floor(unsigned int val) {
 int get_ways(int cache_size) {
     wait(1E9);
     int double_cache_size = 2*cache_size;
-
-    // check cache size in power of two
-    for (int k = log2_floor(double_cache_size); k >0; k--) {
-        int size = 1 << k;
-        void* buffer = mmap(NULL, size, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB, -1, 0);
-        create_pointer_chase(buffer, size / sizeof(void*));
+    void* buffer = mmap(NULL, double_cache_size, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB, -1, 0);
+    create_pointer_chase(buffer, double_cache_size / sizeof(void*));
+    // check stride in power of two
+    for (int stride = 0; stride < log2_floor(double_cache_size); stride++) {
+        int stride = double_cache_size>>k;
+        
         uint64_t millicycles = probe_chase_loop(buffer, PROBE_REPS);
         printf("memsize: %10d bits; time: %7.3f cycles; k: %2d\n", size, (double)millicycles/(1<<10), k);
 
@@ -72,9 +72,9 @@ static uint64_t lfsr_step(uint64_t lfsr) {
   return (lfsr & 1) ? (lfsr >> 1) ^ FEEDBACK : (lfsr >> 1);
 }
 
-static uint64_t probe_chase_loop(const void *addr, const uint64_t reps) {
+static uint64_t probe_stride_loop(const void *addr, const uint64_t addr_len, const uint64_t reps, const uint64_t stride) {
 	volatile uint64_t time;
-	
+	uint64_t stride_size = stride*sizeof(void*);
 	asm __volatile__ (
         // measure
 		"mfence;"
@@ -86,11 +86,12 @@ static uint64_t probe_chase_loop(const void *addr, const uint64_t reps) {
         "shl rdx, 32;"
 		"or rsi, rdx;"
 		// BEGIN - probe address
-        "mov rax, %1;"
-        "mov rdx, %2;"
+        "eor edx, edx;" // zero, r8 index counter
         "loop:"
-		"mov rax, [rax];"
-        "dec rdx;"
+		"mov r8, [%1 + edx];" // load
+        "add edx, %4;"   // compute new index (old_index+stride)
+        "div ebx;" // eax contains quotient, edx contains remainder 
+        "dec %3;" // decrement counter reps
         "jnz loop;"
 		// END - probe address
 		"lfence;"
@@ -101,8 +102,8 @@ static uint64_t probe_chase_loop(const void *addr, const uint64_t reps) {
         // end - high precision
 		"sub rax, rsi;"
 		: "=a" (time)
-		: "c" (addr), "r" (reps)
-		: "esi", "edx"
+		: "r" (addr), "b" (addr_len), "r" (reps), "r" (stride_size)
+		: "esi", "edx", "r8" // esi and edx used by rdtsc, r8 holds loaded value 
 	);
 	return time / (uint64_t)(reps >> 10);
 }
