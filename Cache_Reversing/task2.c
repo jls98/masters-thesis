@@ -27,7 +27,7 @@ int main(int ac, char **av){
 
 int get_ways(int cache_size) {
     wait(1E9);
-    int double_cache_size = 2*cache_size;
+    uint64_t double_cache_size = 2*cache_size;
     // check stride in power of two
     for (uint32_t stride = 1; stride < 20; stride++) {
         void* buffer = mmap(NULL, double_cache_size, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB, -1, 0);
