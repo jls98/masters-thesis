@@ -88,7 +88,7 @@ void *map(char *file_name, uint64_t offset)
     //size_t map_len = st_buf.st_size;
 	//void *mapping = mmap(NULL, map_len, PROT_READ, MAP_PRIVATE, file_descriptor, 0);
 	//void *mapping = malloc(4096 * 4096*4);
-	void *mapping = mmap(NULL, 4096 * 4096, PROT_READ, MAP_PRIVATE | MAP_ANON, -1, 0); 
+	void *mapping = mmap(NULL, 4096 * 4096, PROT_READ, MAP_PRIVATE | MAP_ANON | MAP_HUGETLB, -1, 0); 
 	if (mapping == MAP_FAILED){
 		printf("mmap fail with errno %d\n", errno); // fix problems with mmap
 		return NULL;
@@ -239,13 +239,13 @@ void set_n_ways_detection2(uint64_t n, uint64_t double_cache_size, int cache_siz
 		tmp_time = load(p+(sizeof(uint64_t)*(lfsr%(double_cache_size))), tmp_val);		
 	}
 	int counter=0;
-	for(c=0; c<ACCESS_AMOUNT; c+=(1<<n))
+	for(c=0; c<ACCESS_AMOUNT; c+=n)
 	{
 		for(int i=0;i<cache_size;i++) load(p+(sizeof(uint64_t)*(lfsr%(cache_size))), tmp_val); // load something in L1 to possibly evict from L1
 		tmp_time = load(p+(sizeof(uint64_t)*(lfsr%(double_cache_size))), tmp_val);
 		lfsr ^= *tmp_val; // = lfsr since values are all 0
 		lfsr = step(lfsr);
-		avg_acs_time = (c==0) ? (double) tmp_time : (avg_acs_time*c + (double) tmp_time)/(c+1);	
+		avg_acs_time = (counter==0) ? (double) tmp_time : (avg_acs_time*c + (double) tmp_time)/(counter+1);	
 		counter++;
 		if (tmp_time > 40) misses++; 
 		
@@ -511,15 +511,15 @@ int main(){
 	//set_n_ways_detection(6);
 	uint64_t double_cache_size = 131072;
 	
-		set_n_ways_detection(7, double_cache_size);
-		set_n_ways_detection(8, double_cache_size);
-		set_n_ways_detection(9, double_cache_size);
-		set_n_ways_detection(10, double_cache_size);
-		set_n_ways_detection(11, double_cache_size);
-		set_n_ways_detection(12, double_cache_size);
-		set_n_ways_detection(13, double_cache_size);
-		set_n_ways_detection(14, double_cache_size);
-		set_n_ways_detection(15, double_cache_size);
+    set_n_ways_detection(7, double_cache_size);
+    set_n_ways_detection(8, double_cache_size);
+    set_n_ways_detection(9, double_cache_size);
+    set_n_ways_detection(10, double_cache_size);
+    set_n_ways_detection(11, double_cache_size);
+    set_n_ways_detection(12, double_cache_size);
+    set_n_ways_detection(13, double_cache_size);
+    set_n_ways_detection(14, double_cache_size);
+    set_n_ways_detection(15, double_cache_size);
 
 	
 	
