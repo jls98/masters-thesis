@@ -85,12 +85,14 @@ static uint64_t probe_stride_loop(const void *addr, const uint64_t addr_len, con
         "shl rdx, 32;"
 		"or rsi, rdx;"
 		// BEGIN - probe address
-        "xor rdx, rdx;" // zero, r8 index counter
+        "xor r9, r9;" // zero, r8 index counter
+        "mov rdx, %1;"
         "loop:"
-        "mov r9, rdx;"
-        "add r9, %1;"
 		"mov r8, [r9];" // load
-        "add rdx, %4;"   // compute new index (old_index+stride)
+        // calculate new index
+        "add r9, %4;" // index_offset + stride      
+        "mov rdx, r9;"   // compute new index (old_index+stride)
+        "add rdx, %1;"
         "div rbx;" // eax contains quotient, edx contains remainder 
         "dec %k3;" // decrement counter reps
         "jnz loop;"
@@ -104,7 +106,7 @@ static uint64_t probe_stride_loop(const void *addr, const uint64_t addr_len, con
 		"sub rax, rsi;"
 		: "=a" (time)
 		: "r" (addr), "b" (addr_len), "r" (reps), "r" (stride_size)
-		: "rsi", "rdx", "r8", "r9" // esi and edx used by rdtsc, r8 holds loaded value 
+		: "rsi", "rdx", "r8", "r9" // rsi and rdx used by rdtsc, r8 holds loaded value, r9 holds current adrs (base+index), rdx holds (current) index
 	);
 	return time / (uint64_t)(reps >> 10);
 }
