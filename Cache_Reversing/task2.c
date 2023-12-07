@@ -15,9 +15,9 @@ static void wait(const uint64_t cycles);
 static uint64_t lfsr_create(void);
 static uint64_t lfsr_rand(uint64_t* lfsr);
 static uint64_t lfsr_step(uint64_t lfsr);
-static uint64_t probe_stride_loop(const uint64_t addr_len, const uint64_t reps, const uint64_t stride);
+static uint64_t probe_stride_loop(const uint64_t addr_len, const uint64_t reps, const uint32_t stride);
 static unsigned int log2_floor(unsigned int val);
-static void create_pointer_chase(void** addr, const uint64_t size);
+static void create_pointer_stride_chase(void** addr, const uint64_t size, const uint64_t stride);
 int get_ways(int cache_size);
 static __inline__ uint64_t rdtsc(void);
 
@@ -32,20 +32,19 @@ static unsigned int log2_floor(unsigned int val) {
     return count;
 }
 
-static __inline__ uint64_t rdtsc(void)
-{
-    uint32_t lo, hi;
-    __asm__ volatile ("rdtscp" : "=a" (lo), "=d" (hi) : : "ecx");
-    return ((uint64_t)hi<<32)|lo;
-}
 
 int get_ways(int cache_size) {
     wait(1E9);
     int double_cache_size = 2*cache_size;
-    void* buffer = mmap(NULL, double_cache_size, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB, -1, 0);
-    create_pointer_chase(buffer, double_cache_size / sizeof(void*));
     // check stride in power of two
-    for (uint32_t stride = 1; stride < log2_floor(double_cache_size); stride++) {
+    for (uint32_t stride = 1; stride < 20; stride++) {
+        void* buffer = mmap(NULL, double_cache_size, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB, -1, 0);
+        create_pointer_stride_chase(buffer, size / sizeof(void*), stride);
+        uint64_t millicycles = probe_chase_loop(buffer, PROBE_REPS);
+        printf("memsize: %10d bits; time: %7.3f cycles; k: %2d\n", size, (double)millicycles/(1<<10), k);
+
+        munmap(buffer, size);
+        
         uint64_t millicycles = probe_stride_loop(double_cache_size, PROBE_REPS, stride);
         printf("stride: %5d; time: %7.3f cycles\n", stride, (double)millicycles/(1<<10));
 
@@ -79,31 +78,9 @@ static uint64_t lfsr_step(uint64_t lfsr) {
   return (lfsr & 1) ? (lfsr >> 1) ^ FEEDBACK : (lfsr >> 1);
 }
 
-static uint64_t probe_stride_loop(const uint64_t addr_len, const uint64_t reps, const uint64_t stride){
-    volatile void *ignore;
-    uint64_t *dump = (uint64_t *) malloc(addr_len * sizeof(uint64_t));
-    uint64_t *ind = (uint64_t *) malloc(reps * sizeof(uint64_t));
-    uint64_t lfsr = lfsr_create();
-    
-    // precompute strides randomized
-    for (size_t i=0; i<reps-1;i++){
-        while(ind[i]){
-            lfsr = lfsr_rand(&lfsr) % addr_len;
-            if (lfsr % stride == 0) ind[i] = lfsr;            
-        }
-    } 
-    
-    uint64_t start = rdtsc();
-    for (uint64_t i=0; i<reps-1;i++){
-        dump[ind[i]] *= 3;
-    } 
-    return (rdtsc() - start)*stride / (uint64_t)(reps >> 10);
-}
-/*static uint64_t probe_stride_loop(const void *addr, const uint64_t addr_len, const uint64_t reps, const uint64_t stride) {
+static uint64_t probe_stride_loop(const void *addr, const uint64_t addr_len, const uint64_t reps) {
 	volatile uint64_t time;
-	uint64_t stride_size = stride*sizeof(void*);
 	asm __volatile__ (
-        "mov r10, %3;"
         // measure
 		"mfence;"
 		"lfence;"
@@ -114,20 +91,11 @@ static uint64_t probe_stride_loop(const uint64_t addr_len, const uint64_t reps, 
         "shl rdx, 32;"
 		"or rsi, rdx;"
 		// BEGIN - probe address
-        "xor r9, r9;" // zero, r9 index
-        "xor rax, rax;"
-        "mov rdx, rcx;" // first access at base
-        
+        "mov rax, %1;"
+        "mov rdx, %2;"
         "loop:"
-		"mov r8, [rdx];" // load
-        
-        // calculate new index
-        "add r9, %4;" // new index = index_old + stride      
-        "mov rdx, r9;"   // mod len
-        "div rbx;" // eax contains quotient, edx contains remainder 
-        "add rdx, rcx;" // offset % len + base -> adrs
-        
-        "dec r10;" // decrement counter reps
+		"mov rax, [rax];"
+        "dec rdx;"
         "jnz loop;"
 		// END - probe address
 		"lfence;"
@@ -138,22 +106,24 @@ static uint64_t probe_stride_loop(const uint64_t addr_len, const uint64_t reps, 
         // end - high precision
 		"sub rax, rsi;"
 		: "=a" (time)
-		: "c" (addr), "b" (addr_len), "r" (reps), "r" (stride_size)
-		: "rsi", "rdx", "r8", "r9", "r10" // rsi and rdx used by rdtsc, r8 holds loaded value, r9 holds current adrs (base+index), rdx holds (current) index
+		: "c" (addr), "r" (reps)
+		: "esi", "edx"
 	);
 	return time / (uint64_t)(reps >> 10);
-}*/
+}
 
-static void create_pointer_chase(void** addr, const uint64_t size) {
+
+static void create_pointer_stride_chase(void** addr, const uint64_t size, const uint32_t stride) {
     for (uint64_t i = 0; i < size; i++) {
         addr[i] = NULL; // set all entries inn addr to NULL
     }
     uint64_t lfsr = lfsr_create(); // start random lfsr
     uint64_t offset, curr = 0; // offset = 0
-    for (uint64_t i = 0; i < size - 1; i++) {
+    uint64_t stride_indexes = size % stride == 0? size/stride : size/stride +1;
+    for (uint64_t i = 0; i < stride_indexes-1; i++) {
         do {
             offset = lfsr_rand(&lfsr) % size; // random number mod size 
-        } while (offset == curr || addr[offset] != NULL); // ensure that offset !=curr and addr[offset]==NULL
+        } while (offset == curr || addr[offset] != NULL || offset % stride != 0); // ensure that offset !=curr and addr[offset]==NULL and jumps only between entries of stride
         addr[curr] = &addr[offset]; // set the value of the curr index to the address at the offset index (linked list)
         curr = offset;
     }
