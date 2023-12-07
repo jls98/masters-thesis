@@ -13,8 +13,13 @@ static uint64_t lfsr_rand(uint64_t* lfsr);
 static uint64_t lfsr_step(uint64_t lfsr);
 static uint64_t probe_chase_loop(const void *addr, const uint64_t reps);
 static void create_pointer_chase(void** addr, const uint64_t size);
+int get_cache_size();
 
-int main(int ac, char **av) {
+int main(){
+    return get_cache_size();
+}
+
+int get_cache_size() {
     wait(1E9);
 
     // check cache size in power of two
