@@ -89,7 +89,7 @@ static uint64_t probe_stride_loop(const void *addr, const uint64_t addr_len, con
         "xor r9, r9;" // zero, r9 index
         "mov rdx, rcx;" // first access at base
         "loop:"
-		"mov r8, [edx];" // load
+		"mov r8, [rdx];" // load
         
         // calculate new index
         "add r9, %4;" // new index = index_old + stride      
