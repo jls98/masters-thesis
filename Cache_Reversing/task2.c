@@ -80,19 +80,16 @@ static uint64_t lfsr_step(uint64_t lfsr) {
 }
 
 static uint64_t probe_stride_loop(const void **addr, const uint64_t addr_len, const uint64_t reps, const uint64_t stride){
-    // linear access 
-    uint64_t index=0;
     volatile void *ignore;
     uint64_t lfsr = lfsr_create();
     uint64_t lfsr_vals = malloc(reps * sizeof(uint64_t));
-    for (int i=0;i<reps;i++){
+    for (uint64_t i=0;i<reps;i++){
         lfsr_vals[i] = lfsr = lfsr_rand(&lfsr) % addr_len;
     }
+    
     uint64_t start = rdtsc();
-   
     for(uint64_t i = reps; i>0; i--){
-        ignore = addr[index];
-        index = (index+stride) % addr_len;
+        ignore = addr[lfsr_vals[i]];
     }
     uint64_t diff = rdtsc() - start;
     return diff / (uint64_t)(reps >> 10);
