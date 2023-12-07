@@ -39,7 +39,7 @@ int get_ways(int cache_size) {
     // check stride in power of two
     for (int stride = 0; stride < log2_floor(double_cache_size); stride++) {
         uint64_t millicycles = probe_stride_loop(buffer, double_cache_size, PROBE_REPS, stride);
-        printf("stride: %5d; time: %7.3f cycles; k: %2d\n", stride, (double)millicycles/(1<<10));
+        printf("stride: %5d; time: %7.3f cycles\n", stride, (double)millicycles/(1<<10));
 
         munmap(buffer, double_cache_size);
         
@@ -85,7 +85,7 @@ static uint64_t probe_stride_loop(const void *addr, const uint64_t addr_len, con
         "shl rdx, 32;"
 		"or rsi, rdx;"
 		// BEGIN - probe address
-        "eor edx, edx;" // zero, r8 index counter
+        "xor edx, edx;" // zero, r8 index counter
         "loop:"
 		"mov r8, [%1 + edx];" // load
         "add edx, %4;"   // compute new index (old_index+stride)
