@@ -85,7 +85,7 @@ static uint64_t probe_stride_loop(const void *addr, const uint64_t addr_len, con
     uint64_t index=0;
     uint64_t ignore;
     for(uint64_t i = reps; i>0; i--){
-        ignore |= addr[index];
+        ignore |= (uint64_t) addr[index];
         index = (index+stride) % addr_len;
     }
     uint64_t diff = rdtsc() - start;
