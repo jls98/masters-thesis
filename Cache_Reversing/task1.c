@@ -26,7 +26,7 @@ int main(int ac, char **av) {
 
         munmap(buffer, size);
         
-        size += size>>1 // add half step
+        size += size>>1; // add half step
         void* *buffer = mmap(NULL, size, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB, -1, 0);
         create_pointer_chase(buffer, size / sizeof(void*));
         uint64_t millicycles = probe_chase_loop(buffer, PROBE_REPS);
