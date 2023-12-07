@@ -79,11 +79,11 @@ static uint64_t lfsr_step(uint64_t lfsr) {
   return (lfsr & 1) ? (lfsr >> 1) ^ FEEDBACK : (lfsr >> 1);
 }
 
-static uint64_t probe_stride_loop(const void *addr, const uint64_t addr_len, const uint64_t reps, const uint64_t stride){
+static uint64_t probe_stride_loop(const void **addr, const uint64_t addr_len, const uint64_t reps, const uint64_t stride){
     // linear access 
     uint64_t start = rdtsc();
     uint64_t index=0;
-    volatile void ignore;
+    volatile void *ignore;
     for(uint64_t i = reps; i>0; i--){
         ignore = addr[index];
         index = (index+stride) % addr_len;
