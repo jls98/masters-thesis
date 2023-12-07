@@ -19,7 +19,7 @@ int main(int ac, char **av) {
     // check cache size in power of two
     for (int k = 12; k < 25; k++) {
         int size = 1 << k;
-        void* *buffer = mmap(NULL, size, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB, -1, 0);
+        void* buffer = mmap(NULL, size, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB, -1, 0);
         create_pointer_chase(buffer, size / sizeof(void*));
         uint64_t millicycles = probe_chase_loop(buffer, PROBE_REPS);
         printf("memsize: %10d bits; time: %7.3f cycles; k: %2d\n", size, (double)millicycles/(1<<10), k);
@@ -28,7 +28,7 @@ int main(int ac, char **av) {
         
         for (int s = 1; s < 4; s++){
             int temp_size = size + s*(size>>2); // add quarter step
-            *buffer = mmap(NULL, temp_size, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_HUGETLB, -1, 0);
+            buffer = mmap(NULL, temp_size, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB, -1, 0);
             create_pointer_chase(buffer, temp_size / sizeof(void*));
             millicycles = probe_chase_loop(buffer, PROBE_REPS);
             printf("memsize: %10d bits; time: %7.3f cycles\n", temp_size, (double)millicycles/(1<<10));
