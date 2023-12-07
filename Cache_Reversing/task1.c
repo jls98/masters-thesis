@@ -22,7 +22,7 @@ int main(int ac, char **av) {
         void* *buffer = mmap(NULL, size, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB, -1, 0);
         create_pointer_chase(buffer, size / sizeof(void*));
         uint64_t millicycles = probe_chase_loop(buffer, PROBE_REPS);
-        printf("memsize: %10d bits; k: %2d; time: %7.3f cycles\n", size, k, (double)millicycles/(1<<10));
+        printf("memsize: %10d bits; time: %7.3f cycles; k: %2d\n", size, (double)millicycles/(1<<10), k);
 
         munmap(buffer, size);
         
