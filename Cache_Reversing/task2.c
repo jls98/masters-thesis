@@ -97,7 +97,7 @@ static uint64_t probe_stride_loop(const uint64_t addr_len, const uint64_t reps, 
     for (uint64_t i=0; i<reps-1;i++){
         dump[ind[i]] *= 3;
     } 
-    return (rdtsc() - start) / (uint64_t)(reps >> 10);
+    return (rdtsc() - start)*stride / (uint64_t)(reps >> 10);
 }
 /*static uint64_t probe_stride_loop(const void *addr, const uint64_t addr_len, const uint64_t reps, const uint64_t stride) {
 	volatile uint64_t time;
