@@ -75,6 +75,7 @@ static uint64_t probe_stride_loop(const void *addr, const uint64_t addr_len, con
 	volatile uint64_t time;
 	uint64_t stride_size = stride*sizeof(void*);
 	asm __volatile__ (
+        "mov r10, %3"
         // measure
 		"mfence;"
 		"lfence;"
@@ -96,7 +97,7 @@ static uint64_t probe_stride_loop(const void *addr, const uint64_t addr_len, con
         "div rbx;" // eax contains quotient, edx contains remainder 
         "add rdx, %1;" // offset % len + base -> adrs
         
-        "dec %k3;" // decrement counter reps
+        "dec r10;" // decrement counter reps
         "jnz loop;"
 		// END - probe address
 		"lfence;"
@@ -108,7 +109,7 @@ static uint64_t probe_stride_loop(const void *addr, const uint64_t addr_len, con
 		"sub rax, rsi;"
 		: "=a" (time)
 		: "r" (addr), "b" (addr_len), "r" (reps), "r" (stride_size)
-		: "rsi", "rdx", "r8", "r9" // rsi and rdx used by rdtsc, r8 holds loaded value, r9 holds current adrs (base+index), rdx holds (current) index
+		: "rsi", "rdx", "r8", "r9", "r10" // rsi and rdx used by rdtsc, r8 holds loaded value, r9 holds current adrs (base+index), rdx holds (current) index
 	);
 	return time / (uint64_t)(reps >> 10);
 }
