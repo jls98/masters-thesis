@@ -8,7 +8,7 @@
 #define PROBE_REPS (1<<25)
 #define MEMSIZE_EXP_MIN 14
 #define MEMSIZE_EXP_MAX 23
-#define CACHE_SIZE_DEFAULT 32770
+#define CACHE_SIZE_DEFAULT 32768
 
 
 static void wait(const uint64_t cycles);
@@ -87,7 +87,7 @@ static uint64_t probe_stride_loop(const void *addr, const uint64_t addr_len, con
 		"or rsi, rdx;"
 		// BEGIN - probe address
         "xor r9, r9;" // zero, r9 index
-        "mov rdx, %1;" // first access at base
+        "mov rdx, r11;" // first access at base
         "loop:"
 		"mov r8, [edx];" // load
         
@@ -108,7 +108,7 @@ static uint64_t probe_stride_loop(const void *addr, const uint64_t addr_len, con
         // end - high precision
 		"sub rax, rsi;"
 		: "=a" (time)
-		: "r" (addr), "b" (addr_len), "r" (reps), "r" (stride_size)
+		: "11" (addr), "b" (addr_len), "r" (reps), "r" (stride_size)
 		: "rsi", "rdx", "r8", "r9", "r10" // rsi and rdx used by rdtsc, r8 holds loaded value, r9 holds current adrs (base+index), rdx holds (current) index
 	);
 	return time / (uint64_t)(reps >> 10);
