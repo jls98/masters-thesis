@@ -15,7 +15,7 @@ static void wait(const uint64_t cycles);
 static uint64_t lfsr_create(void);
 static uint64_t lfsr_rand(uint64_t* lfsr);
 static uint64_t lfsr_step(uint64_t lfsr);
-static uint64_t probe_stride_loop(const uint64_t addr_len, const uint64_t reps, const uint32_t stride);
+static uint64_t probe_stride_loop(const void *addr, const uint64_t addr_len, const uint64_t reps);
 static unsigned int log2_floor(unsigned int val);
 static void create_pointer_stride_chase(void** addr, const uint64_t size, const uint64_t stride);
 int get_ways(int cache_size);
