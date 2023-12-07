@@ -5,7 +5,7 @@
 #include <x86intrin.h>
 #include <math.h>
 
-#define PROBE_REPS (1<<20)
+#define PROBE_REPS (1<<25)
 #define MEMSIZE_EXP_MIN 14
 #define MEMSIZE_EXP_MAX 23
 #define CACHE_SIZE_DEFAULT 32768
