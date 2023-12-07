@@ -37,7 +37,7 @@ int get_ways(int cache_size) {
     void* buffer = mmap(NULL, double_cache_size, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB, -1, 0);
     create_pointer_chase(buffer, double_cache_size / sizeof(void*));
     // check stride in power of two
-    for (int stride = 0; stride < log2_floor(double_cache_size); stride++) {
+    for (uint64_t stride = 0; stride < log2_floor(double_cache_size); stride++) {
         uint64_t millicycles = probe_stride_loop(buffer, double_cache_size, PROBE_REPS, stride);
         printf("stride: %5d; time: %7.3f cycles\n", stride, (double)millicycles/(1<<10));
 
@@ -88,11 +88,11 @@ static uint64_t probe_stride_loop(const void *addr, const uint64_t addr_len, con
         "xor edx, edx;" // zero, r8 index counter
         "loop:"
         "mov r9, edx;"
-        "add r9, %1;"
+        "add r9, r10;"
 		"mov r8, [r9];" // load
-        "add edx, %4;"   // compute new index (old_index+stride)
+        "add edx, r12;"   // compute new index (old_index+stride)
         "div ebx;" // eax contains quotient, edx contains remainder 
-        "dec %3;" // decrement counter reps
+        "dec r11;" // decrement counter reps
         "jnz loop;"
 		// END - probe address
 		"lfence;"
@@ -103,7 +103,7 @@ static uint64_t probe_stride_loop(const void *addr, const uint64_t addr_len, con
         // end - high precision
 		"sub rax, rsi;"
 		: "=a" (time)
-		: "r" (addr), "b" (addr_len), "r" (reps), "r" (stride_size)
+		: "r10" (addr), "b" (addr_len), "r11" (reps), "r12" (stride_size)
 		: "esi", "edx", "r8", "r9" // esi and edx used by rdtsc, r8 holds loaded value 
 	);
 	return time / (uint64_t)(reps >> 10);
