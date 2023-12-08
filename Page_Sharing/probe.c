@@ -54,7 +54,7 @@ int probe_t2(char *adrs)
 }
 
 int measure(){	
-	FILE *file_pointer = fopen("./test", "r"); // hard coded path to open the executable used by the victim 
+	FILE *file_pointer = fopen("./zero_file", "r"); // hard coded path to open the executable used by the victim 
     int file_descriptor = fileno(file_pointer);     
     struct stat st_buf;
     fstat(file_descriptor, &st_buf);
@@ -92,7 +92,7 @@ int measure(){
 	
 	
 	// task 5
-	void *base_anon = mmap(NULL, 4096, PROT_READ, MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);
+	void *base_anon = mmap(NULL, 4096, PROT_READ, MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB, -1, 0);
 	for (int i = 0; i< 20; i++)	printf("%02x", *((char*)base_anon+i));
 	printf("\n ---- \ncontrol sequence of anon mapping\n ---- \n\n");
 	
@@ -104,9 +104,9 @@ int measure(){
 
 void task6(){
 	void *base_anon1 = mmap(NULL, 4096, PROT_READ, MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);
-	void *base_anon2 = mmap(NULL, 4096, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);
-	void *base_anon3 = mmap(NULL, 4096, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);
-	void *base_anon4 = mmap(NULL, 4096, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);
+	void *base_anon2 = mmap(NULL, 4096, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB, -1, 0);
+	void *base_anon3 = mmap(NULL, 4096, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB, -1, 0);
+	void *base_anon4 = mmap(NULL, 4096, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB, -1, 0);
 	//void *base_anon5 = mmap(NULL, 4096, PROT_READ, MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);
 	//void *base_anon6 = mmap(NULL, 4096, PROT_READ, MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);
 	//void *base_anon7 = mmap(NULL, 4096, PROT_READ, MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);
