@@ -41,7 +41,7 @@ int get_ways(int cache_size) {
         uint64_t reps = double_cache_size % (1<<stride) == 0? double_cache_size/(1<<stride) : double_cache_size/(1<<stride) +1;
         printf("reps: %5d\n", reps);
         uint64_t millicycles = probe_stride_loop(buffer, reps);
-        printf("stride: %5d; time: %7.3f cycles\n", stride, ((double)millicycles)/(1<<10));
+        printf("stride: %5d; time: %7.3f cycles\n", stride, ((double)millicycles));
 
         munmap(buffer, double_cache_size);
         
@@ -104,7 +104,7 @@ static uint64_t probe_stride_loop(const void *addr, const uint64_t reps) {
 		: "c" (addr), "r" (reps)
 		: "esi", "edx"
 	);
-	return time / (uint64_t)(reps >> 10);
+	return time / reps;
 }
 
 static void create_pointer_stride_chase(void** addr, const uint64_t size, const uint32_t stride) {
