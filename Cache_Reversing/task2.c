@@ -15,7 +15,7 @@ static void wait(const uint64_t cycles);
 static uint64_t lfsr_create(void);
 static uint64_t lfsr_rand(uint64_t* lfsr);
 static uint64_t lfsr_step(uint64_t lfsr);
-static uint64_t probe_stride_loop(const void *addr, const uint64_t reps);
+static double probe_stride_loop(const void *addr, const uint64_t reps);
 static void create_pointer_stride_chase(void** addr, const uint64_t size, const uint32_t stride);
 int get_ways(int cache_size);
 
@@ -40,8 +40,8 @@ int get_ways(int cache_size) {
         create_pointer_stride_chase(buffer, double_cache_size / sizeof(void*), 1<<stride);        
         uint64_t reps = double_cache_size % (1<<stride) == 0? double_cache_size/(1<<stride) : double_cache_size/(1<<stride) +1;
         printf("reps: %5d\n", reps);
-        uint64_t millicycles = probe_stride_loop(buffer, reps);
-        printf("stride: %5d; time: %7.3f cycles\n", stride, ((double)millicycles));
+        double millicycles = probe_stride_loop(buffer, reps);
+        printf("stride: %5d; time: %7.3f cycles\n", stride, millicycles;
 
         munmap(buffer, double_cache_size);
         
@@ -73,7 +73,7 @@ static uint64_t lfsr_step(uint64_t lfsr) {
   return (lfsr & 1) ? (lfsr >> 1) ^ FEEDBACK : (lfsr >> 1);
 }
 
-static uint64_t probe_stride_loop(const void *addr, const uint64_t reps) {
+static double probe_stride_loop(const void *addr, const uint64_t reps) {
 	volatile uint64_t time;
 	asm __volatile__ (
         // measure
@@ -104,7 +104,7 @@ static uint64_t probe_stride_loop(const void *addr, const uint64_t reps) {
 		: "c" (addr), "r" (reps)
 		: "esi", "edx"
 	);
-	return time / reps;
+	return (double)time / (double)reps;
 }
 
 static void create_pointer_stride_chase(void** addr, const uint64_t size, const uint32_t stride) {
