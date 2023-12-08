@@ -12,7 +12,7 @@ task1: Cache_Reversing/task1.c
 task2: Cache_Reversing/task2.c
 	$(CC) $(CFLAGS) -o build/task2  Cache_Reversing/task2.c
 
-task2: Page_Sharing/probe.c
+probe: Page_Sharing/probe.c
 	$(CC) $(CFLAGS) -o build/probe  Page_Sharing/probe.c
     
 file_generator: utils/file_generator.c

@@ -175,7 +175,8 @@ void task6(){
 
 }
 
-void main(){
-	int res = measure();
+int main(){
+	measure();
 	task6();
+    return 0;
 }
