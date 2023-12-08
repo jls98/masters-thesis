@@ -33,13 +33,12 @@ uint64_t log_2(uint64_t val) {
 
 int get_ways(int cache_size) {
     wait(1E9);
-    uint64_t double_cache_size = 4*cache_size;
+    uint64_t double_cache_size = 2*cache_size;
     // check stride in power of two
     for (uint32_t stride = 1; stride < log_2(double_cache_size)-1; stride++) {
         void* buffer = mmap(NULL, double_cache_size, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB, -1, 0);
         create_pointer_stride_chase(buffer, double_cache_size / sizeof(void*), 1<<stride);        
         uint64_t reps = double_cache_size % (1<<stride) == 0? double_cache_size/(1<<stride) : double_cache_size/(1<<stride) +1;
-        printf("reps: %5ld\n", reps);
         double millicycles = probe_stride_loop(buffer, reps);
         printf("stride: %5d; time: %7.3f cycles\n", stride, millicycles);
 
