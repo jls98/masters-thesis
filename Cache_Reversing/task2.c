@@ -22,7 +22,6 @@ int get_ways_sqr(int cache_size);
 int get_ways_lin(int cache_size);
 
 int main(int ac, char **av){
-    printf("sqr\n\n");
     ac==2 ? get_ways_sqr(atoi(av[1])) : get_ways_sqr(CACHE_SIZE_DEFAULT_L2);
 }
 
