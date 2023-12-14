@@ -1,30 +1,40 @@
-import sys
+import argparse
 import numpy as np
 import matplotlib.pyplot as plt
 
-def plot_data(file_path = data):
-    # Lese Daten aus der Textdatei
-    data = np.loadtxt(file_path)
+def parse_input_file(file_path):
+    data = []
+    with open(file_path, 'r') as file:
+        for line in file:
+            if line.strip():  # Ignore empty lines
+                stride, cycle = map(float, line.split())
+                data.append((stride, cycle))
+    return np.array(data)
 
-    # Extrahiere Daten aus den Spalten
-    strides = data[:, 0]
-    cycles = data[:, 1]
-
-    # Plot
+def plot_data(data):
+    strides, cycles = data[:, 0], data[:, 1]
+    
     plt.figure(figsize=(10, 6))
-    plt.scatter(strides, cycles, c=cycles, cmap='viridis', marker='o')
-    plt.colorbar(label='Messwerte')
-    plt.xscale('log')  # Logarithmische Skala auf der x-Achse
+    plt.scatter(strides, cycles, label='cycles', marker='o', color='b')
+    plt.yscale('linear')  # Adjust the scale if needed
+    plt.xscale('log')
+    
+    plt.title('Cycle Count vs. Stride')
     plt.xlabel('Stride')
     plt.ylabel('Cycles')
-    plt.title('Messungen')
+    plt.grid(True)
+    plt.legend()
+    
     plt.show()
 
-if __name__ == "__main__":
-    # Überprüfe, ob der Dateipfad als Argument angegeben wurde
-    if len(sys.argv) != 2:
-        print("Verwendung: python script.py <input_file>")
-        sys.exit(1)
+def main():
+    parser = argparse.ArgumentParser(description='Plot data from input file.')
+    parser.add_argument('input', help='Input file containing stride-cycle pairs.')
+    args = parser.parse_args()
 
-    file_path = sys.argv[1]
-    plot_data(file_path)
+    input_file_path = args.input
+    data = parse_input_file(input_file_path)
+    plot_data(data)
+
+if __name__ == "__main__":
+    main()
