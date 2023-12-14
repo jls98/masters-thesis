@@ -23,8 +23,6 @@ int get_ways_lin(int cache_size);
 int main(int ac, char **av){
     printf("sqr\n\n");
     ac==2 ? get_ways_sqr(atoi(av[1])) : get_ways_sqr(CACHE_SIZE_DEFAULT);
-    printf("lin\n\n");
-    return ac==2 ? get_ways_lin(atoi(av[1])) : get_ways_lin(CACHE_SIZE_DEFAULT);
 }
 
 uint64_t log_2(uint64_t val) {
@@ -45,23 +43,6 @@ int get_ways_sqr(int cache_size) {
         uint64_t reps = double_cache_size % (1<<stride) == 0? double_cache_size/(1<<stride) : double_cache_size/(1<<stride) +1;
         double millicycles = probe_stride_loop(buffer, reps);
         printf("stride: %5d; time: %7.3f cycles\n", (1<<stride), millicycles);
-
-        munmap(buffer, double_cache_size);
-        
-    }
-    return 0;
-}
-
-int get_ways_lin(int cache_size) {
-    wait(1E9);
-    uint64_t double_cache_size = 2*cache_size;
-    // check stride in power of two
-    for (uint32_t stride = 1; stride < 129; stride++) {
-        void* buffer = mmap(NULL, double_cache_size, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB, -1, 0);
-        create_pointer_stride_chase(buffer, double_cache_size / sizeof(void*), stride);        
-        uint64_t reps = double_cache_size % stride == 0? double_cache_size/stride : double_cache_size/stride +1;
-        double millicycles = probe_stride_loop(buffer, reps);
-        printf("stride: %5d; time: %7.3f cycles\n", stride*8, millicycles);
 
         munmap(buffer, double_cache_size);
         
