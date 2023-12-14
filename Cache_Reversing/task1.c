@@ -28,7 +28,8 @@ int get_cache_size() {
         void* buffer = mmap(NULL, size, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB, -1, 0);
         create_pointer_chase(buffer, size / sizeof(void*));
         uint64_t millicycles = probe_chase_loop(buffer, PROBE_REPS);
-        printf("memsize: %10d bits; time: %7.3f cycles; k: %2d\n", size, (double)millicycles/(1<<10), k);
+        //printf("memsize: %10d bits; time: %7.3f cycles; k: %2d\n", size, (double)millicycles/(1<<10), k);
+        printf("%10d %7.3f\n", size, (double)millicycles/(1<<10));
 
         munmap(buffer, size);
         
@@ -37,7 +38,8 @@ int get_cache_size() {
             buffer = mmap(NULL, temp_size, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB, -1, 0);
             create_pointer_chase(buffer, temp_size / sizeof(void*));
             millicycles = probe_chase_loop(buffer, PROBE_REPS);
-            printf("memsize: %10d bits; time: %7.3f cycles\n", temp_size, (double)millicycles/(1<<10));
+            //printf("memsize: %10d bits; time: %7.3f cycles\n", temp_size, (double)millicycles/(1<<10));
+			printf("%10d %7.3f\n", size, (double)millicycles/(1<<10));
 
             munmap(buffer, temp_size);
         }
