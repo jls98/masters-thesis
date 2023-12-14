@@ -39,7 +39,7 @@ int get_cache_size() {
             create_pointer_chase(buffer, temp_size / sizeof(void*));
             millicycles = probe_chase_loop(buffer, PROBE_REPS);
             //printf("memsize: %10d bits; time: %7.3f cycles\n", temp_size, (double)millicycles/(1<<10));
-			printf("%10d %7.3f\n", size, (double)millicycles/(1<<10));
+			printf("%10d %7.3f\n", temp_size, (double)millicycles/(1<<10));
 
             munmap(buffer, temp_size);
         }
