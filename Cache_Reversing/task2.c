@@ -8,7 +8,8 @@
 #define PROBE_REPS (1<<25)
 #define MEMSIZE_EXP_MIN 14
 #define MEMSIZE_EXP_MAX 23
-#define CACHE_SIZE_DEFAULT 32768
+#define CACHE_SIZE_DEFAULT_L1 32768 // ecore
+#define CACHE_SIZE_DEFAULT_L2 2097152 // ecore 2MB
 
 
 static void wait(const uint64_t cycles);
@@ -22,7 +23,7 @@ int get_ways_lin(int cache_size);
 
 int main(int ac, char **av){
     printf("sqr\n\n");
-    ac==2 ? get_ways_sqr(atoi(av[1])) : get_ways_sqr(CACHE_SIZE_DEFAULT);
+    ac==2 ? get_ways_sqr(atoi(av[1])) : get_ways_sqr(CACHE_SIZE_DEFAULT_L2);
 }
 
 uint64_t log_2(uint64_t val) {
