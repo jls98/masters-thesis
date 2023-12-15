@@ -43,9 +43,9 @@ static void control(){
 	uint64_t part, not_part;
 	int ar_size = 2097152;
 	uint64_t *adrs = (uint64_t *) malloc(ar_size* sizeof(uint64_t));
-	uint64_t candidate = 64;
+	uint64_t candidate = 64; // heap and stack -> not cached because of locality
 	CREATE_POINTER_STRIDE_CHASE(adrs, ar_size, 1);
-	part = probe(adrs, ar_size, adrs[0]);
+	part = probe(adrs, ar_size+1, adrs[0]);
 	not_part = probe(adrs, ar_size, &candidate);
 	
 	printf("part %lu\nnot part %lu\n%p\n%p\n%p\n%p\n", part, not_part, &part, &not_part, &candidate, adrs);
