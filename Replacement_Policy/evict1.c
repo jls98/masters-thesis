@@ -121,7 +121,8 @@ static uint64_t probe(const void *addr, const uint64_t reps, const uint64_t* can
 static void create_pointer_stride_chase(void** addr, const uint64_t size, const uint32_t stride, const uint64_t max_index) {
 	if (max_index==0) printf("max0\n");
 	else printf("max else\n");
-	printf("%4c\n", *addr);
+	printf("addr contains %4c\n", *addr);
+	if (addr[0]==NULL) printf("is null\n");
     for (uint64_t i = 0; i < size; i++) {
         addr[i] = NULL; // set all entries inn addr to NULL
     }
