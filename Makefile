@@ -1,7 +1,7 @@
 CC = gcc
 CFLAGS = -Wall -Wextra -masm=intel
 
-all: evict1 workshop3 file_generator execute pxecute task1 task2 replace1
+all: evict1 workshop3 file_generator execute pxecute task1 task2 
 
 # Cache Reversing
 workshop3: Cache_Reversing/workshop3.c
