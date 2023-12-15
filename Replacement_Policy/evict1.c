@@ -25,7 +25,7 @@
 static uint64_t probe(const void *addr, const uint64_t reps, const uint64_t* cand);
 static void wait(const uint64_t cycles);
 static void control(uint64_t cache_size);
-static void create_pointer_stride_chase(void** addr, const uint64_t size, const uint32_t stride, const uint64_t max_index);
+static void create_pointer_stride_chase(void** addr, const uint64_t size, const uint32_t stride, uint64_t ** indexes);
 static uint64_t lfsr_create(void);
 static uint64_t lfsr_rand(uint64_t* lfsr);
 static uint64_t lfsr_step(uint64_t lfsr);
@@ -118,7 +118,8 @@ static uint64_t probe(const void *addr, const uint64_t reps, const uint64_t* can
 	return time;
 }
 
-static void create_pointer_stride_chase(void** addr, const uint64_t size, const uint32_t stride, const uint64_t max_index) {
+// create pointer chase over the valid indexes from addr in indexes where the amount of valid entries is size. indexes is optional
+static void create_pointer_stride_chase(void** addr, const uint64_t size, const uint32_t stride, uint64_t ** indexes) {
     uint64_t lfsr = lfsr_create(); // start random lfsr
     uint64_t offset, curr = 0; // offset = 0
     uint64_t stride_indexes = size % stride == 0? size/stride : size/stride +1;
