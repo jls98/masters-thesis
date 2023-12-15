@@ -13,7 +13,9 @@
 #define P_CACHE_SIZE_DEFAULT_L1 49152 // pcore L1D 48 kb
 #define P_CACHE_SIZE_DEFAULT_L2 1310720 // ecore  L2 1.2MB
 
-#define CREATE_POINTER_STRIDE_CHASE(addr, size, stride, ...) create_pointer_stride_chase(addr, size, stride, (0, ##__VA_ARGS__))
+
+#define DEF_OR_ARG(value,...) value
+#define CREATE_POINTER_STRIDE_CHASE(addr, size, stride, ...) create_pointer_stride_chase(addr, size, stride, DEF_OR_ARG(__VA_ARGS__ __VA_OPT__(,) 0))
 
 static void wait(const uint64_t cycles);
 static uint64_t lfsr_create(void);
