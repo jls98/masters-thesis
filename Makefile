@@ -1,7 +1,7 @@
 CC = gcc
 CFLAGS = -Wall -Wextra -masm=intel
 
-all: workshop3 file_generator execute pxecute task1 task2 replace1
+all: evict1 workshop3 file_generator execute pxecute task1 task2 replace1
 
 # Cache Reversing
 workshop3: Cache_Reversing/workshop3.c
@@ -17,6 +17,9 @@ task2: Cache_Reversing/task2.c
 replace1: Replacement_Policy/replace1.c
 	$(CC) $(CFLAGS) -o build/replace1  Replacement_Policy/replace1.c
 
+evict1: Replacement_Policy/evict1.c
+	$(CC) $(CFLAGS) -o build/evict1  Replacement_Policy/evict1.c
+
 
 file_generator: utils/file_generator.c
 	$(CC) $(CFLAGS) -o build/file_generator utils/file_generator.c
@@ -29,4 +32,4 @@ execute: utils/execute.c
 
 
 clean:
-	rm -f workshop3 file_generator execute pxecute task1 task2 replace1
+	rm -f evict1 workshop3 file_generator execute pxecute task1 task2 replace1
