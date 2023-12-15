@@ -25,7 +25,7 @@
 static uint64_t probe(const void *addr, const uint64_t reps, const uint64_t* cand);
 static void wait(const uint64_t cycles);
 static void control();
-static void create_pointer_stride_chase(uint64_t* addr, const uint64_t size, const uint32_t stride, const uint64_t max_index);
+static void create_pointer_stride_chase(uint64_t** addr, const uint64_t size, const uint32_t stride, const uint64_t max_index);
 static uint64_t lfsr_create(void);
 static uint64_t lfsr_rand(uint64_t* lfsr);
 static uint64_t lfsr_step(uint64_t lfsr);
@@ -42,7 +42,7 @@ static void control(){
 	wait(1E9);
 	uint64_t part, not_part;
 	int ar_size = 2097152;
-	uint64_t *adrs = (uint64_t *) malloc(ar_size* sizeof(uint64_t));
+	uint64_t **adrs = (uint64_t **) malloc(ar_size* sizeof(uint64_t));
 	uint64_t candidate = 64; // heap and stack -> not cached because of locality
 	CREATE_POINTER_STRIDE_CHASE(adrs, ar_size, 1);
 	part = probe(adrs, ar_size+1, &adrs[10]);
@@ -121,7 +121,7 @@ static uint64_t probe(const void *addr, const uint64_t reps, const uint64_t* can
 	return time;
 }
 
-static void create_pointer_stride_chase(uint64_t* addr, const uint64_t size, const uint32_t stride, const uint64_t max_index) {
+static void create_pointer_stride_chase(uint64_t** addr, const uint64_t size, const uint32_t stride, const uint64_t max_index) {
     for (uint64_t i = 0; i < size; i++) {
         addr[i] = 0; // set all entries in addr to 0
     }
