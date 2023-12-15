@@ -88,7 +88,7 @@ static uint64_t probe(const void *addr, const uint64_t reps, const uint64_t* can
 	volatile uint64_t time;
 	asm __volatile__ (
 		// load candidate and set 
-		"mov rax, [%3]" // load candidate 
+		"mov rax, [%3];" // load candidate 
 		// BEGIN - read every entry in addr
         "mov rax, %1;"
         "mov rdx, %2;"
@@ -106,7 +106,7 @@ static uint64_t probe(const void *addr, const uint64_t reps, const uint64_t* can
         // high precision
         "shl rdx, 32;"
 		"or rsi, rdx;"
-		"mov rax, [%3]" // load candidate 	
+		"mov rax, [%3];" // load candidate 	
 		"lfence;"
 		"rdtsc;"
         // start - high precision
