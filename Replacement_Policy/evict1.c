@@ -29,7 +29,6 @@ static void create_pointer_stride_chase(void** addr, const uint64_t size, const 
 static uint64_t lfsr_create(void);
 static uint64_t lfsr_rand(uint64_t* lfsr);
 static uint64_t lfsr_step(uint64_t lfsr);
-static double probe_stride_loop(const void *addr, const uint64_t reps);
 
 
 int main(int ac, char **av){
@@ -41,7 +40,7 @@ int main(int ac, char **av){
 static void control(){
 	
 	wait(1E9);
-	int part, not_part;
+	uint64_t part, not_part;
 	int ar_size = 100;
 	uint64_t *adrs = (uint64_t *) malloc(ar_size* sizeof(uint64_t));
 	uint64_t candidate = 64;
