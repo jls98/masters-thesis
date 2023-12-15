@@ -124,6 +124,10 @@ static void create_pointer_stride_chase(void** addr, const uint64_t size, const 
     uint64_t offset, curr = 0; // offset = 0
     uint64_t stride_indexes = size % stride == 0? size/stride : size/stride +1;
     uint64_t a=1;
+	
+	for (uint64_t i = 0; i < size; i++) {
+        addr[i] = NULL; // set all entries inn addr to NULL
+    }
     // compute amount of entries with stride stride
     for (uint64_t i = 0; i < stride_indexes-1; i++) {
         do {
