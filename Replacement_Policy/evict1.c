@@ -25,13 +25,13 @@
 static uint64_t probe(const void *addr, const uint64_t reps, const uint64_t* cand);
 static void wait(const uint64_t cycles);
 static void control();
-static void create_pointer_stride_chase(void** addr, const uint64_t size, const uint32_t stride, const uint64_t max_index);
+static void create_pointer_stride_chase(uint64_t** addr, const uint64_t size, const uint32_t stride, const uint64_t max_index);
 static uint64_t lfsr_create(void);
 static uint64_t lfsr_rand(uint64_t* lfsr);
 static uint64_t lfsr_step(uint64_t lfsr);
 
 
-int main(int ac, char **av){
+int main(){
     control();
 }
 
@@ -121,7 +121,7 @@ static uint64_t probe(const void *addr, const uint64_t reps, const uint64_t* can
 	return time;
 }
 
-static void create_pointer_stride_chase(void** addr, const uint64_t size, const uint32_t stride, const uint64_t max_index) {
+static void create_pointer_stride_chase(uint64_t** addr, const uint64_t size, const uint32_t stride, const uint64_t max_index) {
 	if (max_index==0) printf("max0\n");
 	else printf("max else\n");
     for (uint64_t i = 0; i < size; i++) {
