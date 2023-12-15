@@ -41,7 +41,7 @@ static void control(){
 	
 	wait(1E9);
 	uint64_t part, not_part;
-	int ar_size = 100;
+	int ar_size = 2097152;
 	uint64_t *adrs = (uint64_t *) malloc(ar_size* sizeof(uint64_t));
 	uint64_t candidate = 64;
 	CREATE_POINTER_STRIDE_CHASE(adrs, ar_size, 1);
