@@ -48,7 +48,7 @@ static void control(){
 	part = probe(adrs, ar_size, adrs[0]);
 	not_part = probe(adrs, ar_size, &candidate);
 	
-	printf("part %lu\nnot part %lu\n", part, not_part);
+	printf("part %lu\nnot part %lu\n%p\n%p\n%p\n%p\n", part, not_part, &part, &not_part, &candidate, adrs);
 	
 	free(adrs);
 	
