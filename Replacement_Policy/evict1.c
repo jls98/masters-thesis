@@ -24,24 +24,24 @@
 
 static uint64_t probe(const void *addr, const uint64_t reps, const uint64_t* cand);
 static void wait(const uint64_t cycles);
-static void control();
+static void control(uint64_t cache_size);
 static void create_pointer_stride_chase(void** addr, const uint64_t size, const uint32_t stride, const uint64_t max_index);
 static uint64_t lfsr_create(void);
 static uint64_t lfsr_rand(uint64_t* lfsr);
 static uint64_t lfsr_step(uint64_t lfsr);
 
 
-int main(){
-    control();
+int main(int ac, char **av){
+    control(atoi(av[1]));
 }
 
 
 
-static void control(){
+static void control(uint64_t cache_size){
 	
 	wait(1E9);
 	uint64_t part, not_part;
-	int ar_size = 100;
+	int ar_size = cache_size;
 	uint64_t candidate = 64;
 	void* buffer = mmap(NULL, ar_size, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB, -1, 0);
 	CREATE_POINTER_STRIDE_CHASE(buffer, ar_size, 1);
