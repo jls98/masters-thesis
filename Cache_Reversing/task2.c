@@ -19,7 +19,6 @@ static uint64_t lfsr_step(uint64_t lfsr);
 static double probe_stride_loop(const void *addr, const uint64_t reps);
 static void create_pointer_stride_chase(void** addr, const uint64_t size, const uint32_t stride);
 int get_ways_sqr(int cache_size);
-int get_ways_lin(int cache_size);
 
 int main(int ac, char **av){
     ac==2 ? get_ways_sqr(atoi(av[1])) : get_ways_sqr(CACHE_SIZE_DEFAULT_L2);

@@ -26,6 +26,10 @@ static uint64_t probe(const void *addr, const uint64_t reps, const uint64_t* can
 static void wait(const uint64_t cycles);
 static void control();
 static void create_pointer_stride_chase(void** addr, const uint64_t size, const uint32_t stride, const uint64_t max_index);
+static uint64_t lfsr_create(void);
+static uint64_t lfsr_rand(uint64_t* lfsr);
+static uint64_t lfsr_step(uint64_t lfsr);
+static double probe_stride_loop(const void *addr, const uint64_t reps);
 
 
 int main(int ac, char **av){
@@ -51,27 +55,6 @@ static void control(){
 	
 }
 
-
-
-int get_ways_sqr(int cache_size) {
-    wait(1E9);
-    uint64_t double_cache_size = 2*cache_size;
-    // check stride in power of two
-    //for (uint32_t stride = 1; stride < log_2(double_cache_size)-1; stride++) {
-        uint32_t stride = 6;
-		void* buffer = mmap(NULL, double_cache_size, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB, -1, 0);
-        CREATE_POINTER_STRIDE_CHASE(buffer, double_cache_size / sizeof(void*), 1<<stride);        
-        CREATE_POINTER_STRIDE_CHASE(buffer, double_cache_size / sizeof(void*), 1<<stride, 123);        
-        uint64_t reps = double_cache_size % (1<<stride) == 0? double_cache_size/(1<<stride) : double_cache_size/(1<<stride) +1;
-        //double millicycles = probe_stride_loop(buffer, reps);
-        //printf("stride: %5d; time: %7.3f cycles\n", (1<<stride), millicycles);
-        //printf("%7d %7.3f\n", (1<<stride), millicycles);
-
-        munmap(buffer, double_cache_size);
-        
-    //}
-    return 0;
-}
 
 static void wait(const uint64_t cycles) {
 	unsigned int ignore;

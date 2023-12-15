@@ -8,11 +8,16 @@
 #define PROBE_REPS (1<<25)
 #define MEMSIZE_EXP_MIN 14
 #define MEMSIZE_EXP_MAX 23
-#define E_CACHE_SIZE_L1 32768 // ecore L1D 32kb
-#define E_CACHE_SIZE_L2 2097152 // ecore L2 2MB
-#define P_CACHE_SIZE_DEFAULT_L1 49152 // pcore L1D 48 kb
-#define P_CACHE_SIZE_DEFAULT_L2 1310720 // ecore  L2 1.2MB
 
+#define E_L1_CACHE_SIZE 32768 	// ecore L1D 32kb
+#define E_L2_CACHE_SIZE 2097152 // ecore L2 2MB
+#define E_L1_STRIDE 512 		// 8 ways
+#define E_L2_STRIDE 32768  		// 16 ways
+  
+#define P_CACHE_SIZE_DEFAULT_L1 49152 	// pcore L1D 48 kb
+#define P_CACHE_SIZE_DEFAULT_L2 1310720 // ecore  L2 1.2MB
+#define P_L1_STRIDE 512 				// 12 ways
+#define P_L2_STRIDE 16384  				// 10 ways
 
 #define DEF_OR_ARG(value,...) value
 #define CREATE_POINTER_STRIDE_CHASE(addr, size, stride, ...) create_pointer_stride_chase(addr, size, stride, DEF_OR_ARG(__VA_ARGS__ __VA_OPT__(,) 0))
@@ -23,20 +28,38 @@ static uint64_t lfsr_rand(uint64_t* lfsr);
 static uint64_t lfsr_step(uint64_t lfsr);
 static double probe_stride_loop(const void *addr, const uint64_t reps);
 static void create_pointer_stride_chase(void** addr, const uint64_t size, const uint32_t stride, const uint64_t max_index) ;
-int get_ways_sqr(int cache_size);
-int get_ways_lin(int cache_size);
+
 
 int main(int ac, char **av){
-    ac==2 ? get_ways_sqr(atoi(av[1])) : get_ways_sqr(E_CACHE_SIZE_L2);
+    
 }
 
-uint64_t log_2(uint64_t val) {
-   uint64_t count = 0;
-   while (val >>= 1) {
-      ++count;
-   }
-   return count;
+
+ // L2
+ // Cache Line 2^6 = 64 Bytes
+ // Ways EL2 16
+ // Sets EL2 2048
+ // Capacity 2ß97152 Bytes
+int control(){
+	
+	
+	
+	
+	// create eviction set for L1: pointer chase with a stride, which includes both strides and 
+	// create pointer chase in L2: 
+	// always cache miss in L1: get L1_size*2 amount of candidates which are 2^10 away in L2 
+	// then find entries with 2^9*i index, which are in one set of the L2, need ways+1 
+	wait(1E9);
+	uint32_t stride = 9; // 2^9 minimum 
+	void* buffer = mmap(NULL, double_cache_size, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB, -1, 0);
+
+	// create pointer chase with only cache misses in L1 and which are in the same set in L2
+
+    munmap(buffer, double_cache_size);
+
 }
+
+
 
 int get_ways_sqr(int cache_size) {
     wait(1E9);
@@ -135,4 +158,10 @@ static void create_pointer_stride_chase(void** addr, const uint64_t size, const 
         curr = offset;
     }
     addr[curr] = addr;
+}
+
+
+static void create_eviction_set(void** addr)
+{
+	
 }
