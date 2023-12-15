@@ -41,7 +41,7 @@ static void control(){
 	
 	wait(1E9);
 	uint64_t part, not_part;
-	int ar_size = 65536 ;
+	int ar_size = 100;
 	uint64_t candidate = 64;
 	void* buffer = mmap(NULL, ar_size, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB, -1, 0);
 	CREATE_POINTER_STRIDE_CHASE(buffer, ar_size, 1);
