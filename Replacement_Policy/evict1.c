@@ -122,10 +122,8 @@ static uint64_t probe(const void *addr, const uint64_t reps, const uint64_t* can
 }
 
 static void create_pointer_stride_chase(uint64_t* addr, const uint64_t size, const uint32_t stride, const uint64_t max_index) {
-	if (max_index==0) printf("max0\n");
-	else printf("max else\n");
     for (uint64_t i = 0; i < size; i++) {
-        addr[i] = NULL; // set all entries inn addr to NULL
+        addr[i] = 0; // set all entries in addr to 0
     }
     uint64_t lfsr = lfsr_create(); // start random lfsr
     uint64_t offset, curr = 0; // offset = 0
@@ -135,7 +133,7 @@ static void create_pointer_stride_chase(uint64_t* addr, const uint64_t size, con
     for (uint64_t i = 0; i < stride_indexes-1; i++) {
         do {
             offset = lfsr_rand(&lfsr) % size; // random number mod size 
-        } while (offset == curr || addr[offset] != NULL || offset % stride != 0); // ensure that offset !=curr and addr[offset]==NULL and jumps only between entries of stride
+        } while (offset == curr || addr[offset] != 0 || offset % stride != 0); // ensure that offset !=curr and addr[offset]==NULL and jumps only between entries of stride
         addr[curr] = &addr[offset]; // set the value of the curr index to the address at the offset index (linked list)
         curr = offset;
     }
