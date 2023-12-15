@@ -44,8 +44,8 @@ static void control(){
 	int ar_size = 2097152;
 	uint64_t candidate = 64;
 	void* buffer = mmap(NULL, ar_size, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB, -1, 0);
-	CREATE_POINTER_STRIDE_CHASE(adrs, ar_size, 1);
-	part = probe(buffer, ar_size, adrs[10]);
+	CREATE_POINTER_STRIDE_CHASE(buffer, ar_size, 1);
+	part = probe(buffer, ar_size, buffer[10]);
 	not_part = probe(buffer, ar_size, &candidate);
 	
 	printf("part %lu\nnot part %lu\n%p\n%p\n", part, not_part, &part, &not_part);	
