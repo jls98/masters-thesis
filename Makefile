@@ -12,7 +12,7 @@ task1: Cache_Reversing/task1.c
 task2: Cache_Reversing/task2.c
 	$(CC) $(CFLAGS) -o build/task2  Cache_Reversing/task2.c
 
-task1: Eviction_Set/evict1.c
+evict1: Eviction_Set/evict1.c
 	$(CC) $(CFLAGS) -o build/evict1  Eviction_Set/evict1.c
     
 file_generator: utils/file_generator.c
