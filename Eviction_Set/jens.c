@@ -11,7 +11,7 @@ static uint64_t lfsr_create(void);
 static uint64_t lfsr_rand(uint64_t* lfsr);
 static uint64_t lfsr_step(uint64_t lfsr);
 static uint64_t probe_chase_loop(const void *addr, const uint64_t reps);
-static void create_pointer_chase(void** addr, const uint64_t size);
+static void create_pointer_chase(void** addr, const uint64_t size, const uint32_t stride);
 
 int main(int ac, char **av) {
     wait(1E9);
@@ -21,7 +21,28 @@ int main(int ac, char **av) {
         void* *buffer = mmap(NULL, size, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);
 
         create_pointer_chase(buffer, size / sizeof(void*));
-        uint64_t millicycles = probe_chase_loop(buffer, PROBE_REPS);
+        uint64_t millicycles = probe_chase_loop(buffer, PROBE_REPS, 1);
+        printf("size: %2d bits; time: %7.3f cycles\n", k, (double)millicycles/(1<<10));
+
+        munmap(buffer, size);
+    }
+	for (int k = 12; k < 26; k++) {
+        int size = 1 << k;
+        void* *buffer = mmap(NULL, size, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);
+
+        create_pointer_chase(buffer, size / sizeof(void*));
+        uint64_t millicycles = probe_chase_loop(buffer, PROBE_REPS, 2);
+        printf("size: %2d bits; time: %7.3f cycles\n", k, (double)millicycles/(1<<10));
+
+        munmap(buffer, size);
+    }
+	
+	for (int k = 12; k < 26; k++) {
+        int size = 1 << k;
+        void* *buffer = mmap(NULL, size, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);
+
+        create_pointer_chase(buffer, size / sizeof(void*));
+        uint64_t millicycles = probe_chase_loop(buffer, PROBE_REPS, 3);
         printf("size: %2d bits; time: %7.3f cycles\n", k, (double)millicycles/(1<<10));
 
         munmap(buffer, size);
@@ -88,7 +109,7 @@ static uint64_t probe_chase_loop(const void *addr, const uint64_t reps) {
 	return time / (uint64_t)(reps >> 10);
 }
 
-static void create_pointer_chase(void** addr, const uint64_t size) {
+static void create_pointer_chase(void** addr, const uint64_t size, const uint32_t stride) {
     for (uint64_t i = 0; i < size; i++) {
         addr[i] = NULL; // set all entries inn addr to NULL
     }
