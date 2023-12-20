@@ -140,4 +140,5 @@ static void create_pointer_stride_chase(void** addr, const uint64_t size, const 
     }
 	addr[curr] = &a;
     addr[curr] = addr;*/
+	printf("done\n");
 }
