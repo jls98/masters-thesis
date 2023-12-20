@@ -127,16 +127,17 @@ static void create_pointer_stride_chase(void** addr, const uint64_t size, const 
 	
 	for (uint64_t i = 0; i < size; i++) {
         addr[i] = NULL; // set all entries inn addr to NULL
+		printf("%p\n", &addr[i]);
     }
     // compute amount of entries with stride stride
-    for (uint64_t i = 0; i < stride_indexes-1; i++) {
+    /*for (uint64_t i = 0; i < stride_indexes-1; i++) {
         do {
             offset = lfsr_rand(&lfsr) % size; // random number mod size 
         } while (offset == curr || addr[offset] != NULL /*|| offset % stride != 0*/); // ensure that offset !=curr and addr[offset]==NULL and jumps only between entries of stride, entries NULL initialized
-        a+=1;
+        /*a+=1;
 		addr[curr] = &addr[offset]; // set the value of the curr index to the address at the offset index (linked list)
         curr = offset;
     }
 	addr[curr] = &a;
-    addr[curr] = addr;
+    addr[curr] = addr;*/
 }
