@@ -155,5 +155,5 @@ static void create_pointer_stride_chase(void** addr, const uint64_t size, const 
         curr = offset;
     }
     addr[curr] = addr;
-	printf("done\n");*/
+	printf("done\n");
 }
