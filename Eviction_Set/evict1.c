@@ -120,7 +120,7 @@ static uint64_t probe(const void *addr, const uint64_t reps, const uint64_t* can
 
 // create pointer chase over the valid indexes from addr in indexes where the amount of valid entries is size. indexes is optional
 static void create_pointer_stride_chase(void** addr, const uint64_t size, const uint32_t stride, uint64_t ** indexes) {
-    for (uint64_t i = 0; i < size; i++) {
+    /*for (uint64_t i = 0; i < size; i++) {
         addr[i] = NULL; // set all entries inn addr to NULL
     }
     uint64_t lfsr = lfsr_create(); // start random lfsr
@@ -135,28 +135,25 @@ static void create_pointer_stride_chase(void** addr, const uint64_t size, const 
         addr[curr] = &addr[offset]; // set the value of the curr index to the address at the offset index (linked list)
         curr = offset;
     }
-    addr[curr] = addr;
+    addr[curr] = addr;*/
 	
 	
-	/*uint64_t lfsr = lfsr_create(); // start random lfsr
+	uint64_t lfsr = lfsr_create(); // start random lfsr
     uint64_t offset, curr = 0; // offset = 0
-    //uint64_t stride_indexes = size % stride == 0? size/stride : size/stride +1;
-    uint64_t a=1;
+    uint64_t stride_indexes = size % stride == 0? size/stride : size/stride +1;
 	
 	for (uint64_t i = 0; i < size; i++) {
         addr[i] = NULL; // set all entries inn addr to NULL
 		printf("%p\n", &addr[i]);
     }
     // compute amount of entries with stride stride
-    for (uint64_t i = 0; i < size-1; i++) {
+    for (uint64_t i = 0; i < stride_indexes-1; i++) {
         do {
             offset = lfsr_rand(&lfsr) % size; // random number mod size 
-        } while (offset == curr || addr[offset] != NULL /*|| offset % stride != 0*//*); // ensure that offset !=curr and addr[offset]==NULL and jumps only between entries of stride, entries NULL initialized
-        a+=1;
+        } while (offset == curr || addr[offset] != NULL /*|| offset % stride != 0*/); // ensure that offset !=curr and addr[offset]==NULL and jumps only between entries of stride, entries NULL initialized
 		addr[curr] = &addr[offset]; // set the value of the curr index to the address at the offset index (linked list)
         curr = offset;
     }
-	addr[curr] = &a;
     addr[curr] = addr;
 	printf("done\n");*/
 }
