@@ -20,8 +20,8 @@ int main(int ac, char **av) {
         int size = 1 << k;
         void* *buffer = mmap(NULL, size, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);
 
-        create_pointer_chase(buffer, size / sizeof(void*));
-        uint64_t millicycles = probe_chase_loop(buffer, PROBE_REPS, 1);
+        create_pointer_chase(buffer, size / sizeof(void*), 1);
+        uint64_t millicycles = probe_chase_loop(buffer, PROBE_REPS);
         printf("size: %2d bits; time: %7.3f cycles\n", k, (double)millicycles/(1<<10));
 
         munmap(buffer, size);
@@ -30,8 +30,8 @@ int main(int ac, char **av) {
         int size = 1 << k;
         void* *buffer = mmap(NULL, size, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);
 
-        create_pointer_chase(buffer, size / sizeof(void*));
-        uint64_t millicycles = probe_chase_loop(buffer, PROBE_REPS, 2);
+        create_pointer_chase(buffer, size / sizeof(void*), 2);
+        uint64_t millicycles = probe_chase_loop(buffer, PROBE_REPS);
         printf("size: %2d bits; time: %7.3f cycles\n", k, (double)millicycles/(1<<10));
 
         munmap(buffer, size);
@@ -41,8 +41,8 @@ int main(int ac, char **av) {
         int size = 1 << k;
         void* *buffer = mmap(NULL, size, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);
 
-        create_pointer_chase(buffer, size / sizeof(void*));
-        uint64_t millicycles = probe_chase_loop(buffer, PROBE_REPS, 3);
+        create_pointer_chase(buffer, size / sizeof(void*), 3);
+        uint64_t millicycles = probe_chase_loop(buffer, PROBE_REPS);
         printf("size: %2d bits; time: %7.3f cycles\n", k, (double)millicycles/(1<<10));
 
         munmap(buffer, size);
