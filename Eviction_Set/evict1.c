@@ -44,7 +44,10 @@ static void control(uint64_t cache_size){
 	int ar_size = cache_size;
 	uint64_t candidate = 64;
 	void* *buffer = mmap(NULL, ar_size, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB, -1, 0);
-	CREATE_POINTER_STRIDE_CHASE(buffer, ar_size/ sizeof(void*), 1);
+	CREATE_POINTER_STRIDE_CHASE(buffer, ar_size/ sizeof(void*), 2);
+	CREATE_POINTER_STRIDE_CHASE(buffer, ar_size/ sizeof(void*), 3);
+	CREATE_POINTER_STRIDE_CHASE(buffer, ar_size/ sizeof(void*), 4);
+	CREATE_POINTER_STRIDE_CHASE(buffer, ar_size/ sizeof(void*), 2, 1);
 	part = probe(buffer, ar_size, buffer);
 	not_part = probe(buffer, ar_size, &candidate);
 	
@@ -144,7 +147,6 @@ static void create_pointer_stride_chase(void** addr, const uint64_t size, const 
 	
 	for (uint64_t i = 0; i < size; i++) {
         addr[i] = NULL; // set all entries inn addr to NULL
-		printf("%p\n", &addr[i]);
     }
     // compute amount of entries with stride stride
     for (uint64_t i = 0; i < stride_indexes-1; i++) {
@@ -155,5 +157,4 @@ static void create_pointer_stride_chase(void** addr, const uint64_t size, const 
         curr = offset;
     }
     addr[curr] = addr;
-	printf("done\n");
 }
