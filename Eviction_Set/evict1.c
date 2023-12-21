@@ -43,7 +43,7 @@ static void control(uint64_t cache_size){
 	wait(1E9);
 	uint64_t part, not_part;
 	int ar_size = cache_size;
-	uint64_t candidate = 64;
+	void  *candidate = (void *)malloc(sizeof(void *));
 	void* *buffer = mmap(NULL, ar_size, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB, -1, 0);
 	CREATE_POINTER_STRIDE_CHASE(buffer, ar_size/ sizeof(void*), 2);
 	CREATE_POINTER_STRIDE_CHASE(buffer, ar_size/ sizeof(void*), 3);
@@ -83,7 +83,7 @@ static uint64_t lfsr_step(uint64_t lfsr) {
 // addr contains first addr to array of pointerchase
 // reps pointer chase array size 
 // cand is candidate to probe
-static uint64_t probe(const void *addr, const uint64_t reps, const uint64_t* cand) {
+static uint64_t probe(const void *addr, const uint64_t reps, const void* cand) {
 	if (reps==0) return 0; // if set is empty, it'll result in cache hit
 	
 	volatile uint64_t time;
