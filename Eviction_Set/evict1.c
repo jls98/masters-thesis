@@ -48,7 +48,7 @@ static void control(uint64_t cache_size){
 	CREATE_POINTER_STRIDE_CHASE(buffer, ar_size/ sizeof(void*), 2);
 	CREATE_POINTER_STRIDE_CHASE(buffer, ar_size/ sizeof(void*), 3);
 	CREATE_POINTER_STRIDE_CHASE(buffer, ar_size/ sizeof(void*), 4);
-	CREATE_POINTER_STRIDE_CHASE(buffer, ar_size/ sizeof(void*), 2, &candidate);
+	//CREATE_POINTER_STRIDE_CHASE(buffer, ar_size/ sizeof(void*), 2, &candidate);
 	part = probe(buffer, ar_size, buffer);
 	not_part = probe(buffer, ar_size, &candidate);
 	
