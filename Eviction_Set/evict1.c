@@ -22,7 +22,7 @@
 #define DEF_OR_ARG(value,...) value
 #define CREATE_POINTER_STRIDE_CHASE(addr, size, stride, ...) create_pointer_stride_chase(addr, size, stride, DEF_OR_ARG(__VA_ARGS__ __VA_OPT__(,) 0))
 
-static uint64_t probe(const void *addr, const uint64_t reps, const uint64_t* cand);
+static uint64_t probe(const void *addr, const uint64_t reps, const void* cand);
 static void wait(const uint64_t cycles);
 static void control(uint64_t cache_size);
 static void create_pointer_stride_chase(void** addr, const uint64_t size, const uint32_t stride, uint64_t ** indexes);
