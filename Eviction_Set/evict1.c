@@ -20,7 +20,7 @@
 #define P_L2_STRIDE 16384  				// 10 ways
 
 #define DEF_OR_ARG(value,...) value
-#define CREATE_POINTER_STRIDE_CHASE(addr, size, stride, ...) create_pointer_stride_chase(addr, size, stride, DEF_OR_ARG(__VA_ARGS__ __VA_OPT__(,) 0))
+#define CREATE_POINTER_STRIDE_CHASE(addr, size, stride, ...) create_pointer_stride_chase(addr, size, stride, DEF_OR_ARG(__VA_ARGS__ __VA_OPT__(,) NULL))
 
 static uint64_t probe(const void *addr, const uint64_t reps, const void* cand);
 static void wait(const uint64_t cycles);
