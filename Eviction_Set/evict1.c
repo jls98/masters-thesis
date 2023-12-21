@@ -32,7 +32,8 @@ static uint64_t lfsr_step(uint64_t lfsr);
 
 
 int main(int ac, char **av){
-    control(atoi(av[1]));
+    if (ac==2) control(atoi(av[1]));
+	else control(200);
 }
 
 
@@ -47,7 +48,7 @@ static void control(uint64_t cache_size){
 	CREATE_POINTER_STRIDE_CHASE(buffer, ar_size/ sizeof(void*), 2);
 	CREATE_POINTER_STRIDE_CHASE(buffer, ar_size/ sizeof(void*), 3);
 	CREATE_POINTER_STRIDE_CHASE(buffer, ar_size/ sizeof(void*), 4);
-	CREATE_POINTER_STRIDE_CHASE(buffer, ar_size/ sizeof(void*), 2, 1);
+	CREATE_POINTER_STRIDE_CHASE(buffer, ar_size/ sizeof(void*), 2, &candidate);
 	part = probe(buffer, ar_size, buffer);
 	not_part = probe(buffer, ar_size, &candidate);
 	
