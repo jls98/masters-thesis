@@ -28,14 +28,12 @@ static void create_pointer_stride_chase(void** addr, const uint64_t size_addr, u
 static uint64_t lfsr_create(void);
 static uint64_t lfsr_rand(uint64_t* lfsr);
 static uint64_t lfsr_step(uint64_t lfsr);
-
+static int contains(uint64_t * indexes, const uint64_t size_indexes, uint64_t offset);
 
 int main(int ac, char **av){
     if (ac==2) control(atoi(av[1]));
 	else control(200);
 }
-
-
 
 static void control(uint64_t cache_size){
 	
@@ -44,7 +42,6 @@ static void control(uint64_t cache_size){
 	int lines_in_bytes = cache_size;
 	int lines_indexes = lines_in_bytes / sizeof(void*);
 	
-	void  *candidate=(void *)malloc(sizeof(void *));
 	void* *buffer=mmap(NULL, lines_in_bytes, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB, -1, 0);
 	
 	uint64_t* conflict_set=(uint64_t*) malloc(sizeof(uint64_t) * lines_indexes); // empty conflict set, will not be completely filled
@@ -145,8 +142,8 @@ static uint64_t probe(const void *addr, const uint64_t reps, const void* cand) {
 	return time;
 }
 
-int contains(uint64_t * indexes, const uint64_t size_indexes, uint64_t offset){
-	for (int i=0;i<size_indexes;i++){
+static int contains(uint64_t * indexes, const uint64_t size_indexes, uint64_t offset){
+	for (uint64_t i=0;i<size_indexes;i++){
 		if (indexes[i] == offset) return 1; // contained in indexes
 	
 	}
@@ -159,13 +156,13 @@ static void create_pointer_stride_chase(void** addr, const uint64_t size_addr, u
 	uint64_t lfsr = lfsr_create(); // start random lfsr
     uint64_t offset, curr = 0; // offset = 0
 	
-	for (uint64_t i = 0; i < size; i++) {
+	for (uint64_t i = 0; i < size_addr; i++) {
 		addr[i] = NULL; // set all entries in addr to NULL
 	}
 	// compute entries, only fill size_indexes many entries with index included in indexes respectively
 	for (uint64_t i = 0; i < size_indexes-1; i++) {
 		do {
-			offset = lfsr_rand(&lfsr) % size; // random number mod size 
+			offset = lfsr_rand(&lfsr) % size_addr; // random number mod size 
 		} while (offset == curr || addr[offset] != NULL || contains(indexes, size_indexes, offset)); // ensure that offset !=curr and addr[offset]==NULL and included in indexes
 		addr[curr] = &addr[offset]; // set the value of the curr index to the address at the offset index (linked list)
 		curr = offset;
