@@ -145,7 +145,7 @@ static void create_pointer_stride_chase(void** addr, const uint64_t size, const 
 		addr[curr] = addr;
 	}
 	// strides = 1, indexes contain indexes allowed
-	else
+	
 	
     
 }
