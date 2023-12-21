@@ -45,10 +45,9 @@ static void control(uint64_t cache_size){
 	int ar_size = cache_size;
 	void  *candidate = (void *)malloc(sizeof(void *));
 	void* *buffer = mmap(NULL, ar_size, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB, -1, 0);
-	CREATE_POINTER_STRIDE_CHASE(buffer, ar_size/ sizeof(void*), 2);
-	CREATE_POINTER_STRIDE_CHASE(buffer, ar_size/ sizeof(void*), 3);
-	CREATE_POINTER_STRIDE_CHASE(buffer, ar_size/ sizeof(void*), 4);
-	//CREATE_POINTER_STRIDE_CHASE(buffer, ar_size/ sizeof(void*), 2, &candidate);
+	uint64_t* *indexes = (uint64_t*) malloc(sizeof(uint64_t *) * ar_size);
+	CREATE_POINTER_STRIDE_CHASE(buffer, ar_size/ sizeof(void*), 1);
+
 	part = probe(buffer, ar_size, buffer);
 	not_part = probe(buffer, ar_size, &candidate);
 	
