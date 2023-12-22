@@ -159,7 +159,7 @@ static void create_pointer_stride_chase(void** addr, const uint64_t size_addr, u
     uint64_t offset, curr = 0; // offset = 0
 	
 	for (uint64_t i = 0; i < size_addr; i++) {
-		addr[i] = NULL; // set all entries in addr to NULL
+		addr[i] = 0; // set all entries in addr to NULL
 	}
 	// compute entries, only fill size_indexes many entries with index included in indexes respectively
 	for (uint64_t i = 0; i < size_indexes; i++) {
