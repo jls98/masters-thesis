@@ -38,7 +38,6 @@ int main(int ac, char **av){
 static void control(uint64_t cache_size){
 	
 	wait(1E9);
-	uint64_t part, not_part;
 	int lines_in_bytes = cache_size;
 	int lines_indexes = lines_in_bytes / sizeof(void*);
 	
@@ -168,6 +167,7 @@ static void create_pointer_stride_chase(void** addr, const uint64_t size_addr, u
 		curr = offset;
 	}
 	addr[curr] = addr;
+	
 	
 	
     
