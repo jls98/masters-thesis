@@ -62,6 +62,7 @@ static void control(uint64_t cache_size){
 			conflict_set[conflict_set_count]=i;
 			conflict_set_count+=1;
 		}
+		printf("currently at i = %lu\n", i);
 	}
 	printf("conflict set count %lu\n", conflict_set_count);
 	
