@@ -164,7 +164,7 @@ static void create_pointer_stride_chase(void** addr, const uint64_t size_addr, u
 	for (uint64_t i = 0; i < size_indexes; i++) {
 		do {
 			offset = lfsr_rand(&lfsr) % size_addr; // random number mod size 
-			printf("offset %lu, addr[offset] %p, contains %i\n", offset, addr[offset], contains(indexes, size_indexes, offset)));
+			printf("offset %lu, addr[offset] %p, contains %i\n", offset, addr[offset], contains(indexes, size_indexes, offset));
 		} while (offset == curr || addr[offset] != NULL || contains(indexes, size_indexes, offset)); // ensure that offset !=curr and addr[offset]==NULL and included in indexes
 		addr[curr] = &addr[offset]; // set the value of the curr index to the address at the offset index (linked list)
 		
