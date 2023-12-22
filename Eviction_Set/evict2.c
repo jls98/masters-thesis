@@ -60,9 +60,6 @@ static void control(uint64_t cache_size){
 		// buffer contains a pointer chase over the entries of the conflict set, other entries are empty and not pointed at
 		printf("pointer chase created\n");
 		
-		for(uint64_t j=0;j<=i;j++){
-			printf("addr %p, index %lu, j %lu\n", buffer[conflict_set[j]], conflict_set[j]);
-		}
 		if (probe(buffer, lines_indexes, buffer[i]) < THRESHOLD){ // probe if candidate is cached or evicted by conflict set
 			// insert candidate to conflict set if conflict set cannot evict candidate
 			conflict_set[conflict_set_count]=i;
@@ -171,11 +168,9 @@ static void create_pointer_stride_chase(void** addr, const uint64_t size_addr, u
 		} while (offset == curr || addr[offset] != NULL || contains(indexes, size_indexes, offset)); // ensure that offset !=curr and addr[offset]==NULL and included in indexes
 		addr[curr] = &addr[offset]; // set the value of the curr index to the address at the offset index (linked list)
 		
-		printf("offset %lu, curr %lu, addr[curr] %p, &addr[offset] %p, addr %p, i %lu\n", offset, curr, addr[curr], &addr[offset], addr, i);
 		curr = offset;
 		
 	}
-	printf("curr %lu\n", curr);
 	addr[curr] = addr;
 	
 	
