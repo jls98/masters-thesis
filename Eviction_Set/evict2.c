@@ -66,7 +66,7 @@ static void control(uint64_t cache_size){
 		}
 		// buffer contains a pointer chase over the entries of the conflict set, other entries are empty and not pointed at
 		//printf("pointer chase created\n");
-		
+		if (i%1000) printf("%i\n");
 		if (probe(probe_dest, lines_indexes, &buffer[i]) < THRESHOLD){ // probe if candidate is cached or evicted by conflict set
 			// insert candidate to conflict set if conflict set cannot evict candidate
 			conflict_set[conflict_set_count]=i;
