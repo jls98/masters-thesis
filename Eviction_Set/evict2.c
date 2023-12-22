@@ -55,7 +55,7 @@ static void control(uint64_t cache_size){
 	// maybe add candidate index to conflict set 
 	for(uint64_t i=0; i < lines_indexes-1; i++){
 		// create pointer chase between all entries in conflict set 
-		if (i%10000==0) printf("currently at i = %lu\n", i);
+		if (i%100==0) printf("currently at i = %lu\n", i);
 		create_pointer_stride_chase(buffer, lines_indexes, conflict_set, conflict_set_count);
 		// buffer contains a pointer chase over the entries of the conflict set, other entries are empty and not pointed at
 		//printf("pointer chase created\n");
