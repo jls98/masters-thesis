@@ -175,6 +175,7 @@ static void create_pointer_stride_chase(void** addr, const uint64_t size_addr, u
 		curr = offset;
 		
 	}
+	printf("curr %lu\n");
 	addr[curr] = addr;
 	
 	
