@@ -171,7 +171,7 @@ static void create_pointer_stride_chase(void** addr, const uint64_t size_addr, u
 		} while (offset == curr || addr[offset] != NULL || contains(indexes, size_indexes, offset)); // ensure that offset !=curr and addr[offset]==NULL and included in indexes
 		addr[curr] = &addr[offset]; // set the value of the curr index to the address at the offset index (linked list)
 		
-		printf("offset %lu, curr %lu, addr[curr] %p, &addr[offset] %p, i %lu\n", offset, curr, addr[curr], &addr[offset], i);
+		printf("offset %lu, curr %lu, addr[curr] %p, &addr[offset] %p, addr[offset] %p, i %lu\n", offset, curr, addr[curr], &addr[offset], addr[offset], i);
 		curr = offset;
 		
 	}
