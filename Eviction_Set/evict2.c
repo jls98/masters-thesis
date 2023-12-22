@@ -25,6 +25,7 @@ static uint64_t probe(const void *addr, const uint64_t reps, const void* cand);
 static void wait(const uint64_t cycles);
 static void control(uint64_t cache_size);
 static void create_pointer_chase(void** addr, const uint64_t size_addr, uint64_t *indexes, const uint64_t size_indexes);
+static void* addto_pointer_chase(void** addr, const uint64_t size_addr, void* first, uint64_t *indexes, const uint64_t size_indexes);
 static uint64_t lfsr_create(void);
 static uint64_t lfsr_rand(uint64_t* lfsr);
 static uint64_t lfsr_step(uint64_t lfsr);
@@ -52,15 +53,21 @@ static void control(uint64_t cache_size){
 	// steps:
 	// create pointer chase between all entries in conflict set 
 	// probe conflict_set and candidate 
-	// maybe add candidate index to conflict set 
+	// maybe add candidate index to conflict set
+	void *probe_dest;
 	for(uint64_t i=0; i < lines_indexes-1; i++){
 		// create pointer chase between all entries in conflict set 
-		if (i%100==0) printf("currently at i = %lu\n", i);
-		create_pointer_chase(buffer, lines_indexes, conflict_set, conflict_set_count);
+		
+		if(i==0){ 
+			create_pointer_chase(buffer, lines_indexes, conflict_set, conflict_set_count);
+			probe_dest=buffer;
+		}else{
+			probe_dest = addto_pointer_chase(buffer, lines_indexes, probe_dest, conflict_set, conflict_set_count, )
+		}
 		// buffer contains a pointer chase over the entries of the conflict set, other entries are empty and not pointed at
 		//printf("pointer chase created\n");
 		
-		if (probe(buffer, lines_indexes, &buffer[i]) < THRESHOLD){ // probe if candidate is cached or evicted by conflict set
+		if (probe(probe_dest, lines_indexes, &buffer[i]) < THRESHOLD){ // probe if candidate is cached or evicted by conflict set
 			// insert candidate to conflict set if conflict set cannot evict candidate
 			conflict_set[conflict_set_count]=i;
 			conflict_set_count+=1;
@@ -165,7 +172,7 @@ static void create_pointer_chase(void** addr, const uint64_t size_addr, uint64_t
 		do {
 			offset = lfsr_rand(&lfsr) % size_addr; // random number mod size 
 			//printf("offset %lu, addr[offset] %p, contains %i\n", offset, addr[offset], contains(indexes, size_indexes, offset));
-		} while (offset == curr || addr[offset] != NULL || !contains(indexes, size_indexes, offset)); // ensure that offset !=curr and addr[offset]==NULL and included in indexes
+		} while (offset == curr || addr[offset] != NULL || contains(indexes, size_indexes, offset)); // ensure that offset !=curr and addr[offset]==NULL and included in indexes
 		addr[curr] = &addr[offset]; // set the value of the curr index to the address at the offset index (linked list)
 		
 		curr = offset;
@@ -183,6 +190,7 @@ static void* addto_pointer_chase(void** addr, const uint64_t size_addr, void* fi
 	do {
 		offset = lfsr_rand(&lfsr) % size_addr; // random number mod size 
 		//printf("offset %lu, addr[offset] %p, contains %i\n", offset, addr[offset], contains(indexes, size_indexes, offset));
-	} while (addr[offset] != NULL || contains(indexes, size_indexes, offset)); // ensure that offset !=curr and addr[offset]==NULL and included in indexes
-		
+	} while ( addr[offset] != NULL || contains(indexes, size_indexes, offset)); // ensure that offset !=curr and addr[offset]==NULL and included in indexes
+	addr[offset] = first; // addr[offset] -> first -> second => first_new = addr[offset]
+	return &addr[offset]; // return pointer
 }
