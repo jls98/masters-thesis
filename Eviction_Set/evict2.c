@@ -55,14 +55,16 @@ static void control(uint64_t cache_size){
 	// maybe add candidate index to conflict set 
 	for(uint64_t i=0; i < lines_indexes-1; i++){
 		// create pointer chase between all entries in conflict set 
+		printf("currently at i = %lu\n", i);
 		create_pointer_stride_chase(buffer, lines_indexes, conflict_set, conflict_set_count);
 		// buffer contains a pointer chase over the entries of the conflict set, other entries are empty and not pointed at
+		printf("pointer chase created\n");
 		if (probe(buffer, lines_indexes, buffer[i]) < THRESHOLD){ // probe if candidate is cached or evicted by conflict set
 			// insert candidate to conflict set if conflict set cannot evict candidate
 			conflict_set[conflict_set_count]=i;
 			conflict_set_count+=1;
 		}
-		printf("currently at i = %lu\n", i);
+		
 	}
 	printf("conflict set count %lu\n", conflict_set_count);
 	
@@ -150,8 +152,7 @@ static int contains(uint64_t * indexes, const uint64_t size_indexes, uint64_t of
 	return 0; // no match found
 }
 
-// create pointer chase over the valid indexes from addr in indexes where the amount of valid entries is size. indexes is optional
-// if indexes is not NULL use stride = 1 and value in stride as size of indexes
+// create pointer chase over the valid indexes from addr in indexes where the amount of valid entries is size. 
 static void create_pointer_stride_chase(void** addr, const uint64_t size_addr, uint64_t *indexes, const uint64_t size_indexes) {
 	uint64_t lfsr = lfsr_create(); // start random lfsr
     uint64_t offset, curr = 0; // offset = 0
@@ -160,7 +161,7 @@ static void create_pointer_stride_chase(void** addr, const uint64_t size_addr, u
 		addr[i] = NULL; // set all entries in addr to NULL
 	}
 	// compute entries, only fill size_indexes many entries with index included in indexes respectively
-	for (uint64_t i = 0; i < size_indexes-1; i++) {
+	for (uint64_t i = 0; i < size_indexes; i++) {
 		do {
 			offset = lfsr_rand(&lfsr) % size_addr; // random number mod size 
 		} while (offset == curr || addr[offset] != NULL || contains(indexes, size_indexes, offset)); // ensure that offset !=curr and addr[offset]==NULL and included in indexes
