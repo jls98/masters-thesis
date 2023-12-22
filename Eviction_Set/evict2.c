@@ -59,6 +59,10 @@ static void control(uint64_t cache_size){
 		create_pointer_stride_chase(buffer, lines_indexes, conflict_set, conflict_set_count);
 		// buffer contains a pointer chase over the entries of the conflict set, other entries are empty and not pointed at
 		printf("pointer chase created\n");
+		
+		for(uint64_t j=0;j<=i;j++){
+			printf("addr %p, index %lu\n", buffer[conflict_set[j]], conflict_set[j]);
+		}
 		if (probe(buffer, lines_indexes, buffer[i]) < THRESHOLD){ // probe if candidate is cached or evicted by conflict set
 			// insert candidate to conflict set if conflict set cannot evict candidate
 			conflict_set[conflict_set_count]=i;
