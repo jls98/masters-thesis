@@ -43,7 +43,7 @@ int get_ways_sqr(int cache_size) {
         uint64_t reps = double_cache_size % (1<<stride) == 0? double_cache_size/(1<<stride) : double_cache_size/(1<<stride) +1;
         double millicycles = probe_stride_loop(buffer, reps);
         //printf("stride: %5d; time: %7.3f cycles\n", (1<<stride), millicycles);
-        printf("%7d %7.3f\n", (1<<stride), millicycles);
+        printf("%7d %7.3f\n", (1<<stride)*8, millicycles);
 
         munmap(buffer, double_cache_size);
         
