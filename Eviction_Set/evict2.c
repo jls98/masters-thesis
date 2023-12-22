@@ -48,7 +48,7 @@ static void control(uint64_t cache_size){
 	
 	// foreach candidate from buffer do probe conflict set and candidate 
 	
-	
+	printf("buffer %p\n", buffer);
 	// steps:
 	// create pointer chase between all entries in conflict set 
 	// probe conflict_set and candidate 
@@ -61,7 +61,7 @@ static void control(uint64_t cache_size){
 		printf("pointer chase created\n");
 		
 		for(uint64_t j=0;j<=i;j++){
-			printf("addr %p, index %lu\n", buffer[conflict_set[j]], conflict_set[j]);
+			printf("addr %p, index %lu, j %lu\n", buffer[conflict_set[j]], conflict_set[j]);
 		}
 		if (probe(buffer, lines_indexes, buffer[i]) < THRESHOLD){ // probe if candidate is cached or evicted by conflict set
 			// insert candidate to conflict set if conflict set cannot evict candidate
