@@ -6,7 +6,7 @@
 
 #define PROBE_REPS (1<<25)
 #define MEMSIZE_EXP_MIN 14
-#define MEMSIZE_EXP_MAX 23
+#define MEMSIZE_EXP_MAX 25
 static void wait(const uint64_t cycles);
 static uint64_t lfsr_create(void);
 static uint64_t lfsr_rand(uint64_t* lfsr);
