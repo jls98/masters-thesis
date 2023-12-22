@@ -21,98 +21,23 @@
 
 #define THRESHOLD 100 // TO Determine
 
-static uint64_t probe(const void *addr, const uint64_t reps, const void* cand);
-static void wait(const uint64_t cycles);
-static void control(uint64_t cache_size);
-static void create_pointer_chase(void** addr, const uint64_t size_addr, uint64_t *indexes, const uint64_t size_indexes);
-static void* addto_pointer_chase(void** addr, const uint64_t size_addr, void* first, uint64_t *indexes, const uint64_t size_indexes);
-static uint64_t lfsr_create(void);
-static uint64_t lfsr_rand(uint64_t* lfsr);
-static uint64_t lfsr_step(uint64_t lfsr);
-static int contains(uint64_t * indexes, const uint64_t size_indexes, uint64_t offset);
+
 
 int main(int ac, char **av){
-    if (ac==2) control(atoi(av[1]));
-	else control(200);
+	control(2* E_L2_CACHE_SIZE);
 }
 
-static void control(uint64_t cache_size){
+static void control(uint64_t size){
+	// create array with lines (twice cache size)
+	void* buffer=mmap(NULL, size, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB, -1, 0);
 	
-	wait(1E9);
-	int lines_in_bytes = cache_size;
-	int lines_indexes = lines_in_bytes / sizeof(void*);
+	// conflict set 
+	void* conflict_set = (void*)malloc(size);
+	uint64_t conflict_set_len = size/sizeof(void*);
 	
-	void* *buffer=mmap(NULL, lines_in_bytes, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB, -1, 0);
-	
-	uint64_t* conflict_set=(uint64_t*) malloc(sizeof(uint64_t) * lines_indexes); // empty conflict set, will not be completely filled
-	uint64_t conflict_set_count=0;
-	
-	// foreach candidate from buffer do probe conflict set and candidate 
-	
-	printf("buffer %p\n", buffer);
-	// steps:
-	// create pointer chase between all entries in conflict set 
-	// probe conflict_set and candidate 
-	// maybe add candidate index to conflict set
-	void *probe_dest;
-	for(uint64_t i=0; i < lines_indexes-1; i++){
-		// create pointer chase between all entries in conflict set 
-		
-		if(i==0){ 
-			create_pointer_chase(buffer, lines_indexes, conflict_set, conflict_set_count);
-			probe_dest=buffer;
-		}else{
-			probe_dest = addto_pointer_chase(buffer, lines_indexes, probe_dest, conflict_set, conflict_set_count);
-		}
-		// buffer contains a pointer chase over the entries of the conflict set, other entries are empty and not pointed at
-		//printf("pointer chase created\n");
-		if (i%1000==0) printf("%i\n");
-		if (probe(probe_dest, lines_indexes, &buffer[i]) < THRESHOLD){ // probe if candidate is cached or evicted by conflict set
-			// insert candidate to conflict set if conflict set cannot evict candidate
-			conflict_set[conflict_set_count]=i;
-			conflict_set_count+=1;
-		}
-	}
-	printf("conflict set count %lu\n", conflict_set_count);
-	
-	/*
-	create_pointer_stride_chase(buffer, lines_indexes, conflict_set, conflict_set_count);
-
-	part = probe(buffer, lines_indexes, buffer);
-	not_part = probe(buffer, lines_indexes, &candidate);
-	
-	printf("part %lu\nnot part %lu\n%p\n%p\n", part, not_part, &part, &not_part);	*/
 }
 
-
-static void wait(const uint64_t cycles) {
-	unsigned int ignore;
-	uint64_t start = __rdtscp(&ignore);
-	while (__rdtscp(&ignore) - start < cycles);
-}
-
-#define FEEDBACK 0x80000000000019E2ULL
-static uint64_t lfsr_create(void) {
-  uint64_t lfsr;
-  asm volatile("rdrand %0": "=r" (lfsr)::"flags");
-  return lfsr;
-}
-
-static uint64_t lfsr_rand(uint64_t* lfsr) {
-    for (uint64_t i = 0; i < 8*sizeof(uint64_t); i++) {
-        *lfsr = lfsr_step(*lfsr);
-    }
-    return *lfsr;
-}
-
-static uint64_t lfsr_step(uint64_t lfsr) {
-  return (lfsr & 1) ? (lfsr >> 1) ^ FEEDBACK : (lfsr >> 1);
-}
-
-// addr contains first addr to array of pointerchase
-// reps pointer chase array size 
-// cand is candidate to probe
-static uint64_t probe(const void *addr, const uint64_t reps, const void* cand) {
+static uint64_t probe(const void *set, const uint64_t set_len, const void* cand) {
 	if (reps==0) return 0; // if set is empty, it'll result in cache hit
 	
 	volatile uint64_t time;
@@ -145,52 +70,8 @@ static uint64_t probe(const void *addr, const uint64_t reps, const void* cand) {
         // end - high precision
 		"sub rax, rsi;"
 		: "=a" (time)
-		: "c" (addr), "r" (reps), "r" (cand)
+		: "c" (set), "r" (set_len), "r" (cand)
 		: "esi", "edx"
 	);
 	return time;
-}
-
-static int contains(uint64_t * indexes, const uint64_t size_indexes, uint64_t offset){
-	for (uint64_t i=0;i<size_indexes;i++){
-		if (indexes[i] == offset) return 1; // contained in indexes
-	
-	}
-	return 0; // no match found
-}
-
-// create pointer chase over the valid indexes from addr in indexes where the amount of valid entries is size. 
-static void create_pointer_chase(void** addr, const uint64_t size_addr, uint64_t *indexes, const uint64_t size_indexes) {
-	uint64_t lfsr = lfsr_create(); // start random lfsr
-    uint64_t offset, curr = 0; // offset = 0
-	
-	for (uint64_t i = 0; i < size_addr; i++) {
-		addr[i] = NULL; // set all entries in addr to NULL
-	}
-	// compute entries, only fill size_indexes many entries with index included in indexes respectively
-	for (uint64_t i = 0; i < size_indexes; i++) {
-		do {
-			offset = lfsr_rand(&lfsr) % size_addr; // random number mod size 
-			//printf("offset %lu, addr[offset] %p, contains %i\n", offset, addr[offset], contains(indexes, size_indexes, offset));
-		} while (offset == curr || addr[offset] != NULL || contains(indexes, size_indexes, offset)); // ensure that offset !=curr and addr[offset]==NULL and included in indexes
-		addr[curr] = &addr[offset]; // set the value of the curr index to the address at the offset index (linked list)
-		
-		curr = offset;
-		
-	}
-	addr[curr] = addr;    
-}
-
-// take pointer chase, add new entry and let it point to "first", making the pointer chase not circular and one time only but faster
-// requires non set entries in addr array to be NULL
-static void* addto_pointer_chase(void** addr, const uint64_t size_addr, void* first, uint64_t *indexes, const uint64_t size_indexes){
-	uint64_t lfsr = lfsr_create(); // start random lfsr
-	uint64_t offset=0;
-	
-	do {
-		offset = lfsr_rand(&lfsr) % size_addr; // random number mod size 
-		//printf("offset %lu, addr[offset] %p, contains %i\n", offset, addr[offset], contains(indexes, size_indexes, offset));
-	} while ( addr[offset] != NULL || contains(indexes, size_indexes, offset)); // ensure that offset !=curr and addr[offset]==NULL and included in indexes
-	addr[offset] = first; // addr[offset] -> first -> second => first_new = addr[offset]
-	return &addr[offset]; // return pointer
 }
