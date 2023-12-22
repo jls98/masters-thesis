@@ -62,7 +62,7 @@ static void control(uint64_t cache_size){
 			create_pointer_chase(buffer, lines_indexes, conflict_set, conflict_set_count);
 			probe_dest=buffer;
 		}else{
-			probe_dest = addto_pointer_chase(buffer, lines_indexes, probe_dest, conflict_set, conflict_set_count, )
+			probe_dest = addto_pointer_chase(buffer, lines_indexes, probe_dest, conflict_set, conflict_set_count);
 		}
 		// buffer contains a pointer chase over the entries of the conflict set, other entries are empty and not pointed at
 		//printf("pointer chase created\n");
