@@ -1,7 +1,7 @@
 CC = gcc
 CFLAGS = -Wall -Wextra -masm=intel
 
-all: workshop3 file_generator execute pxecute task1 task2 evict1
+all: workshop3 file_generator execute pxecute task1 task2 evict1 evict2
 
 workshop3: Cache_Reversing/workshop3.c
 	$(CC) $(CFLAGS) -o build/workshop3  Cache_Reversing/workshop3.c
@@ -14,6 +14,10 @@ task2: Cache_Reversing/task2.c
 
 evict1: Eviction_Set/evict1.c
 	$(CC) $(CFLAGS) -o build/evict1  Eviction_Set/evict1.c
+	
+evict2: Eviction_Set/evict2.c
+	$(CC) $(CFLAGS) -o build/evict2  Eviction_Set/evict2.c
+
     
 file_generator: utils/file_generator.c
 	$(CC) $(CFLAGS) -o build/file_generator utils/file_generator.c
@@ -26,4 +30,4 @@ execute: utils/execute.c
 
 
 clean:
-	rm -f workshop3 file_generator execute pxecute task1 task2 evict1
+	rm -f workshop3 file_generator execute pxecute task1 task2 evict1 evict2

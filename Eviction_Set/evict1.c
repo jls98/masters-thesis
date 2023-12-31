@@ -20,9 +20,9 @@
 #define P_L2_STRIDE 16384  				// 10 ways
 
 #define DEF_OR_ARG(value,...) value
-#define CREATE_POINTER_STRIDE_CHASE(addr, size, stride, ...) create_pointer_stride_chase(addr, size, stride, DEF_OR_ARG(__VA_ARGS__ __VA_OPT__(,) 0))
+#define CREATE_POINTER_STRIDE_CHASE(addr, size, stride, ...) create_pointer_stride_chase(addr, size, stride, DEF_OR_ARG(__VA_ARGS__ __VA_OPT__(,) NULL))
 
-static uint64_t probe(const void *addr, const uint64_t reps, const uint64_t* cand);
+static uint64_t probe(const void *addr, const uint64_t reps, const void* cand);
 static void wait(const uint64_t cycles);
 static void control(uint64_t cache_size);
 static void create_pointer_stride_chase(void** addr, const uint64_t size, const uint32_t stride, uint64_t ** indexes);
@@ -32,7 +32,8 @@ static uint64_t lfsr_step(uint64_t lfsr);
 
 
 int main(int ac, char **av){
-    control(atoi(av[1]));
+    if (ac==2) control(atoi(av[1]));
+	else control(200);
 }
 
 
@@ -42,10 +43,12 @@ static void control(uint64_t cache_size){
 	wait(1E9);
 	uint64_t part, not_part;
 	int ar_size = cache_size;
-	uint64_t candidate = 64;
+	void  *candidate = (void *)malloc(sizeof(void *));
 	void* *buffer = mmap(NULL, ar_size, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB, -1, 0);
-	CREATE_POINTER_STRIDE_CHASE(buffer, ar_size, 1);
-	part = probe(buffer, ar_size / sizeof(void*), buffer);
+	uint64_t* indexes = (uint64_t*) malloc(sizeof(uint64_t) * ar_size);
+	CREATE_POINTER_STRIDE_CHASE(buffer, ar_size/ sizeof(void*), 1);
+
+	part = probe(buffer, ar_size, buffer);
 	not_part = probe(buffer, ar_size, &candidate);
 	
 	printf("part %lu\nnot part %lu\n%p\n%p\n", part, not_part, &part, &not_part);	
@@ -79,7 +82,7 @@ static uint64_t lfsr_step(uint64_t lfsr) {
 // addr contains first addr to array of pointerchase
 // reps pointer chase array size 
 // cand is candidate to probe
-static uint64_t probe(const void *addr, const uint64_t reps, const uint64_t* cand) {
+static uint64_t probe(const void *addr, const uint64_t reps, const void* cand) {
 	if (reps==0) return 0; // if set is empty, it'll result in cache hit
 	
 	volatile uint64_t time;
@@ -119,24 +122,30 @@ static uint64_t probe(const void *addr, const uint64_t reps, const uint64_t* can
 }
 
 // create pointer chase over the valid indexes from addr in indexes where the amount of valid entries is size. indexes is optional
+// if indexes is not NULL use stride = 1 and value in stride as size of indexes
 static void create_pointer_stride_chase(void** addr, const uint64_t size, const uint32_t stride, uint64_t ** indexes) {
-    uint64_t lfsr = lfsr_create(); // start random lfsr
+	uint64_t lfsr = lfsr_create(); // start random lfsr
     uint64_t offset, curr = 0; // offset = 0
-    uint64_t stride_indexes = size % stride == 0? size/stride : size/stride +1;
-    uint64_t a=1;
 	
-	for (uint64_t i = 0; i < size; i++) {
-        addr[i] = NULL; // set all entries inn addr to NULL
-    }
-    // compute amount of entries with stride stride
-    for (uint64_t i = 0; i < stride_indexes-1; i++) {
-        do {
-            offset = lfsr_rand(&lfsr) % size; // random number mod size 
-        } while (offset == curr || addr[offset] != NULL /*|| offset % stride != 0*/); // ensure that offset !=curr and addr[offset]==NULL and jumps only between entries of stride, entries NULL initialized
-        a+=1;
-		addr[curr] = &addr[offset]; // set the value of the curr index to the address at the offset index (linked list)
-        curr = offset;
-    }
-	addr[curr] = &a;
-    addr[curr] = addr;
+	// strides
+	if (indexes == NULL){
+		uint64_t stride_indexes = size % stride == 0? size/stride : size/stride +1;
+	
+		for (uint64_t i = 0; i < size; i++) {
+			addr[i] = NULL; // set all entries inn addr to NULL
+		}
+		// compute amount of entries with stride stride
+		for (uint64_t i = 0; i < stride_indexes-1; i++) {
+			do {
+				offset = lfsr_rand(&lfsr) % size; // random number mod size 
+			} while (offset == curr || addr[offset] != NULL || offset % stride != 0); // ensure that offset !=curr and addr[offset]==NULL and jumps only between entries of stride, entries NULL initialized
+			addr[curr] = &addr[offset]; // set the value of the curr index to the address at the offset index (linked list)
+			curr = offset;
+		}
+		addr[curr] = addr;
+	}
+	// strides = 1, indexes contain indexes allowed
+	
+	
+    
 }
