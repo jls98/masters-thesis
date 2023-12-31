@@ -37,7 +37,7 @@ int get_ways_sqr(int cache_size) {
     wait(1E9);
     uint64_t double_cache_size = 2*cache_size;
     // check stride in power of two
-    for (uint32_t stride = 10; stride < log_2(double_cache_size)-3; stride++) {
+    for (uint32_t stride = 4; stride < log_2(double_cache_size)-2; stride++) {
         void* buffer = mmap(NULL, double_cache_size, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB, -1, 0);
         create_pointer_stride_chase(buffer, double_cache_size / sizeof(void*), 1<<stride);        
         uint64_t reps = double_cache_size % (1<<stride) == 0? double_cache_size/(1<<stride) : double_cache_size/(1<<stride) +1;
@@ -115,8 +115,7 @@ static void create_pointer_stride_chase(void** addr, const uint64_t size, const 
     }
     uint64_t lfsr = lfsr_create(); // start random lfsr
     uint64_t offset, curr = 0; // offset = 0
-    printf("%i\n", size % stride);
-    uint64_t stride_indexes = size % stride == 0? size/stride : size/stride +1;
+    uint64_t stride_indexes = size % stride == 0? size/stride : size/stride +1; // not 0 -> 
     
     // compute amount of entries with stride stride
     for (uint64_t i = 0; i < stride_indexes-1; i++) {
@@ -127,4 +126,5 @@ static void create_pointer_stride_chase(void** addr, const uint64_t size, const 
         curr = offset;
     }
     addr[curr] = addr;
+    printf()
 }
