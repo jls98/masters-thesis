@@ -1,5 +1,6 @@
 #include <stdint.h>
 #include <stdio.h>
+#include <sys/mman.h>
 
 /* threshold values for loading 1 adrs                  */
 // IntelGen12 e core
