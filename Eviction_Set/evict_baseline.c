@@ -1,6 +1,7 @@
 #include <stdint.h>
 #include <stdio.h>
 #include <sys/mman.h>
+#include <x86intrin.h>
 
 /* threshold values for loading 1 adrs                  */
 // IntelGen12 e core
@@ -155,5 +156,5 @@ static void create_pointer_chase(const void *addr, const uint64_t size, const ui
 }
 
 static uint64_t pick(const uint64_t *set_addr, const uint64_t set_size, const uint64_t *base_addr, const uint64_t size, uint64_t lfsr) {
-    
+    return 1; // TODO
 }
