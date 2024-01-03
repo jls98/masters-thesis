@@ -20,6 +20,8 @@
 #define THRESHOLD_SINGLE_LLC_LAB 45     // ~30
 #define THRESHOLD_SINGLE_DEFAULT_LAB THRESHOLD_SINGLE_L1D_LAB
 
+#define CACHESIZE_DEFAULT 32768         // L1D e|lab 
+//#define CACHESIZE_DEFAULT OTHERS TODO
 
 /* #################################################### */
 /* ####################### utils ###################### */
@@ -76,9 +78,43 @@ static void create_pointer_chase(const void *addr, const uint64_t size, const ui
 /* returns index of candidate                           */
 static uint64_t pick(const uint64_t *set_addr, const uint64_t set_size, const uint64_t *base_addr, const uint64_t size, uint64_t lfsr);
 
+/* create minimal eviction set from base set for        */
+/* victim_adrs in evict_set                             */
+static void create_minimal_eviction_set(const void *base_set, const uint64_t base_size, uint64_t *evict_set, uint64_t *evict_size, const uint64_t victim_adrs);
+ 
+/* #################################################### */
+/* ################## implementation ################## */
+/* #################################################### */
 
+// optional argument 1 cache size
 int main(int ac, char **av){
+    /* preparation */
+    wait(1E9); // boost cache 
+    
+    // if (cache) size set, take; divide by 4 since its cache size in bytes and we have 64 bit/8 byte pointer arrays but also take double size
+    uint64_t base_size = ac == 3? atoi(av[2])/4 : CACHESIZE_DEFAULT/4;     
+    uint64_t eviction_candidate_size = 0; // R <- {}
+
+    // allocate space for eviction set
+    uint64_t *evict_set = (uint64_t *) malloc(base_size/2 * sizeof(uint64_t));
+
+    // map base set (using hugepages, twice the size of cache in bytes)
+    void* *base_set = mmap(NULL, base_size * sizeof(void *), PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB, -1, 0);
+
+    // if adrs set, otherwise use some other uint64_t adrs
+    uint64_t victim_adrs = ac > 1? atoi(av[1]) : &eviction_candidate_size;
+    
+    create_minimal_eviction_set(base_set, base_size, evict_set, &eviction_candidate_size, victim_adrs);
+    
     return 0;
+}
+
+static void create_minimal_eviction_set(const void *base_set, const uint64_t base_size, uint64_t *evict_set, uint64_t *evict_size, const uint64_t *victim_adrs){
+    uint64_t *current_base_set = (uint64_t *) malloc(base_size * sizeof(uint64_t));
+
+    return;
+    /* baseline algorithm */
+    // TODO
 }
 
 static void wait(const uint64_t cycles) {
