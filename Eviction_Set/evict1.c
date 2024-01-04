@@ -92,10 +92,10 @@ static uint64_t probe(const void *addr, const uint64_t reps, const void* cand) {
 		// BEGIN - read every entry in addr
         "mov rax, %1;"
         "mov rdx, %2;"
-        "loop:"
+        "loop1:"
 		"mov rax, [rax];"
         "dec rdx;"
-        "jnz loop;"
+        "jnz loop1;"
 		// END - reading set
         // measure start
 		"mfence;"
