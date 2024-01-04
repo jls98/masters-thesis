@@ -35,15 +35,17 @@ void test_pick(){
     // test no candidate possible
     // no elements left in base
     CU_ASSERT_EQUAL(pick(set, set_size, base, 0, size, &lfsr), size+1); 
-    printf("%lu\n", pick(set, set_size, base, 0, size, &lfsr));
 
     // already in eviction set 
     CU_ASSERT_EQUAL(pick(set, set_size, base, 1, size, &lfsr), size+1); 
-    printf("%lu\n", pick(set, set_size, base, 1, size, &lfsr));
 
     // regular (in range?) (ASSERT_TRUE)
     CU_ASSERT_EQUAL(pick(set, set_size, base, 2, size, &lfsr), 65); 
     printf("%lu\n", pick(set, set_size, base, 2, size, &lfsr));
+    
+
+    // regular, 1 option left, base[0] should be always skipped
+    CU_ASSERT_EQUAL(pick(set, set_size, base, 2, size, &lfsr), 65); 
 
     printf("%lu\n", pick(set, set_size, base, base_size, 4, &lfsr));
 
