@@ -13,7 +13,7 @@
 #define THRESHOLD_SINGLE_DEFAULT_E12 THRESHOLD_SINGLE_L1D_E12
 
 // IntelGen12 p core
-#define THRESHOLD_SINGLE_L1D_P12 4      // 2.6
+#define THRESHOLD_SINGLE_L1D_P12 30      // 2.6, prob <30 in single measurement
 #define THRESHOLD_SINGLE_L2_P12 9       // <8
 #define THRESHOLD_SINGLE_LLC_P12 50     // ~30 (?)
 #define THRESHOLD_SINGLE_DEFAULT_P12 THRESHOLD_SINGLE_L1D_P12
@@ -163,7 +163,7 @@ static int64_t test1(const void *addr, const uint64_t size, const void* cand, ui
 		// load candidate and set 
 		// BEGIN - read every entry in addr
 
-        /*"mov rax, %1;"
+        "mov rax, %1;"
         "mov rdx, %2;"
 		"mov r8, [%3];" // load candidate 
         "loop:"
@@ -171,7 +171,7 @@ static int64_t test1(const void *addr, const uint64_t size, const void* cand, ui
         "dec rdx;"
         "jnz loop;"
 		// END - reading set
-        // measure start*/
+        // measure start
 		"mfence;"
         "lfence;"
 		"rdtsc;"		
