@@ -7,13 +7,13 @@
 
 /* threshold values for loading 1 adrs                  */
 // IntelGen12 e core
-#define THRESHOLD_SINGLE_L1D_E12 4      // ~2.2
+#define THRESHOLD_SINGLE_L1D_E12 61      // ~2.2/ <60 on single measurement
 #define THRESHOLD_SINGLE_L2_E12 17      // <15
 #define THRESHOLD_SINGLE_LLC_E12 70     // >40 (?)
 #define THRESHOLD_SINGLE_DEFAULT_E12 THRESHOLD_SINGLE_L1D_E12
 
 // IntelGen12 p core
-#define THRESHOLD_SINGLE_L1D_P12 30      // 2.6, prob <30 in single measurement
+#define THRESHOLD_SINGLE_L1D_P12 31      // 2.6/ <30 in single measurement
 #define THRESHOLD_SINGLE_L2_P12 9       // <8
 #define THRESHOLD_SINGLE_LLC_P12 50     // ~30 (?)
 #define THRESHOLD_SINGLE_DEFAULT_P12 THRESHOLD_SINGLE_L1D_P12
@@ -43,6 +43,14 @@
 /* wait for cycles cycles and activate cache            */
 static void wait(const uint64_t cycles);
 
+/* access pointed adrs p                                */
+inline void* maccess(void *p);
+
+/* lfenced time measurement; returns time stamp         */
+inline uint64_t rdtscpfence();
+
+/* time measurement; returns time stamp                 */
+inline uint64_t rdtscp();
 
 /* #################################################### */
 /* ############## pseudo random generator ############# */
@@ -65,7 +73,7 @@ static uint64_t lfsr_step(uint64_t lfsr);
 /* test1: eviction test for the specific address cand.  */
 /* Loads cand and then all elements from eviction set   */
 /* test. Finally, loads cand and measures time.         */
-/* addr: pointer to mapped adrs with size elements.     */
+/* addr: pointer to first element from eviction set     */
 /* cand: candidate adrs.                                */
 /* returns true if measurement is above a threshold.    */
 static int64_t test1(const void *addr, const uint64_t size, const void* cand, uint64_t threshold);
@@ -122,6 +130,7 @@ int main(int ac, char **av){
     return 0;
 }
 #endif
+
 static void create_minimal_eviction_set(const void *base_set, const uint64_t base_size, uint64_t *evict_set, uint64_t *evict_size, const uint64_t *victim_adrs){
     uint64_t *current_base_set = (uint64_t *) malloc(base_size * sizeof(uint64_t));
     
@@ -135,6 +144,34 @@ static void wait(const uint64_t cycles) {
 	unsigned int ignore;
 	uint64_t start = __rdtscp(&ignore);
 	while (__rdtscp(&ignore) - start < cycles);
+}
+
+inline void* maccess(void *p){
+    void *ret;
+    __asm__ volatile("movq rax, %0;" : "=a"(ret) : "c" (p));
+    return ret;
+}
+
+inline uint64_t rdtscpfence(){
+    uint64_t a, d;
+    __asm__ volatile("
+        "lfence;"
+        "rdtscp;"
+        "lfence;"
+        : "=a" (a), "=d" (d) 
+        :: "ecx");
+    return ((d<<32) | a);
+}
+
+inline uint64_t rdtscp()
+{
+	unsigned a, d;
+	__asm__ volatile("rdtscp\n"
+	"mov %0, edx;"
+	"mov %1, eax;"
+	: "=r" (a), "=r" (d)
+	:: "rax", "rcx", "rdx");
+	return ((uint64_t)a << 32) | d;
 }
 
 #define FEEDBACK 0x80000000000019E2ULL
@@ -157,12 +194,26 @@ static uint64_t lfsr_step(uint64_t lfsr) {
 
 static int64_t test1(const void *addr, const uint64_t size, const void* cand, uint64_t threshold){
     if (size==0 || addr==NULL || cand==NULL) return -1; // parameter check
-	
-	volatile uint64_t time;
+	uint64_t count = size;
+    void *cur_adrs = addr;
+    wait(1E9);
+    maccess(cand);
+    maccess(cand);
+    maccess(cand);
+    maccess(cand);
+
+    __asm__ volatile ("mfence");
+    uint64_t time = rdtscpfence();
+    while (count-->0) cur_adrs = maccess(addr[]);
+    uint64_t delta = rdtscpfence() - time;
+    
+    return delta > threshold;
+    
+	/*volatile uint64_t time;
 	asm __volatile__ (
 		// load candidate and set 
 		// BEGIN - read every entry in addr
-
+        "lfence;"
         "mov rax, %1;"
         "mov rdx, %2;"
 		"mov rsi, [%3];" // load candidate 
@@ -193,7 +244,7 @@ static int64_t test1(const void *addr, const uint64_t size, const void* cand, ui
 		: "rsi", "rdx"
 	);
     printf("time %lu\n", time);
-	return time > threshold? 1 : 0;
+	return time > threshold? 1 : 0;*/
 }
 
 static uint64_t test2(const void *addr, const uint64_t size){
