@@ -187,7 +187,7 @@ static uint64_t pick(const uint64_t *set, const uint64_t set_size, const uint64_
         return size+1;
     }
     
-    uint64_t candidate = NULL, j;
+    uint64_t candidate, j;
     
     // 99999 times set size + base size should suffice to find candidate in legitimate cases
     for(uint64_t i=0; i<99999*(set_size+size);i++){         
