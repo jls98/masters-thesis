@@ -160,14 +160,12 @@ static int64_t test1(const void *addr, const uint64_t size, const void* cand, ui
 	
 	volatile uint64_t time;
 	asm __volatile__ (
-        "mfence;"
-        "lfence;"
 		// load candidate and set 
 		// BEGIN - read every entry in addr
+
         "mov rax, %1;"
         "mov rdx, %2;"
 		"mov rsi, [%3];" // load candidate 
-        "lfence;"
         "loop:"
 		"mov rax, [rax];"
         "dec rdx;"
@@ -175,7 +173,8 @@ static int64_t test1(const void *addr, const uint64_t size, const void* cand, ui
 		// END - reading set
         // measure start
 		"mov rax, [%3];" // load candidate 	
-		"lfence;"
+		"mfence;"
+        "lfence;"
 		"rdtsc;"		
 		"lfence;"
 		"mov rsi, rax;"
