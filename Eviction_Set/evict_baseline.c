@@ -74,7 +74,7 @@ static uint64_t test2(const void *addr, const uint64_t size);
 /* by addr mapped set with size many elements.          */
 /* set contains pointer to set of indexes of set of     */
 /* interest with set_size many elements.                */
-static void create_pointer_chase(const void *addr, const uint64_t size, const uint64_t *set, const uint64_t set_size);
+static void create_pointer_chase(const void **addr, const uint64_t size, const uint64_t *set, const uint64_t set_size);
 
 /* pick lfsr pseudo-randomized next candidate (index)   */
 /* new candidate should not be in eviction set, be part */
@@ -154,15 +154,15 @@ static uint64_t test2(const void *addr, const uint64_t size){
     return 1; // TODO
 }
 
-static void create_pointer_chase(const void *addr, const uint64_t size, const uint64_t *set, const uint64_t set_size){
+static void create_pointer_chase(const void **addr, const uint64_t size, const uint64_t *set, const uint64_t set_size){
     // no pointer chase 
     if (set_size == 0){
-        for (int i=0; i< size-1;i++){
+        for (uint64_t i=0; i< size-1;i++){
             addr[i]=&addr[i]; // every adrs points to itself
         }
     } else { // create pointer chase between set elements
         uint64_t cur_in=set[0]; // current index (from set)
-        for (int i = 1; i<set_size-2){
+        for (uint64_t i = 1; i<set_size-2; i++){
             if (cur_in > size){
                 printf("create_pointer_chase: current index > size! Element not contained in base set!");
                 break;
