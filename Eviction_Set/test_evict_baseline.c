@@ -33,15 +33,15 @@ void test_pick(){
     // test no candidate possible
     // no elements left in base
     CU_ASSERT_EQUAL(pick(set, set_size, base, 0, &lfsr), size+1); 
-
-    printf("a");
+    printf("%lu\n", pick(set, set_size, base, 0, &lfsr));
 
     // already in eviction set 
     CU_ASSERT_EQUAL(pick(set, set_size, base, 1, &lfsr), size+1); 
+    printf("%lu\n", pick(set, set_size, base, 1, &lfsr));
 
-    printf("a");
     // regular (in range?) (ASSERT_TRUE)
     CU_ASSERT_EQUAL(pick(set, set_size, base, 2, &lfsr), 65); 
+    printf("%lu\n", pick(set, set_size, base, 2, &lfsr));
 
 }
 
