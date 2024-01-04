@@ -45,7 +45,7 @@ void test_pick(){
     CU_ASSERT_EQUAL(pick(set, set_size, base, 2, size, &lfsr), 65); 
     printf("%lu\n", pick(set, set_size, base, 2, size, &lfsr));
 
-    printf("%lu\n", pick(set, set_size, base, base_set, 4, &lfsr));
+    printf("%lu\n", pick(set, set_size, base, base_size, 4, &lfsr));
 
 }
 
