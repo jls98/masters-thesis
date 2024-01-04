@@ -84,8 +84,7 @@ static uint64_t pick(const uint64_t *set_addr, const uint64_t set_size, const ui
 
 /* create minimal eviction set from base set for        */
 /* victim_adrs in evict_set                             */
-static void create_minimal_eviction_set(const void *base_set, const uint64_t base_size, uint64_t *evict_set, uint64_t *evict_size, const uint64_t victim_adrs);
- 
+static void create_minimal_eviction_set(const void *base_set, const uint64_t base_size, uint64_t *evict_set, uint64_t *evict_size, const uint64_t *victim_adrs);
 /* #################################################### */
 /* ################## implementation ################## */
 /* #################################################### */
