@@ -53,6 +53,7 @@ void test_create_pointer_chase(){
     CU_ASSERT_EQUAL(base[360], &base[92]);
     CU_ASSERT_EQUAL(base[92], &base[92]); // remains the same! problem occured here
    
+
     // regular pointer chase
     base_size=512;
     set_size=5;

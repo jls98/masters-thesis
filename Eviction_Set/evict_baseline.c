@@ -167,7 +167,7 @@ static void create_pointer_chase(const void **addr, const uint64_t size, const u
         printf("create_pointer_chase: index set[0] > size! Element not contained in base set!");
         return;
     } 
-    for (uint64_t i = 1; i<set_size-2; i++){
+    for (uint64_t i = 1; i<set_size; i++){
         if (set[i] >= size){
             printf("create_pointer_chase: current index > size! Element not contained in base set!");
             return;
