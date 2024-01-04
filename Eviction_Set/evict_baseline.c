@@ -6,13 +6,13 @@
 
 /* threshold values for loading 1 adrs                  */
 // IntelGen12 e core
-#define THRESHOLD_SINGLE_L1D_E12 61      // ~2.2/ <60 on single measurement
+#define THRESHOLD_SINGLE_L1D_E12 200      // ~2.2/ <60 on single measurement / new 200? 140-180
 #define THRESHOLD_SINGLE_L2_E12 17      // <15
 #define THRESHOLD_SINGLE_LLC_E12 70     // >40 (?)
 #define THRESHOLD_SINGLE_DEFAULT_E12 THRESHOLD_SINGLE_L1D_E12
 
 // IntelGen12 p core
-#define THRESHOLD_SINGLE_L1D_P12 31      // 2.6/ <30 in single measurement
+#define THRESHOLD_SINGLE_L1D_P12 150      // 2.6/ <30 in single measurement / new 100? 60-90
 #define THRESHOLD_SINGLE_L2_P12 9       // <8
 #define THRESHOLD_SINGLE_LLC_P12 50     // ~30 (?)
 #define THRESHOLD_SINGLE_DEFAULT_P12 THRESHOLD_SINGLE_L1D_P12
@@ -207,8 +207,13 @@ static int64_t test1(void *addr, uint64_t size, void* cand, uint64_t threshold){
     uint64_t delta = rdtscpfence() - time;
     printf("delta %lu\n", delta);
     return delta > threshold;
-    
-	/*volatile uint64_t time;
+}
+
+/* not sure what to use though -> Threshold values depend on implementation
+static int64_t test1(void *addr, uint64_t size, void* cand, uint64_t threshold){    
+    if (size==0 || addr==NULL || cand==NULL) return -1; // parameter check
+
+	volatile uint64_t time;
 	asm __volatile__ (
 		// load candidate and set 
 		// BEGIN - read every entry in addr
@@ -242,7 +247,6 @@ static int64_t test1(void *addr, uint64_t size, void* cand, uint64_t threshold){
 		: "c" (addr), "r" (size), "r" (cand)
 		: "rsi", "rdx"
 	);
-    printf("time %lu\n", time);
 	return time > threshold? 1 : 0;*/
 }
 
