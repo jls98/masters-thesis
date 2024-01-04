@@ -22,6 +22,8 @@
 #define THRESHOLD_SINGLE_LLC_LAB 45     // ~30
 #define THRESHOLD_SINGLE_DEFAULT_LAB THRESHOLD_SINGLE_L1D_LAB
 
+#define THRESHOLD THRESHOLD_SINGLE_DEFAULT_E12
+
 #define CACHESIZE_DEFAULT 32768         // L1D e|lab 
 //#define CACHESIZE_DEFAULT OTHERS TODO
 
@@ -57,14 +59,14 @@ static uint64_t lfsr_step(uint64_t lfsr);
 /* addr: pointer to mapped adrs with size elements.     */
 /* cand: candidate adrs.                                */
 /* returns true if measurement is above a threshold.    */
-static uint64_t test1(const void *addr, const uint64_t size, const void* cand)
+static uint64_t test1(const void *addr, const uint64_t size, const void* cand);
 
 /* test2: eviction test for an arbitrary address.       */
 /* Loads all elements from eviction set and then loads  */
 /* elements again and measures time.                    */
 /* addr: pointer to mapped adrs with size elements.     */
 /* returns true if measurement is above a threshold.    */
-static uint64_t test2(const void *addr, const uint64_t size)
+static uint64_t test2(const void *addr, const uint64_t size);
 
 /* pointer chase: creates pointer chase in subset of    */
 /* by addr mapped set with size many elements.          */
