@@ -46,11 +46,16 @@ void test_create_pointer_chase(){
     create_pointer_chase(base, base_size, set, 0);
     
     // regular
-    CU_ASSERT_EQUAL(base[1], &base[128]);
+    CU_ASSERT_EQUAL(base[42], &base[128]);
+    printf("42 %p &128 %p\n", base[42], &base[128]);
     CU_ASSERT_EQUAL(base[128], &base[255]);
+    printf("128 %p &255 %p\n", base[128], &base[255]);
     CU_ASSERT_EQUAL(base[255], &base[17]);
+    printf("255 %p &17 %p\n", base[255], &base[17]);
     CU_ASSERT_EQUAL(base[17], &base[360]);
+    printf("17 %p &360 %p\n", base[17], &base[360]);
     CU_ASSERT_EQUAL(base[360], &base[92]);
+    printf("360 %p &92 %p\n", base[360], &base[92]);
     CU_ASSERT_EQUAL(base[92], &base[92]); // remains the same! problem occured here
     
     // 
