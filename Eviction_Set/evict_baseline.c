@@ -81,7 +81,7 @@ static void create_pointer_chase(const void **addr, const uint64_t size, const u
 /* of base set and picked with lfsr state in possible   */
 /* range. Furthermore, remove candidate index from      */
 /* currently available indexes in base set.             */
-/* returns index of candidate                           */
+/* returns index of candidate, if none found size+1     */
 static uint64_t pick(const uint64_t *set_addr, const uint64_t set_size, const uint64_t *base_addr, const uint64_t size, uint64_t lfsr);
 
 /* create minimal eviction set from base set for        */
@@ -117,7 +117,8 @@ int main(int ac, char **av){
 #endif
 static void create_minimal_eviction_set(const void *base_set, const uint64_t base_size, uint64_t *evict_set, uint64_t *evict_size, const uint64_t *victim_adrs){
     uint64_t *current_base_set = (uint64_t *) malloc(base_size * sizeof(uint64_t));
-
+    
+    uint64_t lfsr = lfsr_create();
     return;
     /* baseline algorithm */
     // TODO
@@ -180,6 +181,33 @@ static void create_pointer_chase(const void **addr, const uint64_t size, const u
 
 }
 
-static uint64_t pick(const uint64_t *set_addr, const uint64_t set_size, const uint64_t *base_addr, const uint64_t size, uint64_t lfsr) {
-    return 1; // TODO
+static uint64_t pick(const uint64_t *set, const uint64_t set_size, const uint64_t *base, const uint64_t size, uint64_t *lfsr) {
+    // uninitialized parameters
+    if (lfsr==NULL || set==NULL || base==NULL){
+        return size+1;
+    }
+    
+    uint64_t candidate = NULL, j;
+    
+    // 99999 times set size + base size should suffice to find candidate in legitimate cases
+    for(uint64_t i=0; i<99999*(set_size+size);i++){         
+        // pick pseudo-random candidate index
+        candidate = lfsr_rand(lfsr) % size;
+        
+        // check if its in eviction set
+        for (j=0;j<set_size-1;j++){
+            if (set[j] == candidate) break; // need new candidate
+        }
+        // check if its still part from base or already excluded
+        if (j==set_size-1){
+            for (j=0;j<size-1;j++){
+                if (base[j]==candidate){
+                    return candidate; // success, not in eviction set and in candidate set
+                }
+            } // if never successful, not part of candidate set anymore  
+        }
+    }
+    
+    // did not find candidate -> nothing to pick
+    return size+1;
 }
