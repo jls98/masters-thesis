@@ -148,7 +148,47 @@ static uint64_t lfsr_step(uint64_t lfsr) {
   return (lfsr & 1) ? (lfsr >> 1) ^ FEEDBACK : (lfsr >> 1);
 }
 
-static uint64_t test1(const void *addr, const uint64_t size, const void* cand){
+static int64_t test1(const void *addr, const uint64_t size, const void* cand){
+    if (size==0 || addr==NULL || cand==NULL) return -1; // parameter check
+	
+	volatile uint64_t time;
+	asm __volatile__ (
+        "mfence;"
+        "lfence;"
+		// load candidate and set 
+		// BEGIN - read every entry in addr
+        "mov rax, %1;"
+        "mov rdx, %2;"
+		"mov rsi, [%3];" // load candidate 
+        "lfence;"
+        "loop:"
+		"mov rax, [rax];"
+        "dec rdx;"
+        "jnz loop;"
+		// END - reading set
+        // measure start
+		"lfence;"
+		"rdtsc;"		
+		"lfence;"
+		"mov rsi, rax;"
+        // high precision
+        "shl rdx, 32;"
+		"or rsi, rdx;"
+		"mov rax, [%3];" // load candidate 	
+		"lfence;"
+		"rdtsc;"
+        // start - high precision
+        "shl rdx, 32;"
+        "or rax, rdx;"
+        // end - high precision
+		"sub rax, rsi;"
+		: "=a" (time)
+		: "c" (addr), "r" (size), "r" (cand)
+		: "rsi", "rdx"
+	);
+	return time > THRESHOLD? 1 : 0;
+    
+    
     return 1; // TODO, implement first!
 }
 
