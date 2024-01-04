@@ -20,24 +20,19 @@ void test_test1(){
     // uninitialized params/errors
     
     CU_ASSERT_EQUAL(TEST1(NULL, set_size, cand), -1); // assure self assignment
-    CU_ASSERT_EQUAL(TEST1(base, 0, cand), -1); // assure self assignment
-    CU_ASSERT_EQUAL(TEST1(base, set_size, NULL), -1); // assure self assignment
+    CU_ASSERT_EQUAL(TEST1(&base[set[0]], 0, cand), -1); // assure self assignment
+    CU_ASSERT_EQUAL(TEST1(&base[set[0]], set_size, NULL), -1); // assure self assignment
 
     
     // regular case (full huge page should evict (hopefully))
-    CU_ASSERT_EQUAL(TEST1(base, set_size, cand), 1); // assure self assignment
-    printf("timep %lu\n", probe(base, set_size, (void *) cand));
+    CU_ASSERT_EQUAL(TEST1(&base[set[0]], set_size, cand), 1); // assure self assignment
     
     set[0]=5;
     set[1]=23;
     set[2]=65;
     create_pointer_chase(base, size, set, 3); // eviction set far too small -> no eviction of candidate
-    CU_ASSERT_EQUAL(TEST1(base, 3, cand), 0); // assure self assignment
-    //printf("case 3 set %li\n", TEST1(base, 3, cand));
-    
-    printf("timep %lu\n", probe(base, 3, (void *) cand));
-    printf("timep %lu\n", probe(base, 3, (void *) &base[6]));
-    
+    CU_ASSERT_EQUAL(TEST1(&base[set[0]], 3, cand), 0); // assure self assignment
+    //printf("case 3 set %li\n", TEST1(base, 3, cand)); 
 }
 
 void test_pick(){

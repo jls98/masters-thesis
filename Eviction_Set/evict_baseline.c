@@ -204,7 +204,7 @@ static int64_t test1(const void *addr, const uint64_t size, const void* cand, ui
 
     __asm__ volatile ("mfence");
     uint64_t time = rdtscpfence();
-    while (count-->0) cur_adrs = maccess(addr[]);
+    while (count-->0) cur_adrs = maccess(cur_adrs);
     uint64_t delta = rdtscpfence() - time;
     
     return delta > threshold;
