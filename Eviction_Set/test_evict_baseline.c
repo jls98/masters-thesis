@@ -3,6 +3,7 @@
 #include <CUnit/Basic.h>
 
 void test_test1(){
+    printf("testing test1...\n");
     uint64_t size = CACHESIZE_DEFAULT*8, set_size=size; // set size should be large enough to evict everything from L1 lol
     void **base = mmap(NULL, size * sizeof(void *), PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB, -1, 0);
     uint64_t *cand = (uint64_t *) malloc(sizeof(uint64_t *)); // just some random candidate :D
@@ -28,7 +29,7 @@ void test_test1(){
     set[2]=65;
     create_pointer_chase(base, size, set, 3); // eviction set far too small -> no eviction of candidate
     CU_ASSERT_EQUAL(TEST1(base, 3, cand), 0); // assure self assignment
-   
+    printf("case 3 set %li\n", TEST1(base, 3, cand));
     
 }
 
