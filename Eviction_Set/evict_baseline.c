@@ -43,13 +43,13 @@
 static void wait(uint64_t cycles);
 
 /* access pointed adrs p                                */
-inline void* maccess(void *p);
+static inline void* maccess(void *p);
 
 /* lfenced time measurement; returns time stamp         */
-inline uint64_t rdtscpfence();
+static inline uint64_t rdtscpfence();
 
 /* time measurement; returns time stamp                 */
-inline uint64_t rdtscp();
+static inline uint64_t rdtscp();
 
 /* #################################################### */
 /* ############## pseudo random generator ############# */
@@ -144,13 +144,13 @@ static void wait(uint64_t cycles) {
 	while (rdtscp() - start < cycles);
 }
 
-inline void* maccess(void *p){
+static inline void* maccess(void *p){
     void *ret;
     __asm__ volatile("movq rax, %0;" : "=a"(ret) : "c" (p));
     return ret;
 }
 
-inline uint64_t rdtscpfence(){
+static inline uint64_t rdtscpfence(){
     uint64_t a, d;
     __asm__ volatile(
         "lfence;"
@@ -161,7 +161,7 @@ inline uint64_t rdtscpfence(){
     return ((d<<32) | a);
 }
 
-inline uint64_t rdtscp()
+static inline uint64_t rdtscp()
 {
 	unsigned a, d;
 	__asm__ volatile(
