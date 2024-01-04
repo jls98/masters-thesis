@@ -140,9 +140,8 @@ static void create_minimal_eviction_set(void *base_set, uint64_t base_size, uint
 }
 
 static void wait(uint64_t cycles) {
-	unsigned int ignore;
-	uint64_t start = __rdtscp(&ignore);
-	while (__rdtscp(&ignore) - start < cycles);
+	uint64_t start = rdtscp();
+	while (rdtscp() - start < cycles);
 }
 
 inline void* maccess(void *p){
