@@ -33,7 +33,7 @@ void test_test1(){
     set[2]=65;
     create_pointer_chase(base, size, set, 3); // eviction set far too small -> no eviction of candidate
     CU_ASSERT_EQUAL(TEST1(base, 3, cand), 0); // assure self assignment
-    printf("case 3 set %li\n", TEST1(base, 3, cand));
+    //printf("case 3 set %li\n", TEST1(base, 3, cand));
     
     printf("timep %lu\n", probe(base, 3, (void *) cand));
     printf("timep %lu\n", probe(base, 3, (void *) &base[6]));
