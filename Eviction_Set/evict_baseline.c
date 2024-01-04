@@ -154,7 +154,7 @@ inline void* maccess(void *p){
 
 inline uint64_t rdtscpfence(){
     uint64_t a, d;
-    __asm__ volatile("
+    __asm__ volatile(
         "lfence;"
         "rdtscp;"
         "lfence;"
@@ -166,7 +166,8 @@ inline uint64_t rdtscpfence(){
 inline uint64_t rdtscp()
 {
 	unsigned a, d;
-	__asm__ volatile("rdtscp\n"
+	__asm__ volatile(
+    "rdtscp;"
 	"mov %0, edx;"
 	"mov %1, eax;"
 	: "=r" (a), "=r" (d)
