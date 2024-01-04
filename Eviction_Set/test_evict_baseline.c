@@ -47,7 +47,7 @@ void test_pick(){
     // regular, 1 option left, base[0] should be always skipped
     CU_ASSERT_EQUAL(pick(set, set_size, base, 2, size, &lfsr), 65); 
 
-    printf("%lu\n", pick(set, set_size, base, base_size, 4, &lfsr));
+    printf("%lu\n", pick(set, set_size, base, 2, 100, &lfsr));
 
 }
 
