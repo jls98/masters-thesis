@@ -2,6 +2,36 @@
 #include <CUnit/CUnit.h>
 #include <CUnit/Basic.h>
 
+void test_test1(){
+    uint64_t size = CACHESIZE_DEFAULT*8, set_size=size; // set size should be large enough to evict everything from L1 lol
+    void **base = mmap(NULL, size * sizeof(void *), PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB, -1, 0);
+    uint64_t *cand = (uint64_t *) malloc(sizeof(uint64_t *)); // just some random candidate :D
+    uint64_t *set = (uint64_t *) malloc(set_size*sizeof(uint64_t *)); // indexes from 0-8 in eviction set
+    for (uint64_t i=0; i<set_size-1;i++){
+        set[i]=i; // naive eviction set xd
+    }
+    
+    // create pointer chase on base set
+    create_pointer_chase(base, size, set, set_size);
+    // uninitialized params/errors
+    
+    CU_ASSERT_EQUAL(test1(NULL, set_size, cand), -1); // assure self assignment
+    CU_ASSERT_EQUAL(test1(base, 0, cand), -1); // assure self assignment
+    CU_ASSERT_EQUAL(test1(base, set_size, NULL), -1); // assure self assignment
+
+    
+    // regular case (full huge page should evict (hopefully))
+    CU_ASSERT_EQUAL(test1(base, set_size, cand), 1); // assure self assignment
+    
+    set[0]=5;
+    set[1]=23;
+    set[2]=65;
+    create_pointer_chase(base, size, set, 3); // eviction set far too small -> no eviction of candidate
+    CU_ASSERT_EQUAL(test1(base, 3, cand), 0); // assure self assignment
+   
+    
+}
+
 void test_pick(){
     printf("testing pick...\n");
     uint64_t set_size = 5;      // size of current eviction set
@@ -101,6 +131,7 @@ int main() {
     CU_pSuite suite = CU_add_suite("Test Suite evict_baseline", NULL, NULL);
     CU_add_test(suite, "Test create_pointer_chase", test_create_pointer_chase);
     CU_add_test(suite, "Test pick", test_pick);
+    CU_add_test(suite, "Test test1", test_test1);
 
     CU_basic_run_tests();
     CU_cleanup_registry();

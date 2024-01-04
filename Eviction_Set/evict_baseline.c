@@ -24,10 +24,17 @@
 #define THRESHOLD_SINGLE_LLC_LAB 45     // ~30
 #define THRESHOLD_SINGLE_DEFAULT_LAB THRESHOLD_SINGLE_L1D_LAB
 
-#define THRESHOLD THRESHOLD_SINGLE_DEFAULT_E12
+#define THRESHOLD THRESHOLD_SINGLE_DEFAULT_P12
 
 #define CACHESIZE_DEFAULT 32768         // L1D e|lab 
 //#define CACHESIZE_DEFAULT OTHERS TODO
+
+// optional arguments for threshold in test functions, defaults to THRESHOLD
+#define DEF_OR_ARG(value,...) value
+#define TEST1(addr, size, cand, ...) test1(addr, size, cand, DEF_OR_ARG(__VA_ARGS__ __VA_OPT__(,) THRESHOLD))
+#define TEST2(addr, size, ...) test2(addr, size, DEF_OR_ARG(__VA_ARGS__ __VA_OPT__(,) THRESHOLD))
+
+
 
 /* #################################################### */
 /* ####################### utils ###################### */
@@ -148,7 +155,7 @@ static uint64_t lfsr_step(uint64_t lfsr) {
   return (lfsr & 1) ? (lfsr >> 1) ^ FEEDBACK : (lfsr >> 1);
 }
 
-static int64_t test1(const void *addr, const uint64_t size, const void* cand){
+static int64_t test1(const void *addr, const uint64_t size, const void* cand, uint64_t threshold){
     if (size==0 || addr==NULL || cand==NULL) return -1; // parameter check
 	
 	volatile uint64_t time;
@@ -186,10 +193,7 @@ static int64_t test1(const void *addr, const uint64_t size, const void* cand){
 		: "c" (addr), "r" (size), "r" (cand)
 		: "rsi", "rdx"
 	);
-	return time > THRESHOLD? 1 : 0;
-    
-    
-    return 1; // TODO, implement first!
+	return time > threshold? 1 : 0;
 }
 
 static uint64_t test2(const void *addr, const uint64_t size){
