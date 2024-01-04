@@ -1,6 +1,7 @@
 #include "evict_baseline.c"
 #include <CUnit/CUnit.h>
 #include <CUnit/Basic.h>
+#include "evict1.c"
 
 void test_test1(){
     printf("testing test1...\n");
@@ -32,6 +33,8 @@ void test_test1(){
     create_pointer_chase(base, size, set, 3); // eviction set far too small -> no eviction of candidate
     CU_ASSERT_EQUAL(TEST1(base, 3, cand), 0); // assure self assignment
     printf("case 3 set %li\n", TEST1(base, 3, cand));
+    
+    printf("time %lu\n", probe(base, 3, cand));
     
 }
 

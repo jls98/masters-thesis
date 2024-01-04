@@ -21,7 +21,7 @@ evict_baseline: Eviction_Set/evict_baseline.c
 	$(CC) $(CFLAGS) -o build/evict_baseline  Eviction_Set/evict_baseline.c
     
 test_evict_baseline: Eviction_Set/test_evict_baseline.c 
-	$(CC) $(CFLAGS) -o build/test_evict_baseline -DTESTCASE  Eviction_Set/test_evict_baseline.c Eviction_Set/evict_baseline.c -lcunit
+	$(CC) $(CFLAGS) -o build/test_evict_baseline -DTESTCASE  Eviction_Set/test_evict_baseline.c Eviction_Set/evict_baseline.c Eviction_Set/evict1.c -lcunit
     
 file_generator: utils/file_generator.c
 	$(CC) $(CFLAGS) -o build/file_generator utils/file_generator.c
