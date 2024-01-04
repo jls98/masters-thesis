@@ -156,7 +156,7 @@ static uint64_t test2(const void *addr, const uint64_t size){
     return 1; // TODO
 }
 
-static void create_pointer_chase(const void **addr, const uint64_t size, const uint64_t *set, const uint64_t set_size){
+static void create_pointer_chase(void **addr, const uint64_t size, const uint64_t *set, const uint64_t set_size){
     
     for (uint64_t i=0; i< size-1;i++) addr[i]=&addr[i]; // every adrs points to itself/cleanup
        

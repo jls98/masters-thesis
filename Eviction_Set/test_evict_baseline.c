@@ -8,7 +8,7 @@ void test_create_pointer_chase(){
     
     uint64_t base_size = 512;
     uint64_t set_size = 0;
-    void* *base = mmap(NULL, base_size * sizeof(void *), PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB, -1, 0);
+    void **base = mmap(NULL, base_size * sizeof(void *), PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB, -1, 0);
     uint64_t *set = (uint64_t *) malloc(base_size * sizeof(uint64_t *));
     
     // set some values
