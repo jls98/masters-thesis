@@ -205,7 +205,7 @@ static int64_t test1(void *addr, uint64_t size, void* cand, uint64_t threshold){
     uint64_t time = rdtscpfence();
     while (count-->0) cur_adrs = maccess(cur_adrs);
     uint64_t delta = rdtscpfence() - time;
-    
+    printf("delta %lu\n", delta);
     return delta > threshold;
     
 	/*volatile uint64_t time;
