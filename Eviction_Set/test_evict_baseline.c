@@ -35,7 +35,7 @@ void test_create_pointer_chase(){
 
     
     // case set size = 0
-    create_pointer_chase(base, base_size, set, 0);
+    create_pointer_chase(base, base_size, set, set_size);
     for (uint64_t i=0; i<base_size-1;i++){
         CU_ASSERT_EQUAL(base[i], &base[i]); // assure self assignment
     }
@@ -43,7 +43,7 @@ void test_create_pointer_chase(){
     // case element index out of range
     base_size=511;
     set_size=20;
-    create_pointer_chase(base, base_size, set, 0);
+    create_pointer_chase(base, base_size, set, set_size);
     
     // regular
     CU_ASSERT_EQUAL(base[42], &base[128]);
