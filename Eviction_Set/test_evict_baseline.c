@@ -8,6 +8,8 @@ void test_test1(){
     void **base = mmap(NULL, size * sizeof(void *), PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB, -1, 0);
     uint64_t *cand = (uint64_t *) malloc(sizeof(uint64_t *)); // just some random candidate :D
     uint64_t *set = (uint64_t *) malloc(set_size*sizeof(uint64_t *)); // indexes from 0-8 in eviction set
+    
+    wait(1E9);
     for (uint64_t i=0; i<set_size-1;i++){
         set[i]=i; // naive eviction set xd
     }
