@@ -6,13 +6,13 @@
 
 /* threshold values for loading 1 adrs                  */
 // IntelGen12 e core
-#define THRESHOLD_SINGLE_L1D_E12 61      // ~2.2/ 61<60 on single measurement / new 200? 140-180
+#define THRESHOLD_SINGLE_L1D_E12 200      // ~2.2/ 61<60 on single measurement / new 200? 140-180
 #define THRESHOLD_SINGLE_L2_E12 17      // <15
 #define THRESHOLD_SINGLE_LLC_E12 70     // >40 (?)
 #define THRESHOLD_SINGLE_DEFAULT_E12 THRESHOLD_SINGLE_L1D_E12
 
 // IntelGen12 p core
-#define THRESHOLD_SINGLE_L1D_P12 31      // 2.6/ 31<30 in single measurement / new 150? 60-90
+#define THRESHOLD_SINGLE_L1D_P12 150      // 2.6/ 31<30 in single measurement / new 150? 60-90
 #define THRESHOLD_SINGLE_L2_P12 9       // <8
 #define THRESHOLD_SINGLE_LLC_P12 50     // ~30 (?)
 #define THRESHOLD_SINGLE_DEFAULT_P12 THRESHOLD_SINGLE_L1D_P12
@@ -190,26 +190,32 @@ static uint64_t lfsr_rand(uint64_t* lfsr) {
 static uint64_t lfsr_step(uint64_t lfsr) {
   return (lfsr & 1) ? (lfsr >> 1) ^ FEEDBACK : (lfsr >> 1);
 }
-/*
+
+// delete */ to toggle test1 implementation -> keep in mind that change of threshold values is required
+/* */
 static int64_t test1(void *addr, uint64_t size, void* cand, uint64_t threshold){
     if (size==0 || addr==NULL || cand==NULL) return -1; // parameter check
 	uint64_t count = size;
     void *cur_adrs = addr;
     wait(1E9);
-    maccess(cand);
+    // load candidate
     maccess(cand);
     maccess(cand);
     maccess(cand);
 
     __asm__ volatile ("mfence");
-    uint64_t time = rdtscpfence();
+    // load eviction set
     while (count-->0) cur_adrs = maccess(cur_adrs);
+    
+    // measure time to access candidate
+    uint64_t time = rdtscpfence();
+    maccess(cand);
     uint64_t delta = rdtscpfence() - time;
     printf("delta %lu\n", delta);
     return delta > threshold;
-}*/
+}
 
-/* not sure what to use though -> Threshold values depend on implementation*/
+/*/ not sure what to use though -> Threshold values depend on implementation
 static int64_t test1(void *addr, uint64_t size, void* cand, uint64_t threshold){    
     if (size==0 || addr==NULL || cand==NULL) return -1; // parameter check
 
@@ -248,7 +254,7 @@ static int64_t test1(void *addr, uint64_t size, void* cand, uint64_t threshold){
 		: "rsi", "rdx"
 	);
 	return time > threshold? 1 : 0;
-}
+} /**/
 
 static uint64_t test2(void *addr, uint64_t size){
     return 1; // TODO
