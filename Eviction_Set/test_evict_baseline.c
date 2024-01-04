@@ -57,7 +57,8 @@ void test_create_pointer_chase(){
     CU_ASSERT_EQUAL(base[360], &base[92]);
     printf("360 %p &92 %p\n", base[360], &base[92]);
     CU_ASSERT_EQUAL(base[92], &base[92]); // remains the same! problem occured here
-    
+     printf("92 %p &511 %p\n", base[92], &base[511]);
+   
     // 
     
 }
