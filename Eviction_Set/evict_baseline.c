@@ -41,7 +41,7 @@
 /* #################################################### */
 
 /* wait for cycles cycles and activate cache            */
-static void wait(const uint64_t cycles);
+static void wait(uint64_t cycles);
 
 /* access pointed adrs p                                */
 inline void* maccess(void *p);
@@ -76,20 +76,20 @@ static uint64_t lfsr_step(uint64_t lfsr);
 /* addr: pointer to first element from eviction set     */
 /* cand: candidate adrs.                                */
 /* returns true if measurement is above a threshold.    */
-static int64_t test1(const void *addr, const uint64_t size, const void* cand, uint64_t threshold);
+static int64_t test1(void *addr, uint64_t size, void* cand, uint64_t threshold);
 
 /* test2: eviction test for an arbitrary address.       */
 /* Loads all elements from eviction set and then loads  */
 /* elements again and measures time.                    */
 /* addr: pointer to mapped adrs with size elements.     */
 /* returns true if measurement is above a threshold.    */
-static uint64_t test2(const void *addr, const uint64_t size);
+static uint64_t test2(void *addr, uint64_t size);
 
 /* pointer chase: creates pointer chase in subset of    */
 /* by addr mapped set with size many elements.          */
 /* set contains pointer to set of indexes of set of     */
 /* interest with set_size many elements.                */
-static void create_pointer_chase(void **addr, const uint64_t size, const uint64_t *set, const uint64_t set_size);
+static void create_pointer_chase(void **addr, uint64_t size, uint64_t *set, uint64_t set_size);
 
 /* pick lfsr pseudo-randomized next candidate (index)   */
 /* new candidate should not be in eviction set, be part */
@@ -97,11 +97,11 @@ static void create_pointer_chase(void **addr, const uint64_t size, const uint64_
 /* range. Furthermore, remove candidate index from      */
 /* currently available indexes in base set.             */
 /* returns index of candidate, if none found size+1     */
-static uint64_t pick(const uint64_t *set, const uint64_t set_size, const uint64_t *base, const uint64_t base_size, const uint64_t size, uint64_t *lfsr);
+static uint64_t pick(uint64_t *set, uint64_t set_size, uint64_t *base, uint64_t base_size, uint64_t size, uint64_t *lfsr);
 
 /* create minimal eviction set from base set for        */
 /* victim_adrs in evict_set                             */
-static void create_minimal_eviction_set(const void *base_set, const uint64_t base_size, uint64_t *evict_set, uint64_t *evict_size, const uint64_t *victim_adrs);
+static void create_minimal_eviction_set(void *base_set, uint64_t base_size, uint64_t *evict_set, uint64_t *evict_size, uint64_t *victim_adrs);
 /* #################################################### */
 /* ################## implementation ################## */
 /* #################################################### */
@@ -131,7 +131,7 @@ int main(int ac, char **av){
 }
 #endif
 
-static void create_minimal_eviction_set(const void *base_set, const uint64_t base_size, uint64_t *evict_set, uint64_t *evict_size, const uint64_t *victim_adrs){
+static void create_minimal_eviction_set(void *base_set, uint64_t base_size, uint64_t *evict_set, uint64_t *evict_size, uint64_t *victim_adrs){
     uint64_t *current_base_set = (uint64_t *) malloc(base_size * sizeof(uint64_t));
     
     uint64_t lfsr = lfsr_create();
@@ -140,7 +140,7 @@ static void create_minimal_eviction_set(const void *base_set, const uint64_t bas
     // TODO
 }
 
-static void wait(const uint64_t cycles) {
+static void wait(uint64_t cycles) {
 	unsigned int ignore;
 	uint64_t start = __rdtscp(&ignore);
 	while (__rdtscp(&ignore) - start < cycles);
@@ -192,7 +192,7 @@ static uint64_t lfsr_step(uint64_t lfsr) {
   return (lfsr & 1) ? (lfsr >> 1) ^ FEEDBACK : (lfsr >> 1);
 }
 
-static int64_t test1(const void *addr, const uint64_t size, const void* cand, uint64_t threshold){
+static int64_t test1(void *addr, uint64_t size, void* cand, uint64_t threshold){
     if (size==0 || addr==NULL || cand==NULL) return -1; // parameter check
 	uint64_t count = size;
     void *cur_adrs = addr;
@@ -247,11 +247,11 @@ static int64_t test1(const void *addr, const uint64_t size, const void* cand, ui
 	return time > threshold? 1 : 0;*/
 }
 
-static uint64_t test2(const void *addr, const uint64_t size){
+static uint64_t test2(void *addr, uint64_t size){
     return 1; // TODO
 }
 
-static void create_pointer_chase(void **addr, const uint64_t size, const uint64_t *set, const uint64_t set_size){
+static void create_pointer_chase(void **addr, uint64_t size, uint64_t *set, uint64_t set_size){
     
     for (uint64_t i=0; i< size-1;i++) addr[i]=&addr[i]; // every adrs points to itself/cleanup
        
@@ -276,7 +276,7 @@ static void create_pointer_chase(void **addr, const uint64_t size, const uint64_
 
 }
 
-static uint64_t pick(const uint64_t *set, const uint64_t set_size, const uint64_t *base, const uint64_t base_size, const uint64_t size, uint64_t *lfsr) {
+static uint64_t pick(uint64_t *set, uint64_t set_size, uint64_t *base, uint64_t base_size, uint64_t size, uint64_t *lfsr) {
     // uninitialized parameters
     if (lfsr==NULL || set==NULL || base==NULL || base_size ==0 || size==0){
         return size+1;
