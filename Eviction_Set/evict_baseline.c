@@ -163,7 +163,7 @@ static int64_t test1(const void *addr, const uint64_t size, const void* cand, ui
 		// load candidate and set 
 		// BEGIN - read every entry in addr
 
-        "mov rax, %1;"
+        /*"mov rax, %1;"
         "mov rdx, %2;"
 		"mov r8, [%3];" // load candidate 
         "loop:"
@@ -171,7 +171,7 @@ static int64_t test1(const void *addr, const uint64_t size, const void* cand, ui
         "dec rdx;"
         "jnz loop;"
 		// END - reading set
-        // measure start
+        // measure start*/
 		"mfence;"
         "lfence;"
 		"rdtsc;"		

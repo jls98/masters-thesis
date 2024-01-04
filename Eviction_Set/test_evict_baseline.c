@@ -26,7 +26,7 @@ void test_test1(){
     
     // regular case (full huge page should evict (hopefully))
     CU_ASSERT_EQUAL(TEST1(base, set_size, cand), 1); // assure self assignment
-    printf("time %lu\n", probe(base, set_size, (void *) cand));
+    printf("timep %lu\n", probe(base, set_size, (void *) cand));
     
     set[0]=5;
     set[1]=23;
@@ -35,8 +35,8 @@ void test_test1(){
     CU_ASSERT_EQUAL(TEST1(base, 3, cand), 0); // assure self assignment
     printf("case 3 set %li\n", TEST1(base, 3, cand));
     
-    printf("time %lu\n", probe(base, 3, (void *) cand));
-    printf("time %lu\n", probe(base, 3, (void *) &base[6]));
+    printf("timep %lu\n", probe(base, 3, (void *) cand));
+    printf("timep %lu\n", probe(base, 3, (void *) &base[6]));
     
 }
 
