@@ -174,6 +174,7 @@ static int64_t test1(const void *addr, const uint64_t size, const void* cand, ui
         "jnz loop;"
 		// END - reading set
         // measure start
+		"mov rax, [%3];" // load candidate 	
 		"lfence;"
 		"rdtsc;"		
 		"lfence;"
@@ -181,7 +182,6 @@ static int64_t test1(const void *addr, const uint64_t size, const void* cand, ui
         // high precision
         "shl rdx, 32;"
 		"or rsi, rdx;"
-		"mov rax, [%3];" // load candidate 	
 		"mov rax, [%3];" // load candidate 	
 		"lfence;"
 		"rdtsc;"
