@@ -82,7 +82,7 @@ static void create_pointer_chase(const void **addr, const uint64_t size, const u
 /* range. Furthermore, remove candidate index from      */
 /* currently available indexes in base set.             */
 /* returns index of candidate, if none found size+1     */
-static uint64_t pick(const uint64_t *set_addr, const uint64_t set_size, const uint64_t *base_addr, const uint64_t size, uint64_t lfsr);
+static uint64_t pick(const uint64_t *set, const uint64_t set_size, const uint64_t *base, const uint64_t size, uint64_t *lfsr);
 
 /* create minimal eviction set from base set for        */
 /* victim_adrs in evict_set                             */
