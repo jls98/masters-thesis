@@ -46,7 +46,9 @@ void test_create_pointer_chase(){
     
     // regular
     CU_ASSERT_EQUAL(base[1], &base[128]);
+    CU_ASSERT_EQUAL(base[1], &base[1]);
     CU_ASSERT_EQUAL(base[128], &base[255]);
+    CU_ASSERT_EQUAL(base[128], &base[128]);
     CU_ASSERT_EQUAL(base[255], &base[17]);
     CU_ASSERT_EQUAL(base[17], &base[360]);
     CU_ASSERT_EQUAL(base[360], &base[92]);
