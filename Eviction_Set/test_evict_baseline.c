@@ -35,6 +35,7 @@ void test_test1(){
     printf("case 3 set %li\n", TEST1(base, 3, cand));
     
     printf("time %lu\n", probe(base, 3, (void *) cand));
+    printf("time %lu\n", probe(base, 3, (void *) &base[6]));
     
 }
 
