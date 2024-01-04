@@ -4,16 +4,18 @@
 
 void test_pick(){
     printf("testing pick...\n");
-    uint64_t set_size = 5;
-    uint64_t size = 6;
+    uint64_t set_size = 5;      // size of current eviction set
+    uint64_t base_size = 6;     // size of current base set 
+    uint64_t size = 100;        // size of candidate set 
     uint64_t *set = (uint64_t *) malloc(set_size*sizeof(uint64_t *));
-    uint64_t *base = (uint64_t *) malloc(size*sizeof(uint64_t *));
+    uint64_t *base = (uint64_t *) malloc(base_size*sizeof(uint64_t *));
     uint64_t lfsr = lfsr_create();
-    // test uninitialized params
     
-    CU_ASSERT_EQUAL(pick(set, set_size, base, size, NULL), size+1);
-    CU_ASSERT_EQUAL(pick(set, set_size, NULL, size, &lfsr), size+1);
-    CU_ASSERT_EQUAL(pick(NULL, set_size, base, size, &lfsr), size+1);
+    // test uninitialized params
+    CU_ASSERT_EQUAL(pick(set, set_size, base, base_size, size, NULL), size+1);
+    CU_ASSERT_EQUAL(pick(set, set_size, base, base_size, 0, &lfsr), size+1);
+    CU_ASSERT_EQUAL(pick(set, set_size, NULL, base_size, size, &lfsr), size+1);
+    CU_ASSERT_EQUAL(pick(NULL, set_size, base, base_size, size, &lfsr), size+1);
    
     
     // set some arbitrary indexes
@@ -21,7 +23,7 @@ void test_pick(){
     set[1]=5;
     set[2]=2;
     set[3]=7;
-    set[4]=12;
+    set[4]=3;
     
     base[0]=5;
     base[1]=65;
@@ -32,16 +34,18 @@ void test_pick(){
     
     // test no candidate possible
     // no elements left in base
-    CU_ASSERT_EQUAL(pick(set, set_size, base, 0, &lfsr), size+1); 
-    printf("%lu\n", pick(set, set_size, base, 0, &lfsr));
+    CU_ASSERT_EQUAL(pick(set, set_size, base, 0, size, &lfsr), size+1); 
+    printf("%lu\n", pick(set, set_size, base, 0, size, &lfsr));
 
     // already in eviction set 
-    CU_ASSERT_EQUAL(pick(set, set_size, base, 1, &lfsr), size+1); 
-    printf("%lu\n", pick(set, set_size, base, 1, &lfsr));
+    CU_ASSERT_EQUAL(pick(set, set_size, base, 1, size, &lfsr), size+1); 
+    printf("%lu\n", pick(set, set_size, base, 1, size, &lfsr));
 
     // regular (in range?) (ASSERT_TRUE)
-    CU_ASSERT_EQUAL(pick(set, set_size, base, 2, &lfsr), 65); 
-    printf("%lu\n", pick(set, set_size, base, 2, &lfsr));
+    CU_ASSERT_EQUAL(pick(set, set_size, base, 2, size, &lfsr), 65); 
+    printf("%lu\n", pick(set, set_size, base, 2, size, &lfsr));
+
+    printf("%lu\n", pick(set, set_size, base, base_set, 4 &lfsr));
 
 }
 
