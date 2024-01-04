@@ -12,8 +12,8 @@ void test_pick(){
     // test uninitialized params
     
     CU_ASSERT_EQUAL(pick(set, set_size, base, size, NULL), size+1);
-    CU_ASSERT_EQUAL(pick(set, set_size, NULL, size, lfsr), size+1);
-    CU_ASSERT_EQUAL(pick(NULL, set_size, base, size, lfsr), size+1);
+    CU_ASSERT_EQUAL(pick(set, set_size, NULL, size, &lfsr), size+1);
+    CU_ASSERT_EQUAL(pick(NULL, set_size, base, size, &lfsr), size+1);
     
     
     // set some arbitrary indexes
@@ -32,12 +32,12 @@ void test_pick(){
     
     // test no candidate possible
     // no elements left in base
-    CU_ASSERT_EQUAL(pick(set, set_size, base, 0, lfsr), size+1); 
+    CU_ASSERT_EQUAL(pick(set, set_size, base, 0, &lfsr), size+1); 
     // already in eviction set 
-    CU_ASSERT_EQUAL(pick(set, set_size, base, 1, lfsr), size+1); 
+    CU_ASSERT_EQUAL(pick(set, set_size, base, 1, &lfsr), size+1); 
 
     // regular (in range?) (ASSERT_TRUE)
-    CU_ASSERT_EQUAL(pick(set, set_size, base, 2, lfsr), 65); 
+    CU_ASSERT_EQUAL(pick(set, set_size, base, 2, &lfsr), 65); 
 
 }
 
