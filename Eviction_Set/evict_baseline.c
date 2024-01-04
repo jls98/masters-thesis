@@ -165,12 +165,12 @@ static void create_pointer_chase(void **addr, const uint64_t size, const uint64_
     // create pointer chase between set elements
     uint64_t cur_in=set[0]; // current index (from set)
     if (set[0] >= size){
-        printf("create_pointer_chase: index set[0] > size! Element not contained in base set!");
+        printf("create_pointer_chase: index set[0] > size! Element not contained in base set!\n");
         return;
     } 
     for (uint64_t i = 1; i<set_size; i++){
         if (set[i] >= size){
-            printf("create_pointer_chase: current index > size! Element not contained in base set!");
+            printf("create_pointer_chase: current index > size! Element not contained in base set!\n");
             return;
         } 
         // set pointer to next element (set[i] contains index of next element)

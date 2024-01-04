@@ -9,13 +9,16 @@ void test_pick(){
     uint64_t *set = (uint64_t *) malloc(set_size*sizeof(uint64_t *));
     uint64_t *base = (uint64_t *) malloc(size*sizeof(uint64_t *));
     uint64_t lfsr = lfsr_create();
-    
+    printf("a");
     // test uninitialized params
     
     CU_ASSERT_EQUAL(pick(set, set_size, base, size, NULL), size+1);
+    printf("a");
     CU_ASSERT_EQUAL(pick(set, set_size, NULL, size, &lfsr), size+1);
+    printf("a");
     CU_ASSERT_EQUAL(pick(NULL, set_size, base, size, &lfsr), size+1);
-    
+     printf("a");
+   
     
     // set some arbitrary indexes
     set[0]=0;
@@ -30,13 +33,18 @@ void test_pick(){
     base[3]=10;
     base[4]=8;
     base[5]=9;
+    printf("a");
     
     // test no candidate possible
     // no elements left in base
     CU_ASSERT_EQUAL(pick(set, set_size, base, 0, &lfsr), size+1); 
+
+    printf("a");
+
     // already in eviction set 
     CU_ASSERT_EQUAL(pick(set, set_size, base, 1, &lfsr), size+1); 
 
+    printf("a");
     // regular (in range?) (ASSERT_TRUE)
     CU_ASSERT_EQUAL(pick(set, set_size, base, 2, &lfsr), 65); 
 
