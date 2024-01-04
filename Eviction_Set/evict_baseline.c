@@ -198,9 +198,10 @@ static uint64_t pick(const uint64_t *set, const uint64_t set_size, const uint64_
         for (j=0;j<set_size-1;j++){
             if (set[j] == candidate) break; // need new candidate
         }
+        printf("candidate %lu, set[j] %lu, j %lu\n", candidate, set[j], j);
         // check if its still part from base or already excluded
         if (j==set_size-1){
-            for (j=0;j<size-1;j++){
+            for (j=0;j<base_size-1;j++){
                 if (base[j]==candidate){
                     return candidate; // success, not in eviction set and in candidate set
                 }

@@ -13,7 +13,7 @@ void test_pick(){
     
     // test uninitialized params
     CU_ASSERT_EQUAL(pick(set, set_size, base, base_size, size, NULL), size+1);
-    CU_ASSERT_EQUAL(pick(set, set_size, base, base_size, 0, &lfsr), size+1);
+    CU_ASSERT_EQUAL(pick(set, set_size, base, base_size, 0, &lfsr), 1);
     CU_ASSERT_EQUAL(pick(set, set_size, NULL, base_size, size, &lfsr), size+1);
     CU_ASSERT_EQUAL(pick(NULL, set_size, base, base_size, size, &lfsr), size+1);
    
