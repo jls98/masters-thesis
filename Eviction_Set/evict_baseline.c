@@ -61,7 +61,7 @@ static uint64_t lfsr_step(uint64_t lfsr);
 /* addr: pointer to mapped adrs with size elements.     */
 /* cand: candidate adrs.                                */
 /* returns true if measurement is above a threshold.    */
-static uint64_t test1(const void *addr, const uint64_t size, const void* cand);
+static int64_t test1(const void *addr, const uint64_t size, const void* cand);
 
 /* test2: eviction test for an arbitrary address.       */
 /* Loads all elements from eviction set and then loads  */
