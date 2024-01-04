@@ -165,7 +165,7 @@ static int64_t test1(const void *addr, const uint64_t size, const void* cand, ui
 
         "mov rax, %1;"
         "mov rdx, %2;"
-		"mov r8, [%3];" // load candidate 
+		"mov rsi, [%3];" // load candidate 
         "loop:"
 		"mov rax, [rax];"
         "dec rdx;"
@@ -180,7 +180,7 @@ static int64_t test1(const void *addr, const uint64_t size, const void* cand, ui
         // high precision
         "shl rdx, 32;"
 		"or rsi, rdx;"
-		"mov r8, [%3];" // load candidate 	
+		"mov rax, [%3];" // load candidate 	
 		"lfence;"
 		"rdtsc;"
         // start - high precision
@@ -190,7 +190,7 @@ static int64_t test1(const void *addr, const uint64_t size, const void* cand, ui
 		"sub rax, rsi;"
 		: "=a" (time)
 		: "c" (addr), "r" (size), "r" (cand)
-		: "rsi", "rdx", "r8"
+		: "rsi", "rdx"
 	);
     printf("time %lu\n", time);
 	return time > threshold? 1 : 0;
