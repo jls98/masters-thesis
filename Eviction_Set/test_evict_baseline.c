@@ -3,6 +3,7 @@
 #include <CUnit/Basic.h>
 
 void test_pick(){
+    printf("testing pick...\n");
     uint64_t set_size = 5;
     uint64_t size = 6;
     uint64_t *set = (uint64_t *) malloc(set_size*sizeof(uint64_t *));
@@ -42,6 +43,7 @@ void test_pick(){
 }
 
 void test_create_pointer_chase(){
+    printf("testing create_pointer_chase...\n");
     uint64_t base_size = 512;
     uint64_t set_size = 0;
     void **base = mmap(NULL, base_size * sizeof(void *), PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB, -1, 0);
