@@ -21,7 +21,7 @@
 
 #define DEF_OR_ARG(value,...) value
 #define CREATE_POINTER_STRIDE_CHASE(addr, size, stride, ...) create_pointer_stride_chase(addr, size, stride, DEF_OR_ARG(__VA_ARGS__ __VA_OPT__(,) NULL))
-
+/*
 static uint64_t probe(const void *addr, const uint64_t reps, const void* cand);
 static void wait(const uint64_t cycles);
 static void control(uint64_t cache_size);
@@ -81,7 +81,7 @@ static uint64_t lfsr_step(uint64_t lfsr) {
 
 // addr contains first addr to array of pointerchase
 // reps pointer chase array size 
-// cand is candidate to probe
+// cand is candidate to probe*/
 static uint64_t probe(const void *addr, const uint64_t reps, const void* cand) {
 	if (reps==0) return 0; // if set is empty, it'll result in cache hit
 	
@@ -120,7 +120,7 @@ static uint64_t probe(const void *addr, const uint64_t reps, const void* cand) {
 	);
 	return time;
 }
-
+/*
 // create pointer chase over the valid indexes from addr in indexes where the amount of valid entries is size. indexes is optional
 // if indexes is not NULL use stride = 1 and value in stride as size of indexes
 static void create_pointer_stride_chase(void** addr, const uint64_t size, const uint32_t stride, uint64_t ** indexes) {
@@ -148,4 +148,4 @@ static void create_pointer_stride_chase(void** addr, const uint64_t size, const 
 	
 	
     
-}
+}*/
