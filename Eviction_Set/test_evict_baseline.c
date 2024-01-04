@@ -5,8 +5,8 @@
 void test_pick(){
     uint64_t set_size = 5;
     uint64_t size = 6;
-    uint64_t *set = (uint64_t *) malloc(set_size*sizeof(uint64_t *)));
-    uint64_t *base = (uint64_t *) malloc(size*sizeof(uint64_t *)));
+    uint64_t *set = (uint64_t *) malloc(set_size*sizeof(uint64_t *));
+    uint64_t *base = (uint64_t *) malloc(size*sizeof(uint64_t *));
     uint64_t lfsr = lfsr_create();
     
     // test uninitialized params
