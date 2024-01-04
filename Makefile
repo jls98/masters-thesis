@@ -1,7 +1,6 @@
 CC = gcc
 CFLAGS = -Wall -Wextra -masm=intel
-
-all: evict_baseline
+all: evict_baseline test_evict_baseline
 
 workshop3: Cache_Reversing/workshop3.c
 	$(CC) $(CFLAGS) -o build/workshop3  Cache_Reversing/workshop3.c
@@ -21,6 +20,9 @@ evict2: Eviction_Set/evict2.c
 evict_baseline: Eviction_Set/evict_baseline.c
 	$(CC) $(CFLAGS) -o build/evict_baseline  Eviction_Set/evict_baseline.c
     
+test_evict_baseline: Eviction_Set/test_evict_baseline.c 
+	$(CC) $(CFLAGS) -o build/test_evict_baseline  Eviction_Set/test_evict_baseline.c Eviction_Set/evict_baseline.c -lcunit
+    
 file_generator: utils/file_generator.c
 	$(CC) $(CFLAGS) -o build/file_generator utils/file_generator.c
 	
@@ -32,4 +34,4 @@ execute: utils/execute.c
 
 
 clean:
-	rm -f evict_baseline
+	rm -f evict_baseline test_evict_baseline
