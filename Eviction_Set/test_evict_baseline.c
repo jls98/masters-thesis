@@ -39,16 +39,8 @@ void test_pick(){
     // already in eviction set 
     CU_ASSERT_EQUAL(pick(set, set_size, base, 1, size, &lfsr), size+1); 
 
-    // regular (in range?) (ASSERT_TRUE)
-    CU_ASSERT_EQUAL(pick(set, set_size, base, 2, size, &lfsr), 65); 
-    printf("%lu\n", pick(set, set_size, base, 2, size, &lfsr));
-    
-
     // regular, 1 option left, base[0] should be always skipped
     CU_ASSERT_EQUAL(pick(set, set_size, base, 2, size, &lfsr), 65); 
-
-    printf("%lu\n", pick(set, set_size, base, 2, 100, &lfsr));
-
 }
 
 void test_create_pointer_chase(){

@@ -191,23 +191,14 @@ static uint64_t pick(const uint64_t *set, const uint64_t set_size, const uint64_
     
     // 99999 times set size + base size should suffice to find candidate in legitimate cases
     for(uint64_t i=0; i<99999*size;i++){         
-        // pick pseudo-random candidate index
+        // pick pseudo-random candidate by index from base set
         candidate = lfsr_rand(lfsr) % base_size;
         
         // check if its in eviction set
         for (j=0;j<set_size-1;j++){
             if (set[j] == base[candidate]) break; // need new candidate
         }
-        if(j==set_size-1) return base[candidate];
-        //printf("candidate %lu, set[j] %lu, j %lu\n", candidate, set[j], j);
-        // check if its still part from base or already excluded
-        /*if (j==set_size-1){
-            for (j=0;j<base_size-1;j++){
-                if (base[j]==candidate){
-                    return candidate; // success, not in eviction set and in candidate set
-                }
-            } // if never successful, not part of candidate set anymore  
-        }*/
+        if(j==set_size-1) return base[candidate]; // no match in eviction set
     }
     
     // did not find candidate -> nothing to pick
