@@ -247,8 +247,8 @@ static int64_t test1(void *addr, uint64_t size, void* cand, uint64_t threshold){
 		: "c" (addr), "r" (size), "r" (cand)
 		: "rsi", "rdx"
 	);
-	return time > threshold? 1 : 0;*/
-}
+	return time > threshold? 1 : 0;
+}*/
 
 static uint64_t test2(void *addr, uint64_t size){
     return 1; // TODO
