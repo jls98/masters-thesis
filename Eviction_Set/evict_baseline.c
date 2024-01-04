@@ -183,7 +183,7 @@ static void create_pointer_chase(void **addr, const uint64_t size, const uint64_
 
 static uint64_t pick(const uint64_t *set, const uint64_t set_size, const uint64_t *base, const uint64_t size, uint64_t *lfsr) {
     // uninitialized parameters
-    if (lfsr==NULL || set==NULL || base==NULL){
+    if (lfsr==NULL || set==NULL || base==NULL || size==0){
         return size+1;
     }
     
