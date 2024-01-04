@@ -34,7 +34,7 @@ void test_test1(){
     CU_ASSERT_EQUAL(TEST1(base, 3, cand), 0); // assure self assignment
     printf("case 3 set %li\n", TEST1(base, 3, cand));
     
-    printf("time %lu\n", probe(base, 3, cand));
+    printf("time %lu\n", probe(base, 3, (void *) cand));
     
 }
 
