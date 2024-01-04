@@ -1,7 +1,9 @@
 #include <stdint.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <sys/mman.h>
 #include <x86intrin.h>
+
 
 /* threshold values for loading 1 adrs                  */
 // IntelGen12 e core
@@ -105,7 +107,7 @@ int main(int ac, char **av){
     void* *base_set = mmap(NULL, base_size * sizeof(void *), PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB, -1, 0);
 
     // if adrs set, otherwise use some other uint64_t adrs
-    uint64_t *victim_adrs = ac > 1? (uint64_t *)atoi(av[1]) : &eviction_candidate_size;
+    uint64_t *victim_adrs = ac > 1? (uint64_t *)strtoull(av[1], NULL, 0) : &eviction_candidate_size;
     
     create_minimal_eviction_set(base_set, base_size, evict_set, &eviction_candidate_size, victim_adrs);
     
