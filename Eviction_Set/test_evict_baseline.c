@@ -15,19 +15,19 @@ void test_test1(){
     create_pointer_chase(base, size, set, set_size);
     // uninitialized params/errors
     
-    CU_ASSERT_EQUAL(test1(NULL, set_size, cand), -1); // assure self assignment
-    CU_ASSERT_EQUAL(test1(base, 0, cand), -1); // assure self assignment
-    CU_ASSERT_EQUAL(test1(base, set_size, NULL), -1); // assure self assignment
+    CU_ASSERT_EQUAL(TEST1(NULL, set_size, cand), -1); // assure self assignment
+    CU_ASSERT_EQUAL(TEST1(base, 0, cand), -1); // assure self assignment
+    CU_ASSERT_EQUAL(TEST1(base, set_size, NULL), -1); // assure self assignment
 
     
     // regular case (full huge page should evict (hopefully))
-    CU_ASSERT_EQUAL(test1(base, set_size, cand), 1); // assure self assignment
+    CU_ASSERT_EQUAL(TEST1(base, set_size, cand), 1); // assure self assignment
     
     set[0]=5;
     set[1]=23;
     set[2]=65;
     create_pointer_chase(base, size, set, 3); // eviction set far too small -> no eviction of candidate
-    CU_ASSERT_EQUAL(test1(base, 3, cand), 0); // assure self assignment
+    CU_ASSERT_EQUAL(TEST1(base, 3, cand), 0); // assure self assignment
    
     
 }
