@@ -155,7 +155,24 @@ static uint64_t test2(const void *addr, const uint64_t size){
 }
 
 static void create_pointer_chase(const void *addr, const uint64_t size, const uint64_t *set, const uint64_t set_size){
-    // TODO unrandomized iteriert durch indexes
+    // no pointer chase 
+    if (set_size == 0){
+        for (int i=0; i< size-1;i++){
+            addr[i]=&addr[i]; // every adrs points to itself
+        }
+    } else { // create pointer chase between set elements
+        uint64_t cur_in=set[0]; // current index (from set)
+        for (int i = 1; i<set_size-2){
+            if (cur_in > size){
+                printf("create_pointer_chase: current index > size! Element not contained in base set!");
+                break;
+            } 
+            // set pointer to next element (set[i] contains index of next element)
+            addr[cur_in] = &addr[set[i]]; 
+            cur_in=set[i];   
+        }
+        addr[cur_in] = &addr[set[0]]; // set pointer from last element to first element
+    }
 }
 
 static uint64_t pick(const uint64_t *set_addr, const uint64_t set_size, const uint64_t *base_addr, const uint64_t size, uint64_t lfsr) {
