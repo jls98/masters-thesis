@@ -74,7 +74,7 @@ static uint64_t test2(const void *addr, const uint64_t size);
 /* by addr mapped set with size many elements.          */
 /* set contains pointer to set of indexes of set of     */
 /* interest with set_size many elements.                */
-static void create_pointer_chase(const void **addr, const uint64_t size, const uint64_t *set, const uint64_t set_size);
+static void create_pointer_chase(void **addr, const uint64_t size, const uint64_t *set, const uint64_t set_size);
 
 /* pick lfsr pseudo-randomized next candidate (index)   */
 /* new candidate should not be in eviction set, be part */
