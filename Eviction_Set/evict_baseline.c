@@ -91,6 +91,7 @@ static void create_minimal_eviction_set(const void *base_set, const uint64_t bas
 /* ################## implementation ################## */
 /* #################################################### */
 
+#ifndef TESTCASE
 // optional argument 1 cache size
 int main(int ac, char **av){
     /* preparation */
@@ -113,7 +114,7 @@ int main(int ac, char **av){
     
     return 0;
 }
-
+#endif
 static void create_minimal_eviction_set(const void *base_set, const uint64_t base_size, uint64_t *evict_set, uint64_t *evict_size, const uint64_t *victim_adrs){
     uint64_t *current_base_set = (uint64_t *) malloc(base_size * sizeof(uint64_t));
 
