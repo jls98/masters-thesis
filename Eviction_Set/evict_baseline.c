@@ -166,7 +166,7 @@ static void create_pointer_chase(const void **addr, const uint64_t size, const u
     for (uint64_t i = 1; i<set_size-2; i++){
         if (cur_in >= size){
             printf("create_pointer_chase: current index > size! Element not contained in base set!");
-            break;
+            return;
         } 
         // set pointer to next element (set[i] contains index of next element)
         addr[cur_in] = &addr[set[i]]; 
