@@ -68,15 +68,12 @@ void test_pick(){
 
     candidate_set = addElement(candidate_set, 65);
     // regular, 1 valid candidate option left
-    CU_ASSERT_EQUAL(pick(evict_set, candidate_set, base_size, &lfsr), 65); 
-    printf("%lu\n", pick(evict_set, candidate_set, base_size, &lfsr));
- 
+    CU_ASSERT_EQUAL(pick(evict_set, candidate_set, base_size, &lfsr), 65);  
 
     candidate_set = addElement(candidate_set, 67);
     candidate_set = addElement(candidate_set, 69);
     candidate_set = addElement(candidate_set, 66);
     uint64_t val = pick(evict_set, candidate_set, base_size, &lfsr);
-    printf("%lu\n", val);
     CU_ASSERT_TRUE(val > 64 && val < base_size); 
 
     freeList(candidate_set);
@@ -85,54 +82,54 @@ void test_pick(){
 
 void test_create_pointer_chase(){
     printf("testing create_pointer_chase...\n");
-    uint64_t base_size = 512;
-    uint64_t set_size = 0;
-    void **base = mmap(NULL, base_size * sizeof(void *), PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB, -1, 0);
-    uint64_t *set = (uint64_t *) malloc(base_size * sizeof(uint64_t *));
+    uint64_t c_size = 512;
+    void **candidate_set = mmap(NULL, c_size * sizeof(void *), PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB, -1, 0);
+    struct Node* set = initLinkedList();
+
+    // case set size = 0
+    for (uint64_t i=0; i< c_size-1;i++) candidate_set[i]=&candidate_set[i]; // every adrs points to itself
+    create_pointer_chase(candidate_set, c_size, set);
+    for (uint64_t i=0; i<c_size-1;i++) CU_ASSERT_EQUAL(candidate_set[i], &candidate_set[i]); // self assignment remained -> no cahnges
     
     // set some values
-    set[0] = 42;
-    set[1] = 128;
-    set[2] = 255;
-    set[3] = 17;
-    set[4] = 360;
-    set[5] = 92;
-    set[6] = 511;
-    set[7] = 205;
-    set[8] = 77;
-    set[9] = 3;
-
-    
-    // case set size = 0
-    create_pointer_chase(base, base_size, set, set_size);
-    for (uint64_t i=0; i<base_size-1;i++){
-        CU_ASSERT_EQUAL(base[i], &base[i]); // assure self assignment
-    }
+    set = addElement(set, 42);
+    set = addElement(set, 128);
+    set = addElement(set, 255);
+    set = addElement(set, 17);
+    set = addElement(set, 360);
+    set = addElement(set, 92);
+    set = addElement(set, 511);
+    set = addElement(set, 205);
+    set = addElement(set, 77);
+    set = addElement(set, 3);
     
     // case element index out of range
-    base_size=511;
-    set_size=10;
-    create_pointer_chase(base, base_size, set, set_size);
+    c_size=511;
+    create_pointer_chase(candidate_set, c_size, set);
     
     // regular
+    CU_ASSERT_EQUAL(candidate_set[42], &candidate_set[128]);
+    CU_ASSERT_EQUAL(candidate_set[128], &candidate_set[255]);
+    CU_ASSERT_EQUAL(candidate_set[255], &candidate_set[17]);
+    CU_ASSERT_EQUAL(candidate_set[17], &candidate_set[360]);
+    CU_ASSERT_EQUAL(candidate_set[360], &candidate_set[92]);
+    CU_ASSERT_EQUAL(candidate_set[92], &candidate_set[92]); // remains the same! problem occured here
+   
+
+    // regular pointer chase
+    c_size=512;
+    create_pointer_chase(candidate_set, c_size, set);
+    
     CU_ASSERT_EQUAL(base[42], &base[128]);
     CU_ASSERT_EQUAL(base[128], &base[255]);
     CU_ASSERT_EQUAL(base[255], &base[17]);
     CU_ASSERT_EQUAL(base[17], &base[360]);
     CU_ASSERT_EQUAL(base[360], &base[92]);
-    CU_ASSERT_EQUAL(base[92], &base[92]); // remains the same! problem occured here
-   
-
-    // regular pointer chase
-    base_size=512;
-    set_size=5;
-    create_pointer_chase(base, base_size, set, set_size);
-    
-    CU_ASSERT_EQUAL(base[42], &base[128]);
-    CU_ASSERT_EQUAL(base[128], &base[255]);
-    CU_ASSERT_EQUAL(base[255], &base[17]);
-    CU_ASSERT_EQUAL(base[17], &base[360]);
-    CU_ASSERT_EQUAL(base[360], &base[42]);
+    CU_ASSERT_EQUAL(base[92], &base[511]);
+    CU_ASSERT_EQUAL(base[511], &base[205]);
+    CU_ASSERT_EQUAL(base[205], &base[77]);
+    CU_ASSERT_EQUAL(base[77], &base[3]);
+    CU_ASSERT_EQUAL(base[3], &base[42]);
 }
 
 int main() {

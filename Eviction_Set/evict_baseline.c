@@ -105,10 +105,9 @@ static int64_t test1(void *addr, uint64_t size, void* cand, uint64_t threshold);
 static uint64_t test2(void *addr, uint64_t size);
 
 /* pointer chase: creates pointer chase in subset of    */
-/* by addr mapped set with size many elements.          */
-/* set contains pointer to set of indexes of set of     */
-/* interest with set_size many elements.                */
-static void create_pointer_chase(void **addr, uint64_t size, uint64_t *set, uint64_t set_size);
+/* by candidate_set mapped set with c_size elements.    */
+/* set contains set of indexes for pointer chase        */
+static void create_pointer_chase(void **candidate_set, uint64_t c_size, struct Node* set);
 
 /* pick lfsr pseudo-randomized next candidate (index)   */
 /* new candidate should not be part of eviction set     */
@@ -337,68 +336,48 @@ static uint64_t test2(void *addr, uint64_t size){
 }
 
 //static void create_pointer_chase(void **addr, uint64_t size, uint64_t *set, uint64_t set_size){
-static void create_pointer_chase(void **addr, uint64_t size, uint64_t *set, uint64_t set_size){
-    
-    for (uint64_t i=0; i< size-1;i++) addr[i]=&addr[i]; // every adrs points to itself/cleanup
-       
-    if (set_size == 0) return; // no pointer chase 
-    
+static void create_pointer_chase(void **candidate_set, uint64_t c_size, struct Node* set){
+    if (set == NULL) return; // no pointer chase 
+
     // create pointer chase between set elements
-    uint64_t cur_in=set[0]; // current index (from set)
-    if (set[0] >= size){
-        printf("create_pointer_chase: index set[0] > size! Element not contained in base set!\n");
-        return;
-    } 
-    for (uint64_t i = 1; i<set_size; i++){
-        if (set[i] >= size){
-            printf("create_pointer_chase: current index > size! Element not contained in base set!\n");
+    struct Node* cur_no;  // current index (from set)
+    for (cur_no=set;cur_no->next !=NULL; cur_no=cur_no->next){
+        if (cur_no->value >= c_size){
+            printf("create_pointer_chase: current index from set greater than size! Element not contained in candidate_set!\n");
             return;
         } 
-        // set pointer to next element (set[i] contains index of next element)
-        addr[cur_in] = &addr[set[i]]; 
-        cur_in=set[i];   
+        // set pointer to next element cur_no holds current index, cur_no->next holds next index, &addr[cur_no->next->value] is ptr to respective elem
+        candidate_set[cur_no->value] = &candidate_set[cur_no->next->value];    
     }
-    addr[cur_in] = &addr[set[0]]; // set pointer from last element to first element
+    candidate_set[cur_no->value] = &candidate_set[set->value]; // set pointer from last element to first element
 
 }
 
-//static uint64_t pick(uint64_t *set, uint64_t set_size, uint64_t *base, uint64_t base_size, uint64_t size, uint64_t *lfsr) {
 static uint64_t pick(struct Node* evict_set, struct Node* candidate_set, uint64_t base_size, uint64_t *lfsr) {
     // uninitialized parameters
-    if (lfsr==NULL || evict_set==NULL || candidate_set==NULL || base_size ==0){
-        return base_size+1;
-    }
-    //printf("a");
+    if (lfsr==NULL || evict_set==NULL || candidate_set==NULL || base_size ==0) return base_size+1;
     uint64_t c, j, c_size; // c candidate, j index, c_size current candidate set size
     struct Node* cur_node;
     // get candidate set size  
     // iterate over all elements and count
     for(cur_node = candidate_set, c_size=0; cur_node != NULL; c_size++, cur_node = cur_node->next);
-    //printf("b");
    
     // 99999 times base size should suffice to find candidate in legitimate cases
     for(uint64_t i=0; i<99999*base_size;i++){         
         // pick pseudo-random candidate by index from base set
         // iterate over rand mod c_size elements in current candidate set list and get index value
-        //printf("c");
         for(j=0, cur_node=candidate_set;cur_node != NULL;j++,cur_node=cur_node->next){
-            //printf("d");
-
             if (j == lfsr_rand(lfsr) % c_size){
                 c=cur_node->value;
                 break;
             }
         }
-               
-        //printf("e");
         // check if its in eviction set
         for (cur_node=evict_set;cur_node != NULL;cur_node=cur_node->next){
             if (cur_node->value == c) break; // need new candidate
         }
-        //printf("f");
         if(cur_node == NULL) return c; // no match in eviction set (either break before last element, or c==last element)
     }
-    
     // did not find candidate -> nothing to pick
     return base_size+1;
 }
