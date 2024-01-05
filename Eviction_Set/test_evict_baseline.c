@@ -54,21 +54,28 @@ void test_pick(){
     uint64_t lfsr = lfsr_create();
     
     // test uninitialized params
-    CU_ASSERT_EQUAL(pick(evict_set, candidate_set, base_size, NULL), size+1);
-    CU_ASSERT_EQUAL(pick(evict_set, candidate_set, 0, &lfsr), size+1);
-    CU_ASSERT_EQUAL(pick(evict_set, initLinkedList(), base_size, &lfsr), size+1);
-    CU_ASSERT_EQUAL(pick(initLinkedList(), candidate_set, base_size, &lfsr), size+1); 
+    CU_ASSERT_EQUAL(pick(evict_set, candidate_set, base_size, NULL), base_size+1);
+    CU_ASSERT_EQUAL(pick(evict_set, candidate_set, 0, &lfsr), base_size+1);
+    CU_ASSERT_EQUAL(pick(evict_set, initLinkedList(), base_size, &lfsr), base_size+1);
+    CU_ASSERT_EQUAL(pick(initLinkedList(), candidate_set, base_size, &lfsr), base_size+1); 
     
     // test no candidate possible
     // one duplicate element left in candidate set
     freeList(candidate_set);
     candidate_set = initLinkedList();
     candidate_set = addElement(candidate_set, 5);
-    CU_ASSERT_EQUAL(pick(evict_set, candidate_set, base_size, &lfsr), size+1); 
+    CU_ASSERT_EQUAL(pick(evict_set, candidate_set, base_size, &lfsr), base_size+1); 
 
     candidate_set = addElement(candidate_set, 65);
     // regular, 1 valid candidate option left
     CU_ASSERT_EQUAL(pick(evict_set, candidate_set, base_size, &lfsr), 65); 
+    
+    candidate_set = addElement(candidate_set, 67);
+    candidate_set = addElement(candidate_set, 69);
+    candidate_set = addElement(candidate_set, 66);
+    CU_ASSERT_TRUE(pick(evict_set, candidate_set, base_size, &lfsr) > 64); 
+
+
 }
 
 void test_create_pointer_chase(){
