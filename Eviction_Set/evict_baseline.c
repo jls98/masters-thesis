@@ -53,10 +53,10 @@ static inline uint64_t rdtscp();
 
 /* linked list containing an index and a pointer to     */
 /* the next element                                     */
-static typedef struct Node {
+static struct Node {
     uint64_t value;
     struct Node* next;
-} Node;
+};
 
 /* Function to initialize an empty linked list          */
 static struct Node* initLinkedList();
