@@ -342,7 +342,7 @@ static void create_pointer_chase(void **candidate_set, uint64_t c_size, struct N
     // create pointer chase between set elements
     struct Node* cur_no;  // current index (from set)
     for (cur_no=set;cur_no->next !=NULL; cur_no=cur_no->next){
-        if (cur_no->value >= c_size){
+        if (cur_no->next->value >= c_size){
             printf("create_pointer_chase: current index from set greater than size! Element not contained in candidate_set!\n");
             return;
         } 
