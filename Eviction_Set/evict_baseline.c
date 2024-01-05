@@ -368,28 +368,34 @@ static uint64_t pick(struct Node* evict_set, struct Node* candidate_set, uint64_
     if (lfsr==NULL || evict_set==NULL || candidate_set==NULL || base_size ==0){
         return base_size+1;
     }
-    
+    printf("a");
     uint64_t c, j, c_size; // c candidate, j index, c_size current candidate set size
     struct Node* cur_node;
     // get candidate set size  
     // iterate over all elements and count
     for(cur_node = candidate_set, c_size=0; cur_node != NULL; c_size++, cur_node = cur_node->next);
-    
+    printf("b");
+   
     // 99999 times base size should suffice to find candidate in legitimate cases
     for(uint64_t i=0; i<99999*base_size;i++){         
         // pick pseudo-random candidate by index from base set
         // iterate over rand mod c_size elements in current candidate set list and get index value
+        printf("c");
         for(j=0, cur_node=candidate_set;cur_node != NULL;j++,cur_node=cur_node->next){
+            printf("d");
+
             if (j == lfsr_rand(lfsr) % c_size){
                 c=cur_node->value;
                 break;
             }
         }
                
+        printf("e");
         // check if its in eviction set
         for (cur_node=evict_set;cur_node != NULL;cur_node=cur_node->next){
             if (cur_node->value == c) break; // need new candidate
         }
+        printf("f");
         if(cur_node->next ==NULL) return c; // no match in eviction set (either break before last element, or c==last element)
     }
     
