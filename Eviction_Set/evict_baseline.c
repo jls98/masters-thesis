@@ -53,23 +53,23 @@ static inline uint64_t rdtscp();
 
 /* linked list containing an index and a pointer to     */
 /* the next element                                     */
-static struct Node {
+static typedef struct Node {
     uint64_t value;
     struct Node* next;
-}Node_t;
+} Node;
 
 /* Function to initialize an empty linked list          */
-static struct Node* initLinkedList();
+static Node* initLinkedList();
 
 /* Function to add a new element to the linked list     */
-static struct Node* addElement(struct Node* head, uint64_t value);
+static Node* addElement(Node* head, uint64_t value);
 
 /* Function to print the elements of the linked list    */
-static void printList(struct Node* head);
+static void printList(Node* head);
 
 /* Function to free the memory allocated for the linked */
 /* list                                                 */
-static void freeList(struct Node* head);
+static void freeList(Node* head);
 
 /* #################################################### */
 /* ############## pseudo random generator ############# */
@@ -115,7 +115,7 @@ static void create_pointer_chase(void **addr, uint64_t size, uint64_t *set, uint
 /* evict_set, be part of base set and picked with lfsr  */
 /* state in possible range.                             */
 /* returns candidate index, if none found base_size+1   */
-static uint64_t pick(Node_t *evict_set, Node_t *candidate_set, uint64_t base_size, uint64_t *lfsr);
+static uint64_t pick(Node *evict_set, Node *candidate_set, uint64_t base_size, uint64_t *lfsr);
 
 /* create minimal eviction set from base set for        */
 /* victim_adrs in evict_set                             */
@@ -181,11 +181,11 @@ static void wait(uint64_t cycles) {
 }
 
 // Function to initialize an empty linked list
-static struct Node* initLinkedList() {
+static Node* initLinkedList() {
     return NULL;  // Return NULL to indicate an empty list
 }
 
-static struct Node* addElement(struct Node* head, uint64_t value) {
+static Node* addElement(struct Node* head, uint64_t value) {
     // Allocate memory for a new node
     struct Node* newNode = (struct Node*)malloc(sizeof(struct Node));
     if (newNode == NULL) {
@@ -363,14 +363,14 @@ static void create_pointer_chase(void **addr, uint64_t size, uint64_t *set, uint
 }
 
 //static uint64_t pick(uint64_t *set, uint64_t set_size, uint64_t *base, uint64_t base_size, uint64_t size, uint64_t *lfsr) {
-static uint64_t pick(Node_t *evict_set, Node_t *candidate_set, uint64_t base_size, uint64_t *lfsr) {
+static uint64_t pick(Node *evict_set, Node *candidate_set, uint64_t base_size, uint64_t *lfsr) {
     // uninitialized parameters
     if (lfsr==NULL || evict_set==NULL || candidate_set==NULL || base_size ==0){
         return base_size+1;
     }
     
     uint64_t c, j, c_size; // c candidate, j index, c_size current candidate set size
-    Node_t *cur_node;
+    Node *cur_node;
     // get candidate set size  
     // iterate over all elements and count
     for(cur_node = candidate_set, c_size=0; cur_node->next != NULL; c_size++, cur_node = cur_node->next);
