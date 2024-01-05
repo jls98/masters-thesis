@@ -1,7 +1,6 @@
 #include "evict_baseline.c"
 #include <CUnit/CUnit.h>
 #include <CUnit/Basic.h>
-#include "evict1.c"
 
 void test_test1(){
     printf("testing test1...\n");
@@ -37,43 +36,39 @@ void test_test1(){
 
 void test_pick(){
     printf("testing pick...\n");
-    uint64_t set_size = 5;      // size of current eviction set
-    uint64_t base_size = 6;     // size of current base set 
-    uint64_t size = 100;        // size of candidate set 
-    uint64_t *set = (uint64_t *) malloc(set_size*sizeof(uint64_t *));
-    uint64_t *base = (uint64_t *) malloc(base_size*sizeof(uint64_t *));
+    
+    // init (evict|cand) sets
+    struct Node* evict_set = initLinkedList();
+    struct Node* candidate_set = initLinkedList();
+    
+    evict_set = addElement(evict_set, 0);
+    evict_set = addElement(evict_set, 5);
+    evict_set = addElement(evict_set, 2);
+    evict_set = addElement(evict_set, 7);
+    evict_set = addElement(evict_set, 3);
+    
+    candidate_set = addElement(candidate_set, 5); // should not happen
+    candidate_set = addElement(candidate_set, 65);
+    
+    uint64_t base_size = 100;   // size of candidate set 
     uint64_t lfsr = lfsr_create();
     
     // test uninitialized params
-    CU_ASSERT_EQUAL(pick(set, set_size, base, base_size, size, NULL), size+1);
-    CU_ASSERT_EQUAL(pick(set, set_size, base, base_size, 0, &lfsr), 1);
-    CU_ASSERT_EQUAL(pick(set, set_size, NULL, base_size, size, &lfsr), size+1);
-    CU_ASSERT_EQUAL(pick(NULL, set_size, base, base_size, size, &lfsr), size+1);
-   
-    
-    // set some arbitrary indexes
-    set[0]=0;
-    set[1]=5;
-    set[2]=2;
-    set[3]=7;
-    set[4]=3;
-    
-    base[0]=5;
-    base[1]=65;
-    base[2]=3;
-    base[3]=10;
-    base[4]=8;
-    base[5]=9;
+    CU_ASSERT_EQUAL(pick(evict_set, candidate_set, base_size, NULL), size+1);
+    CU_ASSERT_EQUAL(pick(evict_set, candidate_set, 0, &lfsr), size+1);
+    CU_ASSERT_EQUAL(pick(evict_set, initLinkedList(), base_size, &lfsr), size+1);
+    CU_ASSERT_EQUAL(pick(initLinkedList(), candidate_set, base_size, &lfsr), size+1); 
     
     // test no candidate possible
-    // no elements left in base
-    CU_ASSERT_EQUAL(pick(set, set_size, base, 0, size, &lfsr), size+1); 
+    // one duplicate element left in candidate set
+    freeList(candidate_set);
+    candidate_set = initLinkedList();
+    candidate_set = addElement(candidate_set, 5);
+    CU_ASSERT_EQUAL(pick(evict_set, candidate_set, base_size, &lfsr), size+1); 
 
-    // already in eviction set 
-    CU_ASSERT_EQUAL(pick(set, set_size, base, 1, size, &lfsr), size+1); 
-
-    // regular, 1 option left, base[0] should be always skipped
-    CU_ASSERT_EQUAL(pick(set, set_size, base, 2, size, &lfsr), 65); 
+    candidate_set = addElement(candidate_set, 65);
+    // regular, 1 valid candidate option left
+    CU_ASSERT_EQUAL(pick(evict_set, candidate_set, base_size, &lfsr), 65); 
 }
 
 void test_create_pointer_chase(){
