@@ -20,6 +20,7 @@ void test_test1(){
     // fill eviction set with all elements, maximal eviction set lol
     for (uint64_t i=0; i<c_size/8;i++){
         uint64_t c = pick(cind_set, evict_set1, c_size, &lfsr);
+        if(c == c_size+1) printf("alarm\n");
         printf("a %lu %lu\n", c, i);
         cind_set = deleteElement(cind_set, c);
         printf("b %lu %lu\n", cind_set->value, i);
