@@ -25,6 +25,7 @@ void test_test1(){
         } 
         cind_set = deleteElement(cind_set, c);
         evict_set1 = addElement(evict_set1, c);
+        if (i%100==0) printf("%lu, %lu, %lu, %lu\n", i, c, cind_set->value, evict_set1->value);
     }
     
     printf("a\n");
