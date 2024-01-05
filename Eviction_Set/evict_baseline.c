@@ -185,7 +185,8 @@ static void create_minimal_eviction_set(void **candidate_set, uint64_t base_size
         create_pointer_chase(candidate_set, base_size, combined_set);
         
         // count amount of elements in combined_set
-        for(cnt=0, struct Node* it=combined_set;it!=NULL;cnt++, it=it->next);
+        cnt=0;
+        for(struct Node* it=combined_set;it!=NULL;cnt++, it=it->next);
         
         // if not TEST(R union S\{c}), x)  if removing c results in not evicting x anymore, add c to current eviction set    
         if(!TEST1(candidate_set[combined_set->value], cnt, victim_adrs)){
