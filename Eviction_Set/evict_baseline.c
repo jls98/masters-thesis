@@ -59,17 +59,17 @@ static typedef struct Node {
 } Node;
 
 /* Function to initialize an empty linked list          */
-static Node* initLinkedList();
+static struct Node* initLinkedList();
 
 /* Function to add a new element to the linked list     */
-static Node* addElement(Node* head, uint64_t value);
+static struct Node* addElement(struct Node* head, uint64_t value);
 
 /* Function to print the elements of the linked list    */
-static void printList(Node* head);
+static void printList(struct Node* head);
 
 /* Function to free the memory allocated for the linked */
 /* list                                                 */
-static void freeList(Node* head);
+static void freeList(struct Node* head);
 
 /* #################################################### */
 /* ############## pseudo random generator ############# */
@@ -181,11 +181,11 @@ static void wait(uint64_t cycles) {
 }
 
 // Function to initialize an empty linked list
-static Node* initLinkedList() {
+static struct Node* initLinkedList() {
     return NULL;  // Return NULL to indicate an empty list
 }
 
-static Node* addElement(struct Node* head, uint64_t value) {
+static struct Node* addElement(struct Node* head, uint64_t value) {
     // Allocate memory for a new node
     struct Node* newNode = (struct Node*)malloc(sizeof(struct Node));
     if (newNode == NULL) {
