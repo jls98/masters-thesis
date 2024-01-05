@@ -70,7 +70,7 @@ void test_pick(){
     // regular, 1 valid candidate option left
     uint64_t val = pick(evict_set, candidate_set2, base_size, &lfsr);
     CU_ASSERT_EQUAL(val, 65);  
-    if (val != 65) printf("val65 %lu\n", val);
+    if (val != 65) printf("val65 %lx\n", val);
     
     candidate_set2 = addElement(candidate_set2, 67);
     candidate_set2 = addElement(candidate_set2, 69);
@@ -79,10 +79,10 @@ void test_pick(){
     
     // TODO sometimes fail
     CU_ASSERT_TRUE(val > 64);
-    if (val<65) printf("val<65 %lu\n", val);
+    if (val<65) printf("val<65 %lx\n", val);
 
     CU_ASSERT_TRUE(val < base_size); 
-    if (val>= base_size) printf("val<bsize %lu\n", val);
+    if (val>= base_size) printf("val<bsize %lx\n", val);
     
     freeList(candidate_set1);
     freeList(candidate_set2);
