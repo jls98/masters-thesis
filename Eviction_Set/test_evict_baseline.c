@@ -15,12 +15,9 @@ void test_test1(){
     
     for (uint64_t i=0; i<c_size-1;i++) cind_set = addElement(cind_set, i);      
     
-    for (struct Node* it=cind_set; it!=NULL;it=it->next){
-        printf("%lu\n", it->value);
-    }
     // fill eviction set with all elements, maximal eviction set lol
     for (uint64_t i=0; i<c_size/8;i++){
-        uint64_t c = pick(cind_set, evict_set1, c_size, &lfsr);
+        uint64_t c = pick(evict_set1, cind_set, c_size, &lfsr);
         if(c == c_size+1){
             printf("test_test1: filling eviction_set failed!\n");
             break;
