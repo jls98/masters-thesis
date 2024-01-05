@@ -382,7 +382,7 @@ static uint64_t pick(struct Node* evict_set, struct Node* candidate_set, uint64_
         // iterate over rand mod c_size elements in current candidate set list and get index value
         //printf("c");
         for(j=0, cur_node=candidate_set;cur_node != NULL;j++,cur_node=cur_node->next){
-            printf("d");
+            //printf("d");
 
             if (j == lfsr_rand(lfsr) % c_size){
                 c=cur_node->value;
