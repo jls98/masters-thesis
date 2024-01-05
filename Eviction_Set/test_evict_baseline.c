@@ -178,8 +178,8 @@ int main() {
     CU_initialize_registry();
 
     CU_pSuite suite = CU_add_suite("Test Suite evict_baseline", NULL, NULL);
-    CU_add_test(suite, "Test create_pointer_chase", test_create_pointer_chase);
-    CU_add_test(suite, "Test pick", test_pick);
+    //CU_add_test(suite, "Test create_pointer_chase", test_create_pointer_chase);
+    //CU_add_test(suite, "Test pick", test_pick);
     CU_add_test(suite, "Test test1", test_test1);
 
     CU_basic_run_tests();

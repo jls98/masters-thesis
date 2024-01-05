@@ -120,9 +120,10 @@ static void create_pointer_chase(void **candidate_set, uint64_t c_size, struct N
 /* returns candidate index, if none found base_size+1   */
 static uint64_t pick(struct Node* evict_set, struct Node* candidate_set, uint64_t base_size, uint64_t *lfsr);
 
-/* create minimal eviction set from base set for        */
+/* create minimal eviction set from candidate set for   */
 /* victim_adrs in evict_set                             */
-static void create_minimal_eviction_set(void *base_set, uint64_t base_size, uint64_t *evict_set, uint64_t *evict_size, uint64_t *victim_adrs);
+static void create_minimal_eviction_set(void *candidate_set, uint64_t base_size, struct Node* evict_set, uint64_t *victim_adrs);
+
 /* #################################################### */
 /* ################## implementation ################## */
 /* #################################################### */
@@ -135,28 +136,28 @@ int main(int ac, char **av){
     
     // if (cache) size set, take; divide by 4 since its cache size in bytes and we have 64 bit/8 byte pointer arrays but also take double size
     uint64_t base_size = ac == 3? atoi(av[2])/4 : CACHESIZE_DEFAULT/4;     
-    uint64_t eviction_candidate_size = 0; // R <- {}
 
+    // R <- {}
     // allocate space for eviction set
-    uint64_t *evict_set = (uint64_t *) malloc(base_size/2 * sizeof(uint64_t));
-
-    // map base set (using hugepages, twice the size of cache in bytes)
-    void* *base_set = mmap(NULL, base_size * sizeof(void *), PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB, -1, 0);
+    struct Node* evict_set = initLinkedList();
+    
+    // map candidate_set (using hugepages, twice the size of cache in bytes)
+    void **candidate_set = mmap(NULL, base_size * sizeof(void *), PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB, -1, 0);
 
     // if adrs set, otherwise use some other uint64_t adrs
-    uint64_t *victim_adrs = ac > 1? (uint64_t *)strtoull(av[1], NULL, 0) : &eviction_candidate_size;
+    uint64_t *victim_adrs = ac > 1? (uint64_t *)strtoull(av[1], NULL, 0) : &base_size;
     
-    create_minimal_eviction_set(base_set, base_size, evict_set, &eviction_candidate_size, victim_adrs);
+    create_minimal_eviction_set(candidate_set, base_size, evict_set, victim_adrs);
     
+    freeList(evict_set); // delete eviction set
     return 0;
 }
 #endif
 
 #define EVICT_SIZE_A 12 // p cores 12 ways
-static void create_minimal_eviction_set(void *base_set, uint64_t base_size, uint64_t *evict_set, uint64_t *evict_size, uint64_t *victim_adrs){
-    //uint64_t *current_base_set = (uint64_t *) malloc(base_size * sizeof(uint64_t));
+static void create_minimal_eviction_set(void *candidate_set, uint64_t base_size, struct Node* evict_set, uint64_t *victim_adrs){
     
-    //uint64_t lfsr = lfsr_create(), c; // init lfsr, var c for picked candidate
+    uint64_t lfsr = lfsr_create(), c; // init lfsr, var c for picked candidate
     
     // create current candidate set and initialize with all indexes
     //uint64_t *current_base_set = (uint64_t *) malloc(base_size * sizeof(void *));
@@ -323,11 +324,11 @@ static int64_t test1(void *addr, uint64_t size, void* cand, uint64_t threshold){
 	volatile uint64_t time;
 	asm __volatile__ (
 		// load candidate and set 
-		// BEGIN - read every entry in addr
         "lfence;"
         "mov rax, %1;"
         "mov rdx, %2;"
 		"mov rsi, [%3];" // load candidate 
+        // BEGIN - read every entry in addr
         "loop:"
 		"mov rax, [rax];"
         "dec rdx;"
