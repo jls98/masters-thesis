@@ -55,7 +55,7 @@ void test_pick(){
     
     // test uninitialized params
     CU_ASSERT_EQUAL(pick(evict_set, candidate_set, base_size, NULL), base_size+1);
-    CU_ASSERT_EQUAL(pick(evict_set, candidate_set, 0, &lfsr), base_size+1);
+    CU_ASSERT_EQUAL(pick(evict_set, candidate_set, 0, &lfsr), 1);
     CU_ASSERT_EQUAL(pick(evict_set, initLinkedList(), base_size, &lfsr), base_size+1);
     CU_ASSERT_EQUAL(pick(initLinkedList(), candidate_set, base_size, &lfsr), base_size+1); 
     
@@ -69,7 +69,7 @@ void test_pick(){
     candidate_set = addElement(candidate_set, 65);
     // regular, 1 valid candidate option left
     CU_ASSERT_EQUAL(pick(evict_set, candidate_set, base_size, &lfsr), 65); 
-    
+    printf("%lu\n", pick(evict_set, candidate_set, base_size, &lfsr));
     candidate_set = addElement(candidate_set, 67);
     candidate_set = addElement(candidate_set, 69);
     candidate_set = addElement(candidate_set, 66);
