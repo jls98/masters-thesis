@@ -79,7 +79,6 @@ void test_pick(){
     CU_ASSERT_EQUAL(pick(evict_set, candidate_set1, base_size, NULL), base_size+1);
     CU_ASSERT_EQUAL(pick(evict_set, candidate_set1, 0, &lfsr), 1);
     CU_ASSERT_EQUAL(pick(evict_set, empty_set, base_size, &lfsr), base_size+1);
-    CU_ASSERT_EQUAL(pick(empty_set, candidate_set1, base_size, &lfsr), base_size+1); 
     
     // test no candidate possible
     // one duplicate element left in candidate set

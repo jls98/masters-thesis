@@ -380,7 +380,7 @@ static void create_pointer_chase(void **candidate_set, uint64_t c_size, struct N
 
 static uint64_t pick(struct Node* evict_set, struct Node* candidate_set, uint64_t base_size, uint64_t *lfsr) {
     // uninitialized parameters
-    if (lfsr==NULL || evict_set==NULL || candidate_set==NULL || base_size ==0) return base_size+1;
+    if (lfsr==NULL || candidate_set==NULL || base_size ==0) return base_size+1;
     uint64_t c, j, c_size; // c candidate, j index, c_size current candidate set size
     struct Node* cur_node;
     // get candidate set size  
