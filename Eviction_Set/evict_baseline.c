@@ -149,12 +149,12 @@ int main(int ac, char **av){
 
 #define EVICT_SIZE_A 12 // p cores 12 ways
 static void create_minimal_eviction_set(void *base_set, uint64_t base_size, uint64_t *evict_set, uint64_t *evict_size, uint64_t *victim_adrs){
-    uint64_t *current_base_set = (uint64_t *) malloc(base_size * sizeof(uint64_t));
+    //uint64_t *current_base_set = (uint64_t *) malloc(base_size * sizeof(uint64_t));
     
-    uint64_t lfsr = lfsr_create(), c; // init lfsr, var c for picked candidate
+    //uint64_t lfsr = lfsr_create(), c; // init lfsr, var c for picked candidate
     
     // create current candidate set and initialize with all indexes
-    uint64_t *current_base_set = (uint64_t *) malloc(base_size * sizeof(void *));
+    //uint64_t *current_base_set = (uint64_t *) malloc(base_size * sizeof(void *));
     
     
     // while |R| < a / while current eviction set is not big enough
@@ -168,7 +168,7 @@ static void create_minimal_eviction_set(void *base_set, uint64_t base_size, uint
     //}
  
     
-    return;
+    return; // TODO
     /* baseline algorithm */
     // TODO
 }
