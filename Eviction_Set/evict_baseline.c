@@ -390,7 +390,7 @@ static uint64_t pick(struct Node* evict_set, struct Node* candidate_set, uint64_
         for (cur_node=evict_set;cur_node->next != NULL;cur_node=cur_node->next){
             if (cur_node->value == c) break; // need new candidate
         }
-        if(cur_node->next !=NULL || cur_node->value == c) return c; // no match in eviction set (either break before last element, or c==last element)
+        if(cur_node->next ==NULL && cur_node->value != c) return c; // no match in eviction set (either break before last element, or c==last element)
     }
     
     // did not find candidate -> nothing to pick
