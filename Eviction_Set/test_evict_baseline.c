@@ -22,11 +22,8 @@ void test_test1(){
             printf("test_test1: filling eviction_set failed!\n");
             break;
         } 
-        printf("a %lu %lu\n", c, i);
         cind_set = deleteElement(cind_set, c);
-        printf("b %lu %lu\n", cind_set->value, i);
         evict_set1 = addElement(evict_set1, c);
-        printf("c %lu %lu\n", evict_set1->value, i);
     }
     
     // create pointer chase on base set
@@ -170,8 +167,8 @@ int main() {
     CU_initialize_registry();
 
     CU_pSuite suite = CU_add_suite("Test Suite evict_baseline", NULL, NULL);
-    //CU_add_test(suite, "Test create_pointer_chase", test_create_pointer_chase);
-    //CU_add_test(suite, "Test pick", test_pick);
+    CU_add_test(suite, "Test create_pointer_chase", test_create_pointer_chase);
+    CU_add_test(suite, "Test pick", test_pick);
     CU_add_test(suite, "Test test1", test_test1);
 
     CU_basic_run_tests();
