@@ -4,7 +4,7 @@
 
 void test_test1(){
     printf("\nTesting test1...\n\n");
-    uint64_t c_size = CACHESIZE_DEFAULT*4; // set size should be large enough to evict everything from L1 lol
+    uint64_t c_size = CACHESIZE_DEFAULT*4, a=2000; // set size should be large enough to evict everything from L1 lol
     void **cand_set = mmap(NULL, c_size * sizeof(void *), PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB, -1, 0);
     uint64_t *cand = (uint64_t *) malloc(sizeof(uint64_t *)); // just some random candidate :D
     uint64_t lfsr = lfsr_create();
@@ -18,9 +18,9 @@ void test_test1(){
         evict_set1 = addElement(evict_set1, i);      
     
     }    
-    /*printf("a\n");
+    printf("a\n");
     // fill eviction set with all elements, maximal eviction set lol
-    for (uint64_t i=0; i<c_size/8;i++){
+    for (uint64_t i=0; i<a;i++){
         uint64_t c = pick(evict_set1, cind_set, c_size, &lfsr);
         if(c == c_size+1){
             printf("test_test1: filling eviction_set failed!\n");
@@ -31,20 +31,20 @@ void test_test1(){
         if (i%100==0) printf("%lu, %lu, %lu, %lu\n", i, c, cind_set->value, evict_set1->value);
     }
     
-    printf("a\n");*/
+    printf("a\n");
     // create pointer chase on base set
     create_pointer_chase(cand_set, c_size, evict_set1);
     // uninitialized params/errors
     printf("a\n");
     wait(1E9);
-    CU_ASSERT_EQUAL(TEST1(NULL, c_size, cand), -1); // assure self assignment
+    CU_ASSERT_EQUAL(TEST1(NULL, a, cand), -1); // assure self assignment
     CU_ASSERT_EQUAL(TEST1(cand_set[evict_set1->value], 0, cand), -1); // assure self assignment
-    CU_ASSERT_EQUAL(TEST1(cand_set[evict_set1->value], c_size, NULL), -1); // assure self assignment
+    CU_ASSERT_EQUAL(TEST1(cand_set[evict_set1->value], a, NULL), -1); // assure self assignment
 
     printf("a\n");
     
     // regular case (full huge page should evict (hopefully))
-    CU_ASSERT_EQUAL(TEST1(cand_set[evict_set1->value], c_size, cand), 1); // assure self assignment
+    CU_ASSERT_EQUAL(TEST1(cand_set[evict_set1->value], a, cand), 1); // assure self assignment
     
     evict_set2 = addElement(evict_set2, 65);
     evict_set2 = addElement(evict_set2, 23);
