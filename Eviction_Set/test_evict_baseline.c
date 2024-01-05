@@ -120,16 +120,16 @@ void test_create_pointer_chase(){
     c_size=512;
     create_pointer_chase(candidate_set, c_size, set);
     
-    CU_ASSERT_EQUAL(base[42], &base[128]);
-    CU_ASSERT_EQUAL(base[128], &base[255]);
-    CU_ASSERT_EQUAL(base[255], &base[17]);
-    CU_ASSERT_EQUAL(base[17], &base[360]);
-    CU_ASSERT_EQUAL(base[360], &base[92]);
-    CU_ASSERT_EQUAL(base[92], &base[511]);
-    CU_ASSERT_EQUAL(base[511], &base[205]);
-    CU_ASSERT_EQUAL(base[205], &base[77]);
-    CU_ASSERT_EQUAL(base[77], &base[3]);
-    CU_ASSERT_EQUAL(base[3], &base[42]);
+    CU_ASSERT_EQUAL(candidate_set[42], &candidate_set[128]);
+    CU_ASSERT_EQUAL(candidate_set[128], &candidate_set[255]);
+    CU_ASSERT_EQUAL(candidate_set[255], &candidate_set[17]);
+    CU_ASSERT_EQUAL(candidate_set[17], &candidate_set[360]);
+    CU_ASSERT_EQUAL(candidate_set[360], &candidate_set[92]);
+    CU_ASSERT_EQUAL(candidate_set[92], &candidate_set[511]);
+    CU_ASSERT_EQUAL(candidate_set[511], &candidate_set[205]);
+    CU_ASSERT_EQUAL(candidate_set[205], &candidate_set[77]);
+    CU_ASSERT_EQUAL(candidate_set[77], &candidate_set[3]);
+    CU_ASSERT_EQUAL(candidate_set[3], &candidate_set[42]);
 }
 
 int main() {
