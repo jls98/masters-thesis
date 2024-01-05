@@ -56,7 +56,7 @@ static inline uint64_t rdtscp();
 static struct Node {
     uint64_t value;
     struct Node* next;
-};
+} Node;
 
 /* Function to initialize an empty linked list          */
 static struct Node* initLinkedList();
