@@ -15,7 +15,7 @@ void test_test1(){
     printf("a\n");
     for (uint64_t i=0; i<c_size-1;i++){
         cind_set = addElement(cind_set, i);      
-        evict_set1 = addElement(evict_set1, i);      
+        //evict_set1 = addElement(evict_set1, i);      
     
     }    
     printf("a\n");
