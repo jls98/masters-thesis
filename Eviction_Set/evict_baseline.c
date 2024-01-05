@@ -68,8 +68,17 @@ static struct Node* addElement(struct Node* head, uint64_t value);
 /* from the linked list                                 */
 static struct Node* deleteElement(struct Node* head, uint64_t value);
 
+/* Function to clone a list                             */
+static struct Node* cloneList(struct Node* original);
+
+/* Function to union two lists                          */
+static struct Node* unionLists(struct Node* list1, struct Node* list2);
+
+/*  helper func for unionLists                          */
+static int containsValue(struct Node* head, uint64_t value);
+
 /* Function to print the elements of the linked list    */
-static void printList(Node* head);
+static void printList(struct Node* head);
 
 /* Function to free the memory allocated for the linked */
 /* list                                                 */
@@ -122,7 +131,7 @@ static uint64_t pick(struct Node* evict_set, struct Node* candidate_set, uint64_
 
 /* create minimal eviction set from candidate set for   */
 /* victim_adrs in evict_set                             */
-static void create_minimal_eviction_set(void *candidate_set, uint64_t base_size, struct Node* evict_set, uint64_t *victim_adrs);
+static void create_minimal_eviction_set(void **candidate_set, uint64_t base_size, struct Node* evict_set, uint64_t *victim_adrs);
 
 /* #################################################### */
 /* ################## implementation ################## */
@@ -155,26 +164,36 @@ int main(int ac, char **av){
 #endif
 
 #define EVICT_SIZE_A 12 // p cores 12 ways
-static void create_minimal_eviction_set(void *candidate_set, uint64_t base_size, struct Node* evict_set, uint64_t *victim_adrs){
+static void create_minimal_eviction_set(void **candidate_set, uint64_t base_size, struct Node* evict_set, uint64_t *victim_adrs){
     
-    uint64_t lfsr = lfsr_create(), c; // init lfsr, var c for picked candidate
+    uint64_t lfsr = lfsr_create(), c, a_tmp=0, cnt; // init lfsr, var c for picked candidate
     
     // create current candidate set and initialize with all indexes
-    //uint64_t *current_base_set = (uint64_t *) malloc(base_size * sizeof(void *));
-    
+    struct Node* cind_set = initLinkedList();
+    for (uint64_t i=0; i<base_size-1;i++) cind_set = addElement(cind_set, i); 
     
     // while |R| < a / while current eviction set is not big enough
-    //while(*evict_size < EVICT_SIZE_A){        
+    while(a_tmp < EVICT_SIZE_A || cind_set==NULL){        
         // c <- pick(S) pick candidate c from candidate set S
-        // remove c from S
-        //c=pick(evict_set, evict_size, uint64_t *base_set, uint64_t base_size, uint64_t size, uint64_t *lfsr)
-    
-    // if not TEST(R union S\{c}), x)  if removing c results in not evicting x anymore, add c to current eviction set    
-      
-    //}
- 
-    
-    return; // TODO
+        c=pick(evict_set, cind_set, base_size, &lfsr);
+        cind_set = deleteElement(cind_set, c);         // remove c from S
+
+        // R union S\{c}
+        struct Node *combined_set = unionLists(cind_set, evict_set);
+        
+        // create pointer chase 
+        create_pointer_chase(candidate_set, base_size, combined_set);
+        
+        // count amount of elements in combined_set
+        for(cnt=0, Node* it=combined_set;it!=NULL;cnt++, it=it->next);
+        
+        // if not TEST(R union S\{c}), x)  if removing c results in not evicting x anymore, add c to current eviction set    
+        if(!TEST1(candidate_set[combined_set->value], cnt, victim_adrs)){
+            evict_set = addElement(evict_set1, c);      
+            a_tmp++; // added elem to evict set -> if enough, evict_set complete
+        }
+    }
+    if (cind==NULL && a_tmp < EVICT_SIZE_A) printf("create_minimal_eviction_set: not successful!\n");
     /* baseline algorithm */
     // TODO
 }
@@ -225,8 +244,47 @@ static struct Node* deleteElement(struct Node* head, uint64_t value) {
     return head;
 }
 
+static struct Node* cloneList(struct Node* original) {
+    struct Node* cloned = initLinkedList();
+    struct Node* current = original;
+    while (current != NULL) {
+        cloned = addElement(cloned, current->value);
+        current = current->next;
+    }
+    return cloned;
+}
 
-static void printList(Node* head) {
+static struct Node* unionLists(struct Node* list1, struct Node* list2) {
+    struct Node* result = initLinkedList();
+    struct Node* current;
+
+    // Add elements from the first list
+    current = list1;
+    while (current != NULL) {
+        result = addElement(result, current->value);
+        current = current->next;
+    }
+
+    // Add elements from the second list (avoid duplicates)
+    current = list2;
+    while (current != NULL) {
+        if (!containsValue(result, current->value)) result = addElement(result, current->value);
+        current = current->next;
+    }
+    return result;
+}
+
+static int containsValue(struct Node* head, uint64_t value) {
+    struct Node* current = head;
+
+    while (current != NULL) {
+        if (current->value == value) return 1;  // Value found
+        current = current->next;
+    }
+    return 0;  // Value not found
+}
+
+static void printList(struct Node* head) {
     printf("Linked List: ");
     while (head != NULL) {
         printf("%lu ", head->value);

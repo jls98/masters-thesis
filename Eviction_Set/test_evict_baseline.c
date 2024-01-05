@@ -13,11 +13,8 @@ void test_test1(){
     struct Node* evict_set1 = initLinkedList();  // current eviction set
     struct Node* evict_set2 = initLinkedList();  // current eviction set
     printf("a\n");
-    for (uint64_t i=0; i<c_size-1;i++){
-        cind_set = addElement(cind_set, i);      
-        //evict_set1 = addElement(evict_set1, i);      
-    
-    }    
+    for (uint64_t i=0; i<c_size-1;i++) cind_set = addElement(cind_set, i);      
+          
     printf("a\n");
     // fill eviction set with all elements, maximal eviction set lol
     for (uint64_t i=0; i<a;i++){
