@@ -92,16 +92,24 @@ void test_create_pointer_chase(){
     for (uint64_t i=0; i<c_size-1;i++) CU_ASSERT_EQUAL(candidate_set[i], &candidate_set[i]); // self assignment remained -> no cahnges
     
     // set some values
-    set = addElement(set, 42);
-    set = addElement(set, 128);
-    set = addElement(set, 255);
-    set = addElement(set, 17);
-    set = addElement(set, 360);
-    set = addElement(set, 92);
-    set = addElement(set, 511);
-    set = addElement(set, 205);
+    set = addElement(set, 3);    
     set = addElement(set, 77);
-    set = addElement(set, 3);
+    set = addElement(set, 205);
+    set = addElement(set, 511);
+    set = addElement(set, 92);
+    set = addElement(set, 360);
+    set = addElement(set, 17);
+    set = addElement(set, 255);
+    set = addElement(set, 128);
+    set = addElement(set, 42);
+
+
+
+
+
+
+
+
     
     // case element index out of range
     c_size=511;
