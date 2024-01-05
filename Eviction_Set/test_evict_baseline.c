@@ -50,7 +50,7 @@ void test_test1(){
     printf("a\n");
     freeList(evict_set1);
     freeList(evict_set2);
-    freeList(cand_set);
+    freeList(cind_set);
 }
 
 void test_pick(){
