@@ -111,12 +111,11 @@ static uint64_t test2(void *addr, uint64_t size);
 static void create_pointer_chase(void **addr, uint64_t size, uint64_t *set, uint64_t set_size);
 
 /* pick lfsr pseudo-randomized next candidate (index)   */
-/* new candidate should not be in eviction set, be part */
-/* of base set and picked with lfsr state in possible   */
-/* range. Furthermore, remove candidate index from      */
-/* currently available indexes in base set.             */
-/* returns index of candidate, if none found size+1     */
-static uint64_t pick(uint64_t *set, uint64_t set_size, uint64_t *base, uint64_t base_size, uint64_t size, uint64_t *lfsr);
+/* new candidate should not be part of eviction set     */
+/* evict_set, be part of base set and picked with lfsr  */
+/* state in possible range.                             */
+/* returns candidate index, if none found base_size+1   */
+static uint64_t pick(Node *evict_set, Node *candidate_set, uint64_t base_size, uint64_t *lfsr);
 
 /* create minimal eviction set from base set for        */
 /* victim_adrs in evict_set                             */
@@ -337,6 +336,7 @@ static uint64_t test2(void *addr, uint64_t size){
     return 1; // TODO
 }
 
+//static void create_pointer_chase(void **addr, uint64_t size, uint64_t *set, uint64_t set_size){
 static void create_pointer_chase(void **addr, uint64_t size, uint64_t *set, uint64_t set_size){
     
     for (uint64_t i=0; i< size-1;i++) addr[i]=&addr[i]; // every adrs points to itself/cleanup
@@ -362,26 +362,37 @@ static void create_pointer_chase(void **addr, uint64_t size, uint64_t *set, uint
 
 }
 
-static uint64_t pick(uint64_t *set, uint64_t set_size, uint64_t *base, uint64_t base_size, uint64_t size, uint64_t *lfsr) {
+//static uint64_t pick(uint64_t *set, uint64_t set_size, uint64_t *base, uint64_t base_size, uint64_t size, uint64_t *lfsr) {
+static uint64_t pick(Node *evict_set, Node *candidate_set, uint64_t base_size, uint64_t *lfsr) {
     // uninitialized parameters
-    if (lfsr==NULL || set==NULL || base==NULL || base_size ==0 || size==0){
-        return size+1;
+    if (lfsr==NULL || evict_set==NULL || candidate_set==NULL || base_size ==0){
+        return base_size+1;
     }
     
-    uint64_t candidate, j;
+    uint64_t c, j, c_size; // c candidate, j index, c_size current candidate set size
+    Node *cur_node;
+    // get candidate set size  
+    // iterate over all elements and count
+    for(cur_node = candidate_set, c_size=0; cur_node->next != NULL; c_size++, cur_node = cur_node->next);
     
-    // 99999 times set size + base size should suffice to find candidate in legitimate cases
-    for(uint64_t i=0; i<99999*size;i++){         
+    // 99999 times base size should suffice to find candidate in legitimate cases
+    for(uint64_t i=0; i<99999*base_size;i++){         
         // pick pseudo-random candidate by index from base set
-        candidate = lfsr_rand(lfsr) % base_size;
-        
-        // check if its in eviction set
-        for (j=0;j<set_size-1;j++){
-            if (set[j] == base[candidate]) break; // need new candidate
+        // iterate over rand mod c_size elements in current candidate set list and get index value
+        for(j=0, cur_node=candidate_set;cur_node->next != NULL;j++,cur_node=cur_node->next){
+            if (j == lfsr_rand(lfsr) % c_size){
+                c=cur_node->value;
+                break;
+            }
         }
-        if(j==set_size-1) return base[candidate]; // no match in eviction set
+               
+        // check if its in eviction set
+        for (cur_node=evict_set;cur_node->next != NULL;cur_node=cur_node->next){
+            if (cur_node->value == c) break; // need new candidate
+        }
+        if(cur_node->next !=NULL || cur_node->value == c) return c; // no match in eviction set (either break before last element, or c==last element)
     }
     
     // did not find candidate -> nothing to pick
-    return size+1;
+    return base_size+1;
 }
