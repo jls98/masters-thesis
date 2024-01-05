@@ -158,14 +158,14 @@ static void create_minimal_eviction_set(void *base_set, uint64_t base_size, uint
     
     
     // while |R| < a / while current eviction set is not big enough
-    while(*evict_size < EVICT_SIZE_A){        
+    //while(*evict_size < EVICT_SIZE_A){        
         // c <- pick(S) pick candidate c from candidate set S
         // remove c from S
-        c=pick(evict_set, evict_size, uint64_t *base_set, uint64_t base_size, uint64_t size, uint64_t *lfsr)
+        //c=pick(evict_set, evict_size, uint64_t *base_set, uint64_t base_size, uint64_t size, uint64_t *lfsr)
     
     // if not TEST(R union S\{c}), x)  if removing c results in not evicting x anymore, add c to current eviction set    
       
-    }
+    //}
  
     
     return;
