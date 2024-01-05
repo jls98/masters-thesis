@@ -354,6 +354,8 @@ static int64_t test1(void *addr, uint64_t size, void* cand, uint64_t threshold){
 		: "c" (addr), "r" (size), "r" (cand)
 		: "rsi", "rdx"
 	);
+    
+    printf("time %lu\n", time);
 	return time > threshold? 1 : 0;
 } /**/
 
