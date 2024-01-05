@@ -51,6 +51,23 @@ static inline uint64_t rdtscpfence();
 /* time measurement; returns time stamp                 */
 static inline uint64_t rdtscp();
 
+/* linked list containing an index and a pointer to     */
+/* the next element                                     */
+struct Node {
+    uint64_t value;
+    struct Node* next;
+};
+
+/* Function to add a new element to the linked list     */
+struct Node* addElement(struct Node* head, uint64_t value);
+
+/* Function to print the elements of the linked list    */
+void printList(struct Node* head);
+
+/* Function to free the memory allocated for the linked */
+/* list                                                 */
+void freeList(struct Node* head);
+
 /* #################################################### */
 /* ############## pseudo random generator ############# */
 /* #################################################### */
@@ -130,10 +147,27 @@ int main(int ac, char **av){
 }
 #endif
 
+#define EVICT_SIZE_A 12 // p cores 12 ways
 static void create_minimal_eviction_set(void *base_set, uint64_t base_size, uint64_t *evict_set, uint64_t *evict_size, uint64_t *victim_adrs){
     uint64_t *current_base_set = (uint64_t *) malloc(base_size * sizeof(uint64_t));
     
-    uint64_t lfsr = lfsr_create();
+    uint64_t lfsr = lfsr_create(), c; // init lfsr, var c for picked candidate
+    
+    // create current candidate set and initialize with all indexes
+    uint64_t *current_base_set = (uint64_t *) malloc(base_size * sizeof(void *));
+    
+    
+    // while |R| < a / while current eviction set is not big enough
+    while(*evict_size < EVICT_SIZE_A){        
+        // c <- pick(S) pick candidate c from candidate set S
+        // remove c from S
+        c=pick(evict_set, evict_size, uint64_t *base_set, uint64_t base_size, uint64_t size, uint64_t *lfsr)
+    
+    // if not TEST(R union S\{c}), x)  if removing c results in not evicting x anymore, add c to current eviction set    
+      
+    }
+ 
+    
     return;
     /* baseline algorithm */
     // TODO
@@ -142,6 +176,46 @@ static void create_minimal_eviction_set(void *base_set, uint64_t base_size, uint
 static void wait(uint64_t cycles) {
 	uint64_t start = rdtscp();
 	while (rdtscp() - start < cycles);
+}
+
+// Function to initialize an empty linked list
+struct Node* initLinkedList() {
+    return NULL;  // Return NULL to indicate an empty list
+}
+
+struct Node* addElement(struct Node* head, uint64_t value) {
+    // Allocate memory for a new node
+    struct Node* newNode = (struct Node*)malloc(sizeof(struct Node));
+    if (newNode == NULL) {
+        fprintf(stderr, "Memory allocation error\n");
+        exit(EXIT_FAILURE);
+    }
+    // Set the value and next pointer for the new node
+    newNode->value = value;
+    newNode->next = head;
+    // Update the head to point to the new node
+    head = newNode;
+    return head;
+}
+
+void printList(struct Node* head) {
+    printf("Linked List: ");
+    while (head != NULL) {
+        printf("%lu ", head->value);
+        head = head->next;
+    }
+    printf("\n");
+}
+
+void freeList(struct Node* head) {
+    struct Node* current = head;
+    struct Node* next;
+
+    while (current != NULL) {
+        next = current->next;
+        free(current);
+        current = next;
+    }
 }
 
 static inline void* maccess(void *p){
