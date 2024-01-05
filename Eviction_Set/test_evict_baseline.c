@@ -82,7 +82,7 @@ void test_pick(){
     if (val<65) printf("val<65 %lu\n", val);
 
     CU_ASSERT_TRUE(val < base_size); 
-    if (val< base_size) printf("val<bsize %lu\n", val);
+    if (val>= base_size) printf("val<bsize %lu\n", val);
     
     freeList(candidate_set1);
     freeList(candidate_set2);
