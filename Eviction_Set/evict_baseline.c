@@ -64,6 +64,10 @@ static struct Node* initLinkedList();
 /* Function to add a new element to the linked list     */
 static struct Node* addElement(struct Node* head, uint64_t value);
 
+/* Function to delete an element with a specific value  */
+/* from the linked list                                 */
+static struct Node* deleteElement(struct Node* head, uint64_t value);
+
 /* Function to print the elements of the linked list    */
 static void printList(struct Node* head);
 
@@ -198,6 +202,28 @@ static struct Node* addElement(struct Node* head, uint64_t value) {
     head = newNode;
     return head;
 }
+
+static struct Node* deleteElement(struct Node* head, uint64_t value) {
+    struct Node* current = head;
+    struct Node* previous = NULL;
+
+    // Traverse the list to find the node with the specified value
+    while (current != NULL && current->value != value) {
+        previous = current;
+        current = current->next;
+    }
+
+    // If the value is not found, return the original head
+    if (current == NULL) return head;
+
+    // Update the next pointer of the previous node or the head if the first node is deleted
+    if (previous != NULL) previous->next = current->next;
+    else head = current->next;
+    
+    free(current);
+    return head;
+}
+
 
 static void printList(struct Node* head) {
     printf("Linked List: ");
@@ -335,7 +361,6 @@ static uint64_t test2(void *addr, uint64_t size){
     return 1; // TODO
 }
 
-//static void create_pointer_chase(void **addr, uint64_t size, uint64_t *set, uint64_t set_size){
 static void create_pointer_chase(void **candidate_set, uint64_t c_size, struct Node* set){
     if (set == NULL) return; // no pointer chase 
 
@@ -376,7 +401,7 @@ static uint64_t pick(struct Node* evict_set, struct Node* candidate_set, uint64_
         for (cur_node=evict_set;cur_node != NULL;cur_node=cur_node->next){
             if (cur_node->value == c) break; // need new candidate
         }
-        if(cur_node == NULL && c<base_size) return c; // no match in eviction set (either break before last element, or c==last element)
+        if(cur_node == NULL && c<base_size) return c; // no match in eviction set (no break before last), c<base_size since I got very odd return values...
     }
     // did not find candidate -> nothing to pick
     return base_size+1;

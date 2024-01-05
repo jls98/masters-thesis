@@ -2,37 +2,46 @@
 #include <CUnit/CUnit.h>
 #include <CUnit/Basic.h>
 
-/*void test_test1(){
+void test_test1(){
     printf("testing test1...\n");
-    uint64_t size = CACHESIZE_DEFAULT*8, set_size=size; // set size should be large enough to evict everything from L1 lol
-    void **base = mmap(NULL, size * sizeof(void *), PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB, -1, 0);
+    uint64_t c_size = CACHESIZE_DEFAULT*8; // set size should be large enough to evict everything from L1 lol
+    void **cand_set = mmap(NULL, size * sizeof(void *), PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB, -1, 0);
     uint64_t *cand = (uint64_t *) malloc(sizeof(uint64_t *)); // just some random candidate :D
-    uint64_t *set = (uint64_t *) malloc(set_size*sizeof(uint64_t *)); // indexes from 0-8 in eviction set
+    uint64_t lfsr = lfsr_create();
     
-    wait(1E9);
-    for (uint64_t i=0; i<set_size-1;i++){
-        set[i]=i; // naive eviction set xd
+    struct Node* cind_set = initLinkedList();   // current candidate set (indexes)
+    struct Node* evict_set1 = initLinkedList();  // current eviction set
+    struct Node* evict_set2 = initLinkedList();  // current eviction set
+    
+    
+    for (uint64_t i=0; i<size-1;i++) cind_set = addElement(c_set, i);      
+    
+    // fill eviction set with all elements, maximal eviction set lol
+    for (uint64_t i=0; i<size-1;i++){
+        uint64_t c = pick(cind_set, evict_set1, c_size, &lfsr);
+        cind_set = deleteElement(cind_set, c);
+        evict_set1 = addElement(evict_set1, c);
     }
     
     // create pointer chase on base set
-    create_pointer_chase(base, size, set);
+    create_pointer_chase(cand_set, c_size, set);
     // uninitialized params/errors
-    
-    CU_ASSERT_EQUAL(TEST1(NULL, set_size, cand), -1); // assure self assignment
-    CU_ASSERT_EQUAL(TEST1(&base[set[0]], 0, cand), -1); // assure self assignment
-    CU_ASSERT_EQUAL(TEST1(&base[set[0]], set_size, NULL), -1); // assure self assignment
+    wait(1E9);
+    CU_ASSERT_EQUAL(TEST1(NULL, c_size, cand), -1); // assure self assignment
+    CU_ASSERT_EQUAL(TEST1(cand_set[evict_set1->value], 0, cand), -1); // assure self assignment
+    CU_ASSERT_EQUAL(TEST1(cand_set[evict_set1->value], c_size, NULL), -1); // assure self assignment
 
     
     // regular case (full huge page should evict (hopefully))
-    CU_ASSERT_EQUAL(TEST1(&base[set[0]], set_size, cand), 1); // assure self assignment
+    CU_ASSERT_EQUAL(TEST1(cand_set[evict_set1->value], c_size, cand), 1); // assure self assignment
     
-    set[0]=5;
-    set[1]=23;
-    set[2]=65;
-    create_pointer_chase(base, size, set); // eviction set far too small -> no eviction of candidate
-    CU_ASSERT_EQUAL(TEST1(&base[set[0]], 3, cand), 0); // assure self assignment
+    evict_set2 = addElement(evict_set2, 65);
+    evict_set2 = addElement(evict_set2, 23);
+    evict_set2 = addElement(evict_set2, 5);
+    create_pointer_chase(cand_set, c_size, evict_set2); // eviction set far too small -> no eviction of candidate
+    CU_ASSERT_EQUAL(TEST1(cand_set[evict_set1->value], 3, cand), 0); // assure self assignment
     //printf("case 3 set %li\n", TEST1(base, 3, cand)); 
-}*/
+}
 
 void test_pick(){
     printf("testing pick...\n");
@@ -153,7 +162,7 @@ int main() {
     CU_pSuite suite = CU_add_suite("Test Suite evict_baseline", NULL, NULL);
     CU_add_test(suite, "Test create_pointer_chase", test_create_pointer_chase);
     CU_add_test(suite, "Test pick", test_pick);
-    //CU_add_test(suite, "Test test1", test_test1);
+    CU_add_test(suite, "Test test1", test_test1);
 
     CU_basic_run_tests();
     CU_cleanup_registry();
