@@ -56,7 +56,7 @@ static inline uint64_t rdtscp();
 static struct Node {
     uint64_t value;
     struct Node* next;
-};
+}Node_t;
 
 /* Function to initialize an empty linked list          */
 static struct Node* initLinkedList();
@@ -363,14 +363,14 @@ static void create_pointer_chase(void **addr, uint64_t size, uint64_t *set, uint
 }
 
 //static uint64_t pick(uint64_t *set, uint64_t set_size, uint64_t *base, uint64_t base_size, uint64_t size, uint64_t *lfsr) {
-static uint64_t pick(Node *evict_set, Node *candidate_set, uint64_t base_size, uint64_t *lfsr) {
+static uint64_t pick(Node_t *evict_set, Node_t *candidate_set, uint64_t base_size, uint64_t *lfsr) {
     // uninitialized parameters
     if (lfsr==NULL || evict_set==NULL || candidate_set==NULL || base_size ==0){
         return base_size+1;
     }
     
     uint64_t c, j, c_size; // c candidate, j index, c_size current candidate set size
-    Node *cur_node;
+    Node_t *cur_node;
     // get candidate set size  
     // iterate over all elements and count
     for(cur_node = candidate_set, c_size=0; cur_node->next != NULL; c_size++, cur_node = cur_node->next);
