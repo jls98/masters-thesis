@@ -78,7 +78,8 @@ void test_pick(){
     // TODO sometimes fail
     CU_ASSERT_TRUE(val > 64);
     CU_ASSERT_TRUE(val < base_size); 
-
+    if (val< base_size) printf("val %lu\n", val);
+    
     freeList(candidate_set);
     freeList(evict_set);
 }
@@ -106,14 +107,6 @@ void test_create_pointer_chase(){
     set = addElement(set, 128);
     set = addElement(set, 42);
 
-
-
-
-
-
-
-
-    
     // case element index out of range
     c_size=511;
     create_pointer_chase(candidate_set, c_size, set);
@@ -125,7 +118,10 @@ void test_create_pointer_chase(){
     CU_ASSERT_EQUAL(candidate_set[17], &candidate_set[360]);
     CU_ASSERT_EQUAL(candidate_set[360], &candidate_set[92]);
     CU_ASSERT_EQUAL(candidate_set[92], &candidate_set[92]); // remains the same! problem occured here
-   
+    printf("92: %p\n", candidate_set[92]);
+    printf("360: %p\n", candidate_set[360]);
+    printf("17: %p\n", candidate_set[17]);
+    printf("511: %p\n", candidate_set[511]);
 
     // regular pointer chase
     c_size=512;
