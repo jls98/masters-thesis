@@ -122,10 +122,12 @@ void test_create_pointer_chase(){
     CU_ASSERT_EQUAL(candidate_set[17], &candidate_set[360]);
     CU_ASSERT_EQUAL(candidate_set[360], &candidate_set[92]);
     CU_ASSERT_EQUAL(candidate_set[92], &candidate_set[92]); // remains the same! problem occured here
+    
+    /* // some debug prints
     printf("92: %p, &92 %p\n", candidate_set[92], &candidate_set[92]);
     printf("360: %p, &360 %p\n", candidate_set[360], &candidate_set[360]);
     printf("17: %p, &17 %p\n", candidate_set[17], &candidate_set[17]);
-    printf("511: %p, &511 %p\n", candidate_set[511], &candidate_set[511]);
+    printf("511: %p, &511 %p\n", candidate_set[511], &candidate_set[511]);*/
 
     // regular pointer chase
     c_size=512;
