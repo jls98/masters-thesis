@@ -65,18 +65,22 @@ void test_pick(){
     candidate_set = initLinkedList();
     candidate_set = addElement(candidate_set, 5);
     CU_ASSERT_EQUAL(pick(evict_set, candidate_set, base_size, &lfsr), base_size+1); 
-    printf("%lu\n", pick(evict_set, candidate_set, base_size, &lfsr));
 
     candidate_set = addElement(candidate_set, 65);
     // regular, 1 valid candidate option left
     CU_ASSERT_EQUAL(pick(evict_set, candidate_set, base_size, &lfsr), 65); 
+    printf("%lu\n", pick(evict_set, candidate_set, base_size, &lfsr));
+ 
+
     candidate_set = addElement(candidate_set, 67);
     candidate_set = addElement(candidate_set, 69);
     candidate_set = addElement(candidate_set, 66);
     uint64_t val = pick(evict_set, candidate_set, base_size, &lfsr);
+    printf("%lu\n", val);
     CU_ASSERT_TRUE(val > 64 && val < base_size); 
 
-
+    freeList(candidate_set);
+    freeList(evict_set);
 }
 
 void test_create_pointer_chase(){
