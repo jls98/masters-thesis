@@ -69,7 +69,7 @@ static struct Node* addElement(struct Node* head, uint64_t value);
 static struct Node* deleteElement(struct Node* head, uint64_t value);
 
 /* Function to print the elements of the linked list    */
-static void printList(struct Node* head);
+static void printList(Node* head);
 
 /* Function to free the memory allocated for the linked */
 /* list                                                 */
@@ -226,7 +226,7 @@ static struct Node* deleteElement(struct Node* head, uint64_t value) {
 }
 
 
-static void printList(struct Node* head) {
+static void printList(Node* head) {
     printf("Linked List: ");
     while (head != NULL) {
         printf("%lu ", head->value);
