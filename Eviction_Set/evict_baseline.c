@@ -293,7 +293,7 @@ static uint64_t lfsr_step(uint64_t lfsr) {
 }
 
 // delete */ to toggle test1 implementation -> keep in mind that change of threshold values is required
-/* */
+/* 
 static int64_t test1(void *addr, uint64_t size, void* cand, uint64_t threshold){
     if (size==0 || addr==NULL || cand==NULL) return -1; // parameter check
 	uint64_t count = size;
@@ -316,7 +316,7 @@ static int64_t test1(void *addr, uint64_t size, void* cand, uint64_t threshold){
     return delta > threshold;
 }
 
-/*/ not sure what to use though -> Threshold values depend on implementation
+/*/ // not sure what to use though -> Threshold values depend on implementation
 static int64_t test1(void *addr, uint64_t size, void* cand, uint64_t threshold){    
     if (size==0 || addr==NULL || cand==NULL) return -1; // parameter check
 
