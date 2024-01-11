@@ -100,7 +100,7 @@ static uint64_t lfsr_step(uint64_t lfsr) {
 
 static double probe_stride_loop(void *addr, uint64_t reps) {
 	if(reps==0) return 0.0f;
-	 uint64_t* cur = (uint64_t *)*addr;
+	 uint64_t* cur = (uint64_t *)addr;
 	for(uint64_t i=0;i<reps;i++){
 		cur= *cur;
 	}
