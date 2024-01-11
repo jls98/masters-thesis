@@ -47,27 +47,27 @@ int get_ways_sqr(int cache_size) {
 		printf("s %lu, stride %lu, reps %lu, index %lu, size of pointer chase %lu\n", s, stride, reps, buffer_size, buffer_size/stride);
         double millicycles = probe_stride_loop(buffer, reps);
         //printf("stride: %5d; time: %7.3f cycles\n", (1<<stride), millicycles);
-        printf("%7d %7.3f\n", 8*stride, millicycles);
+        printf("%7ld %7.3f\n", 8*stride, millicycles);
 		
         create_pointer_stride_chase(buffer, buffer_size, stride);  
         reps = double_cache_size % stride == 0? buffer_size/stride : buffer_size/stride +1;
         millicycles = probe_stride_loop(buffer, reps);
         //printf("stride: %5d; time: %7.3f cycles\n", (1<<stride), millicycles);
-        printf("%7d %7.3f\n", 8*stride, millicycles);
-		
-		
-        create_pointer_stride_chase(buffer, buffer_size, stride);  
-        reps = double_cache_size % stride == 0? buffer_size/stride : buffer_size/stride +1;
-        millicycles = probe_stride_loop(buffer, reps);
-        //printf("stride: %5d; time: %7.3f cycles\n", (1<<stride), millicycles);
-        printf("%7d %7.3f\n", 8*stride, millicycles);
+        printf("%7ld %7.3f\n", 8*stride, millicycles);
 		
 		
         create_pointer_stride_chase(buffer, buffer_size, stride);  
         reps = double_cache_size % stride == 0? buffer_size/stride : buffer_size/stride +1;
         millicycles = probe_stride_loop(buffer, reps);
         //printf("stride: %5d; time: %7.3f cycles\n", (1<<stride), millicycles);
-        printf("%7d %7.3f\n", 8*stride, millicycles);
+        printf("%7ld %7.3f\n", 8*stride, millicycles);
+		
+		
+        create_pointer_stride_chase(buffer, buffer_size, stride);  
+        reps = double_cache_size % stride == 0? buffer_size/stride : buffer_size/stride +1;
+        millicycles = probe_stride_loop(buffer, reps);
+        //printf("stride: %5d; time: %7.3f cycles\n", (1<<stride), millicycles);
+        printf("%7ld %7.3f\n", 8*stride, millicycles);
        
         munmap(buffer, double_cache_size);
     }
@@ -100,7 +100,7 @@ static uint64_t lfsr_step(uint64_t lfsr) {
 
 static double probe_stride_loop(void *addr, uint64_t reps) {
 	if(reps==0) return 0.0f;
-	 void* cur = addr;
+	 uint64_t* cur = (uint64_t *)*addr;
 	for(uint64_t i=0;i<reps;i++){
 		cur= *cur;
 	}
