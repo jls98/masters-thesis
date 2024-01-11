@@ -103,12 +103,12 @@ static double probe_stride_loop(void *addr, uint64_t reps) {
 
 	volatile uint64_t time;
 	asm __volatile__ (
-		"mov rax, %1;"
+		/*"mov rax, %1;"
 		"mov rdx, %2;"
 		"loop0:"
 		"mov rax, [rax];"
         "dec rdx;"
-        "jnz loop0;"
+        "jnz loop0;"*/
         // measure
 		"mfence;"
 		"lfence;"
