@@ -100,12 +100,15 @@ static uint64_t lfsr_step(uint64_t lfsr) {
 
 static double probe_stride_loop(void *addr, uint64_t reps) {
 	if(reps==0) return 0.0f;
-	 uint64_t* cur = (uint64_t *)addr;
-	for(uint64_t i=0;i<reps;i++){
-		cur= *cur;
-	}
+
 	volatile uint64_t time;
 	asm __volatile__ (
+		"mov rax, %1;"
+		"mov rdx, %2;"
+		"loop0:"
+		"mov rax, [rax];"
+        "dec rdx;"
+        "jnz loop0;"
         // measure
 		"mfence;"
 		"lfence;"
