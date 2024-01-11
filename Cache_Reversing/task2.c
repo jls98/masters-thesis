@@ -117,10 +117,9 @@ static void create_pointer_stride_chase(void** addr, const uint64_t size, const 
     }
     uint64_t lfsr = lfsr_create(); // start random lfsr
     uint64_t offset, curr = 0; // offset = 0
-    uint64_t stride_indexes = size % stride == 0? size/stride : size/stride +1;
     
     // compute amount of entries with stride stride
-    for (uint64_t i = 0; i < stride_indexes-1; i++) {
+    for (uint64_t i = 0; i < stride-1; i++) {
         do {
             offset = lfsr_rand(&lfsr) % size; // random number mod size 
         } while (offset == curr || addr[offset] != NULL || offset % stride != 0); // ensure that offset !=curr and addr[offset]==NULL and jumps only between entries of stride
