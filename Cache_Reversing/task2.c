@@ -150,5 +150,5 @@ static void create_pointer_stride_chase(void** addr, const uint64_t size, const 
     }
     addr[curr] = addr;
 
-    printf("create_pointer_stride_chase: set size stride_indexes %lu, counter %lu, stride %u \n", stride_indexes, counter, stride);
+    printf("create_pointer_stride_chase: set size stride_indexes %lu, counter %lu, stride %u entries size %lu\n", stride_indexes, counter, stride, size);
 }
