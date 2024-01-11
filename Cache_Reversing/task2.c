@@ -44,7 +44,7 @@ int get_ways_sqr(int cache_size) {
 		uint64_t stride = 1<<s;
         create_pointer_stride_chase(buffer, buffer_size, stride);  
         uint64_t reps = double_cache_size % stride == 0? buffer_size/stride : buffer_size/stride +1;
-		printf("s %lu, stride %lu, reps %lu, index %lu, size of pointer chase %lu\n", s, stride, reps, buffer_size/stride;
+		printf("s %lu, stride %lu, reps %lu, index %lu, size of pointer chase %lu\n", s, stride, reps, buffer_size, buffer_size/stride);
         double millicycles = probe_stride_loop(buffer, reps);
         //printf("stride: %5d; time: %7.3f cycles\n", (1<<stride), millicycles);
         printf("%7d %7.3f\n", 8*stride, millicycles);
