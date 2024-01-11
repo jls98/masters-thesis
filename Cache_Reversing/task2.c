@@ -50,21 +50,21 @@ int get_ways_sqr(int cache_size) {
         printf("%7ld %7.3f\n", 8*stride, millicycles);
 		
         create_pointer_stride_chase(buffer, buffer_size, stride);  
-        reps = double_cache_size % stride == 0? buffer_size/stride : buffer_size/stride +1;
+        //reps = double_cache_size % stride == 0? buffer_size/stride : buffer_size/stride +1;
         millicycles = probe_stride_loop(buffer, buffer_size);
         //printf("stride: %5d; time: %7.3f cycles\n", (1<<stride), millicycles);
         printf("%7ld %7.3f\n", 8*stride, millicycles);
 		
 		
         create_pointer_stride_chase(buffer, buffer_size, stride);  
-        reps = double_cache_size % stride == 0? buffer_size/stride : buffer_size/stride +1;
+        //reps = double_cache_size % stride == 0? buffer_size/stride : buffer_size/stride +1;
         millicycles = probe_stride_loop(buffer, buffer_size);
         //printf("stride: %5d; time: %7.3f cycles\n", (1<<stride), millicycles);
         printf("%7ld %7.3f\n", 8*stride, millicycles);
 		
 		
         create_pointer_stride_chase(buffer, buffer_size, stride);  
-        reps = double_cache_size % stride == 0? buffer_size/stride : buffer_size/stride +1;
+        //reps = double_cache_size % stride == 0? buffer_size/stride : buffer_size/stride +1;
         millicycles = probe_stride_loop(buffer, buffer_size);
         //printf("stride: %5d; time: %7.3f cycles\n", (1<<stride), millicycles);
         printf("%7ld %7.3f\n", 8*stride, millicycles);
