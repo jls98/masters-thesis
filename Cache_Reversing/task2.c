@@ -38,35 +38,36 @@ int get_ways_sqr(int cache_size) {
     uint64_t double_cache_size = 2*cache_size;
     // check stride in power of two
 	printf("probing with set of size %lu for cache size %i\n", double_cache_size, cache_size);
-    for (uint32_t stride = 1; stride < log_2(double_cache_size)-1; stride++) {
+    for (uint64_t s = 1; s < log_2(double_cache_size)-1; s++) {
         void* buffer = mmap(NULL, double_cache_size, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB, -1, 0);
-        create_pointer_stride_chase(buffer, double_cache_size / sizeof(void*), 1<<stride);  
-        uint64_t reps = double_cache_size % (1<<stride) == 0? (double_cache_size/ sizeof(void*))/(1<<stride) : (double_cache_size/ sizeof(void*))/(1<<stride) +1;
-		printf("stride %u, reps %lu, index %lu, size of pointer chase %lu\n", stride, reps, double_cache_size / sizeof(void*), 1<<stride);
+		uint64_t buffer_size = double_cache_size / sizeof(void*);
+		uint64_t stride = 1<<s;
+        create_pointer_stride_chase(buffer, buffer_size, stride);  
+        uint64_t reps = double_cache_size % stride == 0? buffer_size/stride : buffer_size/stride +1;
+		printf("s %lu, stride %lu, reps %lu, index %lu, size of pointer chase %lu\n", s, stride, reps, buffer_size/stride;
         double millicycles = probe_stride_loop(buffer, reps);
         //printf("stride: %5d; time: %7.3f cycles\n", (1<<stride), millicycles);
-        printf("%7d %7.3f\n", 8*(1<<stride), millicycles);
+        printf("%7d %7.3f\n", 8*stride, millicycles);
 		
-        create_pointer_stride_chase(buffer, double_cache_size / sizeof(void*), 1<<stride);  
-        reps = double_cache_size % (1<<stride) == 0? double_cache_size/(1<<stride) : double_cache_size/(1<<stride) +1;
+        create_pointer_stride_chase(buffer, buffer_size, stride);  
+        reps = double_cache_size % stride == 0? buffer_size/stride : buffer_size/stride +1;
         millicycles = probe_stride_loop(buffer, reps);
         //printf("stride: %5d; time: %7.3f cycles\n", (1<<stride), millicycles);
-        printf("%7d %7.3f\n", 8*(1<<stride), millicycles);
+        printf("%7d %7.3f\n", 8*stride, millicycles);
 		
 		
-        create_pointer_stride_chase(buffer, double_cache_size / sizeof(void*), 1<<stride);  
-        reps = double_cache_size % (1<<stride) == 0? double_cache_size/(1<<stride) : double_cache_size/(1<<stride) +1;
+        create_pointer_stride_chase(buffer, buffer_size, stride);  
+        reps = double_cache_size % stride == 0? buffer_size/stride : buffer_size/stride +1;
         millicycles = probe_stride_loop(buffer, reps);
         //printf("stride: %5d; time: %7.3f cycles\n", (1<<stride), millicycles);
-        printf("%7d %7.3f\n", 8*(1<<stride), millicycles);
+        printf("%7d %7.3f\n", 8*stride, millicycles);
 		
 		
-        create_pointer_stride_chase(buffer, double_cache_size / sizeof(void*), 1<<stride);  
-        reps = double_cache_size % (1<<stride) == 0? double_cache_size/(1<<stride) : double_cache_size/(1<<stride) +1;
+        create_pointer_stride_chase(buffer, buffer_size, stride);  
+        reps = double_cache_size % stride == 0? buffer_size/stride : buffer_size/stride +1;
         millicycles = probe_stride_loop(buffer, reps);
         //printf("stride: %5d; time: %7.3f cycles\n", (1<<stride), millicycles);
-        printf("%7d %7.3f\n", 8*(1<<stride), millicycles);
-		
+        printf("%7d %7.3f\n", 8*stride, millicycles);
        
         munmap(buffer, double_cache_size);
     }
