@@ -102,7 +102,7 @@ static double probe_stride_loop(const void *addr, const uint64_t reps) {
 	if(reps==0) return 0.0f;
 	 void* cur = addr;
 	for(uint64_t i=0;i<reps;i++){
-		cur=*cur;
+		cur= *cur;
 	}
 	volatile uint64_t time;
 	asm __volatile__ (
