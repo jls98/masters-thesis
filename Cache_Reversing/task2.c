@@ -100,7 +100,7 @@ static uint64_t lfsr_step(uint64_t lfsr) {
 
 static double probe_stride_loop(const void *addr, const uint64_t reps) {
 	if(reps==0) return 0.0f;
-	for(void *i=*addr;i!=addr;i=*i);
+	for(void *i=*addr;i!=addr;i= *i);
 	volatile uint64_t time;
 	asm __volatile__ (
         // measure
