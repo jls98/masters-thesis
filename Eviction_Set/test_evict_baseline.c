@@ -6,7 +6,10 @@ void test_test1(){
     printf("\nTesting test1...\n\n");
 	// change to local system and cache in 8 bytes to check, a size of candidate set in index 
     //uint64_t c_size = 1024, a=4096/8; // L1d i7, i12e
-    uint64_t c_size = 524288, a=262144; // L2 i12e
+    //uint64_t c_size = 524288, a=262144; // L2 i12e
+    uint64_t c_size = 65536, a=32768; // L2 i7
+    //uint64_t c_size = 12288, a=6144; // L1 i12p
+    //uint64_t c_size = 327680, a=163840; // L2 i12p
     void **cand_set = mmap(NULL, c_size * sizeof(void *), PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB, -1, 0);
     uint64_t *cand = (uint64_t *) malloc(sizeof(uint64_t *)); // just some random candidate :D
     uint64_t lfsr = lfsr_create();
