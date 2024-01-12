@@ -157,7 +157,10 @@ int main(int ac, char **av){
     uint64_t *victim_adrs = ac > 1? (uint64_t *)strtoull(av[1], NULL, 0) : &base_size;
     
     create_minimal_eviction_set(candidate_set, base_size, evict_set, victim_adrs);
-    
+    printf("Eviction set for candidate %p \n", victim_adrs);
+	for(struct Node *it = evict_set;it!=NULL;it=it->next){
+		printf("%p\n", &it);
+	}
     freeList(evict_set); // delete eviction set
     return 0;
 }
