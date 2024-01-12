@@ -12,10 +12,9 @@ void test_test1(){
     struct Node* cind_set = initLinkedList();   // current candidate set (indexes)
     struct Node* evict_set1 = initLinkedList();  // current eviction set
     struct Node* evict_set2 = initLinkedList();  // current eviction set
-    printf("a\n");
+
     for (uint64_t i=0; i<c_size-1;i++) cind_set = addElement(cind_set, i);      
           
-    printf("a\n");
     // fill eviction set with all elements, maximal eviction set lol
     for (uint64_t i=0; i<a;i++){
         uint64_t c = pick(evict_set1, cind_set, c_size, &lfsr);
@@ -28,17 +27,15 @@ void test_test1(){
         if (i%100==0) printf("%lu, %lu, %lu, %lu\n", i, c, cind_set->value, evict_set1->value);
     }
     
-    printf("a\n");
     // create pointer chase on base set
     create_pointer_chase(cand_set, c_size, evict_set1);
     // uninitialized params/errors
-    printf("a\n");
+
     wait(1E9);
     CU_ASSERT_EQUAL(TEST1(NULL, a, cand), -1); // assure self assignment
     CU_ASSERT_EQUAL(TEST1(cand_set[evict_set1->value], 0, cand), -1); // assure self assignment
     CU_ASSERT_EQUAL(TEST1(cand_set[evict_set1->value], a, NULL), -1); // assure self assignment
 
-    printf("a\n");
     
     // regular case (full huge page should evict (hopefully))
     CU_ASSERT_EQUAL(TEST1(cand_set[evict_set1->value], a, cand), 1); // assure self assignment
@@ -50,7 +47,6 @@ void test_test1(){
     CU_ASSERT_EQUAL(TEST1(cand_set[evict_set1->value], 3, cand), 0); // assure self assignment
     //printf("case 3 set %li\n", TEST1(base, 3, cand)); 
     
-    printf("a\n");
     freeList(evict_set1);
     freeList(evict_set2);
     freeList(cind_set);

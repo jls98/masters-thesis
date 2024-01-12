@@ -379,42 +379,47 @@ static int64_t test1(void *addr, uint64_t size, void* cand, uint64_t threshold){
 static int64_t test1(void *addr, uint64_t size, void* cand, uint64_t threshold){    
     if (size==0 || addr==NULL || cand==NULL) return -1; // parameter check
 
-	volatile uint64_t time;
-	asm __volatile__ (
-		// load candidate and set 
-        "lfence;"
-        "mov rax, %1;"
-        "mov rdx, %2;"
-		"mov rsi, [%3];" // load candidate 
-        // BEGIN - read every entry in addr
-        "loop:"
-		"mov rax, [rax];"
-        "dec rdx;"
-        "jnz loop;"
-		// END - reading set
-        // measure start
-        "lfence;"
-		"rdtsc;"		
-		"lfence;"
-		"mov rsi, rax;"
-        // high precision
-        "shl rdx, 32;"
-		"or rsi, rdx;"
-		"mov rax, [%3];" // load candidate 	
-		"lfence;"
-		"rdtsc;"
-        // start - high precision
-        "shl rdx, 32;"
-        "or rax, rdx;"
-        // end - high precision
-		"sub rax, rsi;"
-		: "=a" (time)
-		: "c" (addr), "r" (size), "r" (cand)
-		: "rsi", "rdx"
-	);
+	volatile uint64_t time, sum=0;
+	for(uint64_t i=0;i<10000;i++){
+		time=NULL;
+		asm __volatile__ (
+			// load candidate and set 
+			"lfence;"
+			"mov rax, %1;"
+			"mov rdx, %2;"
+			"mov rsi, [%3];" // load candidate 
+			// BEGIN - read every entry in addr
+			"loop:"
+			"mov rax, [rax];"
+			"dec rdx;"
+			"jnz loop;"
+			// END - reading set
+			// measure start
+			"lfence;"
+			"rdtsc;"		
+			"lfence;"
+			"mov rsi, rax;"
+			// high precision
+			"shl rdx, 32;"
+			"or rsi, rdx;"
+			"mov rax, [%3];" // load candidate 	
+			"lfence;"
+			"rdtsc;"
+			// start - high precision
+			"shl rdx, 32;"
+			"or rax, rdx;"
+			// end - high precision
+			"sub rax, rsi;"
+			: "=a" (time)
+			: "c" (addr), "r" (size), "r" (cand)
+			: "rsi", "rdx"
+		);
+		sum+=time;
+	}
+	
     
     printf("time %lu\n", time);
-	return time > threshold? 1 : 0;
+	return time/10000 > threshold? 1 : 0;
 } /**/
 
 static uint64_t test2(void *addr, uint64_t size){
