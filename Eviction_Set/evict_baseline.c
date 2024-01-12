@@ -198,6 +198,7 @@ static void create_minimal_eviction_set(void **candidate_set, uint64_t base_size
         }
     }
     if (cind_set==NULL && a_tmp < EVICT_SIZE_A) printf("create_minimal_eviction_set: not successful!\n");
+	printf("a_tmp Elements in eviction set %lu, cind_set empty %i, evict_set empty %i\n", a_tmp, cind_set==NULL, evict_set==NULL);
     /* baseline algorithm */
 }
 
