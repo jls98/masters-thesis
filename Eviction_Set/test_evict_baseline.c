@@ -17,7 +17,7 @@ void test_test1(){
     for (uint64_t i=0; i<c_size-1;i++) cind_set = addElement(cind_set, i);  // init indexes for candidate set (add all indexes to candidate index set)
           
     // fill eviction set with all elements, maximal eviction set lol
-    for (uint64_t i=0; i<c_size;i++){
+    for (uint64_t i=0; i<c_size-1;i++){
         uint64_t c = pick(evict_set1, cind_set, c_size, &lfsr);
         if(c == c_size+1){
 			printf("%lu, %lu, %i, %i\n", i, c, cind_set==NULL, evict_set1==NULL);
