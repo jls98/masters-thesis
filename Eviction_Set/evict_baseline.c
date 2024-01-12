@@ -12,7 +12,7 @@
 #define THRESHOLD_SINGLE_DEFAULT_E12 THRESHOLD_SINGLE_L1D_E12
 
 // IntelGen12 p core
-#define THRESHOLD_SINGLE_L1D_P12 240      // 2.6/ 31<30 in single measurement / new 150? 60-90
+#define THRESHOLD_SINGLE_L1D_P12 270      // 2.6/ 31<30 in single measurement / new 150? 60-90
 #define THRESHOLD_SINGLE_L2_P12 9       // <8
 #define THRESHOLD_SINGLE_LLC_P12 50     // ~30 (?)
 #define THRESHOLD_SINGLE_DEFAULT_P12 THRESHOLD_SINGLE_L1D_P12
