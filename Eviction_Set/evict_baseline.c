@@ -411,7 +411,7 @@ static int64_t test1(void *addr, uint64_t size, void* cand, uint64_t threshold){
 			"or rax, rdx;"
 			// end - high precision
 			"sub rax, rsi;"
-			"clflush [%3];"
+			"clflush %3;"
 			: "=a" (time)
 			: "c" (addr), "r" (size), "r" (cand)
 			: "rsi", "rdx"
@@ -442,7 +442,6 @@ static void create_pointer_chase(void **candidate_set, uint64_t c_size, struct N
         candidate_set[cur_no->value] = &candidate_set[cur_no->next->value];    
     }
     candidate_set[cur_no->value] = &candidate_set[set->value]; // set pointer from last element to first element
-
 }
 
 static uint64_t pick(struct Node* evict_set, struct Node* candidate_set, uint64_t base_size, uint64_t *lfsr) {
