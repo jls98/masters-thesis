@@ -84,6 +84,7 @@ static double probe_stride_loop(void *addr, uint64_t reps) {
 	volatile uint64_t time;
 	asm __volatile__ (
 		// load all entries into cache
+		"lfence;"
 		"mov rax, %1;" 
 		"mov rdx, %2;"
 		"loop0:"

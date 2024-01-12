@@ -393,7 +393,6 @@ static int64_t test1(void *addr, uint64_t size, void* cand, uint64_t threshold){
         "jnz loop;"
 		// END - reading set
         // measure start
-		"mfence;"
         "lfence;"
 		"rdtsc;"		
 		"lfence;"
