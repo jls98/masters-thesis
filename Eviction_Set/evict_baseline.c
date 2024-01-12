@@ -156,9 +156,13 @@ int main(int ac, char **av){
     // if adrs set, otherwise use some other uint64_t adrs
     uint64_t *victim_adrs = ac > 1? (uint64_t *)strtoull(av[1], NULL, 0) : &base_size;
     
-    create_minimal_eviction_set(candidate_set, base_size, evict_set, victim_adrs);
-    printf("Eviction set for candidate %p %i\n", victim_adrs, evict_set==NULL);
+    struct Node * tmp_evict_set = create_minimal_eviction_set(candidate_set, base_size, evict_set, victim_adrs);
+    printf("Eviction set for candidate %p %i %i\n", victim_adrs, evict_set==NULL, tmp_evict_set==NULL);
 	for(struct Node *it = evict_set;it!=NULL;it=it->next){
+		printf("%p\n", &it);
+	}
+	printf("---\n");
+	for(struct Node *it = tmp_evict_set;it!=NULL;it=it->next){
 		printf("%p\n", &it);
 	}
     freeList(evict_set); // delete eviction set
@@ -167,7 +171,7 @@ int main(int ac, char **av){
 #endif
 
 #define EVICT_SIZE_A 20 // p cores 12 ways
-static void create_minimal_eviction_set(void **candidate_set, uint64_t base_size, struct Node* evict_set, uint64_t *victim_adrs){
+static struct Node * create_minimal_eviction_set(void **candidate_set, uint64_t base_size, struct Node* evict_set, uint64_t *victim_adrs){
     
     uint64_t lfsr = lfsr_create(), c, a_tmp=0, cnt; // init lfsr, var c for picked candidate
     
@@ -201,6 +205,7 @@ static void create_minimal_eviction_set(void **candidate_set, uint64_t base_size
     if (cind_set==NULL && a_tmp < EVICT_SIZE_A) printf("create_minimal_eviction_set: not successful!\n");
 	printf("a_tmp Elements in eviction set %lu, cind_set empty %i, evict_set empty %i\n", a_tmp, cind_set==NULL, evict_set==NULL);
     /* baseline algorithm */
+	return evict_set;
 }
 
 static void wait(uint64_t cycles) {
