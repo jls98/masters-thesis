@@ -455,9 +455,9 @@ static uint64_t pick(struct Node* evict_set, struct Node* candidate_set, uint64_
     // 99999 times base size should suffice to find candidate in legitimate cases
     for(uint64_t i=0; i<99999*base_size;i++){         
         // pick pseudo-random candidate by index from candidate_set
-        // iterate over rand mod c_size elements in current candidate set list and get index value
+        // iterate over rand mod base_size elements in current candidate set list and get index value
         for(j=0, cur_node=candidate_set;cur_node != NULL;j++,cur_node=cur_node->next){
-            if (j == lfsr_rand(lfsr) % c_size){
+            if (j == lfsr_rand(lfsr) % base_size){
                 c=cur_node->value;
                 break;
             }
