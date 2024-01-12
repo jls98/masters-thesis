@@ -381,7 +381,6 @@ static int64_t test1(void *addr, uint64_t size, void* cand, uint64_t threshold){
 
 	volatile uint64_t time, sum=0;
 	for(uint64_t i=0;i<10000;i++){
-		//time=0;
 		asm __volatile__ (
 			// load candidate and set 
 			"mov rax, %1;"
@@ -418,8 +417,6 @@ static int64_t test1(void *addr, uint64_t size, void* cand, uint64_t threshold){
 		);
 		sum+=time;
 	}
-	
-    
     printf("sum %lu, sum/10000 %lu\n", sum, sum/10000);
 	return sum/10000 > threshold? 1 : 0;
 } /**/
