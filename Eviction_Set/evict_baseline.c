@@ -162,7 +162,7 @@ int main(int ac, char **av){
 		printf("%p\n", &it);
 	}
 	printf("---\n");
-	for(struct Node *it = tmp_evict_set;it!=NULL;it=it->next){
+	for(struct Node *it = *tmp_evict_set;it!=NULL;it=it->next){
 		printf("%p\n", &it);
 	}
     freeList(evict_set); // delete eviction set
