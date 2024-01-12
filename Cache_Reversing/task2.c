@@ -49,7 +49,6 @@ int get_ways_sqr(int cache_size) {
         //printf("stride: %5d; time: %7.3f cycles\n", (1<<stride), millicycles);
         printf("%7ld %7.3f\n", 8*stride, millicycles);
 		
-       
         munmap(buffer, double_cache_size);
     }
     return 0;
@@ -84,13 +83,14 @@ static double probe_stride_loop(void *addr, uint64_t reps) {
 
 	volatile uint64_t time;
 	asm __volatile__ (
-		"mov rax, %1;"
+		// load all entries into cache
+		"mov rax, %1;" 
 		"mov rdx, %2;"
 		"loop0:"
 		"mov rax, [rax];"
         "dec rdx;"
         "jnz loop0;"
-        // measure
+        // START
 		"mfence;"
 		"lfence;"
 		"rdtsc;"
@@ -99,7 +99,7 @@ static double probe_stride_loop(void *addr, uint64_t reps) {
         // high precision
         "shl rdx, 32;"
 		"or rsi, rdx;"
-		// BEGIN - probe address
+		// BEGIN - probe addresses
         "mov rax, %1;"
         "mov rdx, %2;"
         "loop:"
@@ -113,6 +113,7 @@ static double probe_stride_loop(void *addr, uint64_t reps) {
         "shl rdx, 32;"
         "or rax, rdx;"
         // end - high precision
+		// END
 		"sub rax, rsi;"
 		: "=a" (time)
 		: "c" (addr), "r" (reps)
