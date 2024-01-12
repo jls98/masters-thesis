@@ -384,11 +384,10 @@ static int64_t test1(void *addr, uint64_t size, void* cand, uint64_t threshold){
 		time=NULL;
 		asm __volatile__ (
 			// load candidate and set 
-			"lfence;"
-			"mfence;"
 			"mov rax, %1;"
 			"mov rdx, %2;"
 			"mov rsi, [%3];" // load candidate
+			"lfence;"
 			// BEGIN - read every entry in addr
 			"loop:"
 			"mov rax, [rax];"
@@ -411,7 +410,7 @@ static int64_t test1(void *addr, uint64_t size, void* cand, uint64_t threshold){
 			"or rax, rdx;"
 			// end - high precision
 			"sub rax, rsi;"
-			"clflush %3;"
+			"clflush [%3];" // flush data from candidate for repeated loading
 			: "=a" (time)
 			: "c" (addr), "r" (size), "r" (cand)
 			: "rsi", "rdx"
