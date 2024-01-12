@@ -18,8 +18,6 @@ def format_ticks(value, _):
     
 def plot_data_task2(data, opt):
     strides, cycles = data[:, 0], data[:, 1]
-    for i in range (0, len(strides)):
-        strides[i] = strides[i] * 8
     plt.figure(figsize=(10, 6))
     plt.scatter(strides, cycles, label='cycles', marker='o', color='b')
     plt.plot(strides, cycles, linestyle='-', color='b', linewidth=0.5)  # Thin line connecting the dots
