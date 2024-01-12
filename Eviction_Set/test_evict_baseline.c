@@ -4,7 +4,8 @@
 
 void test_test1(){
     printf("\nTesting test1...\n\n");
-    uint64_t c_size = CACHESIZE_DEFAULT, a=4096/8; // set size should be large enough to evict everything from L1 lol
+	
+    uint64_t c_size = 1024, a=4096/8; // change to local system and cache in 8 bytes to check, a size of candidate set in index 
     void **cand_set = mmap(NULL, c_size * sizeof(void *), PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB, -1, 0);
     uint64_t *cand = (uint64_t *) malloc(sizeof(uint64_t *)); // just some random candidate :D
     uint64_t lfsr = lfsr_create();
@@ -13,10 +14,10 @@ void test_test1(){
     struct Node* evict_set1 = initLinkedList();  // current eviction set
     struct Node* evict_set2 = initLinkedList();  // current eviction set
 
-    for (uint64_t i=0; i<c_size-1;i++) cind_set = addElement(cind_set, i);      
+    for (uint64_t i=0; i<c_size-1;i++) cind_set = addElement(cind_set, i);  // init indexes for candidate set (add all indexes to candidate index set)
           
     // fill eviction set with all elements, maximal eviction set lol
-    for (uint64_t i=0; i<a;i++){
+    for (uint64_t i=0; i<c_size;i++){
         uint64_t c = pick(evict_set1, cind_set, c_size, &lfsr);
         if(c == c_size+1){
             printf("test_test1: filling eviction_set failed!\n");
@@ -24,7 +25,7 @@ void test_test1(){
         } 
         cind_set = deleteElement(cind_set, c);
         evict_set1 = addElement(evict_set1, c);
-        if (i%100==0) printf("%lu, %lu, %lu, %lu\n", i, c, cind_set->value, evict_set1->value);
+        //if (i%100==0) printf("%lu, %lu, %lu, %lu\n", i, c, cind_set->value, evict_set1->value);
     }
     
     // create pointer chase on base set

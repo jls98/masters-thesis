@@ -420,7 +420,7 @@ static int64_t test1(void *addr, uint64_t size, void* cand, uint64_t threshold){
 	}
 	
     
-    printf("sum %lu, sum/10000\n", sum, sum/10000);
+    printf("sum %lu, sum/10000 %lu\n", sum, sum/10000);
 	return sum/10000 > threshold? 1 : 0;
 } /**/
 
