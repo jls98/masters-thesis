@@ -415,9 +415,9 @@ static int64_t test1(void *addr, uint64_t size, void* cand, uint64_t threshold){
 			: "=a" (time)
 			: "c" (addr), "r" (size), "r" (cand)
 			: "rsi", "rdx"
-		//);
+		);
 		sum+=time;
-	}
+	//}
 	
     
     printf("sum %lu, sum/10000 %lu\n", sum, sum/10000);
