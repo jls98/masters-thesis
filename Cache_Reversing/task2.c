@@ -92,7 +92,6 @@ static double probe_stride_loop(void *addr, uint64_t reps) {
         "dec rdx;"
         "jnz loop0;"
         // START
-		"mfence;"
 		"lfence;"
 		"rdtsc;"
 		"lfence;"
