@@ -396,6 +396,7 @@ static int64_t test1(void *addr, uint64_t size, void* cand, uint64_t threshold){
 			// END - reading set
 			// measure start
 			"lfence;"
+			"mfence;"
 			"rdtsc;"		
 			"lfence;"
 			"mov rsi, rax;"
