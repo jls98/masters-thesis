@@ -387,7 +387,7 @@ static int64_t test1(void *addr, uint64_t size, void* cand, uint64_t threshold){
 			"lfence;"
 			"mov rax, %1;"
 			"mov rdx, %2;"
-			"mov rsi, [%3];" // load candidate 
+			"mov rsi, [%3];" // load candidate
 			// BEGIN - read every entry in addr
 			"loop:"
 			"mov rax, [rax];"
@@ -410,6 +410,7 @@ static int64_t test1(void *addr, uint64_t size, void* cand, uint64_t threshold){
 			"or rax, rdx;"
 			// end - high precision
 			"sub rax, rsi;"
+			"clflush [%3];"
 			: "=a" (time)
 			: "c" (addr), "r" (size), "r" (cand)
 			: "rsi", "rdx"
