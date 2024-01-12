@@ -385,6 +385,7 @@ static int64_t test1(void *addr, uint64_t size, void* cand, uint64_t threshold){
 		asm __volatile__ (
 			// load candidate and set 
 			"lfence;"
+			"mfence;"
 			"mov rax, %1;"
 			"mov rdx, %2;"
 			"mov rsi, [%3];" // load candidate
