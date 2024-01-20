@@ -56,7 +56,7 @@ void test_test1(){
     freeList(evict_set1);
     freeList(evict_set2);
     freeList(cind_set);
-    printf("     ... success!\n");
+    printf("     ... finished!\n");
 }
 
 void test_pick(){
@@ -74,16 +74,17 @@ void test_pick(){
     evict_set = addElement(evict_set, 7);
     evict_set = addElement(evict_set, 3);
     
-    candidate_set1 = addElement(candidate_set1, 5); // should not happen
+	// just add something
+    candidate_set1 = addElement(candidate_set1, 1); 
     candidate_set1 = addElement(candidate_set1, 65);
     
     uint64_t base_size = 100;   // size of candidate set 
     uint64_t lfsr = lfsr_create();
     
     // test uninitialized params
-    CU_ASSERT_EQUAL(pick(evict_set, candidate_set1, base_size, NULL), base_size+1);
-    CU_ASSERT_EQUAL(pick(evict_set, candidate_set1, 0, &lfsr), 1);
-    CU_ASSERT_EQUAL(pick(evict_set, empty_set, base_size, &lfsr), base_size+1);
+    CU_ASSERT_EQUAL(pick(evict_set, candidate_set1, base_size, NULL), base_size+1); // lfsr
+    CU_ASSERT_EQUAL(pick(evict_set, candidate_set1, 0, &lfsr), 1);	// base candidate set empty -> size = 0
+    CU_ASSERT_EQUAL(pick(evict_set, empty_set, base_size, &lfsr), base_size+1); // empty candidate set
     
     // test no candidate possible
     // one duplicate element left in candidate set
@@ -112,12 +113,14 @@ void test_pick(){
     freeList(candidate_set2);
     freeList(empty_set);
     freeList(evict_set);
-    printf("     ... success!\n");
+    printf("     ... finished!\n");
 }
 
 void test_create_pointer_chase(){
     printf("\nTesting create_pointer_chase...\n\n");
-    uint64_t c_size = 512;
+    
+	
+	uint64_t c_size = 512;
     void **candidate_set = mmap(NULL, c_size * sizeof(void *), PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB, -1, 0);
     struct Node* set = initLinkedList();
 
@@ -170,7 +173,7 @@ void test_create_pointer_chase(){
     CU_ASSERT_EQUAL(candidate_set[205], &candidate_set[77]);
     CU_ASSERT_EQUAL(candidate_set[77], &candidate_set[3]);
     CU_ASSERT_EQUAL(candidate_set[3], &candidate_set[42]);
-    printf("     ... success!\n");
+    printf("     ... finished!\n");
 }
 
 int main() {
