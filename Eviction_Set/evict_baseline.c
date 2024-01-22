@@ -451,7 +451,7 @@ static void create_pointer_chase(void **candidate_set, uint64_t c_size, struct N
     candidate_set[cur_no->value] = &candidate_set[set->value]; // set pointer from last element to first element
 }
 
-static int64_t pick(struct Node* evict_set, struct Node* candidate_set, uint64_t base_size, uint64_t *lfsr) {
+static uint64_t pick(struct Node* evict_set, struct Node* candidate_set, uint64_t base_size, uint64_t *lfsr) {
     // uninitialized parameters
     if (lfsr==NULL || candidate_set==NULL || base_size ==0) return base_size+1;
     uint64_t c, j, c_size; // c candidate, j index, c_size current candidate set size
