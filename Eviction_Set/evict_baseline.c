@@ -175,7 +175,7 @@ static struct Node * create_minimal_eviction_set(void **candidate_set, uint64_t 
     
     uint64_t lfsr = lfsr_create(), c, a_tmp=0, cnt; // init lfsr, var c for picked candidate
     
-    // create current candidate set and initialize with all indexes
+    // create current candidate set containing the indexes of unchecked candidates and initialize with all indexes
     struct Node* cind_set = initLinkedList();
     for (uint64_t i=0; i<base_size-1;i++) cind_set = addElement(cind_set, i); 
     
@@ -205,6 +205,7 @@ static struct Node * create_minimal_eviction_set(void **candidate_set, uint64_t 
     if (cind_set==NULL && a_tmp < EVICT_SIZE_A) printf("create_minimal_eviction_set: not successful!\n");
 	printf("a_tmp Elements in eviction set %lu, cind_set empty %i, evict_set empty %i\n", a_tmp, cind_set==NULL, evict_set==NULL);
     /* baseline algorithm */
+	printList(evict_set);
 	return &evict_set;
 }
 
