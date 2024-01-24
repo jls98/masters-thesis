@@ -221,6 +221,20 @@ int main(int ac, char **av){
 	time = probe(victim_adrs);
 	printf("time loading victim after evict set  %lu\n", time);
 	
+	void *random_adrs = candidate_set[5];
+	printf("\ntesting random_adrs %p now: \n", random_adrs);
+	time = probe(random_adrs);
+	printf("time loading random_adrs %lu\n", time);
+
+	load(victim_adrs);
+	time = probe(victim_adrs);
+	
+	printf("time loading random_adrs cached %lu\n", time);
+
+	flush(victim_adrs);
+	time = probe(victim_adrs);
+	
+	printf("time loading random_adrs uncached %lu\n", time);
 	
     freeList(evict_set); // delete eviction set
 
@@ -257,7 +271,8 @@ static struct Node * create_minimal_eviction_set(void **candidate_set, uint64_t 
         for(struct Node* it=combined_set;it!=NULL;cnt++, it=it->next);
         
         // if not TEST(R union S\{c}), x)  if removing c results in not evicting x anymore, add c to current eviction set    
-        if(combined_set != NULL && combined_set->value != NULL && !TEST1(candidate_set[combined_set->value], cnt, victim_adrs)){
+        
+		if(cnt == 0 || combined_set->value == NULL || !TEST1(candidate_set[combined_set->value], cnt, victim_adrs)){
             evict_set = addElement(evict_set, c);
 			printf("head evict_set: %p\n", evict_set);			
             a_tmp++; // added elem to evict set -> if enough, evict_set complete
