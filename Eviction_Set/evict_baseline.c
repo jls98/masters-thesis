@@ -179,10 +179,6 @@ int main(int ac, char **av){
     // R <- {}
     // allocate space for eviction set
     struct Node* evict_set = initLinkedList();
-	printf("addr evict_set %p\n", evict_set);
-    evict_set = addElement(evict_set, 2);
-	evict_set = deleteElement(evict_set, 2);
-	printf("addr evict_set %p\n", evict_set);
 
     // map candidate_set (using hugepages, twice the size of cache in bytes)
     void **candidate_set = mmap(NULL, base_size * sizeof(void *), PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB, -1, 0);
@@ -255,7 +251,9 @@ static struct Node * create_minimal_eviction_set(void **candidate_set, uint64_t 
         
         // count amount of elements in combined_set
         cnt=0;
+		printf("a");
         for(struct Node* it=combined_set;it!=NULL;cnt++, it=it->next);
+		printf("a");
         
         // if not TEST(R union S\{c}), x)  if removing c results in not evicting x anymore, add c to current eviction set    
         if(!TEST1(candidate_set[combined_set->value], cnt, victim_adrs)){
