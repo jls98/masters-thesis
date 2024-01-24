@@ -241,6 +241,9 @@ static struct Node * create_minimal_eviction_set(void **candidate_set, uint64_t 
     while(a_tmp < EVICT_SIZE_A && cind_set!=NULL){        
         // c <- pick(S) pick candidate c from candidate set S
         c=pick(evict_set, cind_set, base_size, &lfsr);
+		if (c==base_size+1){
+			printf("pick has invalid value!\n");
+		}
         cind_set = deleteElement(cind_set, c);         // remove c from S
 
         // R union S\{c}
@@ -251,10 +254,7 @@ static struct Node * create_minimal_eviction_set(void **candidate_set, uint64_t 
         
         // count amount of elements in combined_set
         cnt=0;
-		printf("a");
         for(struct Node* it=combined_set;it!=NULL;cnt++, it=it->next);
-		
-		printf("a");
         
         // if not TEST(R union S\{c}), x)  if removing c results in not evicting x anymore, add c to current eviction set    
         if(combined_set->value != NULL && !TEST1(candidate_set[combined_set->value], cnt, victim_adrs)){
@@ -306,7 +306,10 @@ static struct Node* deleteElement(struct Node* head, uint64_t value) {
     }
 
     // If the value is not found, return the original head
-    if (current == NULL) return head;
+	if (current == NULL){
+		printf("deleteElement: value %lu not found in Node %p\n", value, head);
+		return head;
+	}
 
     // Update the next pointer of the previous node or the head if the first node is deleted
     if (previous != NULL) previous->next = current->next;
@@ -539,5 +542,6 @@ static uint64_t pick(struct Node* evict_set, struct Node* candidate_set, uint64_
         if(cur_node == NULL && c<base_size) return c; // no match in eviction set (no break before last), c<base_size since I got very odd return values...
     }
     // did not find candidate -> nothing to pick
+	printf("pick: no candidate found for evict set %p and candidate set %p and base size %lu with lfsr %p!\n", evict_set, candidate_setm base_size, lfsr);
     return base_size+1;
 }
