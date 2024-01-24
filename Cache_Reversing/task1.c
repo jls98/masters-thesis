@@ -4,7 +4,7 @@
 #include <sys/mman.h>
 #include <x86intrin.h>
 
-#define PROBE_REPS (1<<25)
+#define PROBE_REPS 1//(1<<25)
 #define MEMSIZE_EXP_MIN 14
 #define MEMSIZE_EXP_MAX 25
 static void wait(const uint64_t cycles);
