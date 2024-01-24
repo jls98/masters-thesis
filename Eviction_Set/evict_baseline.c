@@ -139,7 +139,7 @@ static struct Node * create_minimal_eviction_set(void **candidate_set, uint64_t 
 
 #ifndef TESTCASE
 static void load(void *adrs){
-	__asm__ volatile("movq rax, %0;"::"r" (adrs): "rax", "memory");
+	__asm__ volatile("mov rax, [%0];"::"r" (adrs): "rax", "memory");
 }
 
 static void flush(void *adrs){
