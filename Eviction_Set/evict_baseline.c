@@ -138,6 +138,36 @@ static struct Node * create_minimal_eviction_set(void **candidate_set, uint64_t 
 /* #################################################### */
 
 #ifndef TESTCASE
+static void load(void *adrs){
+	__asm__ volatile("movq rax, [%0];"::"r" (adrs): "rax", "memory");
+}
+
+static void flush(void *adrs){
+	__asm__ volatile("clflush [%0];lfence" ::"r" (adrs));
+}
+
+static void fence(){
+	__asm__ volatile("mfence;lfence");
+}
+
+
+static uint64_t probe(void *adrs){
+	volatile uint64_t time;  
+	__asm__ volatile (
+        " mfence            \n"
+        " lfence            \n"
+        " rdtscp             \n"
+        " mov r8, rax 		\n"
+        " mov rax, [%1]		\n"
+        " lfence            \n"
+        " rdtscp             \n"
+        " sub rax, r8 		\n"
+        : "=&a" (time)
+        : "r" (adrs)
+        : "ecx", "rdx", "r8", "memory"
+	);
+	return time;
+}
 // optional argument 1 cache size
 int main(int ac, char **av){
     /* preparation */
@@ -165,7 +195,33 @@ int main(int ac, char **av){
 	for(struct Node *it = tmp_evict_set;it!=NULL;it=it->next){
 		printf("%p, %lu\n", it, it->value);
 	}
+	
+	printf("tmp evict set %p evict set %p\n\n", tmp_evict_set, evict_set);
+	printf("testing victim adrs %p now: \n", victim_adrs);
+
+	// measure time when cached	
+	load(victim_adrs);
+	uint64_t time = probe(victim_adrs);
+	
+	printf("time loading victim cached %lu\n", time);
+	// measure time when uncached	
+	flush(victim_adrs);
+	time = probe(victim_adrs);
+
+	printf("time loading victim uncached %lu\n", time);
+
+	flush(victim_adrs);
+	for(struct Node *it = tmp_evict_set;it!=NULL;it=it->next){
+		load(candidate_set[it->value]);
+		printf("%p, %lu\n", it, it->value);
+	}
+	
+	time = probe(victim_adrs);
+	printf("time loading victim after evict set  %lu\n", time);
+	
+	
     freeList(evict_set); // delete eviction set
+
     return 0;
 }
 #endif
