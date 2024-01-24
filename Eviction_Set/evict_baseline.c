@@ -181,7 +181,7 @@ int main(int ac, char **av){
     struct Node* evict_set = initLinkedList();
 	printf("addr evict_set %p\n", evict_set);
     evict_set = addElement(evict_set, 2);
-	evict_set = deleteElement(2);
+	evict_set = deleteElement(evict_set, 2);
 	printf("addr evict_set %p\n", evict_set);
 
     // map candidate_set (using hugepages, twice the size of cache in bytes)
