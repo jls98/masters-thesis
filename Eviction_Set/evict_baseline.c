@@ -186,12 +186,11 @@ int main(int ac, char **av){
     // if adrs set, otherwise use some other uint64_t adrs
     uint64_t *victim_adrs = ac > 1? (uint64_t *)strtoull(av[1], NULL, 0) : &base_size;
     
+	// create evict set
     struct Node * tmp_evict_set = create_minimal_eviction_set(candidate_set, base_size, evict_set, victim_adrs);
     printf("Eviction set for candidate %p %i %i\n", victim_adrs, evict_set==NULL, tmp_evict_set==NULL);
-	for(struct Node *it = evict_set;it!=NULL;it=it->next){
-		printf("%p\n", &it);
-	}
-	printf("---\n");
+
+	printf("indexes min evict set\n");
 	for(struct Node *it = tmp_evict_set;it!=NULL;it=it->next){
 		printf("%p, %lu\n", it, it->value);
 	}
@@ -200,6 +199,7 @@ int main(int ac, char **av){
 	printf("testing victim adrs %p now: \n", victim_adrs);
 
 	// measure time when cached	
+	load(victim_adrs);
 	uint64_t time = probe(victim_adrs);
 	
 	printf("time loading victim cached %lu\n", time);
@@ -209,7 +209,7 @@ int main(int ac, char **av){
 
 	printf("time loading victim uncached %lu\n", time);
 
-	flush(victim_adrs);
+	load(victim_adrs);
 	for(struct Node *it = tmp_evict_set;it!=NULL;it=it->next){
 		load(candidate_set[it->value]);
 		printf("%p, %lu\n", it, it->value);
@@ -225,7 +225,7 @@ int main(int ac, char **av){
 }
 #endif
 
-#define EVICT_SIZE_A 20 // p cores 12 ways
+#define EVICT_SIZE_A 100 // p cores 12 ways
 static struct Node * create_minimal_eviction_set(void **candidate_set, uint64_t base_size, struct Node* evict_set, uint64_t *victim_adrs){
     
     uint64_t lfsr = lfsr_create(), c, a_tmp=0, cnt; // init lfsr, var c for picked candidate
@@ -253,12 +253,12 @@ static struct Node * create_minimal_eviction_set(void **candidate_set, uint64_t 
         // if not TEST(R union S\{c}), x)  if removing c results in not evicting x anymore, add c to current eviction set    
         if(!TEST1(candidate_set[combined_set->value], cnt, victim_adrs)){
             evict_set = addElement(evict_set, c);
-			printf("head evict_set: %p\n", evict_set);			
+			//printf("head evict_set: %p\n", evict_set);			
             a_tmp++; // added elem to evict set -> if enough, evict_set complete
         }
     }
     if (cind_set==NULL && a_tmp < EVICT_SIZE_A) printf("create_minimal_eviction_set: not successful!\n");
-	printf("a_tmp Elements in eviction set %lu, cind_set empty %i, evict_set empty %i\n", a_tmp, cind_set==NULL, evict_set==NULL);
+	//printf("a_tmp Elements in eviction set %lu, cind_set empty %i, evict_set empty %i\n", a_tmp, cind_set==NULL, evict_set==NULL);
     /* baseline algorithm */
 	printList(evict_set);
 	return evict_set;
