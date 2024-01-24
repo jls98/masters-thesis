@@ -174,12 +174,16 @@ int main(int ac, char **av){
     wait(1E9); // boost cache 
 ;
     // if (cache) size set, take; divide by 4 since its cache size in bytes and we have 64 bit/8 byte pointer arrays but also take double size
-    uint64_t base_size = ac == 3? atoi(av[2])/4 : CACHESIZE_DEFAULT/4;     
+    uint64_t base_size = ac == 3? atoi(av[2])/4 : CACHESIZE_DEFAULT/8;     
 
     // R <- {}
     // allocate space for eviction set
     struct Node* evict_set = initLinkedList();
-    
+	printf("addr evict_set %p\n", evict_set);
+    evict_set = addElement(evict_set, 2);
+	evict_set = deleteElement(2);
+	printf("addr evict_set %p\n", evict_set);
+
     // map candidate_set (using hugepages, twice the size of cache in bytes)
     void **candidate_set = mmap(NULL, base_size * sizeof(void *), PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB, -1, 0);
 
@@ -238,7 +242,7 @@ static struct Node * create_minimal_eviction_set(void **candidate_set, uint64_t 
     for (uint64_t i=0; i<base_size-1;i++) cind_set = addElement(cind_set, i); 
     
     // while |R| < a / while current eviction set is not big enough
-    while(a_tmp < EVICT_SIZE_A || cind_set==NULL){        
+    while(a_tmp < EVICT_SIZE_A && cind_set!=NULL){        
         // c <- pick(S) pick candidate c from candidate set S
         c=pick(evict_set, cind_set, base_size, &lfsr);
         cind_set = deleteElement(cind_set, c);         // remove c from S
