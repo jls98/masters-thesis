@@ -185,7 +185,8 @@ int main(int ac, char **av){
 
     // if adrs set, otherwise use some other uint64_t adrs
     uint64_t *victim_adrs = ac > 1? (uint64_t *)strtoull(av[1], NULL, 0) : &base_size;
-    
+    printf("time loading victim uncached %lu\n", time);
+	
 	// create evict set
     struct Node * tmp_evict_set = create_minimal_eviction_set(candidate_set, base_size, evict_set, victim_adrs);
     printf("Eviction set for candidate %p %i %i\n", victim_adrs, evict_set==NULL, tmp_evict_set==NULL);
