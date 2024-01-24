@@ -542,6 +542,6 @@ static uint64_t pick(struct Node* evict_set, struct Node* candidate_set, uint64_
         if(cur_node == NULL && c<base_size) return c; // no match in eviction set (no break before last), c<base_size since I got very odd return values...
     }
     // did not find candidate -> nothing to pick
-	printf("pick: no candidate found for evict set %p and candidate set %p and base size %lu with lfsr %p!\n", evict_set, candidate_setm base_size, lfsr);
+	printf("pick: no candidate found for evict set %p and candidate set %p and base size %lu with lfsr %p!\n", evict_set, candidate_set, base_size, lfsr);
     return base_size+1;
 }
