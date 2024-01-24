@@ -6,9 +6,9 @@
 
 /* threshold values for loading 1 adrs                  */
 // IntelGen12 e core
-#define THRESHOLD_SINGLE_L1D_E12 200      // ~2.2/ 61<60 on single measurement / new 200? 140-180
-#define THRESHOLD_SINGLE_L2_E12 17      // <15
-#define THRESHOLD_SINGLE_LLC_E12 70     // >40 (?)
+#define THRESHOLD_SINGLE_L1D_E12 55      // ~2.2/ 61<60 on single measurement / new 200? 140-180
+#define THRESHOLD_SINGLE_L2_E12 40      // cached ~<18
+#define THRESHOLD_SINGLE_LLC_E12 70     // ~52 (?)
 #define THRESHOLD_SINGLE_DEFAULT_E12 THRESHOLD_SINGLE_L1D_E12
 
 // IntelGen12 p core
@@ -23,7 +23,7 @@
 #define THRESHOLD_SINGLE_LLC_LAB 45     // ~30
 #define THRESHOLD_SINGLE_DEFAULT_LAB THRESHOLD_SINGLE_L1D_LAB
 
-#define THRESHOLD THRESHOLD_SINGLE_L1D_P12
+#define THRESHOLD THRESHOLD_SINGLE_L1D_E12
 
 #define CACHESIZE_DEFAULT 32768         // L1D e|lab 
 //#define CACHESIZE_DEFAULT OTHERS TODO
