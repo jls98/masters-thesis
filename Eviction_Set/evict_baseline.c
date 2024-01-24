@@ -200,7 +200,6 @@ int main(int ac, char **av){
 	printf("testing victim adrs %p now: \n", victim_adrs);
 
 	// measure time when cached	
-	load(victim_adrs);
 	uint64_t time = probe(victim_adrs);
 	
 	printf("time loading victim cached %lu\n", time);
