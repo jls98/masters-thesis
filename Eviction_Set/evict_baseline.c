@@ -253,6 +253,7 @@ static struct Node * create_minimal_eviction_set(void **candidate_set, uint64_t 
         cnt=0;
 		printf("a");
         for(struct Node* it=combined_set;it!=NULL;cnt++, it=it->next);
+		
 		printf("a");
         
         // if not TEST(R union S\{c}), x)  if removing c results in not evicting x anymore, add c to current eviction set    
