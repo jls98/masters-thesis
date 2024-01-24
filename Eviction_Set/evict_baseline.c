@@ -172,7 +172,7 @@ static uint64_t probe(void *adrs){
 int main(int ac, char **av){
     /* preparation */
     wait(1E9); // boost cache 
-    
+    uint64_t time;
     // if (cache) size set, take; divide by 4 since its cache size in bytes and we have 64 bit/8 byte pointer arrays but also take double size
     uint64_t base_size = ac == 3? atoi(av[2])/4 : CACHESIZE_DEFAULT/4;     
 
@@ -201,7 +201,7 @@ int main(int ac, char **av){
 
 	// measure time when cached	
 	load(victim_adrs);
-	uint64_t time = probe(victim_adrs);
+	time = probe(victim_adrs);
 	
 	printf("time loading victim cached %lu\n", time);
 	// measure time when uncached	
