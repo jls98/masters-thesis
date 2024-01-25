@@ -116,7 +116,7 @@ static uint64_t pick(struct Node* evict_set, struct Node* candidate_set, uint64_
 
 /* create minimal eviction set from candidate set for   */
 /* victim_adrs in evict_set                             */
-static struct Node * create_minimal_eviction_set(void **candidate_set, uint64_t base_size, struct Node* evict_set, uint64_t *victim_adrs);
+static struct Node * create_minimal_eviction_set(void **candidate_set, uint64_t base_size, struct Node* evict_set, void *victim_adrs);
 
 /* #################################################### */
 /* ################## implementation ################## */
