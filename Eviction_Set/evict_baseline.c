@@ -7,7 +7,7 @@
 
 /* threshold values for loading 1 adrs                  */
 // IntelGen12 e core
-#define THRESHOLD_SINGLE_L1D_E12 40      // ~2.2/ 61<60 on single measurement / new 200? 140-180
+#define THRESHOLD_SINGLE_L1D_E12 45      // ~2.2/ 61<60 on single measurement / new 200? 140-180
 #define THRESHOLD_SINGLE_L2_E12 50      // cached ~<18
 #define THRESHOLD_SINGLE_LLC_E12 70     // ~52 (?)
 #define THRESHOLD_SINGLE_DEFAULT_E12 THRESHOLD_SINGLE_L1D_E12
@@ -34,7 +34,7 @@
 #define TEST1(addr, size, cand, ...) test1(addr, size, cand, DEF_OR_ARG(__VA_ARGS__ __VA_OPT__(,) THRESHOLD))
 #define TEST2(addr, size, ...) test2(addr, size, DEF_OR_ARG(__VA_ARGS__ __VA_OPT__(,) THRESHOLD))
 
-#define EVICT_SIZE_A 8 // p cores 12 ways
+#define EVICT_SIZE_A 12 // p cores 12 ways
 
 /* #################################################### */
 /* ####################### utils ###################### */
@@ -245,7 +245,6 @@ static struct Node * create_minimal_eviction_set(void **candidate_set, uint64_t 
         for(struct Node* it=combined_set;it!=NULL; it=it->next) cnt++;
         // if not TEST(R union S\{c}), x)  
 		// if removing c results in not evicting x anymore, add c to current eviction set    
-		
 		if(!TEST1(candidate_set[combined_set->value], cnt, victim_adrs)){
 			printf("%li\n", TEST1(candidate_set[combined_set->value], cnt, victim_adrs));
             evict_set = addElement(evict_set, c);
