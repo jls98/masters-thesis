@@ -195,7 +195,10 @@ int main(int ac, char **av){
 
     // map candidate_set (using hugepages, twice the size of cache in bytes)
     void **candidate_set = mmap(NULL, base_size * sizeof(void *), PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB, -1, 0);
-
+	for(uint64_t i=0;i<base_size;i++){
+		candidate_set[i] = &candidate_set[i];
+	}
+	
     // if adrs set, otherwise use some other uint64_t adrs
     uint64_t *victim_adrs = ac > 1? (uint64_t *)strtoull(av[1], NULL, 0) : &base_size;
     
