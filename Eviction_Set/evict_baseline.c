@@ -190,11 +190,11 @@ int main(int ac, char **av){
 
 	printf("Time loading victim uncached %lu\n", time);
 
-	load(victim_adrs);
 	create_pointer_chase(candidate_set, *base_size, tmp_evict_set);
 		
 	void *cur = candidate_set[tmp_evict_set->value];
-	for(uint64_t counterj = 0;counterj<EVICT_SIZE_A;counterj++){
+	load(victim_adrs);
+	for(uint64_t counterj = 0;counterj<EVICT_SIZE_A+2;counterj++){
 		cur=*((void **)cur);
 		load(cur);
 		//printf("%p, %lu\n", it, it->value);
@@ -214,20 +214,22 @@ int main(int ac, char **av){
 
 static struct Node * create_minimal_eviction_set(void **candidate_set, uint64_t base_size, struct Node* evict_set, uint64_t *victim_adrs){
     
-    uint64_t lfsr = lfsr_create(), c, a_tmp=0, cnt; // init lfsr, var c for picked candidate
+    // init lfsr, variable c stores currently picked candidate integer/index value
+    uint64_t lfsr = lfsr_create(), c, a_tmp=0, cnt; 
     
-    // create current candidate set containing the indexes of unchecked candidates and initialize with all indexes
+	// create current candidate set containing the indexes of unchecked candidates and initialize with all indexes
     struct Node* cind_set = initLinkedList();
     for (uint64_t i=0; i<base_size-1;i++) cind_set = addElement(cind_set, i); 
     
-    // while |R| < a / while current eviction set is not big enough
+    // while |R| < a and cind still contains possible and unchecked candidates
     while(a_tmp < EVICT_SIZE_A && cind_set!=NULL){        
-        // c <- pick(S) pick candidate c from candidate set S
+        // c <- pick(S) pick candidate index c from candidate set S/cind_set
         c=pick(evict_set, cind_set, base_size, &lfsr);
-		if (c==base_size+1){
-			printf("pick has invalid value!\n");
-		}
-        cind_set = deleteElement(cind_set, c);         // remove c from S
+		if (c==base_size+1) printf("pick has invalid value!\n");
+		
+		// remove c from S
+		cind_set = deleteElement(cind_set, c);         
+		
 
         // R union S\{c}
         struct Node *combined_set = unionLists(cind_set, evict_set);
