@@ -196,7 +196,7 @@ int main(int ac, char **av){
 	void *cur = candidate_set[tmp_evict_set->value];
 	for(uint64_t counterj = 0;counterj<EVICT_SIZE_A;counterj++){
 		cur=*((void **)cur);
-		//load(candidate_set[it->value]);
+		load(cur);
 		//printf("%p, %lu\n", it, it->value);
 	}
 	
