@@ -414,7 +414,7 @@ static int64_t test1(void *addr, uint64_t size, void* cand, uint64_t threshold){
 }
 
 /*/ // not sure what to use though -> Threshold values depend on implementation
-#define reps 1
+#define reps 100
 static int64_t test1(void *addr, uint64_t size, void* cand, uint64_t threshold){    
     if (size==0 || addr==NULL || cand==NULL) return -1; // parameter check
 
