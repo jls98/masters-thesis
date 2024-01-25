@@ -467,7 +467,7 @@ static int64_t test1(void *addr, uint64_t size, void* cand, uint64_t threshold){
     if(sum/reps<500) times[sum]+=1;
 	else times[500]+=1;
 	
-	if(sum/reps <= threshold) printf("Sum %lu, sum/reps %lu for size %lu\n", sum, sum/reps, size);
+	printf("Sum %lu, sum/reps %lu for size %lu\n", sum, sum/reps, size);
 	return sum/reps > threshold? 1 : 0;
 } /**/
 
@@ -515,7 +515,7 @@ static int64_t test1_v(void *addr, uint64_t size, void* cand, uint64_t threshold
 	uint64_t sum=0;
 	for(uint64_t i=0;i<reps_v;i++) sum +=test1_intern(addr, size, cand);
 	
-	if(sum/reps_v <= threshold) printf("Sum %lu, sum/reps %lu for size %lu\n", sum, sum/reps_v, size);
+	printf("Sum %lu, sum/reps_v %lu for size %lu\n", sum, sum/reps_v, size);
 	return sum/reps_v > threshold? 1 : 0;
 } /**/
 
