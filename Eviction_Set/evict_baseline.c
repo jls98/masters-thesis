@@ -242,7 +242,7 @@ int main(int ac, char **av){
 }
 #endif
 
-#define EVICT_SIZE_A 100 // p cores 12 ways
+#define EVICT_SIZE_A 20 // p cores 12 ways
 static struct Node * create_minimal_eviction_set(void **candidate_set, uint64_t base_size, struct Node* evict_set, uint64_t *victim_adrs){
     
     uint64_t lfsr = lfsr_create(), c, a_tmp=0, cnt; // init lfsr, var c for picked candidate
