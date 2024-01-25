@@ -224,7 +224,11 @@ static struct Node * create_minimal_eviction_set(void **candidate_set, uint64_t 
     // while |R| < a and cind still contains possible and unchecked candidates
     while(a_tmp < EVICT_SIZE_A && cind_set!=NULL){        
         // c <- pick(S) pick candidate index c from candidate set S/cind_set
-        c=pick(evict_set, cind_set, base_size, &lfsr);
+		do{
+			c=pick(evict_set, cind_set, base_size, &lfsr);
+		}
+        while(containsValue(evict_set, c) || !containsValue(cind_set, c));
+		
 		if (c==base_size+1) printf("pick returned invalid value!\n");
 		
 		// remove c from S S <- S\{c}
