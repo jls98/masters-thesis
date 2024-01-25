@@ -193,8 +193,8 @@ int main(int ac, char **av){
 	load(victim_adrs);
 	create_pointer_chase(candidate_set, *base_size, tmp_evict_set);
 		
-
-	for(uint64_t counterj = 0, void *cur = candidate_set[tmp_evict_set->value];counterj<EVICT_SIZE_A;counterj++){
+	void *cur = candidate_set[tmp_evict_set->value];
+	for(uint64_t counterj = 0;counterj<EVICT_SIZE_A;counterj++){
 		cur=*cur;
 		//load(candidate_set[it->value]);
 		//printf("%p, %lu\n", it, it->value);
