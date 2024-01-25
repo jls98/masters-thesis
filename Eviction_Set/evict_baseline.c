@@ -171,24 +171,12 @@ static uint64_t probe(void *adrs){
 }
 // optional argument 1 cache size
 int main(int ac, char **av){
-	printf("hi\n");
-	wait(1E9);
-	uint64_t *test = malloc(sizeof(uint64_t *));
-	*test = 10;
-	flush(test);
-	uint64_t time = probe(test);
-	printf("uncached %lu\n", time);
-	
-	load(test);
-	time = probe(test);
-	printf("cached %lu\n", time);
-	free(test);
     /* preparation */
     wait(1E9); // boost cache 
-;
+
     // if (cache) size set, take; divide by 4 since its cache size in bytes and we have 64 bit/8 byte pointer arrays but also take double size
     uint64_t *base_size = malloc(sizeof(uint64_t *));
-	*base_size = ac == 3? atoi(av[2])/4 : CACHESIZE_DEFAULT/4;     
+	*base_size = ac == 3? atoi(av[2])/4 : CACHESIZE_DEFAULT;     
 
     // R <- {}
     // allocate space for eviction set
@@ -216,7 +204,7 @@ int main(int ac, char **av){
 
 	// measure time when cached	
 	load(victim_adrs);
-	time = probe(victim_adrs);
+	uint64_t time = probe(victim_adrs);
 	
 	printf("Time loading victim cached %lu\n", time);
 	// measure time when uncached	
