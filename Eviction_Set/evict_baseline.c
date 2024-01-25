@@ -32,9 +32,9 @@
 // optional arguments for threshold in test functions, defaults to THRESHOLD
 #define DEF_OR_ARG(value,...) value
 #define TEST1(addr, size, cand, ...) test1(addr, size, cand, DEF_OR_ARG(__VA_ARGS__ __VA_OPT__(,) THRESHOLD))
-#define TEST2(addr, size, ...) test2(addr, size, DEF_OR_ARG(__VA_ARGS__ __VA_OPT__(,) THRESHOLD))
+#define TEST1_V(addr, size, cand, ...) TEST1_V(addr, size, cand, DEF_OR_ARG(__VA_ARGS__ __VA_OPT__(,) THRESHOLD))
 
-#define EVICT_SIZE_A 32 // p cores 12 ways
+#define EVICT_SIZE_A 8 // p cores 12/10 ways, else 8 ways
 
 /* #################################################### */
 /* ####################### utils ###################### */
@@ -255,9 +255,12 @@ static struct Node * create_minimal_eviction_set(void **candidate_set, uint64_t 
 		if (cnt==cnt_e) break;
 		if(combined_set != NULL && !TEST1(candidate_set[combined_set->value], cnt, victim_adrs)){
 			//printf("%li\n", TEST1(candidate_set[combined_set->value], cnt, victim_adrs));
-            evict_set = addElement(evict_set, c);
-			//printf("head evict_set: %p\n", evict_set);			
-            a_tmp++; // added elem to evict set -> if enough, evict_set complete
+            if(!TEST1_V(candidate_set[combined_set->value], cnt, victim_adrs)){
+				evict_set = addElement(evict_set, c);
+				//printf("head evict_set: %p\n", evict_set);			
+				a_tmp++; // added elem to evict set -> if enough, evict_set complete
+			}
+
         }
     }
     if (cind_set==NULL && a_tmp < EVICT_SIZE_A) printf("create_minimal_eviction_set: not successful!\n");
@@ -465,6 +468,58 @@ static int64_t test1(void *addr, uint64_t size, void* cand, uint64_t threshold){
 	
 	if(sum/reps <= threshold) printf("Sum %lu, sum/reps %lu for size %lu\n", sum, sum/reps, size);
 	return sum/reps > threshold? 1 : 0;
+} /**/
+
+static int64_t test1_intern(void *addr, uint64_t size, void* cand){
+	volatile uint64_t time, sum=0;	
+	asm __volatile__ (
+		// load candidate and set 
+		"mov rax, %1;"
+		"mov rdx, %2;"
+		"mov rsi, [%3];" // load candidate
+		"lfence;"
+		// BEGIN - read every entry in addr
+		"loop:"
+		"mov rax, [rax];"
+		"dec rdx;"
+		"jnz loop;"
+		// END - reading set
+		// measure start
+		"lfence;"
+		"mfence;"
+		"rdtsc;"		
+		"lfence;"
+		"mov rsi, rax;"
+		// high precision
+		"shl rdx, 32;"
+		"or rsi, rdx;"
+		"mov rax, [%3];" // load candidate 	
+		"lfence;"
+		"rdtsc;"
+		// start - high precision
+		"shl rdx, 32;"
+		"or rax, rdx;"
+		// end - high precision
+		"sub rax, rsi;"
+		"clflush [%3];" // flush data from candidate for repeated loading
+		: "=a" (time)
+		: "c" (addr), "r" (2*size), "r" (cand)
+		: "rsi", "rdx"
+	);
+	return time;
+}
+#define reps_v 10000
+static int64_t test1_v(void *addr, uint64_t size, void* cand, uint64_t threshold){    
+    if (size==0 || addr==NULL || cand==NULL) return -1; // parameter check
+	uint64_t sum=0;
+	for(uint64_t i=0;i<reps_v;i++) sum +=test1_intern(addr, size, cand);
+    
+	// statistics for debugging or monitoring, monitore occurrence of timing
+	if(sum/reps_v<500) times[sum]+=1;
+	else times[500]+=1;
+	
+	if(sum/reps_v <= threshold) printf("Sum %lu, sum/reps %lu for size %lu\n", sum, sum/reps_v, size);
+	return sum/reps_v > threshold? 1 : 0;
 } /**/
 
 static void create_pointer_chase(void **candidate_set, uint64_t c_size, struct Node* set){

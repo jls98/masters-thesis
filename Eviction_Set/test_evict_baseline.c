@@ -58,6 +58,11 @@ void test_test1(){
     CU_ASSERT_EQUAL(TEST1(cand_set[evict_set1->value], a, cand), 1); // assure self assignment
     CU_ASSERT_EQUAL(TEST1(cand_set[evict_set1->value], a, cand), 1); // assure self assignment
     CU_ASSERT_EQUAL(TEST1(cand_set[evict_set1->value], a, cand), 1); // assure self assignment
+    CU_ASSERT_EQUAL(TEST1_V(cand_set[evict_set1->value], a, cand), 1); // assure self assignment
+    CU_ASSERT_EQUAL(TEST1_V(cand_set[evict_set1->value], a, cand), 1); // assure self assignment
+    CU_ASSERT_EQUAL(TEST1_V(cand_set[evict_set1->value], a, cand), 1); // assure self assignment
+    CU_ASSERT_EQUAL(TEST1_V(cand_set[evict_set1->value], a, cand), 1); // assure self assignment
+    CU_ASSERT_EQUAL(TEST1_V(cand_set[evict_set1->value], a, cand), 1); // assure self assignment
     
     evict_set2 = addElement(evict_set2, 65);
     evict_set2 = addElement(evict_set2, 23);
@@ -73,6 +78,11 @@ void test_test1(){
     CU_ASSERT_EQUAL(TEST1(cand_set[evict_set2->value], 3, cand), 0); // assure self assignment
     CU_ASSERT_EQUAL(TEST1(cand_set[evict_set2->value], 3, cand), 0); // assure self assignment
     CU_ASSERT_EQUAL(TEST1(cand_set[evict_set2->value], 3, cand), 0); // assure self assignment
+    CU_ASSERT_EQUAL(TEST1_V(cand_set[evict_set2->value], 3, cand), 0); // assure self assignment
+    CU_ASSERT_EQUAL(TEST1_V(cand_set[evict_set2->value], 3, cand), 0); // assure self assignment
+    CU_ASSERT_EQUAL(TEST1_V(cand_set[evict_set2->value], 3, cand), 0); // assure self assignment
+    CU_ASSERT_EQUAL(TEST1_V(cand_set[evict_set2->value], 3, cand), 0); // assure self assignment
+    CU_ASSERT_EQUAL(TEST1_V(cand_set[evict_set2->value], 3, cand), 0); // assure self assignment
     //printf("case 3 set %li\n", TEST1(base, 3, cand)); 
     
     freeList(evict_set1);
