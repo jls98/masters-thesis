@@ -268,7 +268,7 @@ static struct Node * create_minimal_eviction_set(void **candidate_set, uint64_t 
 					cur=*((void **)cur);
 					load(cur);
 				}
-				time = probe(victim_adrs);
+				uint64_t time = probe(victim_adrs);
 				printf("Time loading victim after evict set  %lu\n", time);		
 				if(time>threshold) break;
 			}
