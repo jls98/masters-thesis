@@ -479,10 +479,10 @@ static int64_t test1_intern(void *addr, uint64_t size, void* cand){
 		"mov rsi, [%3];" // load candidate
 		"lfence;"
 		// BEGIN - read every entry in addr
-		"loop:"
+		"loopv:"
 		"mov rax, [rax];"
 		"dec rdx;"
-		"jnz loop;"
+		"jnz loopv;"
 		// END - reading set
 		// measure start
 		"lfence;"
