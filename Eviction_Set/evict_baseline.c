@@ -236,7 +236,7 @@ static struct Node * create_minimal_eviction_set(void **candidate_set, uint64_t 
         
         // if not TEST(R union S\{c}), x)  if removing c results in not evicting x anymore, add c to current eviction set    
         
-		if(cnt == 0 || combined_set->value == NULL || !TEST1(candidate_set[combined_set->value], cnt, victim_adrs)){
+		if(cnt == 0 || !TEST1(candidate_set[combined_set->value], cnt, victim_adrs)){
             evict_set = addElement(evict_set, c);
 			printf("head evict_set: %p\n", evict_set);			
             a_tmp++; // added elem to evict set -> if enough, evict_set complete
@@ -250,8 +250,9 @@ static struct Node * create_minimal_eviction_set(void **candidate_set, uint64_t 
 }
 
 static void wait(uint64_t cycles) {
-	uint64_t start = rdtscp();
-	while (rdtscp() - start < cycles);
+	unsigned int ignore;
+	uint64_t start = __rdtscp(&ignore);
+	while (__rdtscp(&ignore) - start < cycles);
 }
 
 // Function to initialize an empty linked list
