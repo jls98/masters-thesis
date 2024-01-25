@@ -225,11 +225,10 @@ static struct Node * create_minimal_eviction_set(void **candidate_set, uint64_t 
     while(a_tmp < EVICT_SIZE_A && cind_set!=NULL){        
         // c <- pick(S) pick candidate index c from candidate set S/cind_set
         c=pick(evict_set, cind_set, base_size, &lfsr);
-		if (c==base_size+1) printf("pick has invalid value!\n");
+		if (c==base_size+1) printf("pick returned invalid value!\n");
 		
-		// remove c from S
+		// remove c from S S <- S\{c}
 		cind_set = deleteElement(cind_set, c);         
-		
 
         // R union S\{c}
         struct Node *combined_set = unionLists(cind_set, evict_set);
@@ -242,10 +241,9 @@ static struct Node * create_minimal_eviction_set(void **candidate_set, uint64_t 
         for(struct Node* it=combined_set;it!=NULL;cnt++) it=it->next;
         
         // if not TEST(R union S\{c}), x)  if removing c results in not evicting x anymore, add c to current eviction set    
-        
-		if(cnt == 0 || !TEST1(candidate_set[combined_set->value], cnt, victim_adrs)){
+		if(cnt != 0 && !TEST1(candidate_set[combined_set->value], cnt, victim_adrs)){
             evict_set = addElement(evict_set, c);
-			printf("head evict_set: %p\n", evict_set);			
+			//printf("head evict_set: %p\n", evict_set);			
             a_tmp++; // added elem to evict set -> if enough, evict_set complete
         }
     }
