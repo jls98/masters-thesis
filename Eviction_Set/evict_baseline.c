@@ -210,7 +210,7 @@ int main(int ac, char **av){
 	
     freeList(evict_set); // delete eviction set
 	printf("times\n");
-	for(int i=0;i<2000;i++) printf("%lu\n", times[i]);
+	for(int i=0;i<2000;i++) printf("%i: %lu\n", i, times[i]);
 	free(times);
     return 0;
 }
@@ -456,8 +456,8 @@ static int64_t test1(void *addr, uint64_t size, void* cand, uint64_t threshold){
 		);
 		sum +=time;
 	}
-    if(times<1999) times[sum]=1;
-	else times[1999]=1;
+    if(sum/reps<1999) times[sum]+=1;
+	else times[1999]+=1;
 	
 	if (sum/reps <= threshold)printf("Sum %lu, sum/reps %lu for size %lu\n", sum, sum/reps, size);
 	return sum/reps > threshold? 1 : 0;
