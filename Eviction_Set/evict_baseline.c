@@ -424,7 +424,7 @@ static int64_t test1(void *addr, uint64_t size, void* cand, uint64_t threshold){
 }
 
 /*/ // not sure what to use though -> Threshold values depend on implementation
-#define reps 2000 // weird effects when increasing repetitions -> rapid increase of measured times per iteration
+#define reps 100 // weird effects when increasing repetitions -> rapid increase of measured times per iteration
 static int64_t test1(void *addr, uint64_t size, void* cand, uint64_t threshold){    
     if (size==0 || addr==NULL || cand==NULL) return -1; // parameter check
 	
