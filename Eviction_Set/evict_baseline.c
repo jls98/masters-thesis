@@ -158,7 +158,7 @@ int main(int ac, char **av){
 	for(int i=0;i<501;i++) times[i]=0;
     // if (cache) size set, take; divide by 4 since its cache size in bytes and we have 64 bit/8 byte pointer arrays but also take double size
     uint64_t *base_size = malloc(sizeof(uint64_t *));
-	*base_size = ac == 3? atoi(av[2])/4 : CACHESIZE_DEFAULT/2;      // TODO why does 10000 not work
+	*base_size = ac == 3? atoi(av[2])/4 : CACHESIZE_DEFAULT/4; // /8 *2 for twice the size of respective cache in bytes
 
     // R <- {}
     // allocate space for eviction set
@@ -255,9 +255,12 @@ static struct Node * create_minimal_eviction_set(void **candidate_set, uint64_t 
 		if (cnt==cnt_e) break;
 		if(combined_set != NULL && !TEST1(candidate_set[combined_set->value], cnt, victim_adrs)){
 			//printf("%li\n", TEST1(candidate_set[combined_set->value], cnt, victim_adrs));
-			evict_set = addElement(evict_set, c);
-			//printf("head evict_set: %p\n", evict_set);			
-			a_tmp++; // added elem to evict set -> if enough, evict_set complete
+			if(!TEST1(candidate_set[combined_set->value], cnt, victim_adrs) && !TEST1(candidate_set[combined_set->value], cnt, victim_adrs)){
+				evict_set = addElement(evict_set, c);
+				//printf("head evict_set: %p\n", evict_set);			
+				a_tmp++; // added elem to evict set -> if enough, evict_set complete
+			}
+			
 			
 
         }
