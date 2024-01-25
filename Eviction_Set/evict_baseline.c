@@ -199,7 +199,7 @@ int main(int ac, char **av){
     // if adrs set, otherwise use some other uint64_t adrs
     uint64_t *victim_adrs = ac > 1? (uint64_t *)strtoull(av[1], NULL, 0) : &base_size;
     
-    uint64_t time = probe(victim_adrs);
+    time = probe(victim_adrs);
 	printf("time loading victim uncached %lu\n", time);
 	
 	// create evict set
