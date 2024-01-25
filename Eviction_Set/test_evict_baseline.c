@@ -11,7 +11,7 @@ void test_test1(){
     //uint64_t c_size = 524288, a=262144; // L2 i12e
     //uint64_t c_size = 65536, a=32768; // L2 i7
     //uint64_t c_size = 12288, a=6144; // L1 i12p
-    uint64_t c_size = 4096, a=2048; // L1 i12p
+    uint64_t c_size = 4096, a=c_size; // L1 i12p
     //uint64_t c_size = 327680, a=163840; // L2 i12p
     void **cand_set = mmap(NULL, c_size * sizeof(void *), PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB, -1, 0);
     uint64_t *cand = malloc(sizeof(uint64_t *)); // just some random candidate :D
