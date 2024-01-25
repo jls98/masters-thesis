@@ -151,7 +151,7 @@ static uint64_t probe(void *adrs){
 // optional argument 1 cache size
 // evict_baseline VICTIM_ADRS BASE_SIZE
 
-uint64_t *times;
+static uint64_t *times;
 int main(int ac, char **av){
     /* preparation */
     wait(1E9); // boost cache 
