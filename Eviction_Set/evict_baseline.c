@@ -292,7 +292,7 @@ static struct Node * create_minimal_eviction_set(void **candidate_set, uint64_t 
     cnt=0;
     for(struct Node* it=evict_set;it!=NULL; it=it->next) cnt++;	
     create_pointer_chase(candidate_set, base_size, evict_set);
-	printf("test1 of evict set %li\n", TEST1(candidate_set[evict_set->value], cnt, victim_adrs)))
+	printf("test1 of evict set %li\n", TEST1(candidate_set[evict_set->value], cnt, victim_adrs)));
 	return evict_set;
 }
 
