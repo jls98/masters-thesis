@@ -172,7 +172,7 @@ int main(int ac, char **av){
 	// create evict set
     struct Node * tmp_evict_set = create_minimal_eviction_set(candidate_set, *base_size, evict_set, victim_adrs);
 	
-    printf("Eviction set for candidate at %p %i\n", victim_adrs, tmp_evict_set==NULL);
+    printf("Eviction set for victim at %p %i\n", victim_adrs, tmp_evict_set==NULL);
 
 	printf("Indexes in minimal eviction set:\n"); // print indexes of eviction set
 	for(struct Node *it = tmp_evict_set;it!=NULL;it=it->next) printf("-%p, %lu\n", it, it->value);
@@ -245,7 +245,7 @@ static struct Node * create_minimal_eviction_set(void **candidate_set, uint64_t 
         for(struct Node* it=combined_set;it!=NULL; it=it->next) cnt++;
         // if not TEST(R union S\{c}), x)  
 		// if removing c results in not evicting x anymore, add c to current eviction set    
-		if(cnt != 0 && !TEST1(candidate_set[combined_set->value], cnt, victim_adrs)){
+		if(!TEST1(candidate_set[combined_set->value], cnt, victim_adrs)){
             evict_set = addElement(evict_set, c);
 			//printf("head evict_set: %p\n", evict_set);			
             a_tmp++; // added elem to evict set -> if enough, evict_set complete
