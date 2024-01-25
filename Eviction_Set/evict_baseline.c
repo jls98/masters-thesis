@@ -445,7 +445,7 @@ static int64_t test1(void *addr, uint64_t size, void* cand, uint64_t threshold){
 		);
 		sum+=time;
 	}
-    printf("sum %lu, sum/reps %lu\n", sum, sum/reps);
+    printf("Sum %lu, sum/reps %lu\n", sum, sum/reps);
 	return sum/reps > threshold? 1 : 0;
 } /**/
 
