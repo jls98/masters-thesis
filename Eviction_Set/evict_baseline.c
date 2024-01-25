@@ -247,7 +247,7 @@ static struct Node * create_minimal_eviction_set(void **candidate_set, uint64_t 
 		// if removing c results in not evicting x anymore, add c to current eviction set    
 		
 		if(!TEST1(candidate_set[combined_set->value], cnt, victim_adrs)){
-			printf("li\n", TEST1(candidate_set[combined_set->value], cnt, victim_adrs));
+			printf("%li\n", TEST1(candidate_set[combined_set->value], cnt, victim_adrs));
             evict_set = addElement(evict_set, c);
 			//printf("head evict_set: %p\n", evict_set);			
             a_tmp++; // added elem to evict set -> if enough, evict_set complete
