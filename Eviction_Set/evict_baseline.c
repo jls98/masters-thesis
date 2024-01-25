@@ -268,7 +268,7 @@ static struct Node * create_minimal_eviction_set(void **candidate_set, uint64_t 
 	
 	// measure time needed for this algorithm
 	end = clock();
-	cpu_time_used = ((double) (end - start)) / CLOCKS_PER_SEC;
+	double  cpu_time_used = ((double) (end - start)) / CLOCKS_PER_SEC;
     // Print the measured time
     printf("Time taken by myFunction: %f seconds\n", cpu_time_used);
 	return evict_set;
