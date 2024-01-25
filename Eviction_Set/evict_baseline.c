@@ -401,11 +401,12 @@ static int64_t test1(void *addr, uint64_t size, void* cand, uint64_t threshold){
 }
 
 /*/ // not sure what to use though -> Threshold values depend on implementation
+#define reps 10000
 static int64_t test1(void *addr, uint64_t size, void* cand, uint64_t threshold){    
     if (size==0 || addr==NULL || cand==NULL) return -1; // parameter check
 
 	volatile uint64_t time, sum=0;
-	for(uint64_t i=0;i<10000;i++){
+	for(uint64_t i=0;i<reps;i++){
 		asm __volatile__ (
 			// load candidate and set 
 			"mov rax, %1;"
@@ -442,8 +443,8 @@ static int64_t test1(void *addr, uint64_t size, void* cand, uint64_t threshold){
 		);
 		sum+=time;
 	}
-    //printf("sum %lu, sum/10000 %lu\n", sum, sum/10000);
-	return sum/10000 > threshold? 1 : 0;
+    //printf("sum %lu, sum/reps %lu\n", sum, sum/reps);
+	return sum/reps > threshold? 1 : 0;
 } /**/
 
 static void create_pointer_chase(void **candidate_set, uint64_t c_size, struct Node* set){
