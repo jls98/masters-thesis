@@ -48,6 +48,16 @@ void test_test1(){
     
     // regular case (full huge page should evict (hopefully))
     CU_ASSERT_EQUAL(TEST1(cand_set[evict_set1->value], a, cand), 1); // assure self assignment
+    CU_ASSERT_EQUAL(TEST1(cand_set[evict_set1->value], a, cand), 1); // assure self assignment
+    CU_ASSERT_EQUAL(TEST1(cand_set[evict_set1->value], a, cand), 1); // assure self assignment
+    CU_ASSERT_EQUAL(TEST1(cand_set[evict_set1->value], a, cand), 1); // assure self assignment
+    CU_ASSERT_EQUAL(TEST1(cand_set[evict_set1->value], a, cand), 1); // assure self assignment
+    CU_ASSERT_EQUAL(TEST1(cand_set[evict_set1->value], a, cand), 1); // assure self assignment
+    CU_ASSERT_EQUAL(TEST1(cand_set[evict_set1->value], a, cand), 1); // assure self assignment
+    CU_ASSERT_EQUAL(TEST1(cand_set[evict_set1->value], a, cand), 1); // assure self assignment
+    CU_ASSERT_EQUAL(TEST1(cand_set[evict_set1->value], a, cand), 1); // assure self assignment
+    CU_ASSERT_EQUAL(TEST1(cand_set[evict_set1->value], a, cand), 1); // assure self assignment
+    CU_ASSERT_EQUAL(TEST1(cand_set[evict_set1->value], a, cand), 1); // assure self assignment
     
     evict_set2 = addElement(evict_set2, 65);
     evict_set2 = addElement(evict_set2, 23);
