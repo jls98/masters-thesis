@@ -217,7 +217,7 @@ int main(int ac, char **av){
 
 
 static struct Node * create_minimal_eviction_set(void **candidate_set, uint64_t base_size, struct Node* evict_set, void *victim_adrs){
-    clock_t track_start = clock(), track_end;
+    clock_t track_start = clock();
     // init lfsr, variable c stores currently picked candidate integer/index value
     uint64_t lfsr = lfsr_create(), c, a_tmp=0, cnt, cnt_e; 
     
@@ -267,8 +267,7 @@ static struct Node * create_minimal_eviction_set(void **candidate_set, uint64_t 
 	printList(evict_set);
 	
 	// measure time needed for this algorithm
-	end = clock();
-	double  cpu_time_used = ((double) (end - start)) / CLOCKS_PER_SEC;
+	double  cpu_time_used = ((double) (clock() - track_start)) / CLOCKS_PER_SEC;
     // Print the measured time
     printf("Time taken by myFunction: %f seconds\n", cpu_time_used);
 	return evict_set;
