@@ -245,7 +245,7 @@ static struct Node * create_minimal_eviction_set(void **candidate_set, uint64_t 
         for(struct Node* it=combined_set;it!=NULL; it=it->next) cnt++;
         // if not TEST(R union S\{c}), x)  
 		// if removing c results in not evicting x anymore, add c to current eviction set    
-		if(!TEST1(candidate_set[combined_set->value], cnt, victim_adrs)){
+		if(combined_set != NULL && !TEST1(candidate_set[combined_set->value], cnt, victim_adrs)){
 			printf("%li\n", TEST1(candidate_set[combined_set->value], cnt, victim_adrs));
             evict_set = addElement(evict_set, c);
 			//printf("head evict_set: %p\n", evict_set);			
@@ -449,7 +449,7 @@ static int64_t test1(void *addr, uint64_t size, void* cand, uint64_t threshold){
 			: "c" (addr), "r" (size), "r" (cand)
 			: "rsi", "rdx"
 		);
-		sum+=time;
+		gdb +=time;
 	}
     if (sum/reps <= threshold)printf("Sum %lu, sum/reps %lu for size %lu\n", sum, sum/reps, size);
 	return sum/reps > threshold? 1 : 0;
