@@ -34,7 +34,7 @@
 #define TEST1(addr, size, cand, ...) test1(addr, size, cand, DEF_OR_ARG(__VA_ARGS__ __VA_OPT__(,) THRESHOLD))
 #define TEST2(addr, size, ...) test2(addr, size, DEF_OR_ARG(__VA_ARGS__ __VA_OPT__(,) THRESHOLD))
 
-#define EVICT_SIZE_A 12 // p cores 12 ways
+#define EVICT_SIZE_A 32 // p cores 12 ways
 
 /* #################################################### */
 /* ####################### utils ###################### */
