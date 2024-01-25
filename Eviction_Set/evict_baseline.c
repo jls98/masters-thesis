@@ -209,7 +209,7 @@ int main(int ac, char **av){
 	
     freeList(evict_set); // delete eviction set
 	printf("times\n");
-	for(int i=0;i<501;i++) printf("%4i: %lu\n", i, times[i]);
+	for(int i=0;i<501;i++) printf("%4i: %6d\n", i, times[i]);
 	free(times);
     return 0;
 }
@@ -427,7 +427,7 @@ static int64_t test1(void *addr, uint64_t size, void* cand, uint64_t threshold){
 }
 
 /*/ // not sure what to use though -> Threshold values depend on implementation
-#define reps 100 // weird effects when increasing repetitions -> rapid increase of measured times per iteration
+#define reps 200 // weird effects when increasing repetitions -> rapid increase of measured times per iteration
 static int64_t test1(void *addr, uint64_t size, void* cand, uint64_t threshold){    
     if (size==0 || addr==NULL || cand==NULL) return -1; // parameter check
 	
