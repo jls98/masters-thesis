@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #include <sys/mman.h>
 #include <x86intrin.h>
-
+#include <time.h>
 
 /* threshold values for loading 1 adrs                  */
 // IntelGen12 e core
@@ -217,7 +217,7 @@ int main(int ac, char **av){
 
 
 static struct Node * create_minimal_eviction_set(void **candidate_set, uint64_t base_size, struct Node* evict_set, void *victim_adrs){
-    
+    clock_t track_start = clock(), track_end;
     // init lfsr, variable c stores currently picked candidate integer/index value
     uint64_t lfsr = lfsr_create(), c, a_tmp=0, cnt, cnt_e; 
     
@@ -265,6 +265,12 @@ static struct Node * create_minimal_eviction_set(void **candidate_set, uint64_t 
 	//printf("a_tmp Elements in eviction set %lu, cind_set empty %i, evict_set empty %i\n", a_tmp, cind_set==NULL, evict_set==NULL);
     /* baseline algorithm */
 	printList(evict_set);
+	
+	// measure time needed for this algorithm
+	end = clock();
+	cpu_time_used = ((double) (end - start)) / CLOCKS_PER_SEC;
+    // Print the measured time
+    printf("Time taken by myFunction: %f seconds\n", cpu_time_used);
 	return evict_set;
 }
 
@@ -465,8 +471,14 @@ static int64_t test1(void *addr, uint64_t size, void* cand, uint64_t threshold){
 	}
     if(sum/reps<500) times[sum/reps]+=1;
 	else times[500]+=1;
+#ifndef TESTCASE
 	
 	if ( sum/reps <= threshold)printf("Sum %lu, sum/reps %lu for size %lu\n", sum, sum/reps, size);
+#endif
+#ifdef TESTCASE
+	printf("Sum %lu, sum/reps %lu for size %lu\n", sum, sum/reps, size);
+#endif
+
 	return sum/reps > threshold? 1 : 0;
 } /**/
  /**/
