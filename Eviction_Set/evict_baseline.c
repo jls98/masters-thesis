@@ -7,7 +7,7 @@
 
 /* threshold values for loading 1 adrs                  */
 // IntelGen12 e core
-#define THRESHOLD_SINGLE_L1D_E12 200      // ~2.2/ 61<60 on single measurement / new 200? 140-180
+#define THRESHOLD_SINGLE_L1D_E12 120      // ~2.2/ 61<60 on single measurement / new 200? 140-180
 #define THRESHOLD_SINGLE_L2_E12 50      // cached ~<18
 #define THRESHOLD_SINGLE_LLC_E12 70     // ~52 (?)
 #define THRESHOLD_SINGLE_DEFAULT_E12 THRESHOLD_SINGLE_L1D_E12
@@ -31,8 +31,8 @@
 
 // optional arguments for threshold in test functions, defaults to THRESHOLD
 #define DEF_OR_ARG(value,...) value
-#define TEST1(addr, size, cand, ...) test1(addr, size, cand, DEF_OR_ARG(__VA_ARGS__ __VA_OPT__(,) THRESHOLD))
-#define TEST2(addr, size, ...) test2(addr, size, DEF_OR_ARG(__VA_ARGS__ __VA_OPT__(,) THRESHOLD))
+#define TEST1(addr, size, cand, ...) test1(addr, size, cand, DEF_OR_ARG(__VA_ARGS__ __VA_OPT__(,) 200))
+#define TEST2(addr, size, ...) test2(addr, size, DEF_OR_ARG(__VA_ARGS__ __VA_OPT__(,) 200))
 
 #define EVICT_SIZE_A 8 // p cores 12 ways
 
