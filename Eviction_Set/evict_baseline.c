@@ -449,7 +449,7 @@ static int64_t test1(void *addr, uint64_t size, void* cand, uint64_t threshold){
 			: "c" (addr), "r" (size), "r" (cand)
 			: "rsi", "rdx"
 		);
-		gdb +=time;
+		sum +=time;
 	}
     if (sum/reps <= threshold)printf("Sum %lu, sum/reps %lu for size %lu\n", sum, sum/reps, size);
 	return sum/reps > threshold? 1 : 0;
