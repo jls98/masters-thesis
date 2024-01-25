@@ -7,7 +7,7 @@
 
 /* threshold values for loading 1 adrs                  */
 // IntelGen12 e core
-#define THRESHOLD_SINGLE_L1D_E12 42      // ~2.2/ 61<60 on single measurement / new 200? 140-180
+#define THRESHOLD_SINGLE_L1D_E12 20      // ~2.2/ 61<60 on single measurement / new 200? 140-180
 #define THRESHOLD_SINGLE_L2_E12 50      // cached ~<18
 #define THRESHOLD_SINGLE_LLC_E12 70     // ~52 (?)
 #define THRESHOLD_SINGLE_DEFAULT_E12 THRESHOLD_SINGLE_L1D_E12
@@ -150,10 +150,13 @@ static uint64_t probe(void *adrs){
 }
 // optional argument 1 cache size
 // evict_baseline VICTIM_ADRS BASE_SIZE
+
+uint64_t *times;
 int main(int ac, char **av){
     /* preparation */
     wait(1E9); // boost cache 
-
+	times = malloc(2000*sizeof(uint64_t *));
+	for(int i=0;i<2000;i++) times[i]=0;
     // if (cache) size set, take; divide by 4 since its cache size in bytes and we have 64 bit/8 byte pointer arrays but also take double size
     uint64_t *base_size = malloc(sizeof(uint64_t *));
 	*base_size = ac == 3? atoi(av[2])/4 : CACHESIZE_DEFAULT/2;      // TODO why does 10000 not work
@@ -206,7 +209,9 @@ int main(int ac, char **av){
 
 	
     freeList(evict_set); // delete eviction set
-
+	printf("times\n");
+	for(int i=0;i<2000;i++) printf("%lu\n", times[i]);
+	free(times);
     return 0;
 }
 #endif
@@ -246,7 +251,7 @@ static struct Node * create_minimal_eviction_set(void **candidate_set, uint64_t 
         // if not TEST(R union S\{c}), x)  
 		// if removing c results in not evicting x anymore, add c to current eviction set    
 		if(combined_set != NULL && !TEST1(candidate_set[combined_set->value], cnt, victim_adrs)){
-			printf("%li\n", TEST1(candidate_set[combined_set->value], cnt, victim_adrs));
+			//printf("%li\n", TEST1(candidate_set[combined_set->value], cnt, victim_adrs));
             evict_set = addElement(evict_set, c);
 			//printf("head evict_set: %p\n", evict_set);			
             a_tmp++; // added elem to evict set -> if enough, evict_set complete
@@ -451,7 +456,9 @@ static int64_t test1(void *addr, uint64_t size, void* cand, uint64_t threshold){
 		);
 		sum +=time;
 	}
-    if (sum/reps <= threshold)printf("Sum %lu, sum/reps %lu for size %lu\n", sum, sum/reps, size);
+    if(times<1999) times[sum]+=1
+	else times[1999]+=1;
+	if (sum/reps <= threshold)printf("Sum %lu, sum/reps %lu for size %lu\n", sum, sum/reps, size);
 	return sum/reps > threshold? 1 : 0;
 } /**/
 
