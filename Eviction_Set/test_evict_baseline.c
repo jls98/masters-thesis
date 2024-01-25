@@ -12,7 +12,8 @@ void test_test1(){
     uint64_t c_size = 4096, a=2048; // L1 i12p
     //uint64_t c_size = 327680, a=163840; // L2 i12p
     void **cand_set = mmap(NULL, c_size * sizeof(void *), PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB, -1, 0);
-    uint64_t *cand = (uint64_t *) malloc(sizeof(uint64_t *)); // just some random candidate :D
+    uint64_t *cand = malloc(sizeof(uint64_t *)); // just some random candidate :D
+	*cand = 1;
     uint64_t lfsr = lfsr_create();
     
     struct Node* cind_set = initLinkedList();   // current candidate set (indexes)
