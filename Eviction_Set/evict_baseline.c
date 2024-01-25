@@ -220,7 +220,7 @@ int main(int ac, char **av){
 static struct Node * create_minimal_eviction_set(void **candidate_set, uint64_t base_size, struct Node* evict_set, void *victim_adrs){
     
     // init lfsr, variable c stores currently picked candidate integer/index value
-    uint64_t lfsr = lfsr_create(), c, a_tmp=0, cnt; 
+    uint64_t lfsr = lfsr_create(), c, a_tmp=0, cnt, cnt_e; 
     
 	// create current candidate set containing the indexes of unchecked candidates and initialize with all indexes
     struct Node* cind_set = initLinkedList();
@@ -248,8 +248,11 @@ static struct Node * create_minimal_eviction_set(void **candidate_set, uint64_t 
         // count amount of elements in combined_set
         cnt=0;
         for(struct Node* it=combined_set;it!=NULL; it=it->next) cnt++;
+		cnt_e=0;
+        for(struct Node* it=evict_set;it!=NULL; it=it->next) cnt_e++;
         // if not TEST(R union S\{c}), x)  
 		// if removing c results in not evicting x anymore, add c to current eviction set    
+		if (cnt==cnt_e) break;
 		if(combined_set != NULL && !TEST1(candidate_set[combined_set->value], cnt, victim_adrs)){
 			//printf("%li\n", TEST1(candidate_set[combined_set->value], cnt, victim_adrs));
             evict_set = addElement(evict_set, c);
