@@ -156,7 +156,7 @@ int main(int ac, char **av){
 
     // if (cache) size set, take; divide by 4 since its cache size in bytes and we have 64 bit/8 byte pointer arrays but also take double size
     uint64_t *base_size = malloc(sizeof(uint64_t *));
-	*base_size = ac == 3? atoi(av[2])/4 : 9999;      // TODO why does 10000 not work
+	*base_size = ac == 3? atoi(av[2])/4 : CACHESIZE_DEFAULT/2;      // TODO why does 10000 not work
 
     // R <- {}
     // allocate space for eviction set
