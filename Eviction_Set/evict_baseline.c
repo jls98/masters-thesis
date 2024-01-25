@@ -194,7 +194,8 @@ int main(int ac, char **av){
 
 	create_pointer_chase(candidate_set, *base_size, tmp_evict_set);
 		
-	if(tmp_evict_set != NULL){void *cur = candidate_set[tmp_evict_set->value];
+	if(tmp_evict_set != NULL){
+		void *cur = candidate_set[tmp_evict_set->value];
 		load(victim_adrs);
 		for(uint64_t counterj = 0;counterj<EVICT_SIZE_A+2;counterj++){
 			cur=*((void **)cur);
@@ -206,10 +207,9 @@ int main(int ac, char **av){
 		printf("Time loading victim after evict set  %lu\n", time);
 	}
 
-	
     freeList(evict_set); // delete eviction set
 	printf("times\n");
-	for(int i=0;i<501;i++) printf("%4i: %6d\n", i, times[i]);
+	for(int i=0;i<501;i++) printf("%4i: %6ld\n", i, times[i]);
 	free(times);
     return 0;
 }
@@ -226,7 +226,8 @@ static struct Node * create_minimal_eviction_set(void **candidate_set, uint64_t 
     for (uint64_t i=0; i<base_size-1;i++) cind_set = addElement(cind_set, i); 
     
     // while |R| < a and cind still contains possible and unchecked candidates
-    while(a_tmp < EVICT_SIZE_A && cind_set!=NULL){        
+    //while(a_tmp < EVICT_SIZE_A && cind_set!=NULL){        
+    while(cind_set!=NULL){        
         // c <- pick(S) pick candidate index c from candidate set S/cind_set
 		do{
 			c=pick(evict_set, cind_set, base_size, &lfsr);
@@ -259,10 +260,20 @@ static struct Node * create_minimal_eviction_set(void **candidate_set, uint64_t 
 				evict_set = addElement(evict_set, c);
 				//printf("head evict_set: %p\n", evict_set);			
 				a_tmp++; // added elem to evict set -> if enough, evict_set complete
+				
+				// test if its an eviction set
+				void *cur = candidate_set[evict_set->value];
+				load(victim_adrs);
+				for(uint64_t counterj = 0;counterj<100;counterj++){ // 100 is random
+					cur=*((void **)cur);
+					load(cur);
+				}
+				time = probe(victim_adrs);
+				printf("Time loading victim after evict set  %lu\n", time);		
+				if(time>threshold) break;
 			}
-			
-			
-
+		
+				
         }
     }
     if (cind_set==NULL && a_tmp < EVICT_SIZE_A) printf("create_minimal_eviction_set: not successful!\n");
