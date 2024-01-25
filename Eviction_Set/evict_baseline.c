@@ -466,7 +466,7 @@ static int64_t test1(void *addr, uint64_t size, void* cand, uint64_t threshold){
 		);
 		sum +=time;
 	}
-    if(sum/reps<500) times[sum]+=1;
+    if(sum/reps<500) times[sum/reps]+=1;
 	else times[500]+=1;
 	
 	printf("Sum %lu, sum/reps %lu for size %lu\n", sum, sum/reps, size);
