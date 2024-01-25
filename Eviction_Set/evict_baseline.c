@@ -195,17 +195,17 @@ int main(int ac, char **av){
 
 	create_pointer_chase(candidate_set, *base_size, tmp_evict_set);
 		
-	void *cur = candidate_set[tmp_evict_set->value];
-	load(victim_adrs);
-	for(uint64_t counterj = 0;counterj<EVICT_SIZE_A+2;counterj++){
-		cur=*((void **)cur);
-		load(cur);
-		//printf("%p, %lu\n", it, it->value);
+	if(tmp_evict_set != NULL){void *cur = candidate_set[tmp_evict_set->value];
+		load(victim_adrs);
+		for(uint64_t counterj = 0;counterj<EVICT_SIZE_A+2;counterj++){
+			cur=*((void **)cur);
+			load(cur);
+			//printf("%p, %lu\n", it, it->value);
+		}
+		
+		time = probe(victim_adrs);
+		printf("Time loading victim after evict set  %lu\n", time);
 	}
-	
-	time = probe(victim_adrs);
-	printf("Time loading victim after evict set  %lu\n", time);
-	
 
 	
     freeList(evict_set); // delete eviction set
