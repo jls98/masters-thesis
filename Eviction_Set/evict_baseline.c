@@ -121,7 +121,7 @@ static struct Node * create_minimal_eviction_set(void **candidate_set, uint64_t 
 /* ################## implementation ################## */
 /* #################################################### */
 static uint64_t *times;
-#ifndef TESTCASE
+
 static void load(void *adrs){
 	__asm__ volatile("mov rax, [%0];"::"r" (adrs): "rax", "memory");
 }
@@ -150,7 +150,7 @@ static uint64_t probe(void *adrs){
 // optional argument 1 cache size
 // evict_baseline VICTIM_ADRS BASE_SIZE
 
-
+#ifndef TESTCASE
 int main(int ac, char **av){
     /* preparation */
     wait(1E9); // boost cache 
