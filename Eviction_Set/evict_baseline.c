@@ -42,15 +42,6 @@
 /* wait for cycles cycles and activate cache            */
 static void wait(uint64_t cycles);
 
-/* access pointed adrs p                                */
-static inline void* maccess(void *p);
-
-/* lfenced time measurement; returns time stamp         */
-static inline uint64_t rdtscpfence();
-
-/* time measurement; returns time stamp                 */
-static inline uint64_t rdtscp();
-
 /* linked list containing an index and a pointer to     */
 /* the next element                                     */
 static struct Node {
@@ -110,13 +101,6 @@ static uint64_t lfsr_step(uint64_t lfsr);
 /* returns true if measurement is above a threshold.    */
 static int64_t test1(void *addr, uint64_t size, void* cand, uint64_t threshold);
 
-/* test2: eviction test for an arbitrary address.       */
-/* Loads all elements from eviction set and then loads  */
-/* elements again and measures time.                    */
-/* addr: pointer to mapped adrs with size elements.     */
-/* returns true if measurement is above a threshold.    */
-static uint64_t test2(void *addr, uint64_t size);
-
 /* pointer chase: creates pointer chase in subset of    */
 /* by candidate_set mapped set with c_size elements.    */
 /* set contains set of indexes for pointer chase        */
@@ -145,12 +129,6 @@ static void load(void *adrs){
 static void flush(void *adrs){
 	__asm__ volatile("clflush [%0];lfence" ::"r" (adrs));
 }
-
-
-static void fence(){
-	__asm__ volatile("mfence;lfence");
-}
-
 
 static uint64_t probe(void *adrs){
 	volatile uint64_t time;  
@@ -380,35 +358,6 @@ static void freeList(struct Node* head) {
     }
 }
 
-static inline void* maccess(void *p){
-    void *ret;
-    __asm__ volatile("movq rax, %0;" : "=a"(ret) : "c" (p));
-    return ret;
-}
-
-static inline uint64_t rdtscpfence(){
-    uint64_t a, d;
-    __asm__ volatile(
-        "lfence;"
-        "rdtscp;"
-        "lfence;"
-        : "=a" (a), "=d" (d) 
-        :: "ecx");
-    return ((d<<32) | a);
-}
-
-static inline uint64_t rdtscp()
-{
-	unsigned a, d;
-	__asm__ volatile(
-    "rdtscp;"
-	"mov %0, edx;"
-	"mov %1, eax;"
-	: "=r" (a), "=r" (d)
-	:: "rax", "rcx", "rdx");
-	return ((uint64_t)a << 32) | d;
-}
-
 #define FEEDBACK 0x80000000000019E2ULL
 static uint64_t lfsr_create(void) {
   uint64_t lfsr;
@@ -496,10 +445,6 @@ static int64_t test1(void *addr, uint64_t size, void* cand, uint64_t threshold){
     //printf("sum %lu, sum/10000 %lu\n", sum, sum/10000);
 	return sum/10000 > threshold? 1 : 0;
 } /**/
-
-static uint64_t test2(void *addr, uint64_t size){
-    return 1; // TODO
-}
 
 static void create_pointer_chase(void **candidate_set, uint64_t c_size, struct Node* set){
     if (set == NULL) return; // no pointer chase 
