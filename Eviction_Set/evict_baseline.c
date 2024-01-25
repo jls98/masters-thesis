@@ -212,7 +212,7 @@ int main(int ac, char **av){
 #endif
 
 
-static struct Node * create_minimal_eviction_set(void **candidate_set, uint64_t base_size, struct Node* evict_set, uint64_t *victim_adrs){
+static struct Node * create_minimal_eviction_set(void **candidate_set, uint64_t base_size, struct Node* evict_set, void *victim_adrs){
     
     // init lfsr, variable c stores currently picked candidate integer/index value
     uint64_t lfsr = lfsr_create(), c, a_tmp=0, cnt; 
@@ -238,9 +238,9 @@ static struct Node * create_minimal_eviction_set(void **candidate_set, uint64_t 
         
         // count amount of elements in combined_set
         cnt=0;
-        for(struct Node* it=combined_set;it!=NULL;cnt++) it=it->next;
-        
-        // if not TEST(R union S\{c}), x)  if removing c results in not evicting x anymore, add c to current eviction set    
+        for(struct Node* it=combined_set;it!=NULL; it=it->next) cnt++;
+        // if not TEST(R union S\{c}), x)  
+		// if removing c results in not evicting x anymore, add c to current eviction set    
 		if(cnt != 0 && !TEST1(candidate_set[combined_set->value], cnt, victim_adrs)){
             evict_set = addElement(evict_set, c);
 			//printf("head evict_set: %p\n", evict_set);			
@@ -254,6 +254,7 @@ static struct Node * create_minimal_eviction_set(void **candidate_set, uint64_t 
 	return evict_set;
 }
 
+// say hi to cache
 static void wait(uint64_t cycles) {
 	unsigned int ignore;
 	uint64_t start = __rdtscp(&ignore);
@@ -317,14 +318,12 @@ static struct Node* cloneList(struct Node* original) {
 static struct Node* unionLists(struct Node* list1, struct Node* list2) {
     struct Node* result = initLinkedList();
     struct Node* current;
-
     // Add elements from the first list
     current = list1;
     while (current != NULL) {
         result = addElement(result, current->value);
         current = current->next;
     }
-
     // Add elements from the second list (avoid duplicates)
     current = list2;
     while (current != NULL) {
@@ -336,7 +335,6 @@ static struct Node* unionLists(struct Node* list1, struct Node* list2) {
 
 static int containsValue(struct Node* head, uint64_t value) {
     struct Node* current = head;
-
     while (current != NULL) {
         if (current->value == value) return 1;  // Value found
         current = current->next;
@@ -356,7 +354,6 @@ static void printList(struct Node* head) {
 static void freeList(struct Node* head) {
     struct Node* current = head;
     struct Node* next;
-
     while (current != NULL) {
         next = current->next;
         free(current);
