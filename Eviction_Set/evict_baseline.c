@@ -417,7 +417,8 @@ static int64_t test1(void *addr, uint64_t size, void* cand, uint64_t threshold){
 #define reps 100
 static int64_t test1(void *addr, uint64_t size, void* cand, uint64_t threshold){    
     if (size==0 || addr==NULL || cand==NULL) return -1; // parameter check
-
+	
+	wait(1E9);
 	volatile uint64_t time, sum=0;
 	for(uint64_t i=0;i<reps;i++){
 		asm __volatile__ (
