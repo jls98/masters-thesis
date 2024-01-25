@@ -34,7 +34,7 @@
 #define TEST1(addr, size, cand, ...) test1(addr, size, cand, DEF_OR_ARG(__VA_ARGS__ __VA_OPT__(,) THRESHOLD))
 #define TEST2(addr, size, ...) test2(addr, size, DEF_OR_ARG(__VA_ARGS__ __VA_OPT__(,) THRESHOLD))
 
-
+#define EVICT_SIZE_A 8 // p cores 12 ways
 
 /* #################################################### */
 /* ####################### utils ###################### */
@@ -191,9 +191,13 @@ int main(int ac, char **av){
 	printf("Time loading victim uncached %lu\n", time);
 
 	load(victim_adrs);
-	for(struct Node *it = tmp_evict_set;it!=NULL;it=it->next){
-		load(candidate_set[it->value]);
-		printf("%p, %lu\n", it, it->value);
+	create_pointer_chase(candidate_set, *base_size, tmp_evict_set);
+		
+
+	for(uint64_t counterj = 0, void *cur = candidate_set[tmp_evict_set->value];counterj<EVICT_SIZE_A;counterj++){
+		cur=*cur;
+		//load(candidate_set[it->value]);
+		//printf("%p, %lu\n", it, it->value);
 	}
 	
 	time = probe(victim_adrs);
@@ -207,7 +211,7 @@ int main(int ac, char **av){
 }
 #endif
 
-#define EVICT_SIZE_A 20 // p cores 12 ways
+
 static struct Node * create_minimal_eviction_set(void **candidate_set, uint64_t base_size, struct Node* evict_set, uint64_t *victim_adrs){
     
     uint64_t lfsr = lfsr_create(), c, a_tmp=0, cnt; // init lfsr, var c for picked candidate
