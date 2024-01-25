@@ -176,7 +176,7 @@ int main(int ac, char **av){
 
     // if (cache) size set, take; divide by 4 since its cache size in bytes and we have 64 bit/8 byte pointer arrays but also take double size
     uint64_t *base_size = malloc(sizeof(uint64_t *));
-	*base_size = ac == 3? atoi(av[2])/4 : CACHESIZE_DEFAULT;     
+	*base_size = ac == 3? atoi(av[2])/4 : CACHESIZE_DEFAULT/2;     
 
     // R <- {}
     // allocate space for eviction set
@@ -184,21 +184,18 @@ int main(int ac, char **av){
 
     // map candidate_set (using hugepages, twice the size of cache in bytes)
     void **candidate_set = mmap(NULL, *base_size * sizeof(void *), PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB, -1, 0);
-	for(uint64_t i=0;i<*base_size;i++){
-		candidate_set[i] = &candidate_set[i];
-	}
+	for(uint64_t i=0;i<*base_size;i++) candidate_set[i] = &candidate_set[i]; // avoid null page by writing something on every entry (pointer to itself)
 	
     // if adrs set, otherwise use some other uint64_t adrs
     uint64_t *victim_adrs = ac > 1? (uint64_t *)strtoull(av[1], NULL, 0) : base_size;
 	
 	// create evict set
     struct Node * tmp_evict_set = create_minimal_eviction_set(candidate_set, *base_size, evict_set, victim_adrs);
-    printf("Eviction set for candidate %p %i\n", victim_adrs, tmp_evict_set==NULL);
+	
+    printf("Eviction set for candidate at %p %i\n", victim_adrs, tmp_evict_set==NULL);
 
-	printf("Indexes in minimal eviction set:\n");
-	for(struct Node *it = tmp_evict_set;it!=NULL;it=it->next){
-		printf("-%p, %lu\n", it, it->value);
-	}
+	printf("Indexes in minimal eviction set:\n"); // print indexes of eviction set
+	for(struct Node *it = tmp_evict_set;it!=NULL;it=it->next) printf("-%p, %lu\n", it, it->value);
 	
 	printf("\nTesting victim adrs %p now: \n", victim_adrs);
 
