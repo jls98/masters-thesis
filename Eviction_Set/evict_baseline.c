@@ -6,8 +6,8 @@
 
 /* threshold values for loading 1 adrs                  */
 // IntelGen12 e core
-#define THRESHOLD_SINGLE_L1D_E12 55      // ~2.2/ 61<60 on single measurement / new 200? 140-180
-#define THRESHOLD_SINGLE_L2_E12 40      // cached ~<18
+#define THRESHOLD_SINGLE_L1D_E12 45      // ~2.2/ 61<60 on single measurement / new 200? 140-180
+#define THRESHOLD_SINGLE_L2_E12 50      // cached ~<18
 #define THRESHOLD_SINGLE_LLC_E12 70     // ~52 (?)
 #define THRESHOLD_SINGLE_DEFAULT_E12 THRESHOLD_SINGLE_L1D_E12
 
@@ -188,7 +188,7 @@ int main(int ac, char **av){
 ;
     // if (cache) size set, take; divide by 4 since its cache size in bytes and we have 64 bit/8 byte pointer arrays but also take double size
     uint64_t *base_size = malloc(sizeof(uint64_t *));
-	*base_size = ac == 3? atoi(av[2])/4 : CACHESIZE_DEFAULT/8;     
+	*base_size = ac == 3? atoi(av[2])/4 : CACHESIZE_DEFAULT/4;     
 
     // R <- {}
     // allocate space for eviction set
@@ -202,32 +202,28 @@ int main(int ac, char **av){
 	
     // if adrs set, otherwise use some other uint64_t adrs
     uint64_t *victim_adrs = ac > 1? (uint64_t *)strtoull(av[1], NULL, 0) : base_size;
-    
-    time = probe(victim_adrs);
-	printf("time loading victim uncached %lu\n", time);
 	
 	// create evict set
     struct Node * tmp_evict_set = create_minimal_eviction_set(candidate_set, *base_size, evict_set, victim_adrs);
-    printf("Eviction set for candidate %p %i %i\n", victim_adrs, evict_set==NULL, tmp_evict_set==NULL);
+    printf("Eviction set for candidate %p %i\n", victim_adrs, tmp_evict_set==NULL);
 
-	printf("indexes min evict set\n");
+	printf("Indexes in minimal eviction set:\n");
 	for(struct Node *it = tmp_evict_set;it!=NULL;it=it->next){
-		printf("%p, %lu\n", it, it->value);
+		printf("-%p, %lu\n", it, it->value);
 	}
 	
-	printf("tmp evict set %p evict set %p\n\n", tmp_evict_set, evict_set);
-	printf("testing victim adrs %p now: \n", victim_adrs);
+	printf("\nTesting victim adrs %p now: \n", victim_adrs);
 
 	// measure time when cached	
 	load(victim_adrs);
 	time = probe(victim_adrs);
 	
-	printf("time loading victim cached %lu\n", time);
+	printf("Time loading victim cached %lu\n", time);
 	// measure time when uncached	
 	flush(victim_adrs);
 	time = probe(victim_adrs);
 
-	printf("time loading victim uncached %lu\n", time);
+	printf("Time loading victim uncached %lu\n", time);
 
 	load(victim_adrs);
 	for(struct Node *it = tmp_evict_set;it!=NULL;it=it->next){
@@ -236,22 +232,9 @@ int main(int ac, char **av){
 	}
 	
 	time = probe(victim_adrs);
-	printf("time loading victim after evict set  %lu\n", time);
+	printf("Time loading victim after evict set  %lu\n", time);
 	
-	void *random_adrs = candidate_set[5];
-	printf("\ntesting random_adrs %p now: \n", random_adrs);
-	time = probe(random_adrs);
-	printf("time loading random_adrs %lu\n", time);
 
-	load(victim_adrs);
-	time = probe(victim_adrs);
-	
-	printf("time loading random_adrs cached %lu\n", time);
-
-	flush(victim_adrs);
-	time = probe(victim_adrs);
-	
-	printf("time loading random_adrs uncached %lu\n", time);
 	
     freeList(evict_set); // delete eviction set
 
