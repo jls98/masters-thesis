@@ -210,7 +210,7 @@ int main(int ac, char **av){
 	
     freeList(evict_set); // delete eviction set
 	printf("times\n");
-	for(int i=0;i<2000;i++) printf("%4i: %lu\n", i, times[i]);
+	for(int i=0;i<501;i++) printf("%4i: %lu\n", i, times[i]);
 	free(times);
     return 0;
 }
