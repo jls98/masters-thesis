@@ -421,7 +421,7 @@ static int64_t test1(void *addr, uint64_t size, void* cand, uint64_t threshold){
 }
 
 /*/ // not sure what to use though -> Threshold values depend on implementation
-#define reps 1 // weird effects when increasing repetitions -> rapid increase of measured times per iteration
+#define reps 1000 // weird effects when increasing repetitions -> rapid increase of measured times per iteration
 static int64_t test1(void *addr, uint64_t size, void* cand, uint64_t threshold){    
     if (size==0 || addr==NULL || cand==NULL) return -1; // parameter check
 	
@@ -429,6 +429,8 @@ static int64_t test1(void *addr, uint64_t size, void* cand, uint64_t threshold){
 	volatile uint64_t time, sum=0;
 	for(uint64_t i=0;i<reps;i++){
 		asm __volatile__ (
+			"lfence;"
+			"mfence;"
 			// load candidate and set 
 			"mov rax, %1;"
 			"mov rdx, %2;"
