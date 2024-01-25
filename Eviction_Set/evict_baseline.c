@@ -226,7 +226,7 @@ static struct Node * create_minimal_eviction_set(void **candidate_set, uint64_t 
     for (uint64_t i=0; i<base_size-1;i++) cind_set = addElement(cind_set, i); 
     
     // while |R| < a and cind still contains possible and unchecked candidates
-    //while(a_tmp < EVICT_SIZE_A && cind_set!=NULL){        
+    //while(a_tmp < EVICT_SIZE_A && cind_set!=NULL){   // TODO change back     
     while(cind_set!=NULL){        
         // c <- pick(S) pick candidate index c from candidate set S/cind_set
 		do{
@@ -288,6 +288,11 @@ static struct Node * create_minimal_eviction_set(void **candidate_set, uint64_t 
 	double  cpu_time_used = ((double) (clock() - track_start)) / CLOCKS_PER_SEC;
     // Print the measured time
     printf("Time taken by myFunction: %f seconds\n", cpu_time_used);
+	
+    cnt=0;
+    for(struct Node* it=evict_set;it!=NULL; it=it->next) cnt++;	
+    create_pointer_chase(candidate_set, base_size, evict_set);
+	printf("test1 of evict set %li\n", TEST1(candidate_set[evict_set->value], cnt, victim_adrs)))
 	return evict_set;
 }
 
