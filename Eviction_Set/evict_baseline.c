@@ -475,6 +475,8 @@ static int64_t test1_intern(void *addr, uint64_t size, void* cand){
 	volatile uint64_t time;	
 	asm __volatile__ (
 		// load candidate and set 
+		"lfence;"
+		"mfence;"
 		"mov rax, %1;"
 		"mov rdx, %2;"
 		"mov rsi, [%3];" // load candidate
