@@ -32,7 +32,6 @@
 // optional arguments for threshold in test functions, defaults to THRESHOLD
 #define DEF_OR_ARG(value,...) value
 #define TEST1(addr, size, cand, ...) test1(addr, size, cand, DEF_OR_ARG(__VA_ARGS__ __VA_OPT__(,) THRESHOLD))
-#define TEST1_V(addr, size, cand, ...) test1_v(addr, size, cand, DEF_OR_ARG(__VA_ARGS__ __VA_OPT__(,) THRESHOLD))
 
 #define EVICT_SIZE_A 8 // p cores 12/10 ways, else 8 ways
 
@@ -101,7 +100,6 @@ static uint64_t lfsr_step(uint64_t lfsr);
 /* cand: candidate adrs.                                */
 /* returns true if measurement is above a threshold.    */
 static int64_t test1(void *addr, uint64_t size, void* cand, uint64_t threshold);
-static int64_t test1_v(void *addr, uint64_t size, void* cand, uint64_t threshold);
 
 /* pointer chase: creates pointer chase in subset of    */
 /* by candidate_set mapped set with c_size elements.    */
@@ -472,56 +470,7 @@ static int64_t test1(void *addr, uint64_t size, void* cand, uint64_t threshold){
 	printf("Sum %lu, sum/reps %lu for size %lu\n", sum, sum/reps, size);
 	return sum/reps > threshold? 1 : 0;
 } /**/
-
-static int64_t test1_intern(void *addr, uint64_t size, void* cand){
-	volatile uint64_t time;	
-	asm __volatile__ (
-		// load candidate and set 
-		"lfence;"
-		"mfence;"
-		"mov rax, %1;"
-		"mov rdx, %2;"
-		"mov rsi, [%3];" // load candidate
-		"lfence;"
-		// BEGIN - read every entry in addr
-		"loopv:"
-		"mov rax, [rax];"
-		"dec rdx;"
-		"jnz loopv;"
-		// END - reading set
-		// measure start
-		"lfence;"
-		"mfence;"
-		"rdtsc;"		
-		"lfence;"
-		"mov rsi, rax;"
-		// high precision
-		"shl rdx, 32;"
-		"or rsi, rdx;"
-		"mov rax, [%3];" // load candidate 	
-		"lfence;"
-		"rdtsc;"
-		// start - high precision
-		"shl rdx, 32;"
-		"or rax, rdx;"
-		// end - high precision
-		"sub rax, rsi;"
-		"clflush [%3];" // flush data from candidate for repeated loading
-		: "=a" (time)
-		: "c" (addr), "r" (size), "r" (cand)
-		: "rsi", "rdx"
-	);
-	return time;
-}
-#define reps_v 10000
-static int64_t test1_v(void *addr, uint64_t size, void* cand, uint64_t threshold){    
-    if (size==0 || addr==NULL || cand==NULL) return -1; // parameter check
-	uint64_t sum=0;
-	for(uint64_t i=0;i<reps_v;i++) sum +=test1_intern(addr, size, cand);
-	
-	printf("Sum %lu, sum/reps_v %lu for size %lu\n", sum, sum/reps_v, size);
-	return sum/reps_v > threshold? 1 : 0;
-} /**/
+ /**/
 
 static void create_pointer_chase(void **candidate_set, uint64_t c_size, struct Node* set){
     if (set == NULL) return; // no pointer chase 
