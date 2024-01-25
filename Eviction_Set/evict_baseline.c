@@ -31,8 +31,8 @@
 
 // optional arguments for threshold in test functions, defaults to THRESHOLD
 #define DEF_OR_ARG(value,...) value
-#define TEST1(addr, size, cand, ...) test1(addr, size, cand, DEF_OR_ARG(__VA_ARGS__ __VA_OPT__(,) 200))
-#define TEST2(addr, size, ...) test2(addr, size, DEF_OR_ARG(__VA_ARGS__ __VA_OPT__(,) 200))
+#define TEST1(addr, size, cand, ...) test1(addr, size, cand, DEF_OR_ARG(__VA_ARGS__ __VA_OPT__(,) THRESHOLD))
+#define TEST2(addr, size, ...) test2(addr, size, DEF_OR_ARG(__VA_ARGS__ __VA_OPT__(,) THRESHOLD))
 
 #define EVICT_SIZE_A 8 // p cores 12 ways
 
