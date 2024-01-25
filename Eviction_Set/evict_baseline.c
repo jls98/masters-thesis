@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/mman.h>
+#include <x86intrin.h>
 
 
 /* threshold values for loading 1 adrs                  */
