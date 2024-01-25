@@ -155,8 +155,8 @@ static uint64_t probe(void *adrs){
 int main(int ac, char **av){
     /* preparation */
     wait(1E9); // boost cache 
-	times = malloc(2000*sizeof(uint64_t *));
-	for(int i=0;i<2000;i++) times[i]=0;
+	times = malloc(501*sizeof(uint64_t *));
+	for(int i=0;i<501;i++) times[i]=0;
     // if (cache) size set, take; divide by 4 since its cache size in bytes and we have 64 bit/8 byte pointer arrays but also take double size
     uint64_t *base_size = malloc(sizeof(uint64_t *));
 	*base_size = ac == 3? atoi(av[2])/4 : CACHESIZE_DEFAULT/2;      // TODO why does 10000 not work
@@ -451,13 +451,13 @@ static int64_t test1(void *addr, uint64_t size, void* cand, uint64_t threshold){
 			"sub rax, rsi;"
 			"clflush [%3];" // flush data from candidate for repeated loading
 			: "=a" (time)
-			: "c" (addr), "r" (size), "r" (cand)
+			: "c" (addr), "r" (2*size), "r" (cand)
 			: "rsi", "rdx"
 		);
 		sum +=time;
 	}
-    if(sum/reps<1999) times[sum]+=1;
-	else times[1999]+=1;
+    if(sum/reps<500) times[sum]+=1;
+	else times[500]+=1;
 	
 	if (sum/reps <= threshold)printf("Sum %lu, sum/reps %lu for size %lu\n", sum, sum/reps, size);
 	return sum/reps > threshold? 1 : 0;
