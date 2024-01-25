@@ -101,6 +101,7 @@ static uint64_t lfsr_step(uint64_t lfsr);
 /* cand: candidate adrs.                                */
 /* returns true if measurement is above a threshold.    */
 static int64_t test1(void *addr, uint64_t size, void* cand, uint64_t threshold);
+static int64_t test1_v(void *addr, uint64_t size, void* cand, uint64_t threshold);
 
 /* pointer chase: creates pointer chase in subset of    */
 /* by candidate_set mapped set with c_size elements.    */
