@@ -472,7 +472,7 @@ static int64_t test1(void *addr, uint64_t size, void* cand, uint64_t threshold){
 } /**/
 
 static int64_t test1_intern(void *addr, uint64_t size, void* cand){
-	volatile uint64_t time, sum=0;	
+	volatile uint64_t time;	
 	asm __volatile__ (
 		// load candidate and set 
 		"mov rax, %1;"
@@ -504,7 +504,7 @@ static int64_t test1_intern(void *addr, uint64_t size, void* cand){
 		"sub rax, rsi;"
 		"clflush [%3];" // flush data from candidate for repeated loading
 		: "=a" (time)
-		: "c" (addr), "r" (2*size), "r" (cand)
+		: "c" (addr), "r" (size), "r" (cand)
 		: "rsi", "rdx"
 	);
 	return time;
@@ -514,10 +514,6 @@ static int64_t test1_v(void *addr, uint64_t size, void* cand, uint64_t threshold
     if (size==0 || addr==NULL || cand==NULL) return -1; // parameter check
 	uint64_t sum=0;
 	for(uint64_t i=0;i<reps_v;i++) sum +=test1_intern(addr, size, cand);
-    
-	// statistics for debugging or monitoring, monitore occurrence of timing
-	if(sum/reps_v<500) times[sum]+=1;
-	else times[500]+=1;
 	
 	if(sum/reps_v <= threshold) printf("Sum %lu, sum/reps %lu for size %lu\n", sum, sum/reps_v, size);
 	return sum/reps_v > threshold? 1 : 0;
