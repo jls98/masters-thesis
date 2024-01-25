@@ -171,6 +171,18 @@ static uint64_t probe(void *adrs){
 }
 // optional argument 1 cache size
 int main(int ac, char **av){
+	printf("hi\n");
+	wait(1E9);
+	uint64_t *test = malloc(sizeof(uint64_t *));
+	*test = 10;
+	flush(test);
+	uint64_t time = probe(test);
+	printf("uncached %lu\n", time);
+	
+	load(test);
+	time = probe(test);
+	printf("cached %lu\n", time);
+	free(test);
     /* preparation */
     wait(1E9); // boost cache 
 ;
