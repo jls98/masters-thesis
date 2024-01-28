@@ -183,9 +183,9 @@ int main(int ac, char **av){
 	// experiment:
 	for(uint i=1;i<9;i++) evict_set = addElement(evict_set, 512*i);
 	create_pointer_chase(candidate_set, *base_size, evict_set);
-	printf("test1 value %li \n", TEST1(candidate_set[evict_set->value], 9, candidate_set);
-	printf("test1 value %li \n", TEST1(candidate_set[evict_set->value], 9, candidate_set);
-	printf("test1 value %li \n", TEST1(candidate_set[evict_set->value], 9, candidate_set);
+	printf("test1 value %li \n", TEST1(candidate_set[evict_set->value], 9, candidate_set));
+	printf("test1 value %li \n", TEST1(candidate_set[evict_set->value], 9, candidate_set));
+	printf("test1 value %li \n", TEST1(candidate_set[evict_set->value], 9, candidate_set));
 	
 	// load uncached 
 	flush(candidate_set);
