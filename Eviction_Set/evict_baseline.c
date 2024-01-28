@@ -42,6 +42,14 @@
 /* wait for cycles cycles and activate cache            */
 static void wait(uint64_t cycles);
 
+
+static struct Config {
+	uint64_t ways;
+	uint64_t cache_line_size;
+	uint64_t threshold;
+	uint64_t size;
+}
+
 /* linked list containing an index and a pointer to     */
 /* the next element                                     */
 static struct Node {
@@ -152,6 +160,9 @@ static uint64_t probe(void *adrs){
 
 #ifndef TESTCASE
 int main(int ac, char **av){
+	
+
+	
     /* preparation */
     wait(1E9); // boost cache 
 	times = malloc(501*sizeof(uint64_t *));
@@ -168,6 +179,38 @@ int main(int ac, char **av){
     void **candidate_set = mmap(NULL, *base_size * sizeof(void *), PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB, -1, 0);
 	for(uint64_t i=0;i<*base_size;i++) candidate_set[i] = &candidate_set[i]; // avoid null page by writing something on every entry (pointer to itself)
 	
+
+	// experiment:
+	for(uint i=1;i<9;i++) evict_set = addElement(evict_set, 512*i);
+	create_pointer_chase(candidate_set, *base_size, evict_set);
+	printf("test1 value %li \n", TEST1(candidate_set[evict_set->value], 9, candidate_set);
+	printf("test1 value %li \n", TEST1(candidate_set[evict_set->value], 9, candidate_set);
+	printf("test1 value %li \n", TEST1(candidate_set[evict_set->value], 9, candidate_set);
+	
+	// load uncached 
+	flush(candidate_set);
+	uint64_t time = probe(candidate_set);
+	load(candidate_set);
+	printf("flushed loading time %lu \n", probe(candidate_set)-time);
+	
+	// load cached
+	load(candidate_set);
+	uint64_t time = probe(candidate_set);
+	load(candidate_set);
+	printf("cachde loading time %lu \n", probe(candidate_set)-time);
+	
+	// load evicted
+	void *now = candidate_set[evict_set->value];
+	load(candidate_set);
+	for(uint64_t counterj = 0;counterj<9;counterj++){
+		now=*((void **)now);
+		load(now);
+		//printf("%p, %lu\n", it, it->value);
+	}
+	
+	time = probe(victim_adrs);
+	printf("Time loading victim after evict set  %lu\n", time);
+
     // if adrs set, otherwise use some other uint64_t adrs
     uint64_t *victim_adrs = ac > 1? (uint64_t *)strtoull(av[1], NULL, 0) : base_size;
 	
@@ -211,12 +254,15 @@ int main(int ac, char **av){
 	printf("times\n");
 	for(int i=0;i<501;i++) printf("%4i: %6ld\n", i, times[i]);
 	free(times);
+	
+	
+	
     return 0;
 }
 #endif
 
 
-static struct Node * create_minimal_eviction_set(void **candidate_set, uint64_t base_size, struct Node* evict_set, void *victim_adrs){
+static struct Node *create_minimal_eviction_set(void **candidate_set, uint64_t base_size, struct Node* evict_set, void *victim_adrs){
     clock_t track_start = clock();
     // init lfsr, variable c stores currently picked candidate integer/index value
     uint64_t lfsr = lfsr_create(), c, a_tmp=0, cnt, cnt_e; 
@@ -275,8 +321,6 @@ static struct Node * create_minimal_eviction_set(void **candidate_set, uint64_t 
 					break;
 				}
 			}
-		
-				
         }
     }
     if (cind_set==NULL && a_tmp < EVICT_SIZE_A) printf("create_minimal_eviction_set: not successful!\n");
