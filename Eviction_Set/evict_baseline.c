@@ -208,7 +208,7 @@ int main(int ac, char **av){
 		//printf("%p, %lu\n", it, it->value);
 	}
 	
-	time = probe(victim_adrs);
+	time = probe(candidate_set);
 	printf("Time loading victim after evict set  %lu\n", time);
 	evict_set = initLinkedList();
 	
