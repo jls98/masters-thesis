@@ -192,13 +192,15 @@ int main(int ac, char **av){
 	uint64_t time = probe(candidate_set);
 	load(candidate_set);
 	printf("flushed loading time %lu \n", probe(candidate_set)-time);
+	__asm__ volatile("lfence");
 	
 	// load cached
 	load(candidate_set);
 	time = probe(candidate_set);
 	load(candidate_set);
-	printf("cachde loading time %lu \n", probe(candidate_set)-time);
-	
+	printf("cached loading time %lu \n", probe(candidate_set)-time);
+	__asm__ volatile("lfence");
+
 	// load evicted
 	void *now = candidate_set[evict_set->value];
 	load(candidate_set);
