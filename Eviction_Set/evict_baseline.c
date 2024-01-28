@@ -106,7 +106,7 @@ static uint64_t lfsr_step(uint64_t lfsr);
 /* test. Finally, loads cand and measures time.         */
 /* addr: pointer to first element from eviction set     */
 /* cand: candidate adrs.                                */
-/* returns true if measurement is above a threshold.    */
+/* returns true/1 if measurement is above a threshold.    */
 static int64_t test1(void *addr, uint64_t size, void* cand, uint64_t threshold);
 
 /* pointer chase: creates pointer chase in subset of    */
@@ -264,6 +264,7 @@ int main(int ac, char **av){
 	for(int i=0;i<501;i++) printf("%4i: %6ld\n", i, times[i]);
 	free(times);
 	
+	printf("test1 value %li \n", TEST1(candidate_set[tmp_evict_set->value], 20, victim_adrs));
 	
 	
     return 0;
