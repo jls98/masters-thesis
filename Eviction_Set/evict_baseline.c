@@ -48,7 +48,7 @@ static struct Config {
 	uint64_t cache_line_size;
 	uint64_t threshold;
 	uint64_t size;
-}
+} Config;
 
 /* linked list containing an index and a pointer to     */
 /* the next element                                     */
