@@ -189,14 +189,19 @@ int main(int ac, char **av){
 	
 	// load uncached 
 	flush(candidate_set);
+	__asm__ volatile("lfence");
 	uint64_t time = probe(candidate_set);
+	__asm__ volatile("lfence");
 	load(candidate_set);
+	__asm__ volatile("lfence");
 	printf("flushed loading time %lu \n", probe(candidate_set)-time);
 	__asm__ volatile("lfence");
 	
 	// load cached
 	load(candidate_set);
+	__asm__ volatile("lfence");
 	time = probe(candidate_set);
+	__asm__ volatile("lfence");
 	load(candidate_set);
 	printf("cached loading time %lu \n", probe(candidate_set)-time);
 	__asm__ volatile("lfence");
