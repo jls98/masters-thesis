@@ -195,7 +195,7 @@ int main(int ac, char **av){
 	
 	// load cached
 	load(candidate_set);
-	uint64_t time = probe(candidate_set);
+	time = probe(candidate_set);
 	load(candidate_set);
 	printf("cachde loading time %lu \n", probe(candidate_set)-time);
 	
@@ -210,7 +210,9 @@ int main(int ac, char **av){
 	
 	time = probe(victim_adrs);
 	printf("Time loading victim after evict set  %lu\n", time);
-
+	evict_set = initLinkedList();
+	
+	
     // if adrs set, otherwise use some other uint64_t adrs
     uint64_t *victim_adrs = ac > 1? (uint64_t *)strtoull(av[1], NULL, 0) : base_size;
 	
