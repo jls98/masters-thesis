@@ -631,8 +631,8 @@ static uint64_t pick(struct Node* evict_set, struct Node* candidate_set, uint64_
 
 static int64_t test(void **candidate_set, uint64_t candidate_set_size, struct Node *test_index_set, void *target_adrs, uint64_t threshold){
 	// compute amount of indexes in index set
-	uin64_t test_index_set_size=0;
-	for(Node *tmp=test_index_set;tmp!=NULL;tmp=tmp->next) test_index_set_size+=1;
+	uint64_t test_index_set_size=0;
+	for(struct Node *tmp=test_index_set;tmp!=NULL;tmp=tmp->next) test_index_set_size+=1;
 	
 	// prepare pointer chase between elements from candidate_set indexed by test_index_set 
 	create_pointer_chase(candidate_set, candidate_set_size, test_index_set);
