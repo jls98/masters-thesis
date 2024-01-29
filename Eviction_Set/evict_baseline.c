@@ -205,7 +205,7 @@ int main(int ac, char **av){
 	__asm__ volatile("lfence");
 	load(candidate_set);
 	__asm__ volatile("lfence");
-	end = probe(candidate_set)
+	end = probe(candidate_set);
 	__asm__ volatile("lfence");
 	time=end-time;
 	__asm__ volatile("lfence");
@@ -219,7 +219,7 @@ int main(int ac, char **av){
 	__asm__ volatile("lfence");
 	load(candidate_set);
 	__asm__ volatile("lfence");
-	end = probe(candidate_set)
+	end = probe(candidate_set);
 	__asm__ volatile("lfence");
 	time=end-time;
 	__asm__ volatile("lfence");
