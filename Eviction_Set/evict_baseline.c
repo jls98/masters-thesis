@@ -32,6 +32,7 @@
 // optional arguments for threshold in test functions, defaults to THRESHOLD
 #define DEF_OR_ARG(value,...) value
 #define TEST1(addr, size, cand, ...) test1(addr, size, cand, DEF_OR_ARG(__VA_ARGS__ __VA_OPT__(,) THRESHOLD))
+#define TEST(addr, size, cand, ...) test(addr, size, cand, DEF_OR_ARG(__VA_ARGS__ __VA_OPT__(,) THRESHOLD))
 
 #define EVICT_SIZE_A 8 // p cores 12/10 ways, else 8 ways
 
@@ -100,6 +101,15 @@ static uint64_t lfsr_step(uint64_t lfsr);
 /* #################################################### */
 /* #################### algorithms #################### */
 /* #################################################### */
+
+// candidate_set pointer to the first location of the candidate_set addresses
+// candidate_set_size size of the candidate_set 
+// test_index_set set containing all indexes from a set under test, e.g. the eviction set
+// target_adrs the address to be evicted 
+// threshold the threshold in cycles required to determine if something is cached. Depends on machine and cache level.
+// returns 1 if target_adrs is being evicted and measurement takes longer than threshold time, 0 if time measurement is lower than threshold
+
+static int64_t test(void **candidate_set, uint64_t candidate_set_size, struct *Node test_index_set, void *target_adrs, uint64_t threshold);
 
 /* test1: eviction test for the specific address cand.  */
 /* Loads cand and then all elements from eviction set   */
@@ -179,6 +189,7 @@ int main(int ac, char **av){
     void **candidate_set = mmap(NULL, *base_size * sizeof(void *), PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB, -1, 0);
 	for(uint64_t i=0;i<*base_size;i++) candidate_set[i] = &candidate_set[i]; // avoid null page by writing something on every entry (pointer to itself)
 	
+	uint64_t end;
 
 	// experiment:
 	for(uint i=1;i<9;i++) evict_set = addElement(evict_set, 512*i);
@@ -194,7 +205,9 @@ int main(int ac, char **av){
 	__asm__ volatile("lfence");
 	load(candidate_set);
 	__asm__ volatile("lfence");
-	time=probe(candidate_set)-time;
+	end = probe(candidate_set)
+	__asm__ volatile("lfence");
+	time=end-time;
 	__asm__ volatile("lfence");
 	printf("flushed loading time %lu \n", time);
 	__asm__ volatile("lfence");
@@ -206,7 +219,9 @@ int main(int ac, char **av){
 	__asm__ volatile("lfence");
 	load(candidate_set);
 	__asm__ volatile("lfence");
-	time=probe(candidate_set)-time;
+	end = probe(candidate_set)
+	__asm__ volatile("lfence");
+	time=end-time;
 	__asm__ volatile("lfence");
 	printf("cached loading time %lu \n", time);
 	__asm__ volatile("lfence");
@@ -504,6 +519,9 @@ static int64_t test1(void *addr, uint64_t size, void* cand, uint64_t threshold){
     return delta > threshold;
 }
 
+
+
+
 /*/ // not sure what to use though -> Threshold values depend on implementation
 #define reps 200 // weird effects when increasing repetitions -> rapid increase of measured times per iteration
 static int64_t test1(void *addr, uint64_t size, void* cand, uint64_t threshold){    
@@ -608,4 +626,17 @@ static uint64_t pick(struct Node* evict_set, struct Node* candidate_set, uint64_
     // did not find candidate -> nothing to pick
 	printf("pick: no candidate found for evict set %p and candidate set %p and base size %lu with lfsr %p!\n", evict_set, candidate_set, base_size, lfsr);
     return base_size+1;
+}
+
+
+static int64_t test(void **candidate_set, uint64_t candidate_set_size, struct *Node test_index_set, void *target_adrs, uint64_t threshold){
+	// compute amount of indexes in index set
+	uin64_t test_index_set_size=0;
+	for(Node *tmp=test_index_set;tmp!=NULL;tmp=tmp->next) test_index_set_size+=1;
+	
+	// prepare pointer chase between elements from candidate_set indexed by test_index_set 
+	create_pointer_chase(candidate_set, candidate_set_size, test_index_set);
+	
+	// test 
+	return test1(candidate_set[test_index_set->value], test_index_set_size+1, target_adrs, threshold);
 }
