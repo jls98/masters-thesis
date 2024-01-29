@@ -109,7 +109,7 @@ static uint64_t lfsr_step(uint64_t lfsr);
 // threshold the threshold in cycles required to determine if something is cached. Depends on machine and cache level.
 // returns 1 if target_adrs is being evicted and measurement takes longer than threshold time, 0 if time measurement is lower than threshold
 
-static int64_t test(void **candidate_set, uint64_t candidate_set_size, struct *Node test_index_set, void *target_adrs, uint64_t threshold);
+static int64_t test(void **candidate_set, uint64_t candidate_set_size, struct Node *test_index_set, void *target_adrs, uint64_t threshold);
 
 /* test1: eviction test for the specific address cand.  */
 /* Loads cand and then all elements from eviction set   */
@@ -629,7 +629,7 @@ static uint64_t pick(struct Node* evict_set, struct Node* candidate_set, uint64_
 }
 
 
-static int64_t test(void **candidate_set, uint64_t candidate_set_size, struct *Node test_index_set, void *target_adrs, uint64_t threshold){
+static int64_t test(void **candidate_set, uint64_t candidate_set_size, struct Node *test_index_set, void *target_adrs, uint64_t threshold){
 	// compute amount of indexes in index set
 	uin64_t test_index_set_size=0;
 	for(Node *tmp=test_index_set;tmp!=NULL;tmp=tmp->next) test_index_set_size+=1;
