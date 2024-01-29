@@ -194,7 +194,9 @@ int main(int ac, char **av){
 	__asm__ volatile("lfence");
 	load(candidate_set);
 	__asm__ volatile("lfence");
-	printf("flushed loading time %lu \n", probe(candidate_set)-time);
+	time=probe(candidate_set)-time;
+	__asm__ volatile("lfence");
+	printf("flushed loading time %lu \n", time);
 	__asm__ volatile("lfence");
 	
 	// load cached
@@ -203,7 +205,10 @@ int main(int ac, char **av){
 	time = probe(candidate_set);
 	__asm__ volatile("lfence");
 	load(candidate_set);
-	printf("cached loading time %lu \n", probe(candidate_set)-time);
+	__asm__ volatile("lfence");
+	time=probe(candidate_set)-time;
+	__asm__ volatile("lfence");
+	printf("cached loading time %lu \n", time);
 	__asm__ volatile("lfence");
 
 	// load evicted
