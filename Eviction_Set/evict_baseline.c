@@ -295,8 +295,7 @@ static struct Node *create_minimal_eviction_set(void **candidate_set, uint64_t b
 	
     cnt=0;
     for(struct Node* it=evict_set;it!=NULL; it=it->next) cnt++;	
-    create_pointer_chase(candidate_set, base_size, evict_set);
-	printf("test1 of evict set %li\n", TEST(candidate_set[evict_set->value], cnt, victim_adrs));
+	printf("test of evict set %li\n", TEST(candidate_set, base_size, evict_set, victim_adrs));
 	return evict_set;
 }
 
@@ -550,7 +549,7 @@ static uint64_t pick(struct Node* evict_set, struct Node* candidate_set, uint64_
 
 static int64_t test(void **candidate_set, uint64_t candidate_set_size, struct Node *test_index_set, void *target_adrs, uint64_t threshold){
 	// empty candidate set, no array to create pointer chase on
-    if (candidate == NULL || candidate_set_size == 0 || test_index_set == NULL) return -1;
+    if (candidate_set == NULL || candidate_set_size == 0 || test_index_set == NULL) return -1;
     
     // compute amount of indexes in index set
 	uint64_t test_index_set_size=0;
