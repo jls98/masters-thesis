@@ -201,7 +201,7 @@ int main(int ac, char **av){
 
 	// measure time when cached	
 	load(victim_adrs);
-	time = probe(victim_adrs);
+	uinnt64_t time = probe(victim_adrs);
 	
 	printf("Time loading victim cached %lu\n", time);
 	// measure time when uncached	
