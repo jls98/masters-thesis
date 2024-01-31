@@ -31,7 +31,6 @@ void test_test1(){
         } 
         cind_set = deleteElement(cind_set, c);
         evict_set1 = addElement(evict_set1, c);
-        //if (i%100==0) printf("%lu, %lu, %lu, %lu\n", i, c, cind_set->value, evict_set1->value);
     }
     
     // create pointer chase on base set
@@ -71,7 +70,6 @@ void test_test1(){
     CU_ASSERT_EQUAL(TEST1(cand_set[evict_set2->value], 3, cand), 0); // assure self assignment
     CU_ASSERT_EQUAL(TEST1(cand_set[evict_set2->value], 3, cand), 0); // assure self assignment
     CU_ASSERT_EQUAL(TEST1(cand_set[evict_set2->value], 3, cand), 0); // assure self assignment
-    //printf("case 3 set %li\n", TEST1(base, 3, cand)); 
     
     freeList(evict_set1);
     freeList(evict_set2);
