@@ -5,6 +5,7 @@
 #include <x86intrin.h>
 #include <time.h>
 
+// TODO settings in struct Config
 /* threshold values for loading 1 adrs                  */
 // IntelGen12 e core
 #define THRESHOLD_SINGLE_L1D_E12 60      // ~2.2/ 61<60 on single measurement / new 200? 140-180, 59 if L1, 60+ if L2 WTF?
@@ -171,12 +172,8 @@ static uint64_t probe(void *adrs){
 #ifndef TESTCASE
 int main(int ac, char **av){
 	
-
-	
     /* preparation */
     wait(1E9); // boost cache 
-	times = malloc(501*sizeof(uint64_t *));
-	for(int i=0;i<501;i++) times[i]=0;
     // if (cache) size set, take; divide by 4 since its cache size in bytes and we have 64 bit/8 byte pointer arrays but also take double size
     uint64_t *base_size = malloc(sizeof(uint64_t *));
 	*base_size = ac == 3? atoi(av[2])/4 : CACHESIZE_DEFAULT/4; // /8 *2 for twice the size of respective cache in bytes
@@ -188,57 +185,6 @@ int main(int ac, char **av){
     // map candidate_set (using hugepages, twice the size of cache in bytes)
     void **candidate_set = mmap(NULL, *base_size * sizeof(void *), PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB, -1, 0);
 	for(uint64_t i=0;i<*base_size;i++) candidate_set[i] = &candidate_set[i]; // avoid null page by writing something on every entry (pointer to itself)
-	
-	uint64_t end;
-
-	// experiment:
-	for(uint i=1;i<9;i++) evict_set = addElement(evict_set, 512*i);
-	create_pointer_chase(candidate_set, *base_size, evict_set);
-	printf("test1 value %li \n", TEST1(candidate_set[evict_set->value], 9, candidate_set));
-	printf("test1 value %li \n", TEST1(candidate_set[evict_set->value], 9, candidate_set));
-	printf("test1 value %li \n", TEST1(candidate_set[evict_set->value], 9, candidate_set));
-	
-	// load uncached 
-	flush(candidate_set);
-	__asm__ volatile("lfence");
-	uint64_t time = probe(candidate_set);
-	__asm__ volatile("lfence");
-	load(candidate_set);
-	__asm__ volatile("lfence");
-	end = probe(candidate_set);
-	__asm__ volatile("lfence");
-	time=end-time;
-	__asm__ volatile("lfence");
-	printf("flushed loading time %lu \n", time);
-	__asm__ volatile("lfence");
-	
-	// load cached
-	load(candidate_set);
-	__asm__ volatile("lfence");
-	time = probe(candidate_set);
-	__asm__ volatile("lfence");
-	load(candidate_set);
-	__asm__ volatile("lfence");
-	end = probe(candidate_set);
-	__asm__ volatile("lfence");
-	time=end-time;
-	__asm__ volatile("lfence");
-	printf("cached loading time %lu \n", time);
-	__asm__ volatile("lfence");
-
-	// load evicted
-	void *now = candidate_set[evict_set->value];
-	load(candidate_set);
-	for(uint64_t counterj = 0;counterj<9;counterj++){
-		now=*((void **)now);
-		load(now);
-		//printf("%p, %lu\n", it, it->value);
-	}
-	
-	time = probe(candidate_set);
-	printf("Time loading victim after evict set  %lu\n", time);
-	evict_set = initLinkedList();
-	
 	
     // if adrs set, otherwise use some other uint64_t adrs
     uint64_t *victim_adrs = ac > 1? (uint64_t *)strtoull(av[1], NULL, 0) : base_size;
@@ -272,21 +218,13 @@ int main(int ac, char **av){
 		for(uint64_t counterj = 0;counterj<EVICT_SIZE_A+2;counterj++){
 			cur=*((void **)cur);
 			load(cur);
-			//printf("%p, %lu\n", it, it->value);
 		}
 		
 		time = probe(victim_adrs);
 		printf("Time loading victim after evict set  %lu\n", time);
 	}
 
-    freeList(evict_set); // delete eviction set
-	printf("times\n");
-	for(int i=0;i<501;i++) printf("%4i: %6ld\n", i, times[i]);
-	free(times);
-	
-	printf("test1 value %li \n", TEST1(candidate_set[tmp_evict_set->value], 20, victim_adrs));
-	
-	
+    freeList(evict_set); // delete eviction set	
     return 0;
 }
 #endif
