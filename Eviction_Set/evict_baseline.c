@@ -139,7 +139,6 @@ static struct Node * create_minimal_eviction_set(void **candidate_set, uint64_t 
 /* #################################################### */
 /* ################## implementation ################## */
 /* #################################################### */
-static uint64_t *times;
 
 static void load(void *adrs){
 	__asm__ volatile("mov rax, [%0];"::"r" (adrs): "rax", "memory");
@@ -506,19 +505,8 @@ static int64_t test1(void *addr, uint64_t size, void* cand, uint64_t threshold){
 		);
 		sum +=time;
 	}
-    if(sum/reps<500) times[sum/reps]+=1;
-	else times[500]+=1;
-#ifndef TESTCASE
-	
-	if ( sum/reps <= threshold)printf("Sum %lu, sum/reps %lu for size %lu\n", sum, sum/reps, size);
-#endif
-#ifdef TESTCASE
-	printf("Sum %lu, sum/reps %lu for size %lu\n", sum, sum/reps, size);
-#endif
-
 	return sum/reps > threshold? 1 : 0;
-} /**/
- /**/
+} 
 
 static void create_pointer_chase(void **candidate_set, uint64_t c_size, struct Node* set){
     if (set == NULL) return; // no pointer chase 
