@@ -32,8 +32,8 @@
 
 // optional arguments for threshold in test functions, defaults to THRESHOLD
 #define DEF_OR_ARG(value,...) value
-#define TEST1(addr, size, cand, ...) test1(addr, size, cand, DEF_OR_ARG(__VA_ARGS__ __VA_OPT__(,) THRESHOLD))
 #define TEST(addr, size, cand, ...) test(addr, size, cand, DEF_OR_ARG(__VA_ARGS__ __VA_OPT__(,) THRESHOLD))
+#define TEST1(addr, size, cand, ...) test1(addr, size, cand, DEF_OR_ARG(__VA_ARGS__ __VA_OPT__(,) THRESHOLD))
 
 #define EVICT_SIZE_A 8 // p cores 12/10 ways, else 8 ways
 
@@ -267,27 +267,23 @@ static struct Node *create_minimal_eviction_set(void **candidate_set, uint64_t b
         // if not TEST(R union S\{c}), x)  
 		// if removing c results in not evicting x anymore, add c to current eviction set    
 		if (cnt==cnt_e) break;
-		if(combined_set != NULL && !TEST1(candidate_set[combined_set->value], cnt, victim_adrs)){
-			//printf("%li\n", TEST1(candidate_set[combined_set->value], cnt, victim_adrs));
-			if(!TEST1(candidate_set[combined_set->value], cnt, victim_adrs) && !TEST1(candidate_set[combined_set->value], cnt, victim_adrs)){
-				evict_set = addElement(evict_set, c);
-				//printf("head evict_set: %p\n", evict_set);			
-				a_tmp++; // added elem to evict set -> if enough, evict_set complete
-				
-				// test if its an eviction set
-				void *cur = candidate_set[evict_set->value];
-				load(victim_adrs);
-				for(uint64_t counterj = 0;counterj<100;counterj++){ // 100 is random
-					cur=*((void **)cur);
-					load(cur);
-				}
-				uint64_t time = probe(victim_adrs);
-				printf("Time loading victim after evict set  %lu\n", time);		
-				if(time>THRESHOLD) {
-				
-					break;
-				}
-			}
+		if(combined_set != NULL && !TEST(candidate_set[combined_set->value], cnt, victim_adrs)){
+            evict_set = addElement(evict_set, c);
+            a_tmp++; // added elem to evict set -> if enough, evict_set complete
+            
+            // test if its an eviction set
+            void *cur = candidate_set[evict_set->value];
+            load(victim_adrs);
+            for(uint64_t counterj = 0;counterj<100;counterj++){ // 100 is random
+                cur=*((void **)cur);
+                load(cur);
+            }
+            uint64_t time = probe(victim_adrs);
+            printf("Time loading victim after evict set  %lu\n", time);		
+            if(time>THRESHOLD) {
+            
+                break;
+            }			
         }
     }
     if (cind_set==NULL && a_tmp < EVICT_SIZE_A) printf("create_minimal_eviction_set: not successful!\n");
@@ -303,7 +299,7 @@ static struct Node *create_minimal_eviction_set(void **candidate_set, uint64_t b
     cnt=0;
     for(struct Node* it=evict_set;it!=NULL; it=it->next) cnt++;	
     create_pointer_chase(candidate_set, base_size, evict_set);
-	printf("test1 of evict set %li\n", TEST1(candidate_set[evict_set->value], cnt, victim_adrs));
+	printf("test1 of evict set %li\n", TEST(candidate_set[evict_set->value], cnt, victim_adrs));
 	return evict_set;
 }
 
