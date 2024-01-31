@@ -4,7 +4,6 @@
 
 void test_test1(){
     printf("\nTesting test1...\n\n");
-	times = malloc(501*sizeof(uint64_t *));
 	for(int i=0;i<501;i++) times[i]=0;
 	// change to local system and cache in 8 bytes to check, a size of candidate set in index 
     //uint64_t c_size = 1024, a=4096/8; // L1d i7, i12e
