@@ -109,7 +109,7 @@ static uint64_t lfsr_step(uint64_t lfsr);
 // target_adrs the address to be evicted 
 // threshold the threshold in cycles required to determine if something is cached. Depends on machine and cache level.
 // returns 1 if target_adrs is being evicted and measurement takes longer than threshold time, 0 if time measurement is lower than threshold
-
+// returns -1 if there is an error
 static int64_t test(void **candidate_set, uint64_t candidate_set_size, struct Node *test_index_set, void *target_adrs, uint64_t threshold);
 
 /* test1: eviction test for the specific address cand.  */
@@ -254,10 +254,7 @@ static struct Node *create_minimal_eviction_set(void **candidate_set, uint64_t b
 
         // R union S\{c}
         struct Node *combined_set = unionLists(cind_set, evict_set);
-        
-        // create pointer chase 
-        create_pointer_chase(candidate_set, base_size, combined_set);
-        
+   
         // count amount of elements in combined_set
         cnt=0;
         for(struct Node* it=combined_set;it!=NULL; it=it->next) cnt++;
@@ -267,7 +264,7 @@ static struct Node *create_minimal_eviction_set(void **candidate_set, uint64_t b
         // if not TEST(R union S\{c}), x)  
 		// if removing c results in not evicting x anymore, add c to current eviction set    
 		if (cnt==cnt_e) break;
-		if(combined_set != NULL && !TEST(candidate_set[combined_set->value], cnt, victim_adrs)){
+		if(!TEST(candidate_set, target_adrs, combined_set, victim_adrs)){
             evict_set = addElement(evict_set, c);
             a_tmp++; // added elem to evict set -> if enough, evict_set complete
             
@@ -552,7 +549,10 @@ static uint64_t pick(struct Node* evict_set, struct Node* candidate_set, uint64_
 
 
 static int64_t test(void **candidate_set, uint64_t candidate_set_size, struct Node *test_index_set, void *target_adrs, uint64_t threshold){
-	// compute amount of indexes in index set
+	// empty candidate set, no array to create pointer chase on
+    if (candidate == NULL || candidate_set_size == 0 || test_index_set == NULL) return -1;
+    
+    // compute amount of indexes in index set
 	uint64_t test_index_set_size=0;
 	for(struct Node *tmp=test_index_set;tmp!=NULL;tmp=tmp->next) test_index_set_size+=1;
 	
