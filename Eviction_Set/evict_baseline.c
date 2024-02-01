@@ -193,7 +193,7 @@ int main(int ac, char **av){
 	for(uint64_t i=0;i<c_size;i++) candidate_set[i] = &candidate_set[i]; // avoid null page by writing something on every entry (pointer to itself)
 	
     // if adrs set, otherwise use some other uint64_t adrs
-    void *victim_adrs = ac > 1? (uint64_t *)strtoull(av[1], NULL, 0) : candidate_set[c_size+130];
+    void *victim_adrs = &candidate_set[c_size+130];
 	
 	// create evict set
     struct Node * tmp_evict_set = create_minimal_eviction_set(candidate_set, c_size, evict_set, victim_adrs, conf);
