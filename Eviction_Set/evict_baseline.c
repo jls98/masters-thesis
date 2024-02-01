@@ -181,7 +181,7 @@ static uint64_t probe(void *adrs){
 #ifndef TESTCASE
 int main(int ac, char **av){
 	// DEFAULT TODO change
-	struct Config conf = initConfig(8, 64, 45, 32768, 200);
+	struct Config *conf = initConfig(8, 64, 45, 32768, 200);
     /* preparation */
     wait(1E9); // boost cache 
     // if (cache) size set, take; divide by 4 since its cache size in bytes and we have 64 bit/8 byte pointer arrays but also take double size
