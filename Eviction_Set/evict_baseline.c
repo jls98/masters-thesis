@@ -140,6 +140,12 @@ static uint64_t pick(struct Node* evict_set, struct Node* candidate_set, uint64_
 /* victim_adrs in evict_set                             */
 static struct Node *create_minimal_eviction_set(void **candidate_set, uint64_t candidate_set_size, struct Node* evict_set, void *victim_adrs, struct Config *conf);
 
+/* init Config */
+static struct Config *initConfig(uint64_t ways,	uint64_t cache_line_size, uint64_t threshold, uint64_t cache_size, uint64_t test_reps);
+
+/* configure Config */
+static void updateConfig(struct Config *conf, uint64_t ways, uint64_t cache_line_size, uint64_t threshold, uint64_t cache_size, uint64_t test_reps);
+
 /* #################################################### */
 /* ################## implementation ################## */
 /* #################################################### */
@@ -174,7 +180,8 @@ static uint64_t probe(void *adrs){
 
 #ifndef TESTCASE
 int main(int ac, char **av){
-	
+	// DEFAULT TODO change
+	struct Config conf = initConfig(8, 64, 45, 32768, 200);
     /* preparation */
     wait(1E9); // boost cache 
     // if (cache) size set, take; divide by 4 since its cache size in bytes and we have 64 bit/8 byte pointer arrays but also take double size
@@ -320,6 +327,21 @@ static struct Node *create_minimal_eviction_set(void **candidate_set, uint64_t c
 	return evict_set;
 }
 
+static struct Config *initConfig(uint64_t ways,	uint64_t cache_line_size, uint64_t threshold, uint64_t cache_size, uint64_t test_reps){
+	struct Config *conf= (struct Config *) malloc(sizeof(struct Config));
+	updateConfig(conf, ways, cache_line_size, threshold, cache_size, test_reps);
+	return conf;
+}
+
+static void updateConfig(struct Config *conf, uint64_t ways, uint64_t cache_line_size, uint64_t threshold, uint64_t cache_size, uint64_t test_reps){
+	conf->ways=ways;
+	conf->cache_line_size=cache_line_size;
+	conf->threshold=threshold;
+	conf->cache_size=cache_size;
+	conf->test_reps=test_reps;
+}
+
+
 // say hi to cache
 static void wait(uint64_t cycles) {
 	unsigned int ignore;
@@ -334,7 +356,7 @@ static struct Node* initLinkedList() {
 
 static struct Node* addElement(struct Node* head, uint64_t value) {
     // Allocate memory for a new node
-    struct Node* newNode = (struct Node*)malloc(sizeof(struct Node));
+    struct Node* newNode = (struct Node*) malloc(sizeof(struct Node));
     if (newNode == NULL) {
         fprintf(stderr, "Memory allocation error\n");
         exit(EXIT_FAILURE);
