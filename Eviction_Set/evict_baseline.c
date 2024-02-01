@@ -31,9 +31,9 @@
 //#define CACHESIZE_DEFAULT OTHERS TODO
 
 // optional arguments for threshold in test functions, defaults to THRESHOLD
-#define DEF_OR_ARG(value,...) value
-#define TEST1(addr, size, cand, ...) test1(addr, size, cand, DEF_OR_ARG(__VA_ARGS__ __VA_OPT__(,) THRESHOLD))
-#define TEST(candidate_set, candidate_set_size, test_index_set, target_adrs, ...) test(candidate_set, candidate_set_size, test_index_set, target_adrs, DEF_OR_ARG(__VA_ARGS__ __VA_OPT__(,) THRESHOLD))
+//#define DEF_OR_ARG(value,...) value
+//#define TEST1(addr, size, cand, ...) test1(addr, size, cand, DEF_OR_ARG(__VA_ARGS__ __VA_OPT__(,) THRESHOLD))
+//#define TEST(candidate_set, candidate_set_size, test_index_set, target_adrs, ...) test(candidate_set, candidate_set_size, test_index_set, target_adrs, DEF_OR_ARG(__VA_ARGS__ __VA_OPT__(,) THRESHOLD))
 
 #define EVICT_SIZE_A 8 // p cores 12/10 ways, else 8 ways
 
@@ -49,7 +49,8 @@ static struct Config {
 	uint64_t ways;
 	uint64_t cache_line_size;
 	uint64_t threshold;
-	uint64_t size;
+	uint64_t cache_size;
+	uint64_t test_reps;
 } Config;
 
 /* linked list containing an index and a pointer to     */
@@ -77,6 +78,9 @@ static struct Node* unionLists(struct Node* list1, struct Node* list2);
 
 /*  helper func for unionLists                          */
 static int containsValue(struct Node* head, uint64_t value);
+
+/* helper function to count elements in Node linked list */
+static int count(struct Node *head);
 
 /* Function to print the elements of the linked list    */
 static void printList(struct Node* head);
@@ -110,7 +114,7 @@ static uint64_t lfsr_step(uint64_t lfsr);
 // threshold the threshold in cycles required to determine if something is cached. Depends on machine and cache level.
 // returns 1 if target_adrs is being evicted and measurement takes longer than threshold time, 0 if time measurement is lower than threshold
 // returns -1 if there is an error
-static int64_t test(void **candidate_set, uint64_t candidate_set_size, struct Node *test_index_set, void *target_adrs, uint64_t threshold);
+static int64_t test(void **candidate_set, uint64_t candidate_set_size, struct Node *test_index_set, void *target_adrs, struct Config *conf);
 
 /* test1: eviction test for the specific address cand.  */
 /* Loads cand and then all elements from eviction set   */
@@ -118,7 +122,7 @@ static int64_t test(void **candidate_set, uint64_t candidate_set_size, struct No
 /* addr: pointer to first element from eviction set     */
 /* cand: candidate adrs.                                */
 /* returns true/1 if measurement is above a threshold.    */
-static int64_t test1(void *addr, uint64_t size, void* cand, uint64_t threshold);
+static int64_t test1(void *addr, uint64_t size, void* cand, struct Config *conf);
 
 /* pointer chase: creates pointer chase in subset of    */
 /* by candidate_set mapped set with c_size elements.    */
@@ -134,7 +138,7 @@ static uint64_t pick(struct Node* evict_set, struct Node* candidate_set, uint64_
 
 /* create minimal eviction set from candidate set for   */
 /* victim_adrs in evict_set                             */
-static struct Node * create_minimal_eviction_set(void **candidate_set, uint64_t base_size, struct Node* evict_set, void *victim_adrs);
+static struct Node *create_minimal_eviction_set(void **candidate_set, uint64_t candidate_set_size, struct Node* evict_set, void *victim_adrs, struct Config *conf);
 
 /* #################################################### */
 /* ################## implementation ################## */
@@ -229,25 +233,45 @@ int main(int ac, char **av){
 #endif
 
 
-static struct Node *create_minimal_eviction_set(void **candidate_set, uint64_t base_size, struct Node* evict_set, void *victim_adrs){
-    clock_t track_start = clock();
+static struct Node *create_minimal_eviction_set(void **candidate_set, uint64_t candidate_set_size, struct Node* evict_set, void *victim_adrs, struct Config *conf){
+    if (conf==NULL){
+		printf("create_minimal_eviction_set: Conf is NULL!\n");
+		return NULL;
+	}
+	
+	if (candidate_set==NULL){
+		printf("create_minimal_eviction_set: candidate_set is NULL!\n");
+		return NULL;
+	}
+	
+	if (evict_set==NULL){
+		printf("create_minimal_eviction_set: evict_set is NULL!\n");
+		return NULL;
+	}
+	
+	if (candidate_set_size==0){
+		printf("create_minimal_eviction_set: candidate_set_size is 0!\n");
+		return NULL;
+	}
+	
+	clock_t track_start = clock();
     // init lfsr, variable c stores currently picked candidate integer/index value
     uint64_t lfsr = lfsr_create(), c, a_tmp=0, cnt, cnt_e; 
     
 	// create current candidate set containing the indexes of unchecked candidates and initialize with all indexes
     struct Node* cind_set = initLinkedList();
-    for (uint64_t i=0; i<base_size-1;i++) cind_set = addElement(cind_set, i); 
+    for (uint64_t i=0; i<candidate_set_size-1;i++) cind_set = addElement(cind_set, i); 
     
     // while |R| < a and cind still contains possible and unchecked candidates
     //while(a_tmp < EVICT_SIZE_A && cind_set!=NULL){   // TODO change back     
     while(cind_set!=NULL){        
         // c <- pick(S) pick candidate index c from candidate set S/cind_set
 		do{
-			c=pick(evict_set, cind_set, base_size, &lfsr);
+			c=pick(evict_set, cind_set, candidate_set_size, &lfsr);
 		}
         while(containsValue(evict_set, c) || !containsValue(cind_set, c)); // prevent picking duplicate candidates
 		
-		if (c==base_size+1) printf("pick returned invalid value!\n");
+		if (c==candidate_set_size+1) printf("pick returned invalid value!\n");
 		
 		// remove c from S S <- S\{c}
 		cind_set = deleteElement(cind_set, c);         
@@ -256,15 +280,13 @@ static struct Node *create_minimal_eviction_set(void **candidate_set, uint64_t b
         struct Node *combined_set = unionLists(cind_set, evict_set);
    
         // count amount of elements in combined_set
-        cnt=0;
-        for(struct Node* it=combined_set;it!=NULL; it=it->next) cnt++;
-		cnt_e=0;
-        for(struct Node* it=evict_set;it!=NULL; it=it->next) cnt_e++;
+        cnt=count(combined_set);
+		cnt_e=count(evict_set);
 		if(cnt%1000==0) printf("cnt %lu, evict %lu\n", cnt, cnt_e);
         // if not TEST(R union S\{c}), x)  
 		// if removing c results in not evicting x anymore, add c to current eviction set    
-		if (cnt==cnt_e) break;
-		if(!TEST(candidate_set, base_size, combined_set, victim_adrs)){
+		if (cnt==cnt_e) break; // no candidates left -> end (eviction_set==combined_set)
+		if(!TEST(candidate_set, candidate_set_size, combined_set, victim_adrs)){
             evict_set = addElement(evict_set, c);
             a_tmp++; // added elem to evict set -> if enough, evict_set complete
             
@@ -283,7 +305,7 @@ static struct Node *create_minimal_eviction_set(void **candidate_set, uint64_t b
             }			
         }
     }
-    if (cind_set==NULL && a_tmp < EVICT_SIZE_A) printf("create_minimal_eviction_set: not successful!\n");
+    if (cind_set==NULL && a_tmp < conf->ways) printf("create_minimal_eviction_set: not successful!\n");
 	//printf("a_tmp Elements in eviction set %lu, cind_set empty %i, evict_set empty %i\n", a_tmp, cind_set==NULL, evict_set==NULL);
     /* baseline algorithm */
 	printList(evict_set);
@@ -293,9 +315,8 @@ static struct Node *create_minimal_eviction_set(void **candidate_set, uint64_t b
     // Print the measured time
     printf("Time taken by myFunction: %f seconds\n", cpu_time_used);
 	
-    cnt=0;
-    for(struct Node* it=evict_set;it!=NULL; it=it->next) cnt++;	
-	printf("test of evict set %li\n", TEST(candidate_set, base_size, evict_set, victim_adrs));
+    cnt=count(evict_set);
+	printf("test of evict set %li\n", TEST(candidate_set, candidate_set_size, evict_set, victim_adrs));
 	return evict_set;
 }
 
@@ -387,6 +408,12 @@ static int containsValue(struct Node* head, uint64_t value) {
     return 0;  // Value not found
 }
 
+static int count(struct Node *head){
+	int ctr = 0;
+	for(struct Node *it=head;it!=NULL;it=it->next) ctr+=1;
+	return ctr;
+}
+
 static void printList(struct Node* head) {
     printf("Linked List: ");
     while (head != NULL) {
@@ -452,13 +479,12 @@ static int64_t test1(void *addr, uint64_t size, void* cand, uint64_t threshold){
 
 
 /*/ // not sure what to use though -> Threshold values depend on implementation
-#define reps 200 // weird effects when increasing repetitions -> rapid increase of measured times per iteration
-static int64_t test1(void *addr, uint64_t size, void* cand, uint64_t threshold){    
+static int64_t test1(void *addr, uint64_t size, void* cand, struct Config *conf){    
     if (size==0 || addr==NULL || cand==NULL) return -1; // parameter check
 	
 	wait(1E9);
 	volatile uint64_t time, sum=0;
-	for(uint64_t i=0;i<reps;i++){
+	for(uint64_t i=0;i<conf->test_reps;i++){
 		asm __volatile__ (
 			"lfence;"
 			"mfence;"
@@ -497,7 +523,7 @@ static int64_t test1(void *addr, uint64_t size, void* cand, uint64_t threshold){
 		);
 		sum +=time;
 	}
-	return sum/reps > threshold? 1 : 0;
+	return sum/conf->test_reps > conf->threshold? 1 : 0;
 } 
 
 static void create_pointer_chase(void **candidate_set, uint64_t c_size, struct Node* set){
@@ -547,7 +573,7 @@ static uint64_t pick(struct Node* evict_set, struct Node* candidate_set, uint64_
 }
 
 
-static int64_t test(void **candidate_set, uint64_t candidate_set_size, struct Node *test_index_set, void *target_adrs, uint64_t threshold){
+static int64_t test(void **candidate_set, uint64_t candidate_set_size, struct Node *test_index_set, void *target_adrs, struct Config *conf){
 	// empty candidate set, no array to create pointer chase on
     if (candidate_set == NULL || candidate_set_size == 0 || test_index_set == NULL) return -1;
     
@@ -559,5 +585,5 @@ static int64_t test(void **candidate_set, uint64_t candidate_set_size, struct No
 	create_pointer_chase(candidate_set, candidate_set_size, test_index_set);
 	
 	// test 
-	return test1(candidate_set[test_index_set->value], test_index_set_size+1, target_adrs, threshold);
+	return test1(candidate_set[test_index_set->value], test_index_set_size+1, target_adrs, conf);
 }
