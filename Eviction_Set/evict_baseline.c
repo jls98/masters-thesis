@@ -180,29 +180,20 @@ static uint64_t probe(void *adrs){
 
 #ifndef TESTCASE
 int main(int ac, char **av){
-	printf("a");
     /* preparation */
 	struct Config *conf = initConfig(8, 64, 45, 32768, 200); 	// DEFAULT TODO change
     wait(1E9); // boost cache 
 	uint64_t c_size = conf->cache_size/4;
     // R <- {}
     // allocate space for eviction set
-	printf("a");
     struct Node* evict_set = initLinkedList();
 
-	printf("a");
     // map candidate_set (using hugepages, twice the size of cache in bytes (4 times to have space for target))
-	printf("a");
     void **candidate_set = mmap(NULL, 2* c_size * sizeof(void *), PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB, -1, 0);
-	printf("a");
-	uint64_t *intptr = (uint64_t *) candidate_set[0];
-	printf("a");
-	*intptr = 0xff;
-	printf("a");
+	//uint64_t *intptr = (uint64_t *) candidate_set[0];
+	//*intptr = 0xff;
 	//for (uint64_t i=0;i<9;i++) 
-	printf("%lu %x\n", 0, candidate_set[0]); // learn about indexing void ** 
-	printf("a");
-	return 0;
+	//printf("%lu %x\n", 0, candidate_set[0]); // learn about indexing void ** 
 
 	for(uint64_t i=0;i<c_size;i++) candidate_set[i] = &candidate_set[i]; // avoid null page by writing something on every entry (pointer to itself)
 	
