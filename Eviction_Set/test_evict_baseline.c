@@ -10,9 +10,9 @@ void test_test1(){
     //uint64_t c_size = 524288, a=262144; // L2 i12e
     //uint64_t c_size = 65536, a=32768; // L2 i7
     //uint64_t c_size = 12288, a=6144; // L1 i12p
-    uint64_t c_size = 4096, a=c_size; // L1 i12p
+    uint64_t c_size = conf->cache_size/4; // L1 i12p
     //uint64_t c_size = 327680, a=163840; // L2 i12p
-    void **cand_set = mmap(NULL, conf->cache_size * sizeof(void *), PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB, -1, 0);
+    void **cand_set = mmap(NULL, c_size * sizeof(void *), PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB, -1, 0);
     uint64_t *cand = malloc(sizeof(uint64_t *)); // just some random candidate :D
 	*cand = 1;
     uint64_t lfsr = lfsr_create();
@@ -21,12 +21,12 @@ void test_test1(){
     struct Node* evict_set1 = initLinkedList();  // current eviction set
     struct Node* evict_set2 = initLinkedList();  // current eviction set
 
-    for (uint64_t i=0; i<conf->cache_size-1;i++) cind_set = addElement(cind_set, i);  // init indexes for candidate set (add all indexes to candidate index set)
+    for (uint64_t i=0; i<c_size-1;i++) cind_set = addElement(cind_set, i);  // init indexes for candidate set (add all indexes to candidate index set)
           
     // fill eviction set with all elements, maximal eviction set lol
     for (uint64_t i=0; i<a-1;i++){
-        uint64_t c = pick(evict_set1, cind_set, conf->cache_size, &lfsr);
-        if(c == conf->cache_size+1){
+        uint64_t c = pick(evict_set1, cind_set, c_size, &lfsr);
+        if(c == c_size+1){
             printf("test_test1: filling eviction_set failed!\n");
             break;
         } 
@@ -35,32 +35,32 @@ void test_test1(){
     }
     
     // create pointer chase on base set
-    create_pointer_chase(cand_set, conf->cache_size, evict_set1);
+    create_pointer_chase(cand_set, c_size, evict_set1);
     // uninitialized params/errors
 
     wait(1E9);
-    CU_ASSERT_EQUAL(test1(NULL, conf->cache_size, cand, conf), -1); // assure self assignment
+    CU_ASSERT_EQUAL(test1(NULL, c_size, cand, conf), -1); // assure self assignment
     CU_ASSERT_EQUAL(test1(cand_set[evict_set1->value], 0, cand, conf), -1); // assure self assignment
-    CU_ASSERT_EQUAL(test1(cand_set[evict_set1->value], conf->cache_size, NULL, conf), -1); 
-    CU_ASSERT_EQUAL(test1(cand_set[evict_set1->value], conf->cache_size, cand, NULL), -1); 
+    CU_ASSERT_EQUAL(test1(cand_set[evict_set1->value], c_size, NULL, conf), -1); 
+    CU_ASSERT_EQUAL(test1(cand_set[evict_set1->value], c_size, cand, NULL), -1); 
 
     
     // regular case (full huge page should evict (hopefully))
-    CU_ASSERT_EQUAL(test1(cand_set[evict_set1->value], conf->cache_size, cand, conf), 1); // assure self assignment
-    CU_ASSERT_EQUAL(test1(cand_set[evict_set1->value], conf->cache_size, cand, conf), 1); 
-    CU_ASSERT_EQUAL(test1(cand_set[evict_set1->value], conf->cache_size, cand, conf), 1); 
-    CU_ASSERT_EQUAL(test1(cand_set[evict_set1->value], conf->cache_size, cand, conf), 1); 
-    CU_ASSERT_EQUAL(test1(cand_set[evict_set1->value], conf->cache_size, cand, conf), 1); 
-    CU_ASSERT_EQUAL(test1(cand_set[evict_set1->value], conf->cache_size, cand, conf), 1); 
-    CU_ASSERT_EQUAL(test1(cand_set[evict_set1->value], conf->cache_size, cand, conf), 1); 
-    CU_ASSERT_EQUAL(test1(cand_set[evict_set1->value], conf->cache_size, cand, conf), 1); 
-    CU_ASSERT_EQUAL(test1(cand_set[evict_set1->value], conf->cache_size, cand, conf), 1); 
-    CU_ASSERT_EQUAL(test1(cand_set[evict_set1->value], conf->cache_size, cand, conf), 1); 
+    CU_ASSERT_EQUAL(test1(cand_set[evict_set1->value], c_size, cand, conf), 1); // assure self assignment
+    CU_ASSERT_EQUAL(test1(cand_set[evict_set1->value], c_size, cand, conf), 1); 
+    CU_ASSERT_EQUAL(test1(cand_set[evict_set1->value], c_size, cand, conf), 1); 
+    CU_ASSERT_EQUAL(test1(cand_set[evict_set1->value], c_size, cand, conf), 1); 
+    CU_ASSERT_EQUAL(test1(cand_set[evict_set1->value], c_size, cand, conf), 1); 
+    CU_ASSERT_EQUAL(test1(cand_set[evict_set1->value], c_size, cand, conf), 1); 
+    CU_ASSERT_EQUAL(test1(cand_set[evict_set1->value], c_size, cand, conf), 1); 
+    CU_ASSERT_EQUAL(test1(cand_set[evict_set1->value], c_size, cand, conf), 1); 
+    CU_ASSERT_EQUAL(test1(cand_set[evict_set1->value], c_size, cand, conf), 1); 
+    CU_ASSERT_EQUAL(test1(cand_set[evict_set1->value], c_size, cand, conf), 1); 
     
     evict_set2 = addElement(evict_set2, 65);
     evict_set2 = addElement(evict_set2, 23);
     evict_set2 = addElement(evict_set2, 5);
-    create_pointer_chase(cand_set, conf->cache_size, evict_set2); // eviction set far too small -> no eviction of candidate
+    create_pointer_chase(cand_set, c_size, evict_set2); // eviction set far too small -> no eviction of candidate
     CU_ASSERT_EQUAL(test1(cand_set[evict_set2->value], 3, cand, conf), 0); // assure self assignment
     CU_ASSERT_EQUAL(test1(cand_set[evict_set2->value], 3, cand, conf), 0);
     CU_ASSERT_EQUAL(test1(cand_set[evict_set2->value], 3, cand, conf), 0);
