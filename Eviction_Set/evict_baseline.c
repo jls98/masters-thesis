@@ -46,11 +46,11 @@ static void wait(uint64_t cycles);
 
 
 static struct Config {
-	uint64_t ways;
-	uint64_t cache_line_size;
-	uint64_t threshold;
-	uint64_t cache_size;
-	uint64_t test_reps;
+	uint64_t ways; // cache ways 
+	uint64_t cache_line_size; // cache line size (usually 64)
+	uint64_t threshold; // threshold for cache (eg ~45 for L1 on i7)
+	uint64_t cache_size; // cache size in bytes 
+	uint64_t test_reps; // amount of repetitions in test function
 } Config;
 
 /* linked list containing an index and a pointer to     */
@@ -241,13 +241,9 @@ static struct Node *create_minimal_eviction_set(void **candidate_set, uint64_t c
 		return NULL;
 	}
 	
+	// if candidate set is empty, no eviction set can be created
 	if (candidate_set==NULL){
 		printf("create_minimal_eviction_set: candidate_set is NULL!\n");
-		return NULL;
-	}
-	
-	if (evict_set==NULL){
-		printf("create_minimal_eviction_set: evict_set is NULL!\n");
 		return NULL;
 	}
 	
