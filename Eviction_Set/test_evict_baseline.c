@@ -75,7 +75,7 @@ void test_test1(){
     freeList(evict_set1);
     freeList(evict_set2);
     freeList(cind_set);
-	free(conf)
+	free(conf);
     printf("     ... finished!\n");
 }
 
