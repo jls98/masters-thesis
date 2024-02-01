@@ -502,7 +502,7 @@ static int64_t test1(void *addr, uint64_t size, void* cand, uint64_t threshold){
 
 /*/ // not sure what to use though -> Threshold values depend on implementation
 static int64_t test1(void *addr, uint64_t size, void* cand, struct Config *conf){    
-    if (size==0 || addr==NULL || cand==NULL) return -1; // parameter check
+    if (size==0 || addr==NULL || cand==NULL || conf==NULL) return -1; // parameter check
 	
 	wait(1E9);
 	volatile uint64_t time, sum=0;
