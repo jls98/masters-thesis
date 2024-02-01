@@ -3,6 +3,7 @@
 #include <CUnit/Basic.h>
 
 void test_test1(){
+	struct Config *conf = initConfig(8, 64, 45, 32768, 200);
     printf("\nTesting test1...\n\n");
 	// change to local system and cache in 8 bytes to check, a size of candidate set in index 
     //uint64_t c_size = 1024, a=4096/8; // L1d i7, i12e
@@ -38,38 +39,38 @@ void test_test1(){
     // uninitialized params/errors
 
     wait(1E9);
-    CU_ASSERT_EQUAL(TEST1(NULL, a, cand), -1); // assure self assignment
-    CU_ASSERT_EQUAL(TEST1(cand_set[evict_set1->value], 0, cand), -1); // assure self assignment
-    CU_ASSERT_EQUAL(TEST1(cand_set[evict_set1->value], a, NULL), -1); // assure self assignment
+    CU_ASSERT_EQUAL(test1(NULL, a, cand, conf), -1); // assure self assignment
+    CU_ASSERT_EQUAL(test1(cand_set[evict_set1->value], 0, cand, conf), -1); // assure self assignment
+    CU_ASSERT_EQUAL(test1(cand_set[evict_set1->value], a, NULL, conf), -1); 
+    CU_ASSERT_EQUAL(test1(cand_set[evict_set1->value], a, cand, NULL), -1); 
 
     
     // regular case (full huge page should evict (hopefully))
-    CU_ASSERT_EQUAL(TEST1(cand_set[evict_set1->value], a, cand), 1); // assure self assignment
-    CU_ASSERT_EQUAL(TEST1(cand_set[evict_set1->value], a, cand), 1); // assure self assignment
-    CU_ASSERT_EQUAL(TEST1(cand_set[evict_set1->value], a, cand), 1); // assure self assignment
-    CU_ASSERT_EQUAL(TEST1(cand_set[evict_set1->value], a, cand), 1); // assure self assignment
-    CU_ASSERT_EQUAL(TEST1(cand_set[evict_set1->value], a, cand), 1); // assure self assignment
-    CU_ASSERT_EQUAL(TEST1(cand_set[evict_set1->value], a, cand), 1); // assure self assignment
-    CU_ASSERT_EQUAL(TEST1(cand_set[evict_set1->value], a, cand), 1); // assure self assignment
-    CU_ASSERT_EQUAL(TEST1(cand_set[evict_set1->value], a, cand), 1); // assure self assignment
-    CU_ASSERT_EQUAL(TEST1(cand_set[evict_set1->value], a, cand), 1); // assure self assignment
-    CU_ASSERT_EQUAL(TEST1(cand_set[evict_set1->value], a, cand), 1); // assure self assignment
-    CU_ASSERT_EQUAL(TEST1(cand_set[evict_set1->value], a, cand), 1); // assure self assignment
+    CU_ASSERT_EQUAL(test1(cand_set[evict_set1->value], a, cand, conf), 1); // assure self assignment
+    CU_ASSERT_EQUAL(test1(cand_set[evict_set1->value], a, cand, conf), 1); 
+    CU_ASSERT_EQUAL(test1(cand_set[evict_set1->value], a, cand, conf), 1); 
+    CU_ASSERT_EQUAL(test1(cand_set[evict_set1->value], a, cand, conf), 1); 
+    CU_ASSERT_EQUAL(test1(cand_set[evict_set1->value], a, cand, conf), 1); 
+    CU_ASSERT_EQUAL(test1(cand_set[evict_set1->value], a, cand, conf), 1); 
+    CU_ASSERT_EQUAL(test1(cand_set[evict_set1->value], a, cand, conf), 1); 
+    CU_ASSERT_EQUAL(test1(cand_set[evict_set1->value], a, cand, conf), 1); 
+    CU_ASSERT_EQUAL(test1(cand_set[evict_set1->value], a, cand, conf), 1); 
+    CU_ASSERT_EQUAL(test1(cand_set[evict_set1->value], a, cand, conf), 1); 
     
     evict_set2 = addElement(evict_set2, 65);
     evict_set2 = addElement(evict_set2, 23);
     evict_set2 = addElement(evict_set2, 5);
     create_pointer_chase(cand_set, c_size, evict_set2); // eviction set far too small -> no eviction of candidate
-    CU_ASSERT_EQUAL(TEST1(cand_set[evict_set2->value], 3, cand), 0); // assure self assignment
-    CU_ASSERT_EQUAL(TEST1(cand_set[evict_set2->value], 3, cand), 0); // assure self assignment
-    CU_ASSERT_EQUAL(TEST1(cand_set[evict_set2->value], 3, cand), 0); // assure self assignment
-    CU_ASSERT_EQUAL(TEST1(cand_set[evict_set2->value], 3, cand), 0); // assure self assignment
-    CU_ASSERT_EQUAL(TEST1(cand_set[evict_set2->value], 3, cand), 0); // assure self assignment
-    CU_ASSERT_EQUAL(TEST1(cand_set[evict_set2->value], 3, cand), 0); // assure self assignment
-    CU_ASSERT_EQUAL(TEST1(cand_set[evict_set2->value], 3, cand), 0); // assure self assignment
-    CU_ASSERT_EQUAL(TEST1(cand_set[evict_set2->value], 3, cand), 0); // assure self assignment
-    CU_ASSERT_EQUAL(TEST1(cand_set[evict_set2->value], 3, cand), 0); // assure self assignment
-    CU_ASSERT_EQUAL(TEST1(cand_set[evict_set2->value], 3, cand), 0); // assure self assignment
+    CU_ASSERT_EQUAL(test1(cand_set[evict_set2->value], 3, cand, conf), 0); // assure self assignment
+    CU_ASSERT_EQUAL(test1(cand_set[evict_set2->value], 3, cand, conf), 0);
+    CU_ASSERT_EQUAL(test1(cand_set[evict_set2->value], 3, cand, conf), 0);
+    CU_ASSERT_EQUAL(test1(cand_set[evict_set2->value], 3, cand, conf), 0);
+    CU_ASSERT_EQUAL(test1(cand_set[evict_set2->value], 3, cand, conf), 0);
+    CU_ASSERT_EQUAL(test1(cand_set[evict_set2->value], 3, cand, conf), 0);
+    CU_ASSERT_EQUAL(test1(cand_set[evict_set2->value], 3, cand, conf), 0);
+    CU_ASSERT_EQUAL(test1(cand_set[evict_set2->value], 3, cand, conf), 0);
+    CU_ASSERT_EQUAL(test1(cand_set[evict_set2->value], 3, cand, conf), 0);
+    CU_ASSERT_EQUAL(test1(cand_set[evict_set2->value], 3, cand, conf), 0);
     
     freeList(evict_set1);
     freeList(evict_set2);
