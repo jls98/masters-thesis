@@ -185,22 +185,22 @@ int main(int ac, char **av){
     /* preparation */
     wait(1E9); // boost cache 
     // if (cache) size set, take; divide by 4 since its cache size in bytes and we have 64 bit/8 byte pointer arrays but also take double size
-    uint64_t *base_size = malloc(sizeof(uint64_t *));
-	*base_size = ac == 3? atoi(av[2])/4 : CACHESIZE_DEFAULT/4; // /8 *2 for twice the size of respective cache in bytes
+   // uint64_t *base_size = (uint64_t *) malloc(sizeof(uint64_t));
+	//*base_size = ac == 3? atoi(av[2])/4 : CACHESIZE_DEFAULT/4; // /8 *2 for twice the size of respective cache in bytes
 
     // R <- {}
     // allocate space for eviction set
     struct Node* evict_set = initLinkedList();
 
     // map candidate_set (using hugepages, twice the size of cache in bytes)
-    void **candidate_set = mmap(NULL, *base_size * sizeof(void *), PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB, -1, 0);
-	for(uint64_t i=0;i<*base_size;i++) candidate_set[i] = &candidate_set[i]; // avoid null page by writing something on every entry (pointer to itself)
+    void **candidate_set = mmap(NULL, conf->cache_size * sizeof(void *), PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB, -1, 0);
+	for(uint64_t i=0;i<*conf->cache_size;i++) candidate_set[i] = &candidate_set[i]; // avoid null page by writing something on every entry (pointer to itself)
 	
     // if adrs set, otherwise use some other uint64_t adrs
-    uint64_t *victim_adrs = ac > 1? (uint64_t *)strtoull(av[1], NULL, 0) : base_size;
+    uint64_t *victim_adrs = ac > 1? (uint64_t *)strtoull(av[1], NULL, 0) : conf->cache_size;
 	
 	// create evict set
-    struct Node * tmp_evict_set = create_minimal_eviction_set(candidate_set, *base_size, evict_set, victim_adrs, conf);
+    struct Node * tmp_evict_set = create_minimal_eviction_set(candidate_set, conf->cache_size, evict_set, victim_adrs, conf);
 	
     printf("Eviction set for victim at %p %i\n", victim_adrs, tmp_evict_set==NULL);
 
@@ -220,12 +220,12 @@ int main(int ac, char **av){
 
 	printf("Time loading victim uncached %lu\n", time);
 
-	create_pointer_chase(candidate_set, *base_size, tmp_evict_set);
+	create_pointer_chase(candidate_set, conf->cache_size, tmp_evict_set);
 		
 	if(tmp_evict_set != NULL){
 		void *cur = candidate_set[tmp_evict_set->value];
 		load(victim_adrs);
-		for(uint64_t counterj = 0;counterj<EVICT_SIZE_A+2;counterj++){
+		for(uint64_t counterj = 0;counterj<conf->ways+2;counterj++){
 			cur=*((void **)cur);
 			load(cur);
 		}
@@ -306,7 +306,7 @@ static struct Node *create_minimal_eviction_set(void **candidate_set, uint64_t c
             }
             uint64_t time = probe(victim_adrs);
             printf("Time loading victim after evict set  %lu\n", time);		
-            if(time>THRESHOLD) {
+            if(time>conf->threshold) {
             
                 break;
             }			
