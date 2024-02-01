@@ -187,12 +187,13 @@ int main(int ac, char **av){
     // R <- {}
     // allocate space for eviction set
     struct Node* evict_set = initLinkedList();
+	printf("a");
 
     // map candidate_set (using hugepages, twice the size of cache in bytes (4 times to have space for target))
     void **candidate_set = mmap(NULL, 2* c_size * sizeof(void *), PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB, -1, 0);
-	uint64_t *intptr = (uint64_t *) candidate_set[0];
-	*intptr = 0x1;
-	//printf("a");
+	uint64_t *intptr = (uint64_t *) &candidate_set[0];
+	*intptr = 0xff;
+	printf("a");
 	//for (uint64_t i=0;i<9;i++) 
 	//printf("%lu %x\n", 0, candidate_set[0]); // learn about indexing void ** 
 
