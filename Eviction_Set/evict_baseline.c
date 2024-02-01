@@ -180,14 +180,17 @@ static uint64_t probe(void *adrs){
 
 #ifndef TESTCASE
 int main(int ac, char **av){
+	printf("a");
     /* preparation */
 	struct Config *conf = initConfig(8, 64, 45, 32768, 200); 	// DEFAULT TODO change
     wait(1E9); // boost cache 
 	uint64_t c_size = conf->cache_size/4;
     // R <- {}
     // allocate space for eviction set
+	printf("a");
     struct Node* evict_set = initLinkedList();
 
+	printf("a");
     // map candidate_set (using hugepages, twice the size of cache in bytes (4 times to have space for target))
 	printf("a");
     void **candidate_set = mmap(NULL, 2* c_size * sizeof(void *), PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB, -1, 0);
