@@ -193,7 +193,7 @@ int main(int ac, char **av){
     uint64_t *victim_adrs = ac > 1? (uint64_t *)strtoull(av[1], NULL, 0) : base_size;
 	
 	// create evict set
-    struct Node * tmp_evict_set = create_minimal_eviction_set(candidate_set, *base_size, evict_set, victim_adrs);
+    struct Node * tmp_evict_set = create_minimal_eviction_set(candidate_set, *base_size, evict_set, victim_adrs, conf);
 	
     printf("Eviction set for victim at %p %i\n", victim_adrs, tmp_evict_set==NULL);
 
@@ -286,7 +286,7 @@ static struct Node *create_minimal_eviction_set(void **candidate_set, uint64_t c
         // if not TEST(R union S\{c}), x)  
 		// if removing c results in not evicting x anymore, add c to current eviction set    
 		if (cnt==cnt_e) break; // no candidates left -> end (eviction_set==combined_set)
-		if(!TEST(candidate_set, candidate_set_size, combined_set, victim_adrs)){
+		if(!test(candidate_set, candidate_set_size, combined_set, victim_adrs, conf)){
             evict_set = addElement(evict_set, c);
             a_tmp++; // added elem to evict set -> if enough, evict_set complete
             
@@ -316,7 +316,7 @@ static struct Node *create_minimal_eviction_set(void **candidate_set, uint64_t c
     printf("Time taken by myFunction: %f seconds\n", cpu_time_used);
 	
     cnt=count(evict_set);
-	printf("test of evict set %li\n", TEST(candidate_set, candidate_set_size, evict_set, victim_adrs));
+	printf("test of evict set %li\n", test(candidate_set, candidate_set_size, evict_set, victim_adrs, conf));
 	return evict_set;
 }
 
