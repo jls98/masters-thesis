@@ -37,14 +37,12 @@ void test_test1(){
     // create pointer chase on base set
     create_pointer_chase(cand_set, c_size, evict_set1);
     // uninitialized params/errors
-	printf("a");
+
     wait(1E9);
     CU_ASSERT_EQUAL(test1(NULL, c_size, cand, conf), -1); // assure self assignment
     CU_ASSERT_EQUAL(test1(cand_set[evict_set1->value], 0, cand, conf), -1); // assure self assignment
     CU_ASSERT_EQUAL(test1(cand_set[evict_set1->value], c_size, NULL, conf), -1); 
     CU_ASSERT_EQUAL(test1(cand_set[evict_set1->value], c_size, cand, NULL), -1); 
-
-	printf("a");
     
     // regular case (full huge page should evict (hopefully))
     CU_ASSERT_EQUAL(test1(cand_set[evict_set1->value], c_size, cand, conf), 1); // assure self assignment
@@ -57,7 +55,6 @@ void test_test1(){
     CU_ASSERT_EQUAL(test1(cand_set[evict_set1->value], c_size, cand, conf), 1); 
     CU_ASSERT_EQUAL(test1(cand_set[evict_set1->value], c_size, cand, conf), 1); 
     CU_ASSERT_EQUAL(test1(cand_set[evict_set1->value], c_size, cand, conf), 1); 
- 	printf("a");
    
     evict_set2 = addElement(evict_set2, 65);
     evict_set2 = addElement(evict_set2, 23);
@@ -73,7 +70,6 @@ void test_test1(){
     CU_ASSERT_EQUAL(test1(cand_set[evict_set2->value], 3, cand, conf), 0);
     CU_ASSERT_EQUAL(test1(cand_set[evict_set2->value], 3, cand, conf), 0);
     CU_ASSERT_EQUAL(test1(cand_set[evict_set2->value], 3, cand, conf), 0);
- 	printf("a");
    
     freeList(evict_set1);
     freeList(evict_set2);
