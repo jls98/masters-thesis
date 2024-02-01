@@ -194,6 +194,9 @@ int main(int ac, char **av){
 	*intptr = 0xff;
 	//for (uint64_t i=0;i<9;i++) 
 	printf("%lu %x\n", 0, candidate_set[0]); // learn about indexing void ** 
+
+	return 0;
+
 	for(uint64_t i=0;i<c_size;i++) candidate_set[i] = &candidate_set[i]; // avoid null page by writing something on every entry (pointer to itself)
 	
     void *target_adrs = &candidate_set[c_size+1000]; // take target somewhere in the middle of allocated memory
