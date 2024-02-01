@@ -190,10 +190,19 @@ int main(int ac, char **av){
 
     // map candidate_set (using hugepages, twice the size of cache in bytes (4 times to have space for target))
     void **candidate_set = mmap(NULL, 2* c_size * sizeof(void *), PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB, -1, 0);
+	uint64_t *intptr = (uint64_t *) candidate_set[0];
+	*intptr = 0xff;
+	for (uint64_t i=0;i<9;i++) printf("%lu %x\n", i, candidate_set[i]); // learn about indexing void ** 
 	for(uint64_t i=0;i<c_size;i++) candidate_set[i] = &candidate_set[i]; // avoid null page by writing something on every entry (pointer to itself)
 	
     void *target_adrs = &candidate_set[c_size+1000]; // take target somewhere in the middle of allocated memory
 	
+	// create handmade eviction set:
+	for(int i=296;i<745;i+=64){ // 296, 360, 424, 488, 552, 616, 680, 744, 64 index/
+		evict_set = addElement(evict_set, i); 
+	}
+	
+	// --------------------------------
 	// create evict set
     struct Node *tmp_evict_set = create_minimal_eviction_set(candidate_set, c_size, evict_set, target_adrs, conf);
 	
