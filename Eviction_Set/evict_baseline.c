@@ -181,7 +181,7 @@ static uint64_t probe(void *adrs){
 #ifndef TESTCASE
 int main(int ac, char **av){
     /* preparation */
-	struct Config *conf = initConfig(8, 64, 46, 32768, 200); 	// DEFAULT TODO change
+	struct Config *conf = initConfig(8, 64, 54, 32768, 200); 	// DEFAULT TODO change
     wait(1E9); // boost cache 
 	uint64_t c_size = conf->cache_size/2; // uint64_t = 4 Bytes -> 16384 indexes address 65536 Bytes
     // R <- {}
@@ -192,20 +192,20 @@ int main(int ac, char **av){
     void **candidate_set = mmap(NULL, 10* c_size * sizeof(void *), PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB, -1, 0);
 	
     void *target_adrs = &candidate_set[74640]; // take target somewhere in the middle of allocated memory
-	printf("c[] %p and &c[] %p \n", candidate_set[74640], &candidate_set[74640]);
+	printf("main: c[] %p and &c[] %p \n", candidate_set[74640], &candidate_set[74640]);
 	// create handmade eviction set: M memory addresses = 32768/8=4096, S sets = 64 -> stride of 64 in indexes
 	for(int i=296;i<3881;i+=512){ // 296, 808, 1320, 1832, 2344, 2856, 3368, 3880  index +1 == 8 bytes
 		evict_set = addElement(evict_set, i); 
 	}
 	
-	printf("test %li\n", test(candidate_set, c_size, evict_set, target_adrs, conf)); // works
+	printf("main: test %li\n", test(candidate_set, c_size, evict_set, target_adrs, conf)); // works
 
 	// manual test (dont work even though test = 1 !!!):
 	load(target_adrs);
 	for(struct Node *it = evict_set;it!=NULL;it=it->next){
 		load(&candidate_set[it->value]);
 	}
-	printf("probe %lu\n", probe(target_adrs));
+	printf("main: probe %lu\n", probe(target_adrs));
 	
 	for(struct Node *it = evict_set;it!=NULL;it=it->next) printf("-%p, %p, %lu\n", candidate_set[it->value], &candidate_set[it->value], it->value);
 	
@@ -216,23 +216,23 @@ int main(int ac, char **av){
 	// create evict set
     struct Node *tmp_evict_set = create_minimal_eviction_set(candidate_set, c_size, evict_set, target_adrs, conf);
 	
-    printf("Eviction set for victim at %p %i\n", target_adrs, tmp_evict_set==NULL);
+    printf("main: Eviction set for victim at %p %i\n", target_adrs, tmp_evict_set==NULL);
 
-	printf("Indexes in minimal eviction set:\n"); // print indexes of eviction set
+	printf("main: Indexes in minimal eviction set:\n"); // print indexes of eviction set
 	for(struct Node *it = tmp_evict_set;it!=NULL;it=it->next) printf("-%p, %p, %lu\n", candidate_set[it->value], &candidate_set[it->value], it->value);
 	
-	printf("\nTesting victim adrs %p now: \n", target_adrs);
+	printf("\nmain: Testing victim adrs %p now: \n", target_adrs);
 
 	// measure time when cached	
 	load(target_adrs);
 	uint64_t time = probe(target_adrs);
 	
-	printf("Time loading victim cached %lu\n", time);
+	printf("main: Time loading victim cached %lu\n", time);
 	// measure time when uncached	
 	flush(target_adrs);
 	time = probe(target_adrs);
 
-	printf("Time loading victim uncached %lu\n", time);
+	printf("main: Time loading victim uncached %lu\n", time);
 
 	create_pointer_chase(candidate_set, c_size, tmp_evict_set);
 		
@@ -245,13 +245,13 @@ int main(int ac, char **av){
 		}
 		
 		time = probe(target_adrs);
-		printf("Time loading victim after evict set  %lu\n", time);
+		printf("main: Time loading victim after evict set  %lu\n", time);
 	}
 
-	printf("count %i\n", count(tmp_evict_set));
-	printf("test 7464 %li %p\n", test(candidate_set, c_size, tmp_evict_set, candidate_set[74640], conf), &candidate_set[74640]);
-	printf("test 7463 %li %p\n", test(candidate_set, c_size, tmp_evict_set, candidate_set[74639], conf), &candidate_set[74639]);
-	printf("test 7465 %li %p\n", test(candidate_set, c_size, tmp_evict_set, candidate_set[74641], conf), &candidate_set[74641]);
+	printf("main: count %i\n", count(tmp_evict_set));
+	printf("main: test 7464 %li %p\n", test(candidate_set, c_size, tmp_evict_set, candidate_set[74640], conf), &candidate_set[74640]);
+	printf("main: test 7463 %li %p\n", test(candidate_set, c_size, tmp_evict_set, candidate_set[74639], conf), &candidate_set[74639]);
+	printf("main: test 7465 %li %p\n", test(candidate_set, c_size, tmp_evict_set, candidate_set[74641], conf), &candidate_set[74641]);
 
     freeList(evict_set); // delete eviction set	
     freeList(tmp_evict_set); // delete eviction set	
@@ -304,7 +304,7 @@ static struct Node *create_minimal_eviction_set(void **candidate_set, uint64_t c
    
         // count amount of elements in combined_set
         cnt=count(combined_set);
-		if(cnt%1000==0) printf("cnt %lu, evict %lu\n", cnt, cnt_e);
+		if(cnt%1000==0) printf("create_minimal_eviction_set: cnt %lu, evict %lu\n", cnt, cnt_e);
         // if not TEST(R union S\{c}), x)  
 		// if removing c results in not evicting x anymore, add c to current eviction set    
 		if (cnt==cnt_e) break; // no candidates left -> end (eviction_set==combined_set)
