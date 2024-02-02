@@ -254,7 +254,7 @@ int main(int ac, char **av){
 		printf("Time loading victim after evict set  %lu\n", time);
 	}
 
-	printf("count %li\n", count(tmp_evict_set));
+	printf("count %i\n", count(tmp_evict_set));
 	printf("test 7464 %li %p\n", test(candidate_set, c_size, tmp_evict_set, candidate_set[7464], conf), &candidate_set[7464]);
 	printf("test 7463 %li %p\n", test(candidate_set, c_size, tmp_evict_set, candidate_set[7464], conf), &candidate_set[7463]);
 	printf("test 7465 %li %p\n", test(candidate_set, c_size, tmp_evict_set, candidate_set[7464], conf), &candidate_set[7465]);
