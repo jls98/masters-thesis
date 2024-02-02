@@ -597,7 +597,7 @@ static int64_t test1(void *addr, uint64_t size, void* cand, struct Config *conf)
 	clock_t end = clock();
 	double  cpu_time_used = ((double) (end - start)) / CLOCKS_PER_SEC;
 
-	printf("test1: took %.6f seconds to finish", cpu_time_used);
+	printf("test1: took %.6f seconds to finish\n", cpu_time_used);
 #endif	
 	return sum/conf->test_reps > conf->threshold? 1 : 0;
 } 
@@ -627,7 +627,7 @@ static void create_pointer_chase(void **candidate_set, uint64_t c_size, struct N
 	clock_t end = clock();
 	double  cpu_time_used = ((double) (end - start)) / CLOCKS_PER_SEC;
 
-	printf("create_pointer_chase: took %.6f seconds to finish", cpu_time_used);
+	printf("create_pointer_chase: took %.6f seconds to finish\n", cpu_time_used);
 #endif	
 
 }
