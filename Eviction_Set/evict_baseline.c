@@ -194,7 +194,7 @@ int main(int ac, char **av){
 	uint64_t *intptr = (uint64_t *) &candidate_set[0];
 	*intptr = 0xff;
 	printf("a\n");
-	for (uint64_t i=0;i<9;i++) printf("%lu %x\n", i, candidate_set[i]); // learn about indexing void ** 
+	for (uint64_t i=0;i<9;i++) printf("%lu %x %p\n", i, candidate_set[i], &candidate_set[i]); // learn about indexing void ** 
 
 	for(uint64_t i=0;i<c_size;i++) candidate_set[i] = &candidate_set[i]; // avoid null page by writing something on every entry (pointer to itself)
 	
