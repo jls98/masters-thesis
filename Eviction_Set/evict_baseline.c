@@ -565,6 +565,10 @@ static int64_t test1(void *addr, uint64_t size, void* cand, struct Config *conf)
 			"mov rsi, [%3];" // load candidate
 			"mov rsi, [%3];" // load candidate
 			"mov rsi, [%3];" // load candidate
+			"mov rsi, [%3];" // load candidate
+			"mov rsi, [%3];" // load candidate
+			"mov rsi, [%3];" // load candidate
+			"mov rsi, [%3];" // load candidate
 			"lfence;"
 			// BEGIN - read every entry in addr
 			"loop:"

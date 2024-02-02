@@ -3,7 +3,7 @@
 #include <CUnit/Basic.h>
 
 void test_test1(){
-	struct Config *conf = initConfig(8, 64, 45, 32768, 200);
+	struct Config *conf = initConfig(8, 64, 46, 32768, 200);
     printf("\nTesting test1...\n\n");
 	// change to local system and cache in 8 bytes to check, a size of candidate set in index 
 
