@@ -12,7 +12,7 @@ void test_test1(){
 
     uint64_t c_size = conf->cache_size/2; // two times cache size but as uint64_t
     void **cand_set = mmap(NULL, 10* c_size * sizeof(void *), PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB, -1, 0);
-    void *target_adrs = &cand_set[9600]; // just some random candidate :D
+    void *target_adrs = &cand_set[96000]; // just some random candidate :D
 	
     uint64_t lfsr = lfsr_create();
     
