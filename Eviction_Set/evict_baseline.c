@@ -281,11 +281,12 @@ static struct Node *create_minimal_eviction_set(void **candidate_set, uint64_t c
 	clock_t track_start = clock();
     // init lfsr, variable c stores currently picked candidate integer/index value
     uint64_t lfsr = lfsr_create(), c, cnt_e=0, cnt; 
-    
+    printf("a");
 	// create current candidate set containing the indexes of unchecked candidates and initialize with all indexes
     struct Node* cind_set = initLinkedList();
     for (uint64_t i=0; i<candidate_set_size-1;i++) cind_set = addElement(cind_set, i); 
     
+    printf("a");
     // while |R| < a and cind still contains possible and unchecked candidates
     //while(a_tmp < EVICT_SIZE_A && cind_set!=NULL){   // TODO change back     
     while(cind_set!=NULL && cnt_e < conf->ways){        
@@ -305,6 +306,7 @@ static struct Node *create_minimal_eviction_set(void **candidate_set, uint64_t c
    
         // count amount of elements in combined_set
         cnt=count(combined_set);
+    printf("a");
 		if(cnt%1000==0) printf("cnt %lu, evict %lu\n", cnt, cnt_e);
         // if not TEST(R union S\{c}), x)  
 		// if removing c results in not evicting x anymore, add c to current eviction set    
@@ -315,10 +317,13 @@ static struct Node *create_minimal_eviction_set(void **candidate_set, uint64_t c
             
             // test if its an eviction set
             void *cur = candidate_set[evict_set->value];
+    printf("a");
             load(target_adrs);
+    printf("a");
             for(uint64_t counterj = 0;counterj<100;counterj++){ // 100 is random
                 cur=*((void **)cur);
                 load(cur);
+    printf("a");
             }
             uint64_t time = probe(target_adrs);
             printf("Time loading victim after evict set  %lu\n", time);		
@@ -519,6 +524,26 @@ static int64_t test1(void *addr, uint64_t size, void* cand, uint64_t threshold){
 /*/ // not sure what to use though -> Threshold values depend on implementation
 static int64_t test1(void *addr, uint64_t size, void* cand, struct Config *conf){    
     if (size==0 || addr==NULL || cand==NULL || conf==NULL) return -1; // parameter check
+    if (size==0){
+		printf("test1: size is 0!\n");
+		return -1;
+	} 	
+	 
+	if (addr==NULL){
+		printf("test1: addr is NULL!\n");
+		return -1;
+	} 	
+	
+	if (cand==NULL){
+		printf("test1: cand is NULL!\n");
+		return -1;
+	} 	
+	
+	if (conf==NULL){
+		printf("test1: conf is NULL!\n");
+		return -1;
+	} 	
+	
 	
 	wait(1E9);
 	volatile uint64_t time, sum=0;
@@ -565,7 +590,10 @@ static int64_t test1(void *addr, uint64_t size, void* cand, struct Config *conf)
 } 
 
 static void create_pointer_chase(void **candidate_set, uint64_t c_size, struct Node* set){
-    if (set == NULL) return; // no pointer chase 
+    if (set == NULL) {
+		printf("create_pointer_chase: set is NULL!\n");
+		return; // no pointer chase 
+	}
 
     // create pointer chase between set elements
     struct Node* cur_no;  // current index (from set)
@@ -582,7 +610,19 @@ static void create_pointer_chase(void **candidate_set, uint64_t c_size, struct N
 
 static uint64_t pick(struct Node* evict_set, struct Node* candidate_set, uint64_t base_size, uint64_t *lfsr) {
     // uninitialized parameters
-    if (lfsr==NULL || candidate_set==NULL || base_size ==0) return base_size+1;
+    if (lfsr==NULL){
+		printf("pick: lfsr is NULL!\n");
+		return base_size+1;
+	} 
+	if (candidate_set==NULL){
+		printf("pick: candidate_set is NULL!\n");
+		return base_size+1;
+	} 
+	if (base_size==0){
+		printf("pick: base_size is 0!\n");
+		return base_size+1;
+	} 
+	
     uint64_t c, j, c_size; // c candidate, j index, c_size current candidate set size
     struct Node* cur_node;
     // get candidate set size  
