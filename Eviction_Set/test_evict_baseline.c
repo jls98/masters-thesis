@@ -2,7 +2,7 @@
 #include <CUnit/CUnit.h>
 #include <CUnit/Basic.h>
 
-#define reps_test1 100
+#define reps_test1 1000
 
 void test_test1(){
 	struct Config *conf = initConfig(8, 64, 54, 32768, 200);
