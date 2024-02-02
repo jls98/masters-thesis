@@ -521,7 +521,7 @@ static int64_t test1(void *addr, uint64_t size, void* cand, uint64_t threshold){
 
 /*/ // not sure what to use though -> Threshold values depend on implementation
 static int64_t test1(void *addr, uint64_t size, void* cand, struct Config *conf){    
-    if (size==0 || addr==NULL || cand==NULL || conf==NULL) return -1; // parameter check
+    // parameter check
     if (size==0){
 		printf("test1: size is 0!\n");
 		return -1;
@@ -650,9 +650,7 @@ static uint64_t pick(struct Node* evict_set, struct Node* candidate_set, uint64_
 
 
 static int64_t test(void **candidate_set, uint64_t candidate_set_size, struct Node *test_index_set, void *target_adrs, struct Config *conf){
-	// empty candidate set, no array to create pointer chase on
-    if (candidate_set == NULL || candidate_set_size == 0 || test_index_set == NULL) return -1;
-    
+	// empty candidate set, no array to create pointer chase on    
     if (candidate_set==NULL){
 		printf("test: candidate_set is NULL!\n");
 		return -1;
