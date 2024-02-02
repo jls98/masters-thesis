@@ -322,7 +322,7 @@ static struct Node *create_minimal_eviction_set(void **candidate_set, uint64_t c
             }			
         }
     }
-    if (cind_set==NULL && a_tmp < conf->ways) printf("create_minimal_eviction_set: not successful!\n");
+    if (cind_set==NULL && cnt_e < conf->ways) printf("create_minimal_eviction_set: not successful!\n");
 	//printf("a_tmp Elements in eviction set %lu, cind_set empty %i, evict_set empty %i\n", a_tmp, cind_set==NULL, evict_set==NULL);
     /* baseline algorithm */
 	printList(evict_set);
