@@ -108,7 +108,8 @@ void test_pick(){
 
     candidate_set2 = addElement(candidate_set2, 65);
     // regular, 1 valid candidate option left
-    int64_t val = pick(evict_set, candidate_set2, base_size, &lfsr);
+    int64_t val_tmp = pick(evict_set, candidate_set2, base_size, &lfsr);
+	uint64_t val = val_tmp != -1 ? (uint64_t) val_tmp : 0;
     CU_ASSERT_EQUAL(val, 65);  
     if (val != 65) printf("val65 %lx\n", val);
     
