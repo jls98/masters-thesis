@@ -51,7 +51,7 @@ void test_test1(){
     evict_set2 = addElement(evict_set2, 8);
     create_pointer_chase(cand_set, c_size, evict_set2); // eviction set far too small -> no eviction of candidate
     for (int i=0;i<reps_test1;i++) {
-        fence();
+        __asm__ volatile("lfence");
         CU_ASSERT_EQUAL(test1(cand_set[evict_set2->value], 3, cand, conf), 0); // assure self assignment
     }
     
