@@ -223,7 +223,7 @@ int main(int ac, char **av){
     printf("Eviction set for victim at %p %i\n", target_adrs, tmp_evict_set==NULL);
 
 	printf("Indexes in minimal eviction set:\n"); // print indexes of eviction set
-	for(struct Node *it = tmp_evict_set;it!=NULL;it=it->next) printf("-%p, %lu\n", it, it->value);
+	for(struct Node *it = tmp_evict_set;it!=NULL;it=it->next) printf("-%p, %p, %lu\n", candidate_set[it->value], &candidate_set[it->value], it->value);
 	
 	printf("\nTesting victim adrs %p now: \n", target_adrs);
 
