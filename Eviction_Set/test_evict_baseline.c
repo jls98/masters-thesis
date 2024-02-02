@@ -41,7 +41,7 @@ void test_test1(){
     CU_ASSERT_EQUAL(test1(cand_set[evict_set1->value], c_size, cand, NULL), -1); 
     
     // regular case (full huge page should evict (hopefully))
-    for (int i=0;i<1000;i++) CU_ASSERT_EQUAL(test1(cand_set[evict_set1->value], c_size, cand, conf), 1); // assure self assignment
+    for (int i=0;i<10000;i++) CU_ASSERT_EQUAL(test1(cand_set[evict_set1->value], c_size, cand, conf), 1); // assure self assignment
     
    
     evict_set2 = addElement(evict_set2, 65);
