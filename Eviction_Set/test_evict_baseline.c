@@ -6,6 +6,7 @@
 
 void test_test1(){
 	struct Config *conf = initConfig(8, 64, 54, 32768, 300);
+    wait(1E9);
     printf("\nTesting test1...\n\n");
 	// change to local system and cache in 8 bytes to check, a size of candidate set in index 
 
@@ -36,7 +37,6 @@ void test_test1(){
     create_pointer_chase(cand_set, c_size, evict_set1);
     // uninitialized params/errors
 
-    wait(1E9);
     CU_ASSERT_EQUAL(test1(NULL, c_size, cand, conf), -1); // assure self assignment
     CU_ASSERT_EQUAL(test1(cand_set[evict_set1->value], 0, cand, conf), -1); // assure self assignment
     CU_ASSERT_EQUAL(test1(cand_set[evict_set1->value], c_size, NULL, conf), -1); 
@@ -50,7 +50,10 @@ void test_test1(){
     evict_set2 = addElement(evict_set2, 24);
     evict_set2 = addElement(evict_set2, 8);
     create_pointer_chase(cand_set, c_size, evict_set2); // eviction set far too small -> no eviction of candidate
-    for (int i=0;i<reps_test1;i++) CU_ASSERT_EQUAL(test1(cand_set[evict_set2->value], 3, cand, conf), 0); // assure self assignment
+    for (int i=0;i<reps_test1;i++) {
+        fence();
+        CU_ASSERT_EQUAL(test1(cand_set[evict_set2->value], 3, cand, conf), 0); // assure self assignment
+    }
     
     freeList(evict_set1);
     freeList(evict_set2);
