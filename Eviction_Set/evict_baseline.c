@@ -203,15 +203,9 @@ int main(int ac, char **av){
 	// manual test (dont work even though test = 1 !!!):
 	load(target_adrs);
 	for(struct Node *it = evict_set;it!=NULL;it=it->next){
-		load(candidate_set[it->value]);
-	}
-	printf("probe %lu\n", probe(target_adrs));
-	
-	load(target_adrs);
-	for(struct Node *it = evict_set;it!=NULL;it=it->next){
 		load(&candidate_set[it->value]);
 	}
-	printf("probe2 %lu\n", probe(target_adrs));
+	printf("probe %lu\n", probe(target_adrs));
 	
 	for(struct Node *it = evict_set;it!=NULL;it=it->next) printf("-%p, %p, %lu\n", candidate_set[it->value], &candidate_set[it->value], it->value);
 	
@@ -603,7 +597,7 @@ static int64_t test1(void *addr, uint64_t size, void* cand, struct Config *conf)
 	}
 #ifdef TESTCASE
 	//printf("test1: measurement %lu\n", sum/conf->test_reps);
-	//printf("test1: took %.6f seconds to finish, measurement %lu\n", ((double) (clock() - start_clk)) / CLOCKS_PER_SEC, sum/conf->test_reps);
+	printf("test1: took %.6f seconds to finish, measurement %lu\n", ((double) (clock() - start_clk)) / CLOCKS_PER_SEC, sum/conf->test_reps);
 #endif	
 	return sum/conf->test_reps > conf->threshold? 1 : 0;
 } 

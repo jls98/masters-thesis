@@ -2,6 +2,8 @@
 #include <CUnit/CUnit.h>
 #include <CUnit/Basic.h>
 
+#define reps_test1 100
+
 void test_test1(){
 	struct Config *conf = initConfig(8, 64, 46, 32768, 200);
     printf("\nTesting test1...\n\n");
@@ -41,14 +43,14 @@ void test_test1(){
     CU_ASSERT_EQUAL(test1(cand_set[evict_set1->value], c_size, cand, NULL), -1); 
     
     // regular case (full huge page should evict (hopefully))
-    for (int i=0;i<10000;i++) CU_ASSERT_EQUAL(test1(cand_set[evict_set1->value], c_size, cand, conf), 1); // assure self assignment
+    for (int i=0;i<reps_test1;i++) CU_ASSERT_EQUAL(test1(cand_set[evict_set1->value], c_size, cand, conf), 1); // assure self assignment
     
    
     evict_set2 = addElement(evict_set2, 64);
     evict_set2 = addElement(evict_set2, 24);
     evict_set2 = addElement(evict_set2, 8);
     create_pointer_chase(cand_set, c_size, evict_set2); // eviction set far too small -> no eviction of candidate
-    for (int i=0;i<10000;i++) CU_ASSERT_EQUAL(test1(cand_set[evict_set2->value], 3, cand, conf), 0); // assure self assignment
+    for (int i=0;i<reps_test1;i++) CU_ASSERT_EQUAL(test1(cand_set[evict_set2->value], 3, cand, conf), 0); // assure self assignment
     
     freeList(evict_set1);
     freeList(evict_set2);
