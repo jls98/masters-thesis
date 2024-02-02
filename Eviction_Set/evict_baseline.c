@@ -134,7 +134,7 @@ static void create_pointer_chase(void **candidate_set, uint64_t c_size, struct N
  * evict_set, be part of candidate set and picked with lfsr  
  * state in possible range.                              
  * returns candidate index, if none found base_size+1   */
-static uint64_t pick(struct Node* evict_set, struct Node* candidate_set, uint64_t base_size, uint64_t *lfsr);
+static int64_t pick(struct Node* evict_set, struct Node* candidate_set, uint64_t base_size, uint64_t *lfsr);
 
 /* create minimal eviction set from candidate set for   */
 /* target_adrs in evict_set                             */
