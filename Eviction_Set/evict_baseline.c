@@ -282,7 +282,7 @@ static struct Node *create_minimal_eviction_set(void **candidate_set, uint64_t c
     
     // while |R| < a and cind still contains possible and unchecked candidates
     //while(a_tmp < EVICT_SIZE_A && cind_set!=NULL){   // TODO change back     
-    while(cind_set!=NULL){        
+    while(cind_set!=NULL && a_tmp < conf->ways){        
         // c <- pick(S) pick candidate index c from candidate set S/cind_set
 		do{
 			c=pick(evict_set, cind_set, candidate_set_size, &lfsr);
