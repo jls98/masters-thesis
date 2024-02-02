@@ -553,17 +553,9 @@ static int64_t test1(void *addr, uint64_t size, void* cand, struct Config *conf)
 		asm __volatile__ (
 			"lfence;"
 			"mfence;"
-			// load candidate and set 
-//			"mov rax, %1;"
+			// load target and set 
 			"mov rdx, %2;"
-			"mov rsi, [%3];" // load candidate
-			"mov rsi, [%3];" // load candidate
-			"mov rsi, [%3];" // load candidate
-			"mov rsi, [%3];" // load candidate
-			"mov rsi, [%3];" // load candidate
-			"mov rsi, [%3];" // load candidate
-			"mov rsi, [%3];" // load candidate
-			"mov rsi, [%3];" // load candidate
+			"mov rsi, [%3];" // load target
 			"lfence;"
 			// BEGIN - read every entry in addr
 			"loop:"
@@ -580,7 +572,7 @@ static int64_t test1(void *addr, uint64_t size, void* cand, struct Config *conf)
 			// high precision
 			"shl rdx, 32;"
 			"or rsi, rdx;"
-			"mov rax, [%3];" // load candidate 	
+			"mov rax, [%3];" // load target 	
 			"lfence;"
 			"rdtscp;"
 			// start - high precision
