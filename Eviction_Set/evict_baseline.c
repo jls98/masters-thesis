@@ -191,8 +191,8 @@ int main(int ac, char **av){
     // map candidate_set (using hugepages, twice the size of cache in bytes (4 times to have space for target))
     void **candidate_set = mmap(NULL, 10* c_size * sizeof(void *), PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB, -1, 0);
 	
-    void *target_adrs = &candidate_set[74640]; // take target somewhere in the middle of allocated memory
-	printf("main: c[] %p and &c[] %p \n", candidate_set[74640], &candidate_set[74640]);
+    void *target_adrs = &candidate_set[37320]; // take target somewhere in the middle of allocated memory
+	printf("main: c[] %p and &c[] %p \n", candidate_set[37320], &candidate_set[37320]);
 	// create handmade eviction set: M memory addresses = 32768/8=4096, S sets = 64 -> stride of 64 in indexes
 	for(int i=296;i<3881;i+=512){ // 296, 808, 1320, 1832, 2344, 2856, 3368, 3880  index +1 == 8 bytes
 		evict_set = addElement(evict_set, i); 
@@ -249,9 +249,9 @@ int main(int ac, char **av){
 	}
 
 	printf("main: count %i\n", count(tmp_evict_set));
-	printf("main: test 7464 %li %p\n", test(candidate_set, c_size, tmp_evict_set, candidate_set[74640], conf), &candidate_set[74640]);
-	printf("main: test 7463 %li %p\n", test(candidate_set, c_size, tmp_evict_set, candidate_set[74639], conf), &candidate_set[74639]);
-	printf("main: test 7465 %li %p\n", test(candidate_set, c_size, tmp_evict_set, candidate_set[74641], conf), &candidate_set[74641]);
+	printf("main: test 37320 %li %p\n", test(candidate_set, c_size, tmp_evict_set, candidate_set[37320], conf), &candidate_set[37320]);
+	printf("main: test 37319 %li %p\n", test(candidate_set, c_size, tmp_evict_set, candidate_set[37319], conf), &candidate_set[37319]);
+	printf("main: test 37321 %li %p\n", test(candidate_set, c_size, tmp_evict_set, candidate_set[37321], conf), &candidate_set[37321]);
 
     freeList(evict_set); // delete eviction set	
     freeList(tmp_evict_set); // delete eviction set	
