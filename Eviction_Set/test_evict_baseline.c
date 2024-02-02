@@ -21,8 +21,8 @@ void test_test1(){
           
     // fill eviction set with all elements, maximal eviction set lol
     for (uint64_t i=0; i<c_size-1;i++){
-        uint64_t c = pick(evict_set1, cind_set, c_size, &lfsr);
-        if(c == c_size+1){
+        int64_t c = pick(evict_set1, cind_set, c_size, &lfsr);
+        if(c == -1){
             printf("test_test1: filling eviction_set failed!\n");
             break;
         } 
