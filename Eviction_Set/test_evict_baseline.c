@@ -12,7 +12,7 @@ void test_test1(){
 
     uint64_t c_size = conf->cache_size/2; // two times cache size but as uint64_t
     void **cand_set = mmap(NULL, 10* c_size * sizeof(void *), PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB, -1, 0);
-    void *cand = &cand_set[9600]; // just some random candidate :D
+    void *target_adrs = &cand_set[9600]; // just some random candidate :D
 	
     uint64_t lfsr = lfsr_create();
     
@@ -37,15 +37,15 @@ void test_test1(){
     create_pointer_chase(cand_set, c_size, evict_set1);
     // uninitialized params/errors
 
-    CU_ASSERT_EQUAL(test1(NULL, c_size, cand, conf), -1); // assure self assignment
-    CU_ASSERT_EQUAL(test1(cand_set[evict_set1->value], 0, cand, conf), -1); // assure self assignment
+    CU_ASSERT_EQUAL(test1(NULL, c_size, target_adrs, conf), -1); // assure self assignment
+    CU_ASSERT_EQUAL(test1(cand_set[evict_set1->value], 0, target_adrs, conf), -1); // assure self assignment
     CU_ASSERT_EQUAL(test1(cand_set[evict_set1->value], c_size, NULL, conf), -1); 
-    CU_ASSERT_EQUAL(test1(cand_set[evict_set1->value], c_size, cand, NULL), -1); 
+    CU_ASSERT_EQUAL(test1(cand_set[evict_set1->value], c_size, target_adrs, NULL), -1); 
     
     // regular case (full huge page should evict (hopefully))
     for (int i=0;i<reps_test1;i++){
         __asm__ volatile("lfence");
-        CU_ASSERT_EQUAL(test1(cand_set[evict_set1->value], c_size, cand, conf), 1); // assure self assignment
+        CU_ASSERT_EQUAL(test1(cand_set[evict_set1->value], c_size, target_adrs, conf), 1); // assure self assignment
 
     }
     
@@ -56,10 +56,10 @@ void test_test1(){
     create_pointer_chase(cand_set, c_size, evict_set2); // eviction set far too small -> no eviction of candidate
     for (int i=0;i<reps_test1;i++) {
         __asm__ volatile("lfence");
-        CU_ASSERT_EQUAL(test1(cand_set[evict_set2->value], 3, cand, conf), 0); // assure self assignment
+        CU_ASSERT_EQUAL(test1(cand_set[evict_set2->value], 3, target_adrs, conf), 0); // assure self assignment
     }
     
-    printf("get adrs:\nevictset1 %p\nevictset2 %p\ncandset %p\n", &evict_set1, &evict_set2, &cand_set);
+    printf("get adrs:\nevictset1 %p\nevictset2 %p\ncandset %p\ntarget adrs %p\n", &evict_set1, &evict_set2, &cand_set, target_adrs);
     
     
     freeList(evict_set1);
