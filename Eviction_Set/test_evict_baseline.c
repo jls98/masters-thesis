@@ -54,7 +54,7 @@ void test_test1(){
     freeList(evict_set2);
     freeList(cind_set);
 	free(conf);
-	munmap(cand_set);
+	munmap(cand_set, c_size);
     printf("     ... finished!\n");
 }
 
