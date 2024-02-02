@@ -560,7 +560,7 @@ static int64_t test1(void *addr, uint64_t size, void* cand, struct Config *conf)
 			"lfence;"
 			"mfence;"
 			// load candidate and set 
-			"mov rax, %1;"
+//			"mov rax, %1;"
 			"mov rdx, %2;"
 			"mov rsi, [%3];" // load candidate
 			"mov rsi, [%3];" // load candidate
@@ -573,14 +573,14 @@ static int64_t test1(void *addr, uint64_t size, void* cand, struct Config *conf)
 			"lfence;"
 			// BEGIN - read every entry in addr
 			"loop:"
-			"mov rax, [rax];"
+			"mov %1, [%1];"
 			"dec rdx;"
 			"jnz loop;"
 			// END - reading set
 			// measure start
 			"lfence;"
 			"mfence;"
-			"rdtsc;"		
+			"rdtscp;"		
 			"lfence;"
 			"mov rsi, rax;"
 			// high precision
@@ -588,7 +588,7 @@ static int64_t test1(void *addr, uint64_t size, void* cand, struct Config *conf)
 			"or rsi, rdx;"
 			"mov rax, [%3];" // load candidate 	
 			"lfence;"
-			"rdtsc;"
+			"rdtscp;"
 			// start - high precision
 			"shl rdx, 32;"
 			"or rax, rdx;"
@@ -596,8 +596,8 @@ static int64_t test1(void *addr, uint64_t size, void* cand, struct Config *conf)
 			"sub rax, rsi;"
 			"clflush [%3];" // flush data from candidate for repeated loading
 			: "=a" (time)
-			: "c" (addr), "r" (size+1), "r" (cand)
-			: "rsi", "rdx"
+			: "c" (addr), "r" (size), "r" (cand)
+			: "rsi", "rdx", "rcx"
 		);
 		sum +=time;
 	}
