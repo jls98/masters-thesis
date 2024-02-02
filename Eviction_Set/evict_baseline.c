@@ -551,9 +551,9 @@ static int64_t test1(void *addr, uint64_t size, void* cand, struct Config *conf)
 		return -1;
 	} 	
 	
-/*#ifdef TESTCASE
+#ifdef TESTCASE
 	clock_t start_clk = clock();
-#endif*/	
+#endif	
 	volatile uint64_t time, sum=0;
 	for(uint64_t i=0;i<conf->test_reps;i++){
 		asm __volatile__ (
