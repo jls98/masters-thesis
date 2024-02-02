@@ -59,6 +59,9 @@ void test_test1(){
         CU_ASSERT_EQUAL(test1(cand_set[evict_set2->value], 3, cand, conf), 0); // assure self assignment
     }
     
+    printf("get adrs:\nevictset1 %p\nevictset2 %p\ncandset %p\n", &evict_set1, &evict_set2, &cand_set);
+    
+    
     freeList(evict_set1);
     freeList(evict_set2);
     freeList(cind_set);
