@@ -116,13 +116,13 @@ static uint64_t lfsr_step(uint64_t lfsr);
 // returns -1 if there is an error
 static int64_t test(void **candidate_set, uint64_t candidate_set_size, struct Node *test_index_set, void *target_adrs, struct Config *conf);
 
-/* test1: eviction test for the specific address cand.  */
-/* Loads cand and then all elements from eviction set   */
-/* test. Finally, loads cand and measures time.         */
+/* test1: eviction test for the specific address target_adrs.  */
+/* Loads target_adrs and then all elements from eviction set   */
+/* test. Finally, loads target_adrs and measures time.         */
 /* addr: pointer to first element from eviction set     */
-/* cand: candidate adrs.                                */
+/* target_adrs: target adrs.                                */
 /* returns true/1 if measurement is above a threshold.    */
-static int64_t test1(void *addr, uint64_t size, void* cand, struct Config *conf);
+static int64_t test1(void *addr, uint64_t size, void* target_adrs, struct Config *conf);
 
 /* pointer chase: creates pointer chase in subset of    */
 /* by candidate_set mapped set with c_size elements.    */
@@ -523,7 +523,7 @@ static int64_t test1(void *addr, uint64_t size, void* cand, uint64_t threshold){
 
 
 /*/ // not sure what to use though -> Threshold values depend on implementation
-static int64_t test1(void *addr, uint64_t size, void* cand, struct Config *conf){    
+static int64_t test1(void *addr, uint64_t size, void* target_adrs, struct Config *conf){    
     // parameter check
     if (size==0){
 		printf("test1: size is 0!\n");
@@ -535,8 +535,8 @@ static int64_t test1(void *addr, uint64_t size, void* cand, struct Config *conf)
 		return -1;
 	} 	
 	
-	if (cand==NULL){
-		printf("test1: cand is NULL!\n");
+	if (target_adrs==NULL){
+		printf("test1: target_adrs is NULL!\n");
 		return -1;
 	} 	
 	
@@ -582,7 +582,7 @@ static int64_t test1(void *addr, uint64_t size, void* cand, struct Config *conf)
 			"sub rax, rsi;"
 			"clflush [%3];" // flush data from candidate for repeated loading
 			: "=a" (time)
-			: "r" (addr), "r" (size), "r" (cand)
+			: "r" (addr), "r" (size), "r" (target_adrs)
 			: "rsi", "rdx", "rcx"
 		);
 		sum +=time;
