@@ -200,7 +200,7 @@ int main(int ac, char **av){
 	
 	printf("test %li\n", test(candidate_set, c_size, evict_set, target_adrs, conf));
 
-	// manual test:
+	// manual test (dont work even though test = 1 !!!):
 	load(target_adrs);
 	for(struct Node *it = evict_set;it!=NULL;it=it->next){
 		load(candidate_set[it->value]);
