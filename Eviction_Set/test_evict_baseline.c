@@ -50,11 +50,11 @@ void test_test1(){
     create_pointer_chase(cand_set, c_size, evict_set2); // eviction set far too small -> no eviction of candidate
     for (int i=0;i<10000;i++) CU_ASSERT_EQUAL(test1(cand_set[evict_set2->value], 3, cand, conf), 0); // assure self assignment
     
-   
     freeList(evict_set1);
     freeList(evict_set2);
     freeList(cind_set);
 	free(conf);
+	munmap(cand_set);
     printf("     ... finished!\n");
 }
 

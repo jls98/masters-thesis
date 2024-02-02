@@ -596,7 +596,7 @@ static int64_t test1(void *addr, uint64_t size, void* cand, struct Config *conf)
 			"sub rax, rsi;"
 			"clflush [%3];" // flush data from candidate for repeated loading
 			: "=a" (time)
-			: "c" (addr), "r" (size+1), "r" (cand)
+			: "c" (addr), "r" (size), "r" (cand)
 			: "rsi", "rdx"
 		);
 		sum +=time;
