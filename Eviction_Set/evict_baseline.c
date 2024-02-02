@@ -213,6 +213,8 @@ int main(int ac, char **av){
 	}
 	printf("probe2 %lu\n", probe(target_adrs));
 	
+	for(struct Node *it = evict_set;it!=NULL;it=it->next) printf("-%p, %p, %lu\n", candidate_set[it->value], &candidate_set[it->value], it->value);
+	
 	freeList(evict_set);
 	evict_set = initLinkedList();
 	
