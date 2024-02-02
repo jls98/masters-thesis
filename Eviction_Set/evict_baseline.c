@@ -286,7 +286,7 @@ static struct Node *create_minimal_eviction_set(void **candidate_set, uint64_t c
     struct Node* cind_set = initLinkedList();
     for (uint64_t i=0; i<candidate_set_size-1;i++) cind_set = addElement(cind_set, i); 
     
-    printf("a");
+    printf("a\n");
     // while |R| < a and cind still contains possible and unchecked candidates
     //while(a_tmp < EVICT_SIZE_A && cind_set!=NULL){   // TODO change back     
     while(cind_set!=NULL && cnt_e < conf->ways){        
@@ -306,7 +306,7 @@ static struct Node *create_minimal_eviction_set(void **candidate_set, uint64_t c
    
         // count amount of elements in combined_set
         cnt=count(combined_set);
-    printf("a");
+    printf("a\n");
 		if(cnt%1000==0) printf("cnt %lu, evict %lu\n", cnt, cnt_e);
         // if not TEST(R union S\{c}), x)  
 		// if removing c results in not evicting x anymore, add c to current eviction set    
@@ -317,13 +317,13 @@ static struct Node *create_minimal_eviction_set(void **candidate_set, uint64_t c
             
             // test if its an eviction set
             void *cur = candidate_set[evict_set->value];
-    printf("a");
+    printf("a\n");
             load(target_adrs);
-    printf("a");
+    printf("a\n");
             for(uint64_t counterj = 0;counterj<100;counterj++){ // 100 is random
                 cur=*((void **)cur);
                 load(cur);
-    printf("a");
+    printf("a\n");
             }
             uint64_t time = probe(target_adrs);
             printf("Time loading victim after evict set  %lu\n", time);		
