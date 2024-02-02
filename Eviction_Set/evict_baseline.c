@@ -213,6 +213,7 @@ int main(int ac, char **av){
 	}
 	printf("probe2 %lu\n", probe(target_adrs));
 	
+	freeList(evict_set);
 	evict_set = initLinkedList();
 	
 	// --------------------------------
