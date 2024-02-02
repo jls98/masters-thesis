@@ -290,7 +290,7 @@ static struct Node *create_minimal_eviction_set(void **candidate_set, uint64_t c
 	
 	// create current candidate set containing the indexes of unchecked candidates and initialize with all indexes
     struct Node* cind_set = initLinkedList();
-    for (uint64_t i=0; i<candidate_set_size-1;i+`8) cind_set = addElement(cind_set, i); 
+    for (uint64_t i=0; i<candidate_set_size-1;i+=8) cind_set = addElement(cind_set, i); 
     
     // while |R| < a and cind still contains possible and unchecked candidates
     //while(a_tmp < EVICT_SIZE_A && cind_set!=NULL){   // TODO change back     

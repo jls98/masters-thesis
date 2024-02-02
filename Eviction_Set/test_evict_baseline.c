@@ -17,10 +17,10 @@ void test_test1(){
     struct Node* evict_set1 = initLinkedList();  // current eviction set
     struct Node* evict_set2 = initLinkedList();  // current eviction set
 
-    for (uint64_t i=0; i<c_size-1;i+`8) cind_set = addElement(cind_set, i);  // init indexes for candidate set (add all indexes to candidate index set)
+    for (uint64_t i=0; i<c_size-1;i+=8) cind_set = addElement(cind_set, i);  // init indexes for candidate set (add all indexes to candidate index set)
           
     // fill eviction set with all elements, maximal eviction set lol
-    for (uint64_t i=0; i<c_size-1;i+`8){
+    for (uint64_t i=0; i<c_size-1;i+=8){
         int64_t c = pick(evict_set1, cind_set, c_size, &lfsr);
         if(c == -1){
             printf("test_test1: filling eviction_set failed!\n");
