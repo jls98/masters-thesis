@@ -112,7 +112,7 @@ static uint64_t lfsr_step(uint64_t lfsr);
 // test_index_set set containing all indexes from a set under test, e.g. the eviction set
 // target_adrs the address to be evicted 
 // threshold the threshold in cycles required to determine if something is cached. Depends on machine and cache level.
-// returns 1 if target_adrs is being evicted and measurement takes longer than threshold time, 0 if time measurement is lower than threshold
+// returns 1 if target_adrs is being evicted (1 on miss) and measurement takes longer than threshold time, 0 if time measurement is lower than threshold
 // returns -1 if there is an error
 static int64_t test(void **candidate_set, uint64_t candidate_set_size, struct Node *test_index_set, void *target_adrs, struct Config *conf);
 
@@ -296,7 +296,7 @@ static struct Node *create_minimal_eviction_set(void **candidate_set, uint64_t c
 		}
         while(containsValue(evict_set, c) || !containsValue(cind_set, c)); // prevent picking duplicate candidates
 		
-		if (c==candidate_set_size+1) printf("pick returned invalid value!\n");
+		if (c==candidate_set_size+1) printf("create_minimal_eviction_set: pick returned invalid value!\n");
 		
 		// remove c from S S <- S\{c}
 		cind_set = deleteElement(cind_set, c);         
@@ -310,6 +310,7 @@ static struct Node *create_minimal_eviction_set(void **candidate_set, uint64_t c
         // if not TEST(R union S\{c}), x)  
 		// if removing c results in not evicting x anymore, add c to current eviction set    
 		if (cnt==cnt_e) break; // no candidates left -> end (eviction_set==combined_set)
+			
 		if(!test(candidate_set, candidate_set_size, combined_set, target_adrs, conf)){
             evict_set = addElement(evict_set, c);
             cnt_e++; // added elem to evict set -> if enough, evict_set complete
