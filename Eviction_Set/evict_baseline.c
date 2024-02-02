@@ -618,7 +618,7 @@ static void create_pointer_chase(void **candidate_set, uint64_t c_size, struct N
 
 #ifdef TESTCASE
 	clock_t end = clock();
-	double  cpu_time_used = ((double) (end - track_start)) / CLOCKS_PER_SEC;
+	double  cpu_time_used = ((double) (end - start)) / CLOCKS_PER_SEC;
 
 	printf("create_pointer_chase: took %.6f seconds to finish", cpu_time_used);
 #endif	
