@@ -183,7 +183,7 @@ int main(int ac, char **av){
     /* preparation */
 	struct Config *conf = initConfig(8, 64, 45, 32768, 200); 	// DEFAULT TODO change
     wait(1E9); // boost cache 
-	uint64_t c_size = conf->cache_size/4;
+	uint64_t c_size = conf->cache_size/2; // uint64_t = 4 Bytes -> 16384 indexes address 65536 Bytes
     // R <- {}
     // allocate space for eviction set
     struct Node* evict_set = initLinkedList();
@@ -254,9 +254,9 @@ int main(int ac, char **av){
 		printf("Time loading victim after evict set  %lu\n", time);
 	}
 
-	printf("test 7400 %li\n", test(candidate_set, c_size, tmp_evict_set, &candidate_set[7400], conf));
-	printf("test 7399 %li\n", test(candidate_set, c_size, tmp_evict_set, &candidate_set[7399], conf));
-	printf("test 7401 %li\n", test(candidate_set, c_size, tmp_evict_set, &candidate_set[7401], conf));
+	printf("test 7464 %li\n", test(candidate_set, c_size, tmp_evict_set, &candidate_set[7464], conf));
+	printf("test 7463 %li\n", test(candidate_set, c_size, tmp_evict_set, &candidate_set[7463], conf));
+	printf("test 7465 %li\n", test(candidate_set, c_size, tmp_evict_set, &candidate_set[7465], conf));
 
 
     freeList(evict_set); // delete eviction set	
