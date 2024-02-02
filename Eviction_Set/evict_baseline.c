@@ -194,7 +194,7 @@ int main(int ac, char **av){
     void *target_adrs = &candidate_set[7400]; // take target somewhere in the middle of allocated memory
 	printf("c[] %p and &c[] %p \n", candidate_set[7400], &candidate_set[7400]);
 	// create handmade eviction set: M memory addresses = 32768/8=4096, S sets = 64 -> stride of 64 in indexes
-	for(int i=296;i<745;i+=64){ // 296, 360, 424, 488, 552, 616, 680, 744, index +1 == 8 bytes
+	for(int i=296;i<361;i+=1){ // 296, 360, 424, 488, 552, 616, 680, 744, index +1 == 8 bytes
 		evict_set = addElement(evict_set, i); 
 	}
 	
