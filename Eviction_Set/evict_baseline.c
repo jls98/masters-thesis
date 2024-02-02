@@ -318,7 +318,9 @@ static struct Node *create_minimal_eviction_set(void **candidate_set, uint64_t c
 		if(!test(candidate_set, candidate_set_size, combined_set, target_adrs, conf)){
             evict_set = addElement(evict_set, c);
             cnt_e++; // added elem to evict set -> if enough, evict_set complete
-            
+			printf("tmp eviction set contains:\n");
+			for(struct Node *it = evict_set;it!=NULL;it=it->next) printf("-%p, %p, %lu\n", candidate_set[it->value], &candidate_set[it->value], it->value);
+          
             /*// test if its an eviction set
             void *cur = &candidate_set[evict_set->value];
 
