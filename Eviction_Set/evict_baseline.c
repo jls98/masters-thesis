@@ -535,10 +535,10 @@ static int64_t test1(void *addr, uint64_t size, void* target_adrs, struct Config
 		return -1;
 	} 	
 	
-	if (target_adrs==NULL){
+	/*if (target_adrs==NULL){
 		printf("test1: target_adrs is NULL!\n");
 		return -1;
-	} 	
+	} 	*/
 	
 	if (conf==NULL){
 		printf("test1: conf is NULL!\n");
