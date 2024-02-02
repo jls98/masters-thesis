@@ -191,10 +191,10 @@ int main(int ac, char **av){
     // map candidate_set (using hugepages, twice the size of cache in bytes (4 times to have space for target))
     void **candidate_set = mmap(NULL, 10* c_size * sizeof(void *), PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB, -1, 0);
 	
-    void *target_adrs = &candidate_set[10000]; // take target somewhere in the middle of allocated memory
+    void *target_adrs = &candidate_set[7400]; // take target somewhere in the middle of allocated memory
 	
 	// create handmade eviction set: M memory addresses = 32768/8=4096, S sets = 64 -> stride of 64 in indexes
-	for(int i=9296;i<745;i+=64){ // 296, 360, 424, 488, 552, 616, 680, 744, index +1 == 8 bytes
+	for(int i=296;i<745;i+=64){ // 296, 360, 424, 488, 552, 616, 680, 744, index +1 == 8 bytes
 		evict_set = addElement(evict_set, i); 
 	}
 	
@@ -274,7 +274,7 @@ static struct Node *create_minimal_eviction_set(void **candidate_set, uint64_t c
 	
 	clock_t track_start = clock();
     // init lfsr, variable c stores currently picked candidate integer/index value
-    uint64_t lfsr = lfsr_create(), c, a_tmp=0, cnt, cnt_e; 
+    uint64_t lfsr = lfsr_create(), c, cnt_e=0, cnt; 
     
 	// create current candidate set containing the indexes of unchecked candidates and initialize with all indexes
     struct Node* cind_set = initLinkedList();
@@ -282,7 +282,7 @@ static struct Node *create_minimal_eviction_set(void **candidate_set, uint64_t c
     
     // while |R| < a and cind still contains possible and unchecked candidates
     //while(a_tmp < EVICT_SIZE_A && cind_set!=NULL){   // TODO change back     
-    while(cind_set!=NULL && a_tmp < conf->ways){        
+    while(cind_set!=NULL && cnt_e < conf->ways){        
         // c <- pick(S) pick candidate index c from candidate set S/cind_set
 		do{
 			c=pick(evict_set, cind_set, candidate_set_size, &lfsr);
@@ -299,14 +299,13 @@ static struct Node *create_minimal_eviction_set(void **candidate_set, uint64_t c
    
         // count amount of elements in combined_set
         cnt=count(combined_set);
-		cnt_e=count(evict_set);
 		if(cnt%1000==0) printf("cnt %lu, evict %lu\n", cnt, cnt_e);
         // if not TEST(R union S\{c}), x)  
 		// if removing c results in not evicting x anymore, add c to current eviction set    
 		if (cnt==cnt_e) break; // no candidates left -> end (eviction_set==combined_set)
 		if(!test(candidate_set, candidate_set_size, combined_set, target_adrs, conf)){
             evict_set = addElement(evict_set, c);
-            a_tmp++; // added elem to evict set -> if enough, evict_set complete
+            cnt_e++; // added elem to evict set -> if enough, evict_set complete
             
             // test if its an eviction set
             void *cur = candidate_set[evict_set->value];
