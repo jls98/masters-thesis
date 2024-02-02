@@ -11,9 +11,9 @@ void test_test1(){
 	// change to local system and cache in 8 bytes to check, a size of candidate set in index 
 
     uint64_t c_size = conf->cache_size/2; // two times cache size but as uint64_t
-    void **cand_set = mmap(NULL, c_size * sizeof(void *), PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB, -1, 0);
-    uint64_t *cand = malloc(sizeof(uint64_t *)); // just some random candidate :D
-	*cand = 1;
+    void **cand_set = mmap(NULL, 10* c_size * sizeof(void *), PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB, -1, 0);
+    void *cand = &cand_set[9600]; // just some random candidate :D
+	
     uint64_t lfsr = lfsr_create();
     
     struct Node* cind_set = initLinkedList();   // current candidate set (indexes)
