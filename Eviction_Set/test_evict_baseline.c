@@ -104,7 +104,7 @@ void test_pick(){
     // test no candidate possible
     // one duplicate element left in candidate set
     candidate_set2 = addElement(candidate_set2, 5);
-    CU_ASSERT_EQUAL(pick(evict_set, candidate_set2, base_size, &lfsr), base_size+1); 
+    CU_ASSERT_EQUAL(pick(evict_set, candidate_set2, base_size, &lfsr), -1); 
 
     candidate_set2 = addElement(candidate_set2, 65);
     // regular, 1 valid candidate option left

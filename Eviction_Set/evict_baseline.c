@@ -550,8 +550,9 @@ static int64_t test1(void *addr, uint64_t size, void* cand, struct Config *conf)
 		return -1;
 	} 	
 	
-	
-	wait(1E9);
+#ifdef TESTCASE
+	clock_t start = clock();
+#endif	
 	volatile uint64_t time, sum=0;
 	for(uint64_t i=0;i<conf->test_reps;i++){
 		asm __volatile__ (
@@ -592,6 +593,12 @@ static int64_t test1(void *addr, uint64_t size, void* cand, struct Config *conf)
 		);
 		sum +=time;
 	}
+#ifdef TESTCASE
+	clock_t end = clock();
+	double  cpu_time_used = ((double) (end - start)) / CLOCKS_PER_SEC;
+
+	printf("test1: took %.6f seconds to finish", cpu_time_used);
+#endif	
 	return sum/conf->test_reps > conf->threshold? 1 : 0;
 } 
 
