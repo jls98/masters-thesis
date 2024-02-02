@@ -213,6 +213,8 @@ int main(int ac, char **av){
 	}
 	printf("probe2 %lu\n", probe(target_adrs));
 	
+	evict_set = initLinkedList();
+	
 	// --------------------------------
 	// create evict set
     struct Node *tmp_evict_set = create_minimal_eviction_set(candidate_set, c_size, evict_set, target_adrs, conf);
