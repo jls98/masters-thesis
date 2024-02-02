@@ -290,7 +290,7 @@ static struct Node *create_minimal_eviction_set(void **candidate_set, uint64_t c
 	
 	// create current candidate set containing the indexes of unchecked candidates and initialize with all indexes
     struct Node* cind_set = initLinkedList();
-    for (uint64_t i=0; i<candidate_set_size-1;i++) cind_set = addElement(cind_set, i); 
+    for (uint64_t i=0; i<candidate_set_size-1;i+`8) cind_set = addElement(cind_set, i); 
     
     // while |R| < a and cind still contains possible and unchecked candidates
     //while(a_tmp < EVICT_SIZE_A && cind_set!=NULL){   // TODO change back     
@@ -659,7 +659,7 @@ static int64_t pick(struct Node* evict_set, struct Node* candidate_set, uint64_t
     // iterate over all elements and count
     for(cur_node = candidate_set, c_size=0; cur_node != NULL; c_size++, cur_node = cur_node->next);
    
-    // 99999 times base size should suffice to find candidate in legitimate cases
+    // pick a pseudorandom candidate
     for(uint64_t i=0; i<base_size;i++){         
         // pick pseudo-random candidate by index from candidate_set
         // iterate over rand mod c_size elements in current candidate set list and get index value
