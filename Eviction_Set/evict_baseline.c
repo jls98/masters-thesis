@@ -600,10 +600,10 @@ static int64_t test1(void *addr, uint64_t size, void* cand, struct Config *conf)
 		);
 		sum +=time;
 	}
-#ifdef TESTCASE
-	printf("test1: measurement %lu\n", sum/conf->test_reps);
+//#ifdef TESTCASE
+	//printf("test1: measurement %lu\n", sum/conf->test_reps);
 //	printf("test1: took %.6f seconds to finish, measurement %lu\n", ((double) (clock() - start_clk)) / CLOCKS_PER_SEC, sum/conf->test_reps);
-#endif	
+//#endif	
 	return sum/conf->test_reps > conf->threshold? 1 : 0;
 } 
 
