@@ -97,9 +97,9 @@ void test_pick(){
     uint64_t lfsr = lfsr_create();
     
     // test uninitialized params
-    CU_ASSERT_EQUAL(pick(evict_set, candidate_set1, base_size, NULL), base_size+1); // lfsr
-    CU_ASSERT_EQUAL(pick(evict_set, candidate_set1, 0, &lfsr), 1);	// base candidate set empty -> size = 0
-    CU_ASSERT_EQUAL(pick(evict_set, empty_set, base_size, &lfsr), base_size+1); // empty candidate set
+    CU_ASSERT_EQUAL(pick(evict_set, candidate_set1, base_size, NULL), -1); // lfsr
+    CU_ASSERT_EQUAL(pick(evict_set, candidate_set1, 0, &lfsr), -1);	// base candidate set empty -> size = 0
+    CU_ASSERT_EQUAL(pick(evict_set, empty_set, base_size, &lfsr), -1); // empty candidate set
     
     // test no candidate possible
     // one duplicate element left in candidate set
@@ -108,7 +108,7 @@ void test_pick(){
 
     candidate_set2 = addElement(candidate_set2, 65);
     // regular, 1 valid candidate option left
-    uint64_t val = pick(evict_set, candidate_set2, base_size, &lfsr);
+    int64_t val = pick(evict_set, candidate_set2, base_size, &lfsr);
     CU_ASSERT_EQUAL(val, 65);  
     if (val != 65) printf("val65 %lx\n", val);
     

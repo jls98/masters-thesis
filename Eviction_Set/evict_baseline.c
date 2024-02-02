@@ -25,9 +25,9 @@
 #define THRESHOLD_SINGLE_LLC_LAB 200     // ~30
 #define THRESHOLD_SINGLE_DEFAULT_LAB THRESHOLD_SINGLE_L1D_LAB
 
-#define THRESHOLD THRESHOLD_SINGLE_L1D_LAB
+//#define THRESHOLD THRESHOLD_SINGLE_L1D_LAB
 
-#define CACHESIZE_DEFAULT 32768         // L1D e|lab 
+//#define CACHESIZE_DEFAULT 32768         // L1D e|lab 
 //#define CACHESIZE_DEFAULT OTHERS TODO
 
 // optional arguments for threshold in test functions, defaults to THRESHOLD
@@ -35,7 +35,7 @@
 //#define TEST1(addr, size, cand, ...) test1(addr, size, cand, DEF_OR_ARG(__VA_ARGS__ __VA_OPT__(,) THRESHOLD))
 //#define TEST(candidate_set, candidate_set_size, test_index_set, target_adrs, ...) test(candidate_set, candidate_set_size, test_index_set, target_adrs, DEF_OR_ARG(__VA_ARGS__ __VA_OPT__(,) THRESHOLD))
 
-#define EVICT_SIZE_A 8 // p cores 12/10 ways, else 8 ways
+//#define EVICT_SIZE_A 8 // p cores 12/10 ways, else 8 ways
 
 /* #################################################### */
 /* ####################### utils ###################### */
@@ -198,7 +198,7 @@ int main(int ac, char **av){
 		evict_set = addElement(evict_set, i); 
 	}
 	
-	printf("test %li\n", test(candidate_set, c_size, evict_set, target_adrs, conf));
+	printf("test %li\n", test(candidate_set, c_size, evict_set, target_adrs, conf)); // works
 
 	// manual test (dont work even though test = 1 !!!):
 	load(target_adrs);
@@ -286,7 +286,8 @@ static struct Node *create_minimal_eviction_set(void **candidate_set, uint64_t c
 	clock_t track_start = clock();
     // init lfsr, variable c stores currently picked candidate integer/index value
     uint64_t lfsr = lfsr_create(), c, cnt_e=0, cnt; 
-
+	int64_t c_tmp;
+	
 	// create current candidate set containing the indexes of unchecked candidates and initialize with all indexes
     struct Node* cind_set = initLinkedList();
     for (uint64_t i=0; i<candidate_set_size-1;i++) cind_set = addElement(cind_set, i); 
@@ -296,12 +297,11 @@ static struct Node *create_minimal_eviction_set(void **candidate_set, uint64_t c
     while(cind_set!=NULL /*&& cnt_e < conf->ways*/){        
         // c <- pick(S) pick candidate index c from candidate set S/cind_set
 		do{
-			c=pick(evict_set, cind_set, candidate_set_size, &lfsr);
+			c_tmp=pick(evict_set, cind_set, candidate_set_size, &lfsr);
 		}
-        while(containsValue(evict_set, c) || !containsValue(cind_set, c)); // prevent picking duplicate candidates
-		
-		if (c==candidate_set_size+1) printf("create_minimal_eviction_set: pick returned invalid value!\n");
-		
+        while(c_tmp==-1 || containsValue(evict_set, (uint64_t) c_tmp) || !containsValue(cind_set, (uint64_t) c_tmp)); // prevent picking duplicate candidates and continuing on error
+				
+		c = (uint64_t) c_tmp;
 		// remove c from S S <- S\{c}
 		cind_set = deleteElement(cind_set, c);         
 
@@ -347,7 +347,7 @@ static struct Node *create_minimal_eviction_set(void **candidate_set, uint64_t c
 	// measure time needed for this algorithm
 	double  cpu_time_used = ((double) (clock() - track_start)) / CLOCKS_PER_SEC;
     // Print the measured time
-    printf("Time taken by myFunction: %f seconds\n", cpu_time_used);
+    printf("Time taken by myFunction: %.6f seconds\n", cpu_time_used);
 	
     cnt=count(evict_set);
 	printf("test of evict set %li\n", test(candidate_set, candidate_set_size, evict_set, target_adrs, conf));
@@ -596,7 +596,10 @@ static int64_t test1(void *addr, uint64_t size, void* cand, struct Config *conf)
 } 
 
 static void create_pointer_chase(void **candidate_set, uint64_t c_size, struct Node* set){
-    if (set == NULL) {
+#ifdef TESTCASE
+	clock_t start = clock();
+#endif
+	if (set == NULL) {
 		printf("create_pointer_chase: set is NULL!\n");
 		return; // no pointer chase 
 	}
@@ -612,21 +615,29 @@ static void create_pointer_chase(void **candidate_set, uint64_t c_size, struct N
         candidate_set[cur_no->value] = &candidate_set[cur_no->next->value];    
     }
     candidate_set[cur_no->value] = &candidate_set[set->value]; // set pointer from last element to first element
+
+#ifdef TESTCASE
+	clock_t end = clock();
+	double  cpu_time_used = ((double) (end - track_start)) / CLOCKS_PER_SEC;
+
+	printf("create_pointer_chase: took %.6f seconds to finish", cpu_time_used);
+#endif	
+
 }
 
-static uint64_t pick(struct Node* evict_set, struct Node* candidate_set, uint64_t base_size, uint64_t *lfsr) {
+static int64_t pick(struct Node* evict_set, struct Node* candidate_set, uint64_t base_size, uint64_t *lfsr) {
     // uninitialized parameters
     if (lfsr==NULL){
 		printf("pick: lfsr is NULL!\n");
-		return base_size+1;
+		return -1;
 	} 
 	if (candidate_set==NULL){
 		printf("pick: candidate_set is NULL!\n");
-		return base_size+1;
+		return -1;
 	} 
 	if (base_size==0){
 		printf("pick: base_size is 0!\n");
-		return base_size+1;
+		return -1;
 	} 
 	
     uint64_t c, j, c_size; // c candidate, j index, c_size current candidate set size
@@ -653,7 +664,7 @@ static uint64_t pick(struct Node* evict_set, struct Node* candidate_set, uint64_
     }
     // did not find candidate -> nothing to pick
 	printf("pick: no candidate found for evict set %p and candidate set %p and base size %lu with lfsr %p!\n", evict_set, candidate_set, base_size, lfsr);
-    return base_size+1;
+    return -1;
 }
 
 
