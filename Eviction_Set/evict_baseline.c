@@ -653,6 +653,19 @@ static int64_t test(void **candidate_set, uint64_t candidate_set_size, struct No
 	// empty candidate set, no array to create pointer chase on
     if (candidate_set == NULL || candidate_set_size == 0 || test_index_set == NULL) return -1;
     
+    if (candidate_set==NULL){
+		printf("test: candidate_set is NULL!\n");
+		return -1;
+	} 
+	if (candidate_set_size==0){
+		printf("test: candidate_set_size is 0!\n");
+		return -1;
+	} 
+	if (test_index_set==NULL){
+		printf("test: test_index_set is NULL!\n");
+		return -1;
+	} 
+	
     // compute amount of indexes in index set
 	uint64_t test_index_set_size=0;
 	for(struct Node *tmp=test_index_set;tmp!=NULL;tmp=tmp->next) test_index_set_size+=1;
