@@ -198,7 +198,7 @@ int main(int ac, char **av){
 		evict_set = addElement(evict_set, i); 
 	}
 	
-	printf("test %i\n", test(candidate_set, c_size, evict_set, target_adrs, conf));
+	printf("test %li\n", test(candidate_set, c_size, evict_set, target_adrs, conf));
 
 	// manual test:
 	load(target_adrs);
