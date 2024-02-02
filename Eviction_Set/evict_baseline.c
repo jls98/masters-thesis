@@ -151,7 +151,7 @@ static void updateConfig(struct Config *conf, uint64_t ways, uint64_t cache_line
 /* #################################################### */
 
 static void load(void *adrs){
-	__asm__ volatile("mov rax, [%0];"::"r" (adrs): "rax", "memory");
+	__asm__ volatile("mov rax, [%0];mov rax, [%0];mov rax, [%0];"::"r" (adrs): "rax", "memory");
 }
 
 static void flush(void *adrs){

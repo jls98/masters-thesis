@@ -41,31 +41,15 @@ void test_test1(){
     CU_ASSERT_EQUAL(test1(cand_set[evict_set1->value], c_size, cand, NULL), -1); 
     
     // regular case (full huge page should evict (hopefully))
-    CU_ASSERT_EQUAL(test1(cand_set[evict_set1->value], c_size, cand, conf), 1); // assure self assignment
-    CU_ASSERT_EQUAL(test1(cand_set[evict_set1->value], c_size, cand, conf), 1); 
-    CU_ASSERT_EQUAL(test1(cand_set[evict_set1->value], c_size, cand, conf), 1); 
-    CU_ASSERT_EQUAL(test1(cand_set[evict_set1->value], c_size, cand, conf), 1); 
-    CU_ASSERT_EQUAL(test1(cand_set[evict_set1->value], c_size, cand, conf), 1); 
-    CU_ASSERT_EQUAL(test1(cand_set[evict_set1->value], c_size, cand, conf), 1); 
-    CU_ASSERT_EQUAL(test1(cand_set[evict_set1->value], c_size, cand, conf), 1); 
-    CU_ASSERT_EQUAL(test1(cand_set[evict_set1->value], c_size, cand, conf), 1); 
-    CU_ASSERT_EQUAL(test1(cand_set[evict_set1->value], c_size, cand, conf), 1); 
-    CU_ASSERT_EQUAL(test1(cand_set[evict_set1->value], c_size, cand, conf), 1); 
+    for (int i=0;i<1000;i++) CU_ASSERT_EQUAL(test1(cand_set[evict_set1->value], c_size, cand, conf), 1); // assure self assignment
+    
    
     evict_set2 = addElement(evict_set2, 65);
     evict_set2 = addElement(evict_set2, 23);
     evict_set2 = addElement(evict_set2, 5);
     create_pointer_chase(cand_set, c_size, evict_set2); // eviction set far too small -> no eviction of candidate
-    CU_ASSERT_EQUAL(test1(cand_set[evict_set2->value], 3, cand, conf), 0); // assure self assignment
-    CU_ASSERT_EQUAL(test1(cand_set[evict_set2->value], 3, cand, conf), 0);
-    CU_ASSERT_EQUAL(test1(cand_set[evict_set2->value], 3, cand, conf), 0);
-    CU_ASSERT_EQUAL(test1(cand_set[evict_set2->value], 3, cand, conf), 0);
-    CU_ASSERT_EQUAL(test1(cand_set[evict_set2->value], 3, cand, conf), 0);
-    CU_ASSERT_EQUAL(test1(cand_set[evict_set2->value], 3, cand, conf), 0);
-    CU_ASSERT_EQUAL(test1(cand_set[evict_set2->value], 3, cand, conf), 0);
-    CU_ASSERT_EQUAL(test1(cand_set[evict_set2->value], 3, cand, conf), 0);
-    CU_ASSERT_EQUAL(test1(cand_set[evict_set2->value], 3, cand, conf), 0);
-    CU_ASSERT_EQUAL(test1(cand_set[evict_set2->value], 3, cand, conf), 0);
+    for (int i=0;i<1000;i++) CU_ASSERT_EQUAL(test1(cand_set[evict_set2->value], 3, cand, conf), 0); // assure self assignment
+    
    
     freeList(evict_set1);
     freeList(evict_set2);
