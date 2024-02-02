@@ -597,7 +597,8 @@ static int64_t test1(void *addr, uint64_t size, void* cand, struct Config *conf)
 	clock_t end = clock();
 	double  cpu_time_used = ((double) (end - start)) / CLOCKS_PER_SEC;
 
-	printf("test1: took %.6f seconds to finish\n", cpu_time_used);
+	printf("test1: took %.6f seconds to finish, measurement %lu\n", cpu_time_used, sum/conf->test_reps);
+	
 #endif	
 	return sum/conf->test_reps > conf->threshold? 1 : 0;
 } 
