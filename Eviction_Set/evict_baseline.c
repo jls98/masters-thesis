@@ -187,23 +187,31 @@ int main(int ac, char **av){
     // R <- {}
     // allocate space for eviction set
     struct Node* evict_set = initLinkedList();
-	printf("a");
 
     // map candidate_set (using hugepages, twice the size of cache in bytes (4 times to have space for target))
     void **candidate_set = mmap(NULL, 2* c_size * sizeof(void *), PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB, -1, 0);
-	uint64_t *intptr = (uint64_t *) &candidate_set[0];
-	*intptr = 0xff;
-	printf("a\n");
-	for (uint64_t i=0;i<9;i++) printf("%lu %x %p\n", i, candidate_set[i], &candidate_set[i]); // learn about indexing void ** 
-
-	for(uint64_t i=0;i<c_size;i++) candidate_set[i] = &candidate_set[i]; // avoid null page by writing something on every entry (pointer to itself)
 	
     void *target_adrs = &candidate_set[c_size+1000]; // take target somewhere in the middle of allocated memory
 	
-	// create handmade eviction set:
-	for(int i=296;i<745;i+=64){ // 296, 360, 424, 488, 552, 616, 680, 744, 64 index/
+	// create handmade eviction set: M memory addresses = 32768/8=4096, S sets = 64 -> stride of 64 in indexes
+	for(int i=296;i<745;i+=64){ // 296, 360, 424, 488, 552, 616, 680, 744, index +1 == 8 bytes
 		evict_set = addElement(evict_set, i); 
 	}
+	
+	printf("test %i\n", test(candidate_set, c_size, evict_set, target_adrs, conf));
+
+	// manual test:
+	load(target_adrs);
+	for(struct Node *it = evict_set;it!=NULL;it=it->next){
+		load(candidate_set[it->value]);
+	}
+	printf("probe %lu\n", probe(target_adrs));
+	
+	load(target_adrs);
+	for(struct Node *it = evict_set;it!=NULL;it=it->next){
+		load(&candidate_set[it->value]);
+	}
+	printf("probe2 %lu\n", probe(target_adrs));
 	
 	// --------------------------------
 	// create evict set
