@@ -252,10 +252,11 @@ int main(int ac, char **av){
 		printf("Time loading victim after evict set  %lu\n", time);
 	}
 
-	printf("test %li\n", test(candidate_set, c_size, evict_set, target_adrs, conf));
+	printf("test %li\n", test(candidate_set, c_size, tmp_evict_set, target_adrs, conf));
 
 
     freeList(evict_set); // delete eviction set	
+    freeList(tmp_evict_set); // delete eviction set	
     return 0;
 }
 #endif
