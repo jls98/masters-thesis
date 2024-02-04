@@ -192,6 +192,7 @@ int main(int ac, char **av){
     void **candidate_set = mmap(NULL, 10* c_size * sizeof(void *), PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB, -1, 0);
 	
     void *target_adrs = &candidate_set[37320]; // take target somewhere in the middle of allocated memory
+    target_adrs = &target_adrs;
 	printf("main: c[] %p and &c[] %p \n", candidate_set[37320], &candidate_set[37320]);
 	// create handmade eviction set: M memory addresses = 32768/8=4096, S sets = 64 -> stride of 64 in indexes
 	for(int i=296;i<3881;i+=512){ // 296, 808, 1320, 1832, 2344, 2856, 3368, 3880  index +1 == 8 bytes
@@ -535,10 +536,10 @@ static int64_t test1(void *addr, uint64_t size, void* target_adrs, struct Config
 		return -1;
 	} 	
 	
-	/*if (target_adrs==NULL){
+	if (target_adrs==NULL){
 		printf("test1: target_adrs is NULL!\n");
 		return -1;
-	} 	*/
+	} 	
 	
 	if (conf==NULL){
 		printf("test1: conf is NULL!\n");
