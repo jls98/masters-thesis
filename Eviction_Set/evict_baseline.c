@@ -283,7 +283,7 @@ static struct Node *create_minimal_eviction_set(void **candidate_set, uint64_t c
 	
 	clock_t track_start = clock();
     // init lfsr, variable c stores currently picked candidate integer/index value
-    uint64_t lfsr = lfsr_create(), c, cnt_e=0, cnt; 
+    uint64_t lfsr = lfsr_create(), c, cnt_e=0; 
 	int64_t c_tmp;
 	
 	// create current candidate set containing the indexes of unchecked candidates and initialize with all indexes
