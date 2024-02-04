@@ -292,7 +292,7 @@ static struct Node *create_minimal_eviction_set(void **candidate_set, uint64_t c
     
     // while |R| < a and cind still contains possible and unchecked candidates
     //while(a_tmp < EVICT_SIZE_A && cind_set!=NULL){   // TODO change back     
-    while(cind_set!=NULL /*&& cnt_e < conf->ways*/){        
+    while(cind_set!=NULL && cnt_e < conf->ways){        
         // c <- pick(S) pick candidate index c from candidate set S/cind_set
 		do{
 			c_tmp=pick(evict_set, cind_set, candidate_set_size, &lfsr);
@@ -311,7 +311,10 @@ static struct Node *create_minimal_eviction_set(void **candidate_set, uint64_t c
 		if(cnt%1000==0) printf("create_minimal_eviction_set: cnt %lu, evict %lu\n", cnt, cnt_e);
         // if not TEST(R union S\{c}), x)  
 		// if removing c results in not evicting x anymore, add c to current eviction set    
-		if (cnt==cnt_e) break; // no candidates left -> end (eviction_set==combined_set)
+		if (cnt==cnt_e) {
+            printf("create_minimal_eviction_set: finished with cnt==cnt_e\n");
+            break; 
+        }// no candidates left -> end (eviction_set==combined_set)
 			
 		if(!test(candidate_set, candidate_set_size, combined_set, target_adrs, conf)){
             evict_set = addElement(evict_set, c);
