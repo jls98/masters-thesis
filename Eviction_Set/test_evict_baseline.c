@@ -22,7 +22,7 @@ void test_test1(){
     struct Node* evict_set_minimal = initLinkedList();
     
     // 512, 1024, 1536, 2048, 2560, 3112, 3624, 4136  index +1 == 8 bytes
-    for(int i=512;i<4137;i+=512) evict_set = addElement(evict_set, i); 
+    for(int i=512;i<4137;i+=512) evict_set_minimal = addElement(evict_set_minimal, i); 
 	create_pointer_chase(cand_set, c_size, evict_set_minimal);
     CU_ASSERT_EQUAL(test1(evict_set_minimal, c_size, &cand_set[16000], conf), 1); // assure self assignment
 
