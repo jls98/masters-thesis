@@ -191,8 +191,9 @@ int main(int ac, char **av){
     // map candidate_set (using hugepages, twice the size of cache in bytes (4 times to have space for target))
     void **candidate_set = mmap(NULL, 10* c_size * sizeof(void *), PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB, -1, 0);
 	
+    candidate_set[target_index] = &candidate_set[target_index];
     void *target_adrs = &candidate_set[target_index]; // take target somewhere in the middle of allocated memory
-    *target_adrs = &target_adrs;
+    
 	printf("main: c[] %p and &c[] %p \n", candidate_set[target_index], &candidate_set[target_index]);
 	// create handmade eviction set: M memory addresses = 32768/8=4096, S sets = 64 -> stride of 64 in indexes
 	for(int i=296;i<3881;i+=512){ // 296, 808, 1320, 1832, 2344, 2856, 3368, 3880  index +1 == 8 bytes
