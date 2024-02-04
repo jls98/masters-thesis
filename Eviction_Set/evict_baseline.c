@@ -344,7 +344,6 @@ static struct Node *create_minimal_eviction_set(void **candidate_set, uint64_t c
     // Print the measured time
     printf("Time taken by myFunction: %.6f seconds\n", cpu_time_used);
 	
-    cnt=count(evict_set);
 	printf("test of evict set %li\n", test(candidate_set, candidate_set_size, evict_set, target_adrs, conf));
 	return evict_set;
 }
