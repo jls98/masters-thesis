@@ -254,8 +254,8 @@ int main(int ac, char **av){
     
 	printf("main: count %i\n", count(tmp_evict_set));
 	printf("main: test %i %li %p\n", target_index, test(candidate_set, c_size, tmp_evict_set, &candidate_set[target_index], conf), &candidate_set[target_index]);
-	printf("main: test %i %li %p\n", target_index-1, test(candidate_set, c_size, tmp_evict_set, &candidate_set[target_index-1], conf), &candidate_set[target_index-1]);
-	printf("main: test %i %li %p\n", target_index+1, test(candidate_set, c_size, tmp_evict_set, &candidate_set[target_index+1], conf), &candidate_set[target_index+1]);
+	printf("main: test %i %li %p\n", target_index+63, test(candidate_set, c_size, tmp_evict_set, &candidate_set[target_index+63], conf), &candidate_set[target_index+63]);
+	printf("main: test %i %li %p\n", target_index+64, test(candidate_set, c_size, tmp_evict_set, &candidate_set[target_index+64], conf), &candidate_set[target_index+64]);
 
     freeList(evict_set); // delete eviction set	
     freeList(tmp_evict_set); // delete eviction set	
