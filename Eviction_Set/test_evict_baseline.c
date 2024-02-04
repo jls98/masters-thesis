@@ -19,7 +19,14 @@ void test_test1(){
     struct Node* cind_set = initLinkedList();   // current candidate set (indexes)
     struct Node* evict_set1 = initLinkedList();  // current eviction set
     struct Node* evict_set2 = initLinkedList();  // current eviction set
+    struct Node* evict_set_minimal = initLinkedList();
+    
+    // 512, 1024, 1536, 2048, 2560, 3112, 3624, 4136  index +1 == 8 bytes
+    for(int i=512;i<4137;i+=512) evict_set = addElement(evict_set, i); 
+	create_pointer_chase(cand_set, c_size, evict_set_minimal);
+    CU_ASSERT_EQUAL(test1(evict_set_minimal, c_size, &cand_set[16000], conf), 1); // assure self assignment
 
+    
     for (uint64_t i=0; i<c_size-1;i+=8) cind_set = addElement(cind_set, i);  // init indexes for candidate set (add all indexes to candidate index set)
           
     // fill eviction set with all elements, maximal eviction set lol
@@ -46,7 +53,6 @@ void test_test1(){
     for (int i=0;i<reps_test1;i++){
         __asm__ volatile("lfence");
         CU_ASSERT_EQUAL(test1(cand_set[evict_set1->value], c_size, target_adrs, conf), 1); // assure self assignment
-
     }
     
    
@@ -74,16 +80,9 @@ void test_pick(){
     printf("\nTesting pick...\n\n");
     
     // init (evict|cand) sets
-    //struct Node* evict_set = initLinkedList();
     struct Node* candidate_set1 = initLinkedList();
     struct Node* candidate_set2 = initLinkedList();
     struct Node* empty_set = initLinkedList();
-    
-   // evict_set = addElement(evict_set, 0);
-   // evict_set = addElement(evict_set, 5);
-   // evict_set = addElement(evict_set, 2);
-   // evict_set = addElement(evict_set, 7);
-   // evict_set = addElement(evict_set, 3);
     
 	// just add something
     candidate_set1 = addElement(candidate_set1, 1); 
@@ -96,11 +95,6 @@ void test_pick(){
     CU_ASSERT_EQUAL(pick(candidate_set1, base_size, NULL), -1); // lfsr
     CU_ASSERT_EQUAL(pick(candidate_set1, 0, &lfsr), -1);	// base candidate set empty -> size = 0
     CU_ASSERT_EQUAL(pick(empty_set, base_size, &lfsr), -1); // empty candidate set
-    
-    // test no candidate possible
-    // one duplicate element left in candidate set
-   // candidate_set2 = addElement(candidate_set2, 5);
-    //CU_ASSERT_EQUAL(pick(evict_set, candidate_set2, base_size, &lfsr), -1); 
 
     candidate_set2 = addElement(candidate_set2, 65);
     // regular, 1 valid candidate option left
@@ -192,9 +186,9 @@ int main() {
     CU_initialize_registry();
 
     CU_pSuite suite = CU_add_suite("Test Suite evict_baseline", NULL, NULL);
-    // CU_add_test(suite, "Test create_pointer_chase", test_create_pointer_chase);
+    CU_add_test(suite, "Test create_pointer_chase", test_create_pointer_chase);
     CU_add_test(suite, "Test pick", test_pick);
-    // CU_add_test(suite, "Test test1", test_test1);
+    CU_add_test(suite, "Test test1", test_test1);
 
     CU_basic_run_tests();
     CU_cleanup_registry();
