@@ -192,6 +192,8 @@ int main(int ac, char **av){
     void **candidate_set = mmap(NULL, 10* c_size * sizeof(void *), PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB, -1, 0);
 	
     candidate_set[target_index] = &candidate_set[target_index];
+    candidate_set[target_index-1] = &candidate_set[target_index-1];
+    candidate_set[target_index+1] = &candidate_set[target_index+1];
     void *target_adrs = &candidate_set[target_index]; // take target somewhere in the middle of allocated memory
     
 	printf("main: c[] %p and &c[] %p \n", candidate_set[target_index], &candidate_set[target_index]);
@@ -249,11 +251,11 @@ int main(int ac, char **av){
 		time = probe(target_adrs);
 		printf("main: Time loading victim after evict set  %lu\n", time);
 	}
-
+    
 	printf("main: count %i\n", count(tmp_evict_set));
-	printf("main: test %i %li %p\n", target_index, test(candidate_set, c_size, tmp_evict_set, candidate_set[target_index], conf), &candidate_set[37320]);
-	printf("main: test %i %li %p\n", target_index-1, test(candidate_set, c_size, tmp_evict_set, candidate_set[target_index-1], conf), &candidate_set[37319]);
-	printf("main: test %i %li %p\n", target_index+1, test(candidate_set, c_size, tmp_evict_set, candidate_set[target_index+1], conf), &candidate_set[37321]);
+	printf("main: test %i %li %p\n", target_index, test(candidate_set, c_size, tmp_evict_set, &candidate_set[target_index], conf), &candidate_set[target_index]);
+	printf("main: test %i %li %p\n", target_index-1, test(candidate_set, c_size, tmp_evict_set, &candidate_set[target_index-1], conf), &candidate_set[target_index-1]);
+	printf("main: test %i %li %p\n", target_index+1, test(candidate_set, c_size, tmp_evict_set, &candidate_set[target_index+1], conf), &candidate_set[target_index+1]);
 
     freeList(evict_set); // delete eviction set	
     freeList(tmp_evict_set); // delete eviction set	
