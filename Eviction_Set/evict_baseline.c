@@ -643,8 +643,8 @@ static int64_t pick(struct Node* candidate_set, uint64_t base_size, uint64_t *lf
     // iterate over all elements and count
     //for(cur_node = candidate_set, c_size=0; cur_node != NULL; c_size++, cur_node = cur_node->next);
     c_size = (uint64_t) count(candidate_set);
-    
-    for(j = lfsr_rand(lfsr) % c_size, struct Node *cur_node = candidate_set;j>1;j--, cur_node=cur_node->next) c=cur_node->value;
+    struct Node *cur_node;
+    for(j = lfsr_rand(lfsr) % c_size, cur_node = candidate_set;j>1;j--, cur_node=cur_node->next) c=cur_node->value;
     
     
     
