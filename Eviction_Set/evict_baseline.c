@@ -649,12 +649,16 @@ static int64_t pick(struct Node* candidate_set, uint64_t base_size, uint64_t *lf
         if (c==j) break;
         c++;
         cur_node = cur_node->next;
+#ifdef TESTCASE
+
         printf("cur val %lu\n", cur_node->value);
+#endif
     }
     while(cur_node->next != NULL);
 
-    j=cur_node->value;   
-    
+    int64_t ret =(int64_t) cur_node->value;   
+#ifdef TESTCASE
+    printf("return value %li\n", ret);
    /*
     // pick a pseudorandom candidate
     for(uint64_t i=0; i<base_size;i++){         
@@ -674,7 +678,7 @@ static int64_t pick(struct Node* candidate_set, uint64_t base_size, uint64_t *lf
     }*/
     
     // did not find candidate -> nothing to pick
-    return j;
+    return ret;
 }
 
 
