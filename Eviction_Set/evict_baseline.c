@@ -134,7 +134,7 @@ static void create_pointer_chase(void **candidate_set, uint64_t c_size, struct N
  * evict_set, be part of candidate set and picked with lfsr  
  * state in possible range.                              
  * returns candidate index, if none found base_size+1   */
-static int64_t pick(struct Node* evict_set, struct Node* candidate_set, uint64_t base_size, uint64_t *lfsr);
+static int64_t pick(struct Node* candidate_set, uint64_t base_size, uint64_t *lfsr);
 
 /* create minimal eviction set from candidate set for   */
 /* target_adrs in evict_set                             */
@@ -220,12 +220,12 @@ int main(int ac, char **av){
 	// create evict set
     struct Node *tmp_evict_set = create_minimal_eviction_set(candidate_set, c_size, evict_set, target_adrs, conf);
 	
-    printf("main: Eviction set for victim at %p %i\n", target_adrs, tmp_evict_set==NULL);
+    printf("main: Eviction set for target at %p %i\n", target_adrs, tmp_evict_set==NULL);
 
 	printf("main: Indexes in minimal eviction set:\n"); // print indexes of eviction set
 	for(struct Node *it = tmp_evict_set;it!=NULL;it=it->next) printf("-%p, %p, %lu\n", candidate_set[it->value], &candidate_set[it->value], it->value);
 	
-	printf("\nmain: Testing victim adrs %p now: \n", target_adrs);
+	printf("\nmain: Testing target adrs %p now: \n", target_adrs);
 
 	// measure time when cached	
 	load(target_adrs);
@@ -295,7 +295,7 @@ static struct Node *create_minimal_eviction_set(void **candidate_set, uint64_t c
     while(cind_set!=NULL /*&& cnt_e < conf->ways*/){        
         // c <- pick(S) pick candidate index c from candidate set S/cind_set
 		do{
-			c_tmp=pick(evict_set, cind_set, candidate_set_size, &lfsr);
+			c_tmp=pick(cind_set, candidate_set_size, &lfsr);
 		}
         while(c_tmp==-1 || containsValue(evict_set, (uint64_t) c_tmp) || !containsValue(cind_set, (uint64_t) c_tmp)); // prevent picking duplicate candidates and continuing on error
 				
@@ -306,15 +306,8 @@ static struct Node *create_minimal_eviction_set(void **candidate_set, uint64_t c
         // R union S\{c}
         struct Node *combined_set = unionLists(cind_set, evict_set);
    
-        // count amount of elements in combined_set
-        cnt=count(combined_set);
         // if not TEST(R union S\{c}), x)  
 		// if removing c results in not evicting x anymore, add c to current eviction set    
-		if (cnt==cnt_e) {
-            printf("create_minimal_eviction_set: finished with cnt==cnt_e\n");
-            break; 
-        }// no candidates left -> end (eviction_set==combined_set)
-			
 		if(!test(candidate_set, candidate_set_size, combined_set, target_adrs, conf)){
             evict_set = addElement(evict_set, c);
             cnt_e++; // added elem to evict set -> if enough, evict_set complete
@@ -631,7 +624,7 @@ static void create_pointer_chase(void **candidate_set, uint64_t c_size, struct N
 
 }
 
-static int64_t pick(struct Node* evict_set, struct Node* candidate_set, uint64_t base_size, uint64_t *lfsr) {
+static int64_t pick(struct Node* candidate_set, uint64_t base_size, uint64_t *lfsr) {
     // uninitialized parameters
     if (lfsr==NULL){
 		printf("pick: lfsr is NULL!\n");
@@ -646,12 +639,18 @@ static int64_t pick(struct Node* evict_set, struct Node* candidate_set, uint64_t
 		return -1;
 	} 
 	
-    uint64_t c, j, c_size; // c candidate, j index, c_size current candidate set size
-    struct Node* cur_node;
+    uint64_t c=-1, j, c_size; // c picked candidate, j index in candidate_set, c_size current candidate set size
+    struct Node *cur_node;
     // get candidate set size  
     // iterate over all elements and count
-    for(cur_node = candidate_set, c_size=0; cur_node != NULL; c_size++, cur_node = cur_node->next);
-   
+    //for(cur_node = candidate_set, c_size=0; cur_node != NULL; c_size++, cur_node = cur_node->next);
+    c_size = (uint64_t) count(candidate_set);
+    
+    for(j = lfsr_rand(lfsr) % c_size, cur_node = candidate_set;j>0;j--, cur_node=cur_node->next) c=cur_node->value;
+    
+    
+    
+   /*
     // pick a pseudorandom candidate
     for(uint64_t i=0; i<base_size;i++){         
         // pick pseudo-random candidate by index from candidate_set
@@ -667,10 +666,10 @@ static int64_t pick(struct Node* evict_set, struct Node* candidate_set, uint64_t
             if (cur_node->value == c) break; // need new candidate
         }
         if(cur_node == NULL && c<base_size) return c; // no match in eviction set (no break before last), c<base_size since I got very odd return values...
-    }
+    }*/
+    
     // did not find candidate -> nothing to pick
-	printf("pick: no candidate found for evict set %p and candidate set %p and base size %lu with lfsr %p!\n", evict_set, candidate_set, base_size, lfsr);
-    return -1;
+    return c;
 }
 
 

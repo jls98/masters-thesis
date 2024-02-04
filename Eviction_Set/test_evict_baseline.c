@@ -74,16 +74,16 @@ void test_pick(){
     printf("\nTesting pick...\n\n");
     
     // init (evict|cand) sets
-    struct Node* evict_set = initLinkedList();
+    //struct Node* evict_set = initLinkedList();
     struct Node* candidate_set1 = initLinkedList();
     struct Node* candidate_set2 = initLinkedList();
     struct Node* empty_set = initLinkedList();
     
-    evict_set = addElement(evict_set, 0);
-    evict_set = addElement(evict_set, 5);
-    evict_set = addElement(evict_set, 2);
-    evict_set = addElement(evict_set, 7);
-    evict_set = addElement(evict_set, 3);
+   // evict_set = addElement(evict_set, 0);
+   // evict_set = addElement(evict_set, 5);
+   // evict_set = addElement(evict_set, 2);
+   // evict_set = addElement(evict_set, 7);
+   // evict_set = addElement(evict_set, 3);
     
 	// just add something
     candidate_set1 = addElement(candidate_set1, 1); 
@@ -93,18 +93,18 @@ void test_pick(){
     uint64_t lfsr = lfsr_create();
     
     // test uninitialized params
-    CU_ASSERT_EQUAL(pick(evict_set, candidate_set1, base_size, NULL), -1); // lfsr
-    CU_ASSERT_EQUAL(pick(evict_set, candidate_set1, 0, &lfsr), -1);	// base candidate set empty -> size = 0
-    CU_ASSERT_EQUAL(pick(evict_set, empty_set, base_size, &lfsr), -1); // empty candidate set
+    CU_ASSERT_EQUAL(pick(candidate_set1, base_size, NULL), -1); // lfsr
+    CU_ASSERT_EQUAL(pick(candidate_set1, 0, &lfsr), -1);	// base candidate set empty -> size = 0
+    CU_ASSERT_EQUAL(pick(empty_set, base_size, &lfsr), -1); // empty candidate set
     
     // test no candidate possible
     // one duplicate element left in candidate set
-    candidate_set2 = addElement(candidate_set2, 5);
-    CU_ASSERT_EQUAL(pick(evict_set, candidate_set2, base_size, &lfsr), -1); 
+   // candidate_set2 = addElement(candidate_set2, 5);
+    //CU_ASSERT_EQUAL(pick(evict_set, candidate_set2, base_size, &lfsr), -1); 
 
     candidate_set2 = addElement(candidate_set2, 65);
     // regular, 1 valid candidate option left
-    int64_t val_tmp = pick(evict_set, candidate_set2, base_size, &lfsr);
+    int64_t val_tmp = pick(candidate_set2, base_size, &lfsr);
 	uint64_t val = val_tmp != -1 ? (uint64_t) val_tmp : 0;
     CU_ASSERT_EQUAL(val, 65);  
     if (val != 65) printf("val65 %lx\n", val);
@@ -112,7 +112,7 @@ void test_pick(){
     candidate_set2 = addElement(candidate_set2, 67);
     candidate_set2 = addElement(candidate_set2, 69);
     candidate_set2 = addElement(candidate_set2, 66);
-    val = pick(evict_set, candidate_set2, base_size, &lfsr);
+    val = pick(candidate_set2, base_size, &lfsr);
     
     // TODO sometimes fail
     CU_ASSERT_TRUE(val > 64);
