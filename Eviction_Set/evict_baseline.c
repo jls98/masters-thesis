@@ -673,7 +673,7 @@ static int64_t pick(struct Node* candidate_set, uint64_t base_size, uint64_t *lf
     }*/
     
     // did not find candidate -> nothing to pick
-    return c;
+    return j;
 }
 
 
