@@ -124,7 +124,6 @@ void test_pick(){
     freeList(candidate_set1);
     freeList(candidate_set2);
     freeList(empty_set);
-    freeList(evict_set);
     printf("     ... finished!\n");
 }
 
