@@ -649,6 +649,7 @@ static int64_t pick(struct Node* candidate_set, uint64_t base_size, uint64_t *lf
         if (c==j) break;
         c++;
         cur_node = cur_node->next;
+        printf("cur val %lu\n", cur_node->value);
     }
     while(cur_node->next != NULL);
 
