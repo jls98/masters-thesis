@@ -660,9 +660,9 @@ static int64_t pick(struct Node* candidate_set, uint64_t base_size, uint64_t *lf
     while(cur_node->next != NULL);
 
     int64_t ret =(int64_t) cur_node->value;   
-#ifdef TESTCASE
+// #ifdef TESTCASE
     printf("return value %li\n", ret);
-#endif
+// #endif
    /*
     // pick a pseudorandom candidate
     for(uint64_t i=0; i<base_size;i++){         
