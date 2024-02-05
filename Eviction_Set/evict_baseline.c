@@ -5,37 +5,10 @@
 #include <x86intrin.h>
 #include <time.h>
 
-// TODO settings in struct Config
-/* threshold values for loading 1 adrs                  */
-// IntelGen12 e core
-#define THRESHOLD_SINGLE_L1D_E12 60      // ~2.2/ 61<60 on single measurement / new 200? 140-180, 59 if L1, 60+ if L2 WTF?
-#define THRESHOLD_SINGLE_L2_E12 70      // cached ~<18, 60-64, or 70?
-#define THRESHOLD_SINGLE_LLC_E12 70     // ~52 (?)
-#define THRESHOLD_SINGLE_DEFAULT_E12 THRESHOLD_SINGLE_L1D_E12
-
-// IntelGen12 p core
-#define THRESHOLD_SINGLE_L1D_P12 270      // 2.6/ 31<30 in single measurement / new 150? 60-90
-#define THRESHOLD_SINGLE_L2_P12 9       // <8
-#define THRESHOLD_SINGLE_LLC_P12 50     // ~30 (?)
-#define THRESHOLD_SINGLE_DEFAULT_P12 THRESHOLD_SINGLE_L1D_P12
-
-// IntelGen7 ? lab pc
-#define THRESHOLD_SINGLE_L1D_LAB 45      // ~3.5 / 40-42 zu 46-50 38-42 for L1?
-#define THRESHOLD_SINGLE_L2_LAB 70      // <10, 46, 47, 48 for L2?
-#define THRESHOLD_SINGLE_LLC_LAB 200     // ~30
-#define THRESHOLD_SINGLE_DEFAULT_LAB THRESHOLD_SINGLE_L1D_LAB
-
-//#define THRESHOLD THRESHOLD_SINGLE_L1D_LAB
-
-//#define CACHESIZE_DEFAULT 32768         // L1D e|lab 
-//#define CACHESIZE_DEFAULT OTHERS TODO
-
 // optional arguments for threshold in test functions, defaults to THRESHOLD
 //#define DEF_OR_ARG(value,...) value
 //#define TEST1(addr, size, cand, ...) test1(addr, size, cand, DEF_OR_ARG(__VA_ARGS__ __VA_OPT__(,) THRESHOLD))
 //#define TEST(candidate_set, candidate_set_size, test_index_set, target_adrs, ...) test(candidate_set, candidate_set_size, test_index_set, target_adrs, DEF_OR_ARG(__VA_ARGS__ __VA_OPT__(,) THRESHOLD))
-
-//#define EVICT_SIZE_A 8 // p cores 12/10 ways, else 8 ways
 
 /* #################################################### */
 /* ####################### utils ###################### */
@@ -151,7 +124,7 @@ static void updateConfig(struct Config *conf, uint64_t ways, uint64_t cache_line
 /* #################################################### */
 
 static void load(void *adrs){
-	__asm__ volatile("mov rax, [%0];mov rax, [%0];mov rax, [%0];"::"r" (adrs): "rax", "memory");
+	__asm__ volatile("mov rax, [%0];"::"r" (adrs): "rax", "memory");
 }
 
 static void flush(void *adrs){
@@ -286,7 +259,7 @@ static struct Node *create_minimal_eviction_set(void **candidate_set, uint64_t c
 	
 	clock_t track_start = clock();
     // init lfsr, variable c stores currently picked candidate integer/index value
-    uint64_t lfsr = lfsr_create(), c, cnt_e=0; 
+    uint64_t lfsr = lfsr_create(), c, cnt_e=0, test_temp; 
 	int64_t c_tmp;
 	
 	// create current candidate set containing the indexes of unchecked candidates and initialize with all indexes
@@ -308,11 +281,14 @@ static struct Node *create_minimal_eviction_set(void **candidate_set, uint64_t c
 
         // R union S\{c}
         struct Node *combined_set = unionLists(cind_set, evict_set);
-   
+        test_temp=0;
+        test_temp+=test(candidate_set, candidate_set_size, combined_set, target_adrs, conf);
+        test_temp+=test(candidate_set, candidate_set_size, combined_set, target_adrs, conf);
+        test_temp+=test(candidate_set, candidate_set_size, combined_set, target_adrs, conf);
         // if not TEST(R union S\{c}), x)  
 		// if removing c results in not evicting x anymore, add c to current eviction set    
         // majority voting for test, if 2 out of 3 times evicted -> >1, if only 1 time or less, <=1
-		if((test(candidate_set, candidate_set_size, combined_set, target_adrs, conf)+test(candidate_set, candidate_set_size, combined_set, target_adrs, conf)+test(candidate_set, candidate_set_size, combined_set, target_adrs, conf))<2){
+		if(test_temp<2){
             evict_set = addElement(evict_set, c);
             cnt_e++; // added elem to evict set -> if enough, evict_set complete
 			printf("create_minimal_eviction_set: added adrs %p, cnt_e %lu\n", &candidate_set[evict_set->value], cnt_e);
