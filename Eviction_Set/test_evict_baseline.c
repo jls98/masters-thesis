@@ -5,7 +5,8 @@
 #define reps_test1 100
 
 void test_test1(){
-	struct Config *conf = initConfig(8, 64, 53, 32768, 1000);
+	//struct Config *conf = initConfig(8, 64, 53, 32768, 1000); // i7 L1
+	struct Config *conf = initConfig(8, 64, 58, 262144, 1000);
     wait(1E9);
     printf("\nTesting test1...\n\n");
 	// change to local system and cache in 8 bytes to check, a size of candidate set in index 
