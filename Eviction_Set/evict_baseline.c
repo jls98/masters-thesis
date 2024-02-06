@@ -199,20 +199,6 @@ int main(int ac, char **av){
 	time = probe(target_adrs);
 
 	printf("main: Time loading victim uncached %lu\n", time);
-
-	create_pointer_chase(candidate_set, c_size, tmp_evict_set);
-		
-	if(tmp_evict_set != NULL){
-		void *cur = candidate_set[tmp_evict_set->value];
-		load(target_adrs);
-		for(uint64_t counterj = 0;counterj<conf->ways+2;counterj++){
-			cur=*((void **)cur);
-			load(cur);
-		}
-		
-		time = probe(target_adrs);
-		printf("main: Time loading victim after evict set  %lu\n", time);
-	}
     
     flush(&candidate_set[target_index+8]);
     flush(&candidate_set[target_index+7]);
