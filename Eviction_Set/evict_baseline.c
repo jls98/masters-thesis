@@ -584,9 +584,8 @@ static int64_t pick(struct Node* candidate_set, uint64_t base_size, uint64_t *lf
 	} 
 	
     uint64_t c=0, j, c_size; // c picked candidate, j index in candidate_set, c_size current candidate set size
-    // get candidate set size  
-    // iterate over all elements and count
-    //for(cur_node = candidate_set, c_size=0; cur_node != NULL; c_size++, cur_node = cur_node->next);
+
+    // pick a random number, compute modulo amount of elements left in candidate set and take the value from the node element at the resulting position
     c_size = (uint64_t) count(candidate_set);
     struct Node *cur_node = candidate_set;
     j = lfsr_rand(lfsr) % c_size;
@@ -601,25 +600,6 @@ static int64_t pick(struct Node* candidate_set, uint64_t base_size, uint64_t *lf
 #ifdef TESTCASE
     printf("return value %li\n", ret);
 #endif
-   /*
-    // pick a pseudorandom candidate
-    for(uint64_t i=0; i<base_size;i++){         
-        // pick pseudo-random candidate by index from candidate_set
-        // iterate over rand mod c_size elements in current candidate set list and get index value
-        for(j=0, cur_node=candidate_set;cur_node != NULL;j++,cur_node=cur_node->next){
-            if (j == lfsr_rand(lfsr) % c_size){
-                c=cur_node->value;
-                break;
-            }
-        }
-        // check if its in eviction set
-        for (cur_node=evict_set;cur_node != NULL;cur_node=cur_node->next){
-            if (cur_node->value == c) break; // need new candidate
-        }
-        if(cur_node == NULL && c<base_size) return c; // no match in eviction set (no break before last), c<base_size since I got very odd return values...
-    }*/
-    
-    // did not find candidate -> nothing to pick
     return ret;
 }
 
