@@ -608,8 +608,8 @@ static int64_t test(void **candidate_set, uint64_t candidate_set_size, struct No
 		return -1;
 	} 
 	if (test_index_set==NULL){
-		printf("test: test_index_set is NULL!\n");
-		return -1;
+		//printf("test: test_index_set is NULL!\n");
+		return 0;
 	} 
 	
 	uint64_t test_index_set_size=count(test_index_set);
