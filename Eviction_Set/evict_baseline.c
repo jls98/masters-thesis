@@ -147,7 +147,7 @@ static uint64_t probe(void *adrs){
 }
 
 #define target_index 51200
-#ifndef TESTCASE
+#ifdef EVICT_BASELINE
 int main(int ac, char **av){
     /* preparation */
 	// struct Config *conf = initConfig(8, 64, 53, 32768, 1000); 	// L1 i7
