@@ -3,9 +3,9 @@
 #include <CUnit/Basic.h>
 
 #define reps_test1 100
+static struct Config *conf;
 
 void test_test1(){
-	struct Config *conf = initConfig(8, 64, 53, 32768, 1000); // i7 L1
 	//struct Config *conf = initConfig(8, 64, 58, 262144, 1000);
     
 	//struct Config *conf = initConfig(8, 64, 75, 32768, 1000); 	// L1 i12 // remember taskset -c 8!!
@@ -16,7 +16,7 @@ void test_test1(){
 
     uint64_t c_size = conf->cache_size/2; // two times cache size but as uint64_t
     void **cand_set = mmap(NULL, 10* c_size * sizeof(void *), PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB, -1, 0);
-    void *target_adrs = &cand_set[96000]; // just some random candidate :D
+    void *target_adrs = &cand_set[c_size+8*512]; // just some random candidate :D
 	
     uint64_t lfsr = lfsr_create();
     
@@ -186,7 +186,10 @@ void test_create_pointer_chase(){
     printf("     ... finished!\n");
 }
 
-int main() {
+int main(int ac, char **av) {
+    if (ac==1){
+        conf = initConfig(8, 64, 53, 32768, 1000);
+    }
     CU_initialize_registry();
 
     CU_pSuite suite = CU_add_suite("Test Suite evict_baseline", NULL, NULL);
