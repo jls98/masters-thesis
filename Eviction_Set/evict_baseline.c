@@ -9,6 +9,8 @@
 /* ####################### utils ###################### */
 /* #################################################### */
 
+static uint64_t time_buf;
+
 /* wait for cycles cycles and activate cache            */
 static void wait(uint64_t cycles);
 
@@ -144,7 +146,7 @@ static uint64_t probe(void *adrs){
 	return time;
 }
 
-#define target_index 51201
+#define target_index 51200
 #ifndef TESTCASE
 int main(int ac, char **av){
     /* preparation */
@@ -275,7 +277,8 @@ static struct Node *create_minimal_eviction_set(void **candidate_set, uint64_t c
 		if(test(candidate_set, candidate_set_size, combined_set, target_adrs, conf)==0){
             evict_set = addElement(evict_set, c);
             cnt_e++; // added elem to evict set -> if enough, evict_set complete
-			printf("create_minimal_eviction_set: added adrs %p, cnt_e %lu\n", &candidate_set[evict_set->value], cnt_e);	
+			printf("create: added adrs %p, cnt_e %lu, time %lu\n", &candidate_set[evict_set->value], cnt_e, time_buf);	
+            
         }
     }
     printf("cind set count %i\n", count(cind_set));
@@ -535,6 +538,7 @@ static int64_t test1(void *addr, uint64_t size, void* target_adrs, struct Config
 	//printf("test1: measurement %lu\n", sum/conf->test_reps);
 	printf("test1: took %.6f seconds to finish, measurement %lu\n", ((double) (clock() - start_clk)) / CLOCKS_PER_SEC, sum/conf->test_reps);
 #endif	
+    time_buf = sum/conf->test_reps;
 	return sum/conf->test_reps > conf->threshold? 1 : 0;
 } 
 
