@@ -158,7 +158,7 @@ int main(int ac, char **av){
     
     wait(1E9); // boost cache 
 	uint64_t c_size = conf->cache_size/2; // uint64_t = 4 Bytes -> 16384 indexes address 65536 Bytes
-    uint64_t target_index=c_size+8*512;
+    int64_t target_index=((int64_t) c_size)+8*512;
     // R <- {}
     // allocate space for eviction set
     struct Node* evict_set = initLinkedList();
