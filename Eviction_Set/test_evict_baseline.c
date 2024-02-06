@@ -5,8 +5,8 @@
 #define reps_test1 100
 
 void test_test1(){
-	//struct Config *conf = initConfig(8, 64, 53, 32768, 1000); // i7 L1
-	struct Config *conf = initConfig(8, 64, 58, 262144, 1000);
+	struct Config *conf = initConfig(8, 64, 53, 32768, 1000); // i7 L1
+	//struct Config *conf = initConfig(8, 64, 58, 262144, 1000);
     wait(1E9);
     printf("\nTesting test1...\n\n");
 	// change to local system and cache in 8 bytes to check, a size of candidate set in index 
@@ -26,7 +26,7 @@ void test_test1(){
     for(int i=512;i<4137;i+=512) evict_set_minimal = addElement(evict_set_minimal, i); 
 	create_pointer_chase(cand_set, c_size, evict_set_minimal);
     CU_ASSERT_EQUAL(test1(cand_set[evict_set_minimal->value], c_size, &cand_set[51200], conf), 1); // assure self assignment
-
+    // works on L1, modification TODO
     
     for (uint64_t i=0; i<c_size-1;i+=8) cind_set = addElement(cind_set, i);  // init indexes for candidate set (add all indexes to candidate index set)
           
