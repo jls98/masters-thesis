@@ -5,11 +5,6 @@
 #include <x86intrin.h>
 #include <time.h>
 
-// optional arguments for threshold in test functions, defaults to THRESHOLD
-//#define DEF_OR_ARG(value,...) value
-//#define TEST1(addr, size, cand, ...) test1(addr, size, cand, DEF_OR_ARG(__VA_ARGS__ __VA_OPT__(,) THRESHOLD))
-//#define TEST(candidate_set, candidate_set_size, test_index_set, target_adrs, ...) test(candidate_set, candidate_set_size, test_index_set, target_adrs, DEF_OR_ARG(__VA_ARGS__ __VA_OPT__(,) THRESHOLD))
-
 /* #################################################### */
 /* ####################### utils ###################### */
 /* #################################################### */
@@ -149,8 +144,6 @@ static uint64_t probe(void *adrs){
 	return time;
 }
 // optional argument 1 cache size
-// evict_baseline target_adrs BASE_SIZE
-#define target_index 51200
 #ifndef TESTCASE
 int main(int ac, char **av){
     /* preparation */
@@ -176,13 +169,6 @@ int main(int ac, char **av){
 	}
 	
 	printf("main: test %li\n", test(candidate_set, c_size, evict_set, target_adrs, conf)); // works
-
-	// manual test (dont work even though test = 1 !!!):
-	load(target_adrs);
-	for(struct Node *it = evict_set;it!=NULL;it=it->next){
-		load(&candidate_set[it->value]);
-	}
-	printf("main: probe %lu\n", probe(target_adrs));
 	
 	for(struct Node *it = evict_set;it!=NULL;it=it->next) printf("-%p, %p, %lu\n", candidate_set[it->value], &candidate_set[it->value], it->value);
 	
@@ -259,7 +245,7 @@ static struct Node *create_minimal_eviction_set(void **candidate_set, uint64_t c
 	
 	clock_t track_start = clock();
     // init lfsr, variable c stores currently picked candidate integer/index value
-    uint64_t lfsr = lfsr_create(), c, cnt_e=0, test_temp; 
+    uint64_t lfsr = lfsr_create(), c, cnt_e=0; 
 	int64_t c_tmp;
 	
 	// create current candidate set containing the indexes of unchecked candidates and initialize with all indexes
@@ -281,36 +267,14 @@ static struct Node *create_minimal_eviction_set(void **candidate_set, uint64_t c
 
         // R union S\{c}
         struct Node *combined_set = unionLists(cind_set, evict_set);
-        test_temp=0;
-        test_temp+=test(candidate_set, candidate_set_size, combined_set, target_adrs, conf);
-        test_temp+=test(candidate_set, candidate_set_size, combined_set, target_adrs, conf);
-        test_temp+=test(candidate_set, candidate_set_size, combined_set, target_adrs, conf);
+
         // if not TEST(R union S\{c}), x)  
 		// if removing c results in not evicting x anymore, add c to current eviction set    
         // majority voting for test, if 2 out of 3 times evicted -> >1, if only 1 time or less, <=1
 		if(test(candidate_set, candidate_set_size, combined_set, target_adrs, conf)==0){
             evict_set = addElement(evict_set, c);
             cnt_e++; // added elem to evict set -> if enough, evict_set complete
-			printf("create_minimal_eviction_set: added adrs %p, cnt_e %lu\n", &candidate_set[evict_set->value], cnt_e);
-			//printf("tmp eviction set contains:\n");
-			//for(struct Node *it = evict_set;it!=NULL;it=it->next) printf("-%p, %p, %lu\n", candidate_set[it->value], &candidate_set[it->value], it->value);
-          
-            /*// test if its an eviction set
-            void *cur = &candidate_set[evict_set->value];
-
-            load(target_adrs);
-
-            for(uint64_t counterj = 0;counterj<100;counterj++){ // 100 is random
-                cur=*((void **)cur);
-                load(cur);
-
-            }
-            uint64_t time = probe(target_adrs);
-            printf("Time loading victim after evict set  %lu\n", time);		
-            if(time>conf->threshold) {
-            
-                break;
-            }	*/		
+			printf("create_minimal_eviction_set: added adrs %p, cnt_e %lu\n", &candidate_set[evict_set->value], cnt_e);	
         }
     }
     printf("cind set count %i\n", count(cind_set));
