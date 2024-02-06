@@ -210,9 +210,9 @@ int main(int ac, char **av){
     flush(&candidate_set[target_index+7]);
     flush(&candidate_set[target_index]);
 	printf("main: count %i\n", count(tmp_evict_set));
-	printf("main: test %i %li %p\n", target_index, test(candidate_set, c_size, tmp_evict_set, &candidate_set[target_index], conf), &candidate_set[target_index]);
-	printf("main: test %i %li %p\n", target_index+7, test(candidate_set, c_size, tmp_evict_set, &candidate_set[target_index+7], conf), &candidate_set[target_index+7]);
-	printf("main: test %i %li %p\n", target_index+8, test(candidate_set, c_size, tmp_evict_set, &candidate_set[target_index+8], conf), &candidate_set[target_index+8]);
+	printf("main: test %li %li %p\n", target_index, test(candidate_set, c_size, tmp_evict_set, &candidate_set[target_index], conf), &candidate_set[target_index]);
+	printf("main: test %li %li %p\n", target_index+7, test(candidate_set, c_size, tmp_evict_set, &candidate_set[target_index+7], conf), &candidate_set[target_index+7]);
+	printf("main: test %li %li %p\n", target_index+8, test(candidate_set, c_size, tmp_evict_set, &candidate_set[target_index+8], conf), &candidate_set[target_index+8]);
 
     freeList(evict_set); // delete eviction set	
     freeList(tmp_evict_set); // delete eviction set	
