@@ -144,7 +144,7 @@ static uint64_t probe(void *adrs){
 	return time;
 }
 
-#define target_index 51200
+#define target_index 51201
 #ifndef TESTCASE
 int main(int ac, char **av){
     /* preparation */
