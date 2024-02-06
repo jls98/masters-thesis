@@ -278,10 +278,10 @@ static struct Node *create_minimal_eviction_set(void **candidate_set, uint64_t c
             evict_set = addElement(evict_set, c);
             cnt_e++; // added elem to evict set -> if enough, evict_set complete
 			printf("create: added adrs %p, cnt_e %lu, time %lu\n", &candidate_set[evict_set->value], cnt_e, time_buf);	
-            if(cnt_e >= conf->ways && test(candidate_set, candidate_set_size, evict_set, target_adrs, conf)==1){
+            /*if(cnt_e >= conf->ways && test(candidate_set, candidate_set_size, evict_set, target_adrs, conf)==1){
                 printf("creation: finished\n");
                 break;
-            }
+            }*/
           
         }
     }
