@@ -150,7 +150,7 @@ static uint64_t probe(void *adrs){
 #ifndef TESTCASE
 int main(int ac, char **av){
     /* preparation */
-	struct Config *conf = initConfig(8, 64, 52, 32768, 1000); 	// DEFAULT TODO change
+	struct Config *conf = initConfig(8, 64, 55, 32768, 1000); 	// DEFAULT TODO change
     wait(1E9); // boost cache 
 	uint64_t c_size = conf->cache_size/2; // uint64_t = 4 Bytes -> 16384 indexes address 65536 Bytes
     // R <- {}
