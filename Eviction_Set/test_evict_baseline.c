@@ -5,10 +5,10 @@
 #define reps_test1 100
 
 void test_test1(){
-	// struct Config *conf = initConfig(8, 64, 53, 32768, 1000); // i7 L1
+	struct Config *conf = initConfig(8, 64, 53, 32768, 1000); // i7 L1
 	//struct Config *conf = initConfig(8, 64, 58, 262144, 1000);
     
-	struct Config *conf = initConfig(8, 64, 75, 32768, 1000); 	// L1 i12 // remember taskset -c 8!!
+	//struct Config *conf = initConfig(8, 64, 75, 32768, 1000); 	// L1 i12 // remember taskset -c 8!!
 
     wait(1E9);
     printf("\nTesting test1...\n\n");
