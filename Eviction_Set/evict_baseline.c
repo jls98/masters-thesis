@@ -248,8 +248,7 @@ static struct Node *create_minimal_eviction_set(void **candidate_set, uint64_t c
     for (uint64_t i=0; i<candidate_set_size-1;i+=8) cind_set = addElement(cind_set, i); 
     
     // while |R| < a and cind still contains possible and unchecked candidates
-    //while(a_tmp < EVICT_SIZE_A && cind_set!=NULL){   // TODO change back     
-    while(cind_set!=NULL /*&& cnt_e < conf->ways*/){        
+    while(cind_set!=NULL && cnt_e < conf->ways){        
         // c <- pick(S) pick candidate index c from candidate set S/cind_set
 		do{
 			c_tmp=pick(cind_set, candidate_set_size, &lfsr);
@@ -482,7 +481,7 @@ static int64_t test1(void *addr, uint64_t size, void* target_adrs, struct Config
 		return -1;
 	} 	
 	
-#ifdef TESTCASE
+#ifdef TEST_EVICT_BASELINE
 	clock_t start_clk = clock();
 #endif	
 	volatile uint64_t time, sum=0;
@@ -524,7 +523,7 @@ static int64_t test1(void *addr, uint64_t size, void* target_adrs, struct Config
 		);
 		sum +=time;
 	}
-#ifdef TESTCASE
+#ifdef TEST_EVICT_BASELINE
 	//printf("test1: measurement %lu\n", sum/conf->test_reps);
 	printf("test1: took %.6f seconds to finish, measurement %lu\n", ((double) (clock() - start_clk)) / CLOCKS_PER_SEC, sum/conf->test_reps);
 #endif	
@@ -533,7 +532,7 @@ static int64_t test1(void *addr, uint64_t size, void* target_adrs, struct Config
 } 
 
 static void create_pointer_chase(void **candidate_set, uint64_t c_size, struct Node* set){
-#ifdef TESTCASE
+#ifdef TEST_EVICT_BASELINE
 	clock_t start = clock();
 #endif
 	if (set == NULL) {
@@ -591,7 +590,7 @@ static int64_t pick(struct Node* candidate_set, uint64_t base_size, uint64_t *lf
     while(cur_node->next != NULL);
 
     int64_t ret =(int64_t) cur_node->value;   
-#ifdef TESTCASE
+#ifdef TEST_EVICT_BASELINE
     printf("return value %li\n", ret);
 #endif
     return ret;
