@@ -153,8 +153,7 @@ int main(int ac, char **av){
 	// struct Config *conf = initConfig(8, 64, 53, 32768, 1000); 	// L1 i7
 	// struct Config *conf = initConfig(8, 64, 58, 262144, 1000); 	// L2 i7
     
-	struct Config *conf = initConfig(8, 64, 36, 32768, 1000); 	// L1 i12
-	// struct Config *conf = initConfig(8, 64, 58, 262144, 1000); 	// L2 i7
+	struct Config *conf = initConfig(8, 64, 75, 32768, 1000); 	// L1 i12 // remember taskset -c 8!!
     wait(1E9); // boost cache 
 	uint64_t c_size = conf->cache_size/2; // uint64_t = 4 Bytes -> 16384 indexes address 65536 Bytes
     // R <- {}
