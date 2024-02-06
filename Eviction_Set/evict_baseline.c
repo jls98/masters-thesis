@@ -143,7 +143,8 @@ static uint64_t probe(void *adrs){
 	);
 	return time;
 }
-// optional argument 1 cache size
+
+#define target_index 51200
 #ifndef TESTCASE
 int main(int ac, char **av){
     /* preparation */
