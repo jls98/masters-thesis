@@ -146,7 +146,6 @@ static uint64_t probe(void *adrs){
 	return time;
 }
 
-static uint64_t target_index;
 #ifdef EVICT_BASELINE
 int main(int ac, char **av){
     /* preparation */
@@ -159,7 +158,7 @@ int main(int ac, char **av){
     
     wait(1E9); // boost cache 
 	uint64_t c_size = conf->cache_size/2; // uint64_t = 4 Bytes -> 16384 indexes address 65536 Bytes
-    target_index=c_size+8*512;
+    uint64_t target_index=c_size+8*512;
     // R <- {}
     // allocate space for eviction set
     struct Node* evict_set = initLinkedList();
@@ -249,7 +248,7 @@ static struct Node *create_minimal_eviction_set(void **candidate_set, uint64_t c
     for (uint64_t i=0; i<candidate_set_size-1;i+=8) cind_set = addElement(cind_set, i); 
     
     // while |R| < a and cind still contains possible and unchecked candidates
-    while(cind_set!=NULL && cnt_e < conf->ways){        
+    while(cind_set!=NULL && cnt_e < conf->ways && test(candidate_set, candidate_set_size, evict_set, target_adrs, conf)){        
         // c <- pick(S) pick candidate index c from candidate set S/cind_set
 		do{
 			c_tmp=pick(cind_set, candidate_set_size, &lfsr);
