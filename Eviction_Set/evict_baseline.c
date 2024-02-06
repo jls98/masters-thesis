@@ -150,10 +150,13 @@ static uint64_t probe(void *adrs){
 #ifdef EVICT_BASELINE
 int main(int ac, char **av){
     /* preparation */
-	// struct Config *conf = initConfig(8, 64, 53, 32768, 1000); 	// L1 i7
+    
+	struct Config *conf = initConfig(8, 64, 53, 32768, 1000); 	// L1 i7
 	// struct Config *conf = initConfig(8, 64, 58, 262144, 1000); 	// L2 i7
     
-	struct Config *conf = initConfig(8, 64, 75, 32768, 1000); 	// L1 i12 // remember taskset -c 8!!
+	// struct Config *conf = initConfig(8, 64, 75, 32768, 1000); 	// L1 i12 // remember taskset -c 8!!
+    
+    
     wait(1E9); // boost cache 
 	uint64_t c_size = conf->cache_size/2; // uint64_t = 4 Bytes -> 16384 indexes address 65536 Bytes
     // R <- {}
@@ -265,18 +268,12 @@ static struct Node *create_minimal_eviction_set(void **candidate_set, uint64_t c
         // majority voting for test, if 2 out of 3 times evicted -> >1, if only 1 time or less, <=1
 		if(test(candidate_set, candidate_set_size, combined_set, target_adrs, conf)==0){
             evict_set = addElement(evict_set, c);
-            cnt_e++; // added elem to evict set -> if enough, evict_set complete
-			printf("create: added adrs %p, cnt_e %lu, time %lu\n", &candidate_set[evict_set->value], cnt_e, time_buf);	
-            /*if(cnt_e >= conf->ways && test(candidate_set, candidate_set_size, evict_set, target_adrs, conf)==1){
-                printf("creation: finished\n");
-                break;
-            }*/
-          
+            cnt_e++; // added elem to evict set -> if enough, evict_set complete          
         }
     }
     printf("cind set count %i\n", count(cind_set));
-    if (cind_set==NULL && cnt_e < conf->ways) printf("create_minimal_eviction_set: not successful!\n");
-	//printf("a_tmp Elements in eviction set %lu, cind_set empty %i, evict_set empty %i\n", a_tmp, cind_set==NULL, evict_set==NULL);
+    if (cind_set==NULL && cnt_e < conf->ways) printf("create_minimal_eviction_set: not successful, eviction set contains less elements than cache ways!\n");
+    
     /* baseline algorithm */
 	printList(evict_set);
 	
