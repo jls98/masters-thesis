@@ -209,7 +209,7 @@ int main(int ac, char **av){
     flush(&candidate_set[target_index+8]);
     flush(&candidate_set[target_index+7]);
     flush(&candidate_set[target_index]);
-	printf("main: count %i\n", count(tmp_evict_set));
+	printf("main: tmp_evict_set contains %i elements\n", count(tmp_evict_set));
 	printf("main: test %li %li %p\n", target_index, test(candidate_set, c_size, tmp_evict_set, &candidate_set[target_index], conf), &candidate_set[target_index]);
 	printf("main: test %li %li %p\n", target_index+7, test(candidate_set, c_size, tmp_evict_set, &candidate_set[target_index+7], conf), &candidate_set[target_index+7]);
 	printf("main: test %li %li %p\n", target_index+8, test(candidate_set, c_size, tmp_evict_set, &candidate_set[target_index+8], conf), &candidate_set[target_index+8]);
@@ -270,7 +270,7 @@ static struct Node *create_minimal_eviction_set(void **candidate_set, uint64_t c
             cnt_e++; // added elem to evict set -> if enough, evict_set complete          
         }
     }
-    printf("cind set count %i\n", count(cind_set));
+    printf("cind set contains still %i elements\n", count(cind_set));
     if (cind_set==NULL && cnt_e < conf->ways) printf("create_minimal_eviction_set: not successful, eviction set contains less elements than cache ways!\n");
     
     /* baseline algorithm */
