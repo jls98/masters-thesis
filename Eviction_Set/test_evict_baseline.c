@@ -24,7 +24,7 @@ void test_test1(){
     struct Node* evict_set_minimal = initLinkedList();
     
     // 512, 1024, 1536, 2048, 2560, 3112, 3624, 4136  index +1 == 8 bytes
-    for(int i=512;i<4137;i+=512) evict_set_minimal = addElement(evict_set_minimal, i); 
+    for(int i=1;i<8;i+=1) evict_set_minimal = addElement(evict_set_minimal, i*(conf->cache_size/(conf->ways*conf->cache_line_size))); 
 	create_pointer_chase(cand_set, c_size, evict_set_minimal);
     
 	// test with a minimal eviction set 4096 bytes apart
