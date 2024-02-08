@@ -164,6 +164,7 @@ int main(int ac, char **av){
 		if (conf_choice==23) conf = initConfig(8, 64, 58, 262144, 1000); 	// L3e i12 TODO or unneeded
 		if (conf==NULL){
 			printf("Error, no valid choice, XY, whereby X is the CPU (1:i7, 2:i12) and Y the cache Level (1-3)");
+			return;
 		}
 	}
 	if (ac==6){ // self, ways, cache line size, threshold, cache size, test reps
