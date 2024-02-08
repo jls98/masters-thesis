@@ -59,21 +59,22 @@ void test_test1(){
 	// test with empty candidate set
     CU_ASSERT_EQUAL(test1(cand_set[evict_set1->value], 0, target_adrs, conf), -1); 
     
-	
+	// test with invalid target address
 	CU_ASSERT_EQUAL(test1(cand_set[evict_set1->value], c_size, NULL, conf), -1); 
+	
+	// test with uninitialized config
     CU_ASSERT_EQUAL(test1(cand_set[evict_set1->value], c_size, target_adrs, NULL), -1); 
     
-    // regular case (full huge page should evict (hopefully))
+    // dumb test, double cache size sized eviction set should evict
     for (int i=0;i<reps_test1;i++){
         __asm__ volatile("lfence");
         CU_ASSERT_EQUAL(test1(cand_set[evict_set1->value], c_size, target_adrs, conf), 1); 
     }
     
    
-    evict_set2 = addElement(evict_set2, 64);
-    evict_set2 = addElement(evict_set2, 24);
-    evict_set2 = addElement(evict_set2, 8);
-    create_pointer_chase(cand_set, c_size, evict_set2); // eviction set far too small -> no eviction of candidate
+	for(int i=1;i<63;i++) evict_set2 = addElement(evict_set2, i*8);
+		
+    create_pointer_chase(cand_set, c_size, evict_set2); // eviction set on wrong offsets -> should not evict!
     for (int i=0;i<reps_test1;i++) {
         __asm__ volatile("lfence");
         CU_ASSERT_EQUAL(test1(cand_set[evict_set2->value], 3, target_adrs, conf), 0); // assure self assignment
