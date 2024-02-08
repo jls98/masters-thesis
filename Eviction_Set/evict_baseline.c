@@ -595,11 +595,7 @@ static int64_t pick(struct Node* candidate_set, uint64_t base_size, uint64_t *lf
     }
     while(cur_node->next != NULL);
 
-    int64_t ret =(int64_t) cur_node->value;   
-#ifdef TEST_EVICT_BASELINE
-    printf("return value %li\n", ret);
-#endif
-    return ret;
+    return (int64_t) cur_node->value;
 }
 
 
