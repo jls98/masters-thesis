@@ -2,7 +2,7 @@
 #include <CUnit/CUnit.h>
 #include <CUnit/Basic.h>
 
-#define reps_test1 10 // 1000 -> awkward behavior
+#define reps_test1 20 // 1000 -> awkward behavior
 static struct Config *conf;
 
 void test_test1(){
