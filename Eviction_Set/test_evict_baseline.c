@@ -34,7 +34,7 @@ void test_test1(){
 	// works on L1, modification for other setups might be a TODO
  
 
-	for(int i=1;i<63;i++){
+	for(int i=1;i<64;i++){
 		evict_set = addElement(evict_set, i*8);
 		evict_set = addElement(evict_set, (64+i)*8);
 	} 
@@ -46,7 +46,7 @@ void test_test1(){
 		create_pointer_chase(cand_set, c_size, evict_set); 
         __asm__ volatile("lfence");
 		// test no eviction
-        CU_ASSERT_EQUAL(test1(cand_set[evict_set->value], 3, target_adrs, conf), 0); // assure self assignment
+        CU_ASSERT_EQUAL(test1(cand_set[evict_set->value], 126, target_adrs, conf), 0); // assure self assignment
 		munmap(cand_set, 10* c_size * sizeof(void *));
     }
 	
