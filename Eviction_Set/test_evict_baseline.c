@@ -64,15 +64,9 @@ void test_test1(){
 	// test with uninitialized config
     CU_ASSERT_EQUAL(test1(cand_set[evict_set->value], c_size, target_adrs, NULL), -1); 
     
-    
-   
-
-    
     printf("get adrs:\nevictset %p\ncandset %p\ntarget adrs %p\n", &evict_set, &cand_set, target_adrs);
     
-    
     freeList(evict_set);
-	free(conf);
 	munmap(cand_set, c_size);
     printf("     ... finished!\n");
 }
@@ -182,7 +176,7 @@ int main(int ac, char **av) {
 	if (ac==2){
 		int conf_choice = strtol(av[1], NULL, 10);
 		if (conf_choice==11) conf = initConfig(8, 64, 54, 32768, 10000); 	// L1 i7
-		if (conf_choice==12) conf = initConfig(8, 64, 58, 262144, 10000); 	// L2 i7
+		if (conf_choice==12) conf = initConfig(8, 64, 58, 262144, 5000); 	// L2 i7
 		if (conf_choice==13) conf = initConfig(8, 64, 58, 262144, 10000); 	// L3 i7 TODO or unneeded
 		
 		if (conf_choice==21) conf = initConfig(8, 64, 75, 32768, 10000); 	// L1e i12
@@ -206,6 +200,7 @@ int main(int ac, char **av) {
 
     CU_basic_run_tests();
     CU_cleanup_registry();
-
+	free(conf);
+	
     return 0;
 }
