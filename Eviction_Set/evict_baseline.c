@@ -498,7 +498,9 @@ static int64_t test1(void *addr, uint64_t size, void* target_adrs, struct Config
 		return -1;
 	} 	
 	
+	printf("test1: testing now target_adrs %p\n", target_adrs);
 #ifdef TEST_EVICT_BASELINE
+	
 	clock_t start_clk = clock();
 #endif	
 	volatile uint64_t time, sum=0;
