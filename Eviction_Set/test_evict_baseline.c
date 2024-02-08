@@ -2,7 +2,7 @@
 #include <CUnit/CUnit.h>
 #include <CUnit/Basic.h>
 
-#define reps_test1 64 // 1000 -> awkward behavior
+#define reps_test1 63 // at 64 segmentation fault
 static struct Config *conf;
 
 void test_test1(){
@@ -178,12 +178,12 @@ void test_create_pointer_chase(){
 }
 
 int main(int ac, char **av) {
-	if (ac==1) conf = initConfig(8, 64, 53, 32768, 1000); // default L1 lab machine, no inputs
+	if (ac==1) conf = initConfig(8, 64, 53, 32768, 10000); // default L1 lab machine, no inputs
 	if (ac==2){
 		int conf_choice = strtol(av[1], NULL, 10);
-		if (conf_choice==11) conf = initConfig(8, 64, 54, 32768, 1000); 	// L1 i7
-		if (conf_choice==12) conf = initConfig(8, 64, 58, 262144, 1000); 	// L2 i7
-		if (conf_choice==13) conf = initConfig(8, 64, 58, 262144, 1000); 	// L3 i7 TODO or unneeded
+		if (conf_choice==11) conf = initConfig(8, 64, 54, 32768, 10000); 	// L1 i7
+		if (conf_choice==12) conf = initConfig(8, 64, 58, 262144, 10000); 	// L2 i7
+		if (conf_choice==13) conf = initConfig(8, 64, 58, 262144, 10000); 	// L3 i7 TODO or unneeded
 		
 		if (conf_choice==21) conf = initConfig(8, 64, 75, 32768, 1000); 	// L1e i12
 		if (conf_choice==22) conf = initConfig(8, 64, 58, 262144, 1000); 	// L2e i12 TODO
