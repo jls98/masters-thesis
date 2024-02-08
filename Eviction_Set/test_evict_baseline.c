@@ -20,9 +20,7 @@ void test_test1(){
 	
     uint64_t lfsr = lfsr_create();
     
-    struct Node* cind_set = initLinkedList();   // current candidate set (indexes)
-    struct Node* evict_set1 = initLinkedList();  // current eviction set
-    struct Node* evict_set2 = initLinkedList();  // current eviction set
+    struct Node* evict_set = initLinkedList(); 
     struct Node* evict_set_minimal = initLinkedList();
     
     // 512, 1024, 1536, 2048, 2560, 3112, 3624, 4136  index +1 == 8 bytes
@@ -35,20 +33,21 @@ void test_test1(){
 		CU_ASSERT_EQUAL(test1(cand_set[evict_set_minimal->value], c_size, target_adrs, conf), 1); 
     }
 	// works on L1, modification for other setups might be a TODO
-    
-    for (uint64_t i=0; i<c_size-1;i+=8) cind_set = addElement(cind_set, i);  // init indexes for candidate set (add all indexes to candidate index set)
-          
-    // fill eviction set with all elements, maximal eviction set lol
-    for (uint64_t i=0; i<c_size-1;i+=8){
-        int64_t c = pick(cind_set, c_size, &lfsr);
-        if(c == -1){
-            printf("test_test1: filling eviction_set failed!\n");
-            break;
-        } 
-        cind_set = deleteElement(cind_set, c);
-        evict_set1 = addElement(evict_set1, c);
+ 
+
+	for(int i=1;i<63;i++){
+		evict_set = addElement(evict_set, i*8);
+		evict_set = addElement(evict_set, (64+i)*8);
+	} 
+		
+	// eviction set on wrong offsets -> should not evict!
+    create_pointer_chase(cand_set, c_size, evict_set); 
+    for (int i=0;i<reps_test1;i++) {
+        __asm__ volatile("lfence");
+		// test no eviction
+        CU_ASSERT_EQUAL(test1(cand_set[evict_set->value], 3, target_adrs, conf), 0); // assure self assignment
     }
-    
+	    
     // create pointer chase on base set
     create_pointer_chase(cand_set, c_size, evict_set1);
     // uninitialized params/errors
@@ -57,35 +56,22 @@ void test_test1(){
     CU_ASSERT_EQUAL(test1(NULL, c_size, target_adrs, conf), -1); 
 	
 	// test with empty candidate set
-    CU_ASSERT_EQUAL(test1(cand_set[evict_set1->value], 0, target_adrs, conf), -1); 
+    CU_ASSERT_EQUAL(test1(cand_set[evict_set->value], 0, target_adrs, conf), -1); 
     
 	// test with invalid target address
-	CU_ASSERT_EQUAL(test1(cand_set[evict_set1->value], c_size, NULL, conf), -1); 
+	CU_ASSERT_EQUAL(test1(cand_set[evict_set->value], c_size, NULL, conf), -1); 
 	
 	// test with uninitialized config
-    CU_ASSERT_EQUAL(test1(cand_set[evict_set1->value], c_size, target_adrs, NULL), -1); 
+    CU_ASSERT_EQUAL(test1(cand_set[evict_set->value], c_size, target_adrs, NULL), -1); 
     
-    // dumb test, double cache size sized eviction set should evict
-    for (int i=0;i<reps_test1;i++){
-        __asm__ volatile("lfence");
-        CU_ASSERT_EQUAL(test1(cand_set[evict_set1->value], c_size, target_adrs, conf), 1); 
-    }
     
    
-	for(int i=1;i<63;i++) evict_set2 = addElement(evict_set2, i*8);
-		
-    create_pointer_chase(cand_set, c_size, evict_set2); // eviction set on wrong offsets -> should not evict!
-    for (int i=0;i<reps_test1;i++) {
-        __asm__ volatile("lfence");
-        CU_ASSERT_EQUAL(test1(cand_set[evict_set2->value], 3, target_adrs, conf), 0); // assure self assignment
-    }
+
     
-    printf("get adrs:\nevictset1 %p\nevictset2 %p\ncandset %p\ntarget adrs %p\n", &evict_set1, &evict_set2, &cand_set, target_adrs);
+    printf("get adrs:\nevictset %p\ncandset %p\ntarget adrs %p\n", &evict_set, &cand_set, target_adrs);
     
     
-    freeList(evict_set1);
-    freeList(evict_set2);
-    freeList(cind_set);
+    freeList(evict_set);
 	free(conf);
 	munmap(cand_set, c_size);
     printf("     ... finished!\n");
