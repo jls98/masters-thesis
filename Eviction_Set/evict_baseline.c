@@ -281,7 +281,7 @@ static struct Node *create_minimal_eviction_set(void **candidate_set, uint64_t c
         // if not TEST(R union S\{c}), x)  
 		// if removing c results in not evicting x anymore, add c to current eviction set    
         // majority voting for test, if 2 out of 3 times evicted -> >1, if only 1 time or less, <=1
-		if(test(candidate_set, candidate_set_size, combined_set, target_adrs, conf)==0){
+		if(test(candidate_set, candidate_set_size, combined_set, target_adrs, conf)==0 && test(candidate_set, candidate_set_size, evict_set, target_adrs, conf)==0){
             evict_set = addElement(evict_set, c);
             cnt_e++; // added elem to evict set -> if enough, evict_set complete   
 			printf("when adding element %p, test result was %lu\n", &candidate_set[c], time_buf);
