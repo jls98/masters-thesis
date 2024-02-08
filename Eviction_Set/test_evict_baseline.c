@@ -29,7 +29,7 @@ void test_test1(){
     
 	// test with a minimal eviction set 4096 bytes apart
 	for (int i=0;i<reps_test1;i++){
-        __asm__ volatile("lfence");
+        __asm__ volatile("mfence");
 		CU_ASSERT_EQUAL(test1(cand_set[evict_set_minimal->value], c_size, target_adrs, conf), 1); 
     }
 	// works on L1, modification for other setups might be a TODO
@@ -43,7 +43,7 @@ void test_test1(){
 	// eviction set on wrong offsets -> should not evict!
     create_pointer_chase(cand_set, c_size, evict_set); 
     for (int i=0;i<reps_test1;i++) {
-        __asm__ volatile("lfence");
+        __asm__ volatile("mfence");
 		// test no eviction
         CU_ASSERT_EQUAL(test1(cand_set[evict_set->value], 3, target_adrs, conf), 0); // assure self assignment
     }
