@@ -28,7 +28,7 @@ static struct Config {
 static struct Node {
     uint64_t value;
     struct Node* next;
-} Node = NULL;
+} Node;
 
 /* Function to initialize an empty linked list          */
 static struct Node* initLinkedList();
