@@ -1,6 +1,6 @@
 CC = gcc
 CFLAGS = -Wall -Wextra -masm=intel
-all: task2 evict_baseline test_evict_baseline
+all: evict_baseline test_evict_baseline
 
 workshop3: Cache_Reversing/workshop3.c
 	$(CC) $(CFLAGS) -o build/workshop3  Cache_Reversing/workshop3.c
@@ -34,4 +34,4 @@ execute: utils/execute.c
 
 
 clean:
-	rm -f task2 evict_baseline test_evict_baseline
+	rm -f evict_baseline test_evict_baseline
