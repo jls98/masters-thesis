@@ -21,14 +21,14 @@ static struct Config {
 	uint64_t threshold; // threshold for cache (eg ~45 for L1 on i7)
 	uint64_t cache_size; // cache size in bytes 
 	uint64_t test_reps; // amount of repetitions in test function
-};
+} Config;
 
 /* linked list containing an index and a pointer to     */
 /* the next element                                     */
 static struct Node {
     uint64_t value;
     struct Node* next;
-};
+} Node = NULL;
 
 /* Function to initialize an empty linked list          */
 static struct Node* initLinkedList();
