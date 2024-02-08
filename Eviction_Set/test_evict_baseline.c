@@ -22,10 +22,10 @@ void test_test1(){
     // 512, 1024, 1536, 2048, 2560, 3112, 3624, 4136  index +1 == 8 bytes on L1
     for(int i=1;i<9;i+=1) evict_set_minimal = addElement(evict_set_minimal, i*(conf->cache_size/conf->cache_line_size)); 
     
-	// test with a minimal eviction set 4096 bytes apart
+	// test with a minimal eviction set (4096 bytes apart on L1)
 	for (int i=0;i<reps_test1;i++){
 		cand_set = mmap(NULL, 10* c_size * sizeof(void *), PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB, -1, 0);
-		target_adrs = &cand_set[c_size+8*512]; // just some random candidate :D
+		target_adrs = &cand_set[c_size+4096*2]; // just some random candidate :D
 		create_pointer_chase(cand_set, c_size, evict_set_minimal);
         __asm__ volatile("lfence");
 		CU_ASSERT_EQUAL(test1(cand_set[evict_set_minimal->value], c_size, target_adrs, conf), 1); 
@@ -36,13 +36,13 @@ void test_test1(){
 
 	for(int i=1;i<64;i++){
 		evict_set = addElement(evict_set, i*8);
-		evict_set = addElement(evict_set, (64+i)*8);
+		//evict_set = addElement(evict_set, (64+i)*8);
 	} 
 		
 	// eviction set on wrong offsets -> should not evict!
     for (int i=0;i<reps_test1;i++) {
 		cand_set = mmap(NULL, 10* c_size * sizeof(void *), PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB, -1, 0);
-		target_adrs = &cand_set[c_size+8*512]; // just some random candidate :D
+		target_adrs = &cand_set[c_size+4096*2]; // just some random candidate :D
 		create_pointer_chase(cand_set, c_size, evict_set); 
         __asm__ volatile("lfence");
 		// test no eviction
@@ -52,7 +52,7 @@ void test_test1(){
 	
 	
 	cand_set = mmap(NULL, 10* c_size * sizeof(void *), PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB, -1, 0);
-	target_adrs = &cand_set[c_size+8*512]; // just some random candidate :D
+	target_adrs = &cand_set[c_size+4096*2]; // just some random candidate :D
 	
     // create pointer chase on base set
     create_pointer_chase(cand_set, c_size, evict_set);
