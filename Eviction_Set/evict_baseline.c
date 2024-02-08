@@ -631,9 +631,7 @@ static int64_t test(void **candidate_set, uint64_t candidate_set_size, struct No
 		//printf("test: test_index_set is NULL!\n");
 		return 0;
 	} 
-	
-	uint64_t test_index_set_size=count(test_index_set);
-	
+		
 	// prepare pointer chase between elements from candidate_set indexed by test_index_set 
 	create_pointer_chase(candidate_set, candidate_set_size, test_index_set);
 	
