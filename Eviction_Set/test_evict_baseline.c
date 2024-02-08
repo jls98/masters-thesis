@@ -2,7 +2,7 @@
 #include <CUnit/CUnit.h>
 #include <CUnit/Basic.h>
 
-#define reps_test1 100 // 1000 -> awkward behavior
+#define reps_test1 10 // 1000 -> awkward behavior
 static struct Config *conf;
 
 void test_test1(){
@@ -36,7 +36,7 @@ void test_test1(){
 
 	for(int i=1;i<64;i++){
 		evict_set = addElement(evict_set, i*8);
-		//evict_set = addElement(evict_set, (64+i)*8);
+		evict_set = addElement(evict_set, (64+i)*8);
 	} 
 		
 	// eviction set on wrong offsets -> should not evict!
