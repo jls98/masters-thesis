@@ -2,7 +2,7 @@
 #include <CUnit/CUnit.h>
 #include <CUnit/Basic.h>
 
-#define reps_test1 100
+#define reps_test1 1000
 static struct Config *conf;
 
 void test_test1(){
