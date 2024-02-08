@@ -29,7 +29,7 @@ void test_test1(){
 		create_pointer_chase(cand_set, c_size, evict_set_minimal);
         __asm__ volatile("lfence");
 		CU_ASSERT_EQUAL(test1(cand_set[evict_set_minimal->value], c_size, target_adrs, conf), 1); 
-		munmap(cand_set, c_size);
+		munmap(cand_set, 10* c_size * sizeof(void *));
     }
 	// works on L1, modification for other setups might be a TODO
  
@@ -43,11 +43,11 @@ void test_test1(){
     for (int i=0;i<reps_test1;i++) {
 		cand_set = mmap(NULL, 10* c_size * sizeof(void *), PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB, -1, 0);
 		target_adrs = &cand_set[c_size+8*512]; // just some random candidate :D
-		    create_pointer_chase(cand_set, c_size, evict_set); 
+		create_pointer_chase(cand_set, c_size, evict_set); 
         __asm__ volatile("lfence");
 		// test no eviction
         CU_ASSERT_EQUAL(test1(cand_set[evict_set->value], 3, target_adrs, conf), 0); // assure self assignment
-		munmap(cand_set, c_size);
+		munmap(cand_set, 10* c_size * sizeof(void *));
     }
 	
 	
@@ -73,7 +73,7 @@ void test_test1(){
     printf("get adrs:\nevictset %p\ncandset %p\ntarget adrs %p\n", &evict_set, &cand_set, target_adrs);
     
     freeList(evict_set);
-	munmap(cand_set, c_size);
+	munmap(cand_set, 10* c_size * sizeof(void *));
     printf("     ... finished!\n");
 }
 
