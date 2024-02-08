@@ -6,17 +6,13 @@
 static struct Config *conf;
 
 void test_test1(){
-	//struct Config *conf = initConfig(8, 64, 58, 262144, 1000);
-    
-	//struct Config *conf = initConfig(8, 64, 75, 32768, 1000); 	// L1 i12 // remember taskset -c 8!!
-
     wait(1E9);
     printf("\nTesting test1...\n\n");
 	// change to local system and cache in 8 bytes to check, a size of candidate set in index 
 
     uint64_t c_size = conf->cache_size/2; // two times cache size but as uint64_t
-    void **cand_set = mmap(NULL, 10* c_size * sizeof(void *), PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB, -1, 0);
-    void *target_adrs = &cand_set[c_size+8*512]; // just some random candidate :D
+    void **cand_set;
+    void *target_adrs;
 	
     uint64_t lfsr = lfsr_create();
     
@@ -25,12 +21,15 @@ void test_test1(){
     
     // 512, 1024, 1536, 2048, 2560, 3112, 3624, 4136  index +1 == 8 bytes on L1
     for(int i=1;i<9;i+=1) evict_set_minimal = addElement(evict_set_minimal, i*(conf->cache_size/conf->cache_line_size)); 
-	create_pointer_chase(cand_set, c_size, evict_set_minimal);
     
 	// test with a minimal eviction set 4096 bytes apart
 	for (int i=0;i<reps_test1;i++){
-        __asm__ volatile("mfence");
+		cand_set = mmap(NULL, 10* c_size * sizeof(void *), PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB, -1, 0);
+		target_adrs = &cand_set[c_size+8*512]; // just some random candidate :D
+		create_pointer_chase(cand_set, c_size, evict_set_minimal);
+        __asm__ volatile("lfence");
 		CU_ASSERT_EQUAL(test1(cand_set[evict_set_minimal->value], c_size, target_adrs, conf), 1); 
+		munmap(cand_set, c_size);
     }
 	// works on L1, modification for other setups might be a TODO
  
@@ -41,13 +40,20 @@ void test_test1(){
 	} 
 		
 	// eviction set on wrong offsets -> should not evict!
-    create_pointer_chase(cand_set, c_size, evict_set); 
     for (int i=0;i<reps_test1;i++) {
-        __asm__ volatile("mfence");
+		cand_set = mmap(NULL, 10* c_size * sizeof(void *), PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB, -1, 0);
+		target_adrs = &cand_set[c_size+8*512]; // just some random candidate :D
+		    create_pointer_chase(cand_set, c_size, evict_set); 
+        __asm__ volatile("lfence");
 		// test no eviction
         CU_ASSERT_EQUAL(test1(cand_set[evict_set->value], 3, target_adrs, conf), 0); // assure self assignment
+		munmap(cand_set, c_size);
     }
-	    
+	
+	
+	cand_set = mmap(NULL, 10* c_size * sizeof(void *), PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB, -1, 0);
+	target_adrs = &cand_set[c_size+8*512]; // just some random candidate :D
+	
     // create pointer chase on base set
     create_pointer_chase(cand_set, c_size, evict_set);
     // uninitialized params/errors
