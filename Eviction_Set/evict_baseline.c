@@ -264,7 +264,7 @@ static struct Node *create_minimal_eviction_set(void **candidate_set, uint64_t c
     for (uint64_t i=0; i<candidate_set_size-1;i+=8) cind_set = addElement(cind_set, i); 
     
     // while |R| < a and cind still contains possible and unchecked candidates
-    while(cind_set!=NULL && test(candidate_set, candidate_set_size, evict_set, target_adrs, conf) !=1){        
+    while(cind_set!=NULL /*&& test(candidate_set, candidate_set_size, evict_set, target_adrs, conf) !=1*/){        
         // c <- pick(S) pick candidate index c from candidate set S/cind_set
 		do{
 			c_tmp=pick(cind_set, candidate_set_size, &lfsr);
