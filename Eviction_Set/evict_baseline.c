@@ -150,10 +150,26 @@ static uint64_t probe(void *adrs){
 int main(int ac, char **av){
     /* preparation */
     
-	struct Config *conf = initConfig(8, 64, 53, 32768, 1000); 	// L1 i7
-	// struct Config *conf = initConfig(8, 64, 58, 262144, 1000); 	// L2 i7
-    
-	// struct Config *conf = initConfig(8, 64, 75, 32768, 1000); 	// L1 i12 // remember taskset -c 8!!
+	struct Config *conf=NULL;
+	
+	if (ac==1) conf = initConfig(8, 64, 53, 32768, 1000); // default L1 lab machine, no inputs
+	if (ac==2){
+		int conf_choice = strtol(av[1], NULL, 10);
+		if (conf_choice==11) conf = initConfig(8, 64, 53, 32768, 1000); 	// L1 i7
+		if (conf_choice==12) conf = initConfig(8, 64, 58, 262144, 1000); 	// L2 i7
+		if (conf_choice==13) conf = initConfig(8, 64, 58, 262144, 1000); 	// L3 i7 TODO or unneeded
+		
+		if (conf_choice==21) conf = initConfig(8, 64, 75, 32768, 1000); 	// L1e i12
+		if (conf_choice==22) conf = initConfig(8, 64, 58, 262144, 1000); 	// L2e i12 TODO
+		if (conf_choice==23) conf = initConfig(8, 64, 58, 262144, 1000); 	// L3e i12 TODO or unneeded
+		if (conf==NULL){
+			printf("Error, no valid ")
+		}
+	}
+	if (ac==6){ // self, ways, cache line size, threshold, cache size, test reps
+		conf = initConfig(strtol(av[1], NULL, 10), strtol(av[2], NULL, 10), strtol(av[3], NULL, 10), strtol(av[4], NULL, 10), strtol(av[5], NULL, 10));
+	}
+	
     
     
     wait(1E9); // boost cache 
