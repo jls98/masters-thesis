@@ -49,7 +49,7 @@ void test_test1(){
     }
 	    
     // create pointer chase on base set
-    create_pointer_chase(cand_set, c_size, evict_set1);
+    create_pointer_chase(cand_set, c_size, evict_set);
     // uninitialized params/errors
 
 	// test with invalid candidate set
