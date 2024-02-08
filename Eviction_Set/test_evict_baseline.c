@@ -28,7 +28,7 @@ void test_test1(){
     // 512, 1024, 1536, 2048, 2560, 3112, 3624, 4136  index +1 == 8 bytes
     for(int i=512;i<4137;i+=512) evict_set_minimal = addElement(evict_set_minimal, i); 
 	create_pointer_chase(cand_set, c_size, evict_set_minimal);
-    CU_ASSERT_EQUAL(test1(cand_set[evict_set_minimal->value], c_size, &cand_set[51200], conf), 1); // assure self assignment
+    CU_ASSERT_EQUAL(test1(cand_set[evict_set_minimal->value], c_size, target_adrs, conf), 1); // assure self assignment
     // works on L1, modification TODO
     
     for (uint64_t i=0; i<c_size-1;i+=8) cind_set = addElement(cind_set, i);  // init indexes for candidate set (add all indexes to candidate index set)

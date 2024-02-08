@@ -547,7 +547,7 @@ static int64_t test1(void *addr, uint64_t size, void* target_adrs, struct Config
 	printf("test1: took %.6f seconds to finish, measurement %lu\n", ((double) (clock() - start_clk)) / CLOCKS_PER_SEC, sum/conf->test_reps);
 #endif	
     time_buf = sum/conf->test_reps;
-	return sum/conf->test_reps > conf->threshold? 1 : 0;
+	return time_buf > conf->threshold? 1 : 0;
 } 
 
 static void create_pointer_chase(void **candidate_set, uint64_t c_size, struct Node* set){
