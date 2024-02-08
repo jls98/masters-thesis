@@ -40,8 +40,8 @@ static struct Node* addElement(struct Node* head, uint64_t value);
 /* from the linked list                                 */
 static struct Node* deleteElement(struct Node* head, uint64_t value);
 
-/* Function to clone a list                             */
-static struct Node* cloneList(struct Node* original);
+// /* Function to clone a list                             */
+// static struct Node* cloneList(struct Node* original);
 
 /* Function to union two lists                          */
 static struct Node* unionLists(struct Node* list1, struct Node* list2);
@@ -369,15 +369,15 @@ static struct Node* deleteElement(struct Node* head, uint64_t value) {
     return head;
 }
 
-static struct Node* cloneList(struct Node* original) {
-    struct Node* cloned = initLinkedList();
-    struct Node* current = original;
-    while (current != NULL) {
-        cloned = addElement(cloned, current->value);
-        current = current->next;
-    }
-    return cloned;
-}
+// static struct Node* cloneList(struct Node* original) {
+    // struct Node* cloned = initLinkedList();
+    // struct Node* current = original;
+    // while (current != NULL) {
+        // cloned = addElement(cloned, current->value);
+        // current = current->next;
+    // }
+    // return cloned;
+// }
 
 static struct Node* unionLists(struct Node* list1, struct Node* list2) {
     struct Node* result = initLinkedList();
