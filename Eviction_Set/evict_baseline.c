@@ -167,8 +167,8 @@ int main(int ac, char **av){
 			return 0;
 		}
 	}
-	if (ac==6){ // self, ways, cache line size, threshold, cache size, test reps
-		conf = initConfig(strtol(av[1], NULL, 10), strtol(av[2], NULL, 10), strtol(av[3], NULL, 10), strtol(av[4], NULL, 10), strtol(av[5], NULL, 10));
+	if (ac==7){ // self, ways, cache line size, threshold, cache size, test reps
+		conf = initConfig(strtol(av[1], NULL, 10), strtol(av[2], NULL, 10), strtol(av[3], NULL, 10), strtol(av[4], NULL, 10), strtol(av[5], NULL, 10), strtol(av[6], NULL, 10));
 	}
 	
     
