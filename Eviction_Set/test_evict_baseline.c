@@ -187,7 +187,7 @@ int main(int ac, char **av) {
 		if (conf_choice==13) conf = initConfig(8, 64, 58, 262144, 1, 1); 	// L3 i7 TODO or unneeded
 		
 		if (conf_choice==21) conf = initConfig(8, 64, 75, 32768, 1, 1); 	// L1e i12
-		if (conf_choice==22) conf = initConfig(8, 64, 82, 2097152, 1, 1); 	// L2e i12 TODO
+		if (conf_choice==22) conf = initConfig(8, 64, 90, 2097152, 1, 1); 	// L2e i12 TODO
 		if (conf_choice==23) conf = initConfig(8, 64, 58, 262144, 1, 1); 	// L3e i12 TODO or unneeded
 		if (conf==NULL){
 			printf("Error, no valid choice, XY, whereby X is the CPU (1:i7, 2:i12) and Y the cache Level (1-3)");
