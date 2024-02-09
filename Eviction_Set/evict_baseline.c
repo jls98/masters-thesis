@@ -207,7 +207,7 @@ int main(int ac, char **av){
 	printf("main: Indexes in minimal eviction set:\n"); // print indexes of eviction set
 	int hits=0;
 	for(struct Node *it = tmp_evict_set;it!=NULL;it=it->next) {
-		printf("-%p, %p, %lu\n", candidate_set[it->value], &candidate_set[it->value], it->value);
+		printf("-%p, %p, %lu\n", candidate_set[it->value],(uintptr_t)  &candidate_set[it->value], it->value);
 		if(((uintptr_t) &candidate_set[it->value]) & 0xfff == 0x0) hits++;
 	}
 	printf("This evset contains %i hits\n", hits);
