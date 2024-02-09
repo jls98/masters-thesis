@@ -205,8 +205,12 @@ int main(int ac, char **av){
     printf("main: Eviction set for target at %p %i\n", target_adrs, tmp_evict_set==NULL);
 
 	printf("main: Indexes in minimal eviction set:\n"); // print indexes of eviction set
-	for(struct Node *it = tmp_evict_set;it!=NULL;it=it->next) printf("-%p, %p, %lu\n", candidate_set[it->value], &candidate_set[it->value], it->value);
-	
+	int hits=0;
+	for(struct Node *it = tmp_evict_set;it!=NULL;it=it->next) {
+		printf("-%p, %p, %lu\n", candidate_set[it->value], &candidate_set[it->value], it->value);
+		if(&candidate_set[it->value] & 0xfff == 0x0) hits++;
+	}
+	printf("This evset contains %i hits\n", hits);
 	printf("\nmain: Testing target adrs %p now: \n", target_adrs);
 
 	// measure time when cached	
