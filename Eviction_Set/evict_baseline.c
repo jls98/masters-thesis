@@ -523,7 +523,7 @@ static int64_t test1(void *addr, uint64_t size, void* target_adrs, struct Config
 			// end - high precision
 			"sub rax, rsi;"
 			"clflush [%3];" // flush data from candidate for repeated loading
-			: "=a" (time)
+			: "=a" (time_buf)
 			: "r" (addr), "r" (size), "r" (target_adrs)
 			: "rsi", "rdx", "rcx"
 		);
@@ -533,7 +533,6 @@ static int64_t test1(void *addr, uint64_t size, void* target_adrs, struct Config
 	//printf("test1: measurement %lu\n", sum/conf->test_reps);
 	printf("test1: took %.6f seconds to finish, measurement %lu\n", ((double) (clock() - start_clk)) / CLOCKS_PER_SEC, sum/conf->test_reps);
 #endif	
-    time_buf = sum/conf->test_reps;
 	return time_buf > conf->threshold? 1 : 0;
 } 
 
