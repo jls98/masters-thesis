@@ -523,17 +523,17 @@ static int64_t test1(void *addr, uint64_t size, void* target_adrs, struct Config
 			// end - high precision
 			"sub rax, rsi;"
 			"clflush [%3];" // flush data from candidate for repeated loading
-			: "=a" (time_buf)
+			: "=a" (time)
 			: "r" (addr), "r" (size), "r" (target_adrs)
 			: "rsi", "rdx", "rcx"
 		);
-		sum +=time;
+		time_buf=time;
 	}
 #ifdef TEST_EVICT_BASELINE
 	//printf("test1: measurement %lu\n", sum/conf->test_reps);
 	printf("test1: took %.6f seconds to finish, measurement %lu\n", ((double) (clock() - start_clk)) / CLOCKS_PER_SEC, time_buf);
 #endif	
-	return time_buf > conf->threshold? 1 : 0;
+	return time > conf->threshold? 1 : 0;
 } 
 
 static void create_pointer_chase(void **candidate_set, uint64_t c_size, struct Node* set){
