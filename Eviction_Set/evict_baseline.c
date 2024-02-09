@@ -546,7 +546,7 @@ static int64_t test1(void *addr, uint64_t size, void* target_adrs, struct Config
 			"or rax, rdx;"
 			// end - high precision
 			"sub rax, rsi;"
-			"clflush [%3];" // flush data from candidate for repeated loading
+			// "clflush [%3];" // flush data from candidate for repeated loading
 			: "=a" (time_buf)
 			: "r" (addr), "r" (size), "r" (target_adrs)
 			: "rsi", "rdx", "rcx"
