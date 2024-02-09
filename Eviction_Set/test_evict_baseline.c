@@ -178,7 +178,7 @@ void test_create_pointer_chase(){
 }
 
 int main(int ac, char **av) {
-	if (ac==1) conf = initConfig(8, 64, 53, 32768, 10); // default L1 lab machine, no inputs
+	if (ac==1) conf = initConfig(8, 64, 53, 32768, 1); // default L1 lab machine, no inputs
 	if (ac==2){
 		int conf_choice = strtol(av[1], NULL, 10);
 		if (conf_choice==11) conf = initConfig(8, 64, 54, 32768, 1); 	// L1 i7
