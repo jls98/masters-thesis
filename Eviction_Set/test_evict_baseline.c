@@ -11,7 +11,7 @@ void test_test1(){
 	// change to local system and cache in 8 bytes to check, a size of candidate set in index 
 
     uint64_t c_size = conf->cache_size/2; // two times cache size but as uint64_t
-    printf("lol?\n");
+
 	void **cand_set;
     void *target_adrs;
 	
