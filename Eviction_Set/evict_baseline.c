@@ -151,7 +151,7 @@ int main(int ac, char **av){
     
 	struct Config *conf=NULL;
 	
-	if (ac==1) conf = initConfig(8, 64, 53, 32768, 1); // default L1 lab machine, no inputs
+	if (ac==1) conf = initConfig(8, 64, 54, 32768, 1); // default L1 lab machine, no inputs
 	if (ac==2){
 		int conf_choice = strtol(av[1], NULL, 10);
 		if (conf_choice==11) conf = initConfig(8, 64, 54, 32768, 1); 	// L1 i7
@@ -264,23 +264,23 @@ static struct Node *create_minimal_eviction_set(void **candidate_set, uint64_t c
 	int64_t c_tmp;
 	
 	// create current candidate set containing the indexes of unchecked candidates and initialize with all indexes
-    struct Node* cind_set = initLinkedList();
-    for (uint64_t i=0; i<candidate_set_size-1;i+=8) cind_set = addElement(cind_set, i); 
+    struct Node* cand_ind_set = initLinkedList();
+    for (uint64_t i=0; i<candidate_set_size-1;i+=8) cand_ind_set = addElement(cand_ind_set, i); 
     
     // while |R| < a and cind still contains possible and unchecked candidates
-    while(cind_set!=NULL /*&& test(candidate_set, candidate_set_size, evict_set, target_adrs, conf) !=1*/){        
-        // c <- pick(S) pick candidate index c from candidate set S/cind_set
+    while(cand_ind_set!=NULL /*&& test(candidate_set, candidate_set_size, evict_set, target_adrs, conf) !=1*/){        
+        // c <- pick(S) pick candidate index c from candidate set S/cand_ind_set
 		do{
-			c_tmp=pick(cind_set, candidate_set_size, &lfsr);
+			c_tmp=pick(cand_ind_set, candidate_set_size, &lfsr);
 		}
-        while(c_tmp==-1 || containsValue(evict_set, (uint64_t) c_tmp) || !containsValue(cind_set, (uint64_t) c_tmp)); // prevent picking duplicate candidates and continuing on error
+        while(c_tmp==-1 || containsValue(evict_set, (uint64_t) c_tmp) || !containsValue(cand_ind_set, (uint64_t) c_tmp)); // prevent picking duplicate candidates and continuing on error
 				
 		c = (uint64_t) c_tmp;
 		// remove c from S S <- S\{c}
-		cind_set = deleteElement(cind_set, c);         
+		cand_ind_set = deleteElement(cand_ind_set, c);         
 
         // R union S\{c}
-        struct Node *combined_set = unionLists(cind_set, evict_set);
+        struct Node *combined_set = unionLists(cand_ind_set, evict_set);
 
         // if not TEST(R union S\{c}), x)  
 		// if removing c results in not evicting x anymore, add c to current eviction set    
@@ -291,8 +291,8 @@ static struct Node *create_minimal_eviction_set(void **candidate_set, uint64_t c
 			printf("when adding element %p, test result was %lu\n", &candidate_set[c], time_buf);
         }
     }
-    printf("cind set contains still %i elements\n", count(cind_set));
-    if (cind_set==NULL && cnt_e < conf->ways) printf("create_minimal_eviction_set: not successful, eviction set contains less elements than cache ways!\n");
+    printf("cind set contains still %i elements\n", count(cand_ind_set));
+    if (cand_ind_set==NULL && cnt_e < conf->ways) printf("create_minimal_eviction_set: not successful, eviction set contains less elements than cache ways!\n");
     
     /* baseline algorithm */
 	printList(evict_set);
