@@ -21,6 +21,7 @@ static struct Config {
 	uint64_t threshold; // threshold for cache (eg ~45 for L1 on i7)
 	uint64_t cache_size; // cache size in bytes 
 	uint64_t test_reps; // amount of repetitions in test function
+	uint64_t hugepages;
 } Config;
 
 /* linked list containing an index and a pointer to     */
@@ -110,10 +111,10 @@ static int64_t pick(struct Node* candidate_set, uint64_t base_size, uint64_t *lf
 static struct Node *create_minimal_eviction_set(void **candidate_set, uint64_t candidate_set_size, struct Node* evict_set, void *target_adrs, struct Config *conf);
 
 /* init Config */
-static struct Config *initConfig(uint64_t ways,	uint64_t cache_line_size, uint64_t threshold, uint64_t cache_size, uint64_t test_reps);
+static struct Config *initConfig(uint64_t ways,	uint64_t cache_line_size, uint64_t threshold, uint64_t cache_size, uint64_t test_reps, uint64_t hugepages);
 
 /* configure Config */
-static void updateConfig(struct Config *conf, uint64_t ways, uint64_t cache_line_size, uint64_t threshold, uint64_t cache_size, uint64_t test_reps);
+static void updateConfig(struct Config *conf, uint64_t ways, uint64_t cache_line_size, uint64_t threshold, uint64_t cache_size, uint64_t test_reps, uint64_t hugepages);
 
 /* #################################################### */
 /* ################## implementation ################## */
@@ -151,16 +152,16 @@ int main(int ac, char **av){
     
 	struct Config *conf=NULL;
 	
-	if (ac==1) conf = initConfig(8, 64, 54, 32768, 1); // default L1 lab machine, no inputs
+	if (ac==1) conf = initConfig(8, 64, 54, 32768, 1, 1); // default L1 lab machine, no inputs
 	if (ac==2){
 		int conf_choice = strtol(av[1], NULL, 10);
-		if (conf_choice==11) conf = initConfig(8, 64, 54, 32768, 1); 	// L1 i7
-		if (conf_choice==12) conf = initConfig(8, 64, 58, 262144, 1); 	// L2 i7
-		if (conf_choice==13) conf = initConfig(8, 64, 58, 262144, 1); 	// L3 i7 TODO or unneeded
+		if (conf_choice==11) conf = initConfig(8, 64, 54, 32768, 1, 1); 	// L1 i7
+		if (conf_choice==12) conf = initConfig(8, 64, 58, 262144, 1, 1); 	// L2 i7
+		if (conf_choice==13) conf = initConfig(8, 64, 58, 262144, 1, 1); 	// L3 i7 TODO or unneeded
 		
-		if (conf_choice==21) conf = initConfig(8, 64, 75, 32768, 1); 	// L1e i12
-		if (conf_choice==22) conf = initConfig(8, 64, 58, 262144, 1); 	// L2e i12 TODO
-		if (conf_choice==23) conf = initConfig(8, 64, 58, 262144, 1); 	// L3e i12 TODO or unneeded
+		if (conf_choice==21) conf = initConfig(8, 64, 75, 32768, 1, 1); 	// L1e i12
+		if (conf_choice==22) conf = initConfig(8, 64, 58, 262144, 1, 1); 	// L2e i12 TODO
+		if (conf_choice==23) conf = initConfig(8, 64, 58, 262144, 1, 1); 	// L3e i12 TODO or unneeded
 		if (conf==NULL){
 			printf("Error, no valid choice, XY, whereby X is the CPU (1:i7, 2:i12) and Y the cache Level (1-3)");
 			return 0;
@@ -180,7 +181,8 @@ int main(int ac, char **av){
     struct Node* evict_set = initLinkedList();
 
     // map candidate_set (using hugepages, twice the size of cache in bytes (4 times to have space for target))
-    void **candidate_set = mmap(NULL, 10* c_size * sizeof(void *), PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB, -1, 0);
+    void **candidate_set = conf->hugepages==1 ? mmap(NULL, 10* c_size * sizeof(void *), PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB, -1, 0) : mmap(NULL, 10* c_size * sizeof(void *), PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);
+	
 	
     candidate_set[target_index] = &candidate_set[target_index];
     candidate_set[target_index-1] = &candidate_set[target_index-1];
@@ -285,16 +287,18 @@ static struct Node *create_minimal_eviction_set(void **candidate_set, uint64_t c
         // if not TEST(R union S\{c}), x)  
 		// if removing c results in not evicting x anymore, add c to current eviction set    
         // majority voting for test, if 2 out of 3 times evicted -> >1, if only 1 time or less, <=1
+		
 		if(test(candidate_set, candidate_set_size, combined_set, target_adrs, conf)==0 && test(candidate_set, candidate_set_size, evict_set, target_adrs, conf)==0){
             evict_set = addElement(evict_set, c);
             cnt_e++; // added elem to evict set -> if enough, evict_set complete   
 			printf("when adding element %p, test result was %lu\n", &candidate_set[c], time_buf);
         }
-		else if(test(candidate_set, candidate_set_size, combined_set, target_adrs, conf)==0 && test(candidate_set, candidate_set_size, evict_set, target_adrs, conf)==0){
-            evict_set = addElement(evict_set, c);
-            cnt_e++; // added elem to evict set -> if enough, evict_set complete   
-			printf("when adding element %p, test result was %lu\n", &candidate_set[c], time_buf);
-        }
+		// brings more reliability but increases the amount of elements
+		// else if(test(candidate_set, candidate_set_size, combined_set, target_adrs, conf)==0 && test(candidate_set, candidate_set_size, evict_set, target_adrs, conf)==0){
+            // evict_set = addElement(evict_set, c);
+            // cnt_e++; // added elem to evict set -> if enough, evict_set complete   
+			// printf("when adding element %p, test result was %lu\n", &candidate_set[c], time_buf);
+        // }
     }
     printf("cind set contains still %i elements\n", count(cand_ind_set));
     if (cand_ind_set==NULL && cnt_e < conf->ways) printf("create_minimal_eviction_set: not successful, eviction set contains less elements than cache ways!\n");
@@ -311,18 +315,19 @@ static struct Node *create_minimal_eviction_set(void **candidate_set, uint64_t c
 	return evict_set;
 }
 
-static struct Config *initConfig(uint64_t ways,	uint64_t cache_line_size, uint64_t threshold, uint64_t cache_size, uint64_t test_reps){
+static struct Config *initConfig(uint64_t ways,	uint64_t cache_line_size, uint64_t threshold, uint64_t cache_size, uint64_t test_reps, uint64_t hugepages){
 	struct Config *conf= (struct Config *) malloc(sizeof(struct Config));
-	updateConfig(conf, ways, cache_line_size, threshold, cache_size, test_reps);
+	updateConfig(conf, ways, cache_line_size, threshold, cache_size, test_reps, hugepages);
 	return conf;
 }
 
-static void updateConfig(struct Config *conf, uint64_t ways, uint64_t cache_line_size, uint64_t threshold, uint64_t cache_size, uint64_t test_reps){
+static void updateConfig(struct Config *conf, uint64_t ways, uint64_t cache_line_size, uint64_t threshold, uint64_t cache_size, uint64_t test_reps, uint64_t hugepages){
 	conf->ways=ways;
 	conf->cache_line_size=cache_line_size;
 	conf->threshold=threshold;
 	conf->cache_size=cache_size;
 	conf->test_reps=test_reps;
+	conf->hugepages=hugepages;
 }
 
 
