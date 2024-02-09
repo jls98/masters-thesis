@@ -531,7 +531,7 @@ static int64_t test1(void *addr, uint64_t size, void* target_adrs, struct Config
 	}
 #ifdef TEST_EVICT_BASELINE
 	//printf("test1: measurement %lu\n", sum/conf->test_reps);
-	printf("test1: took %.6f seconds to finish, measurement %lu\n", ((double) (clock() - start_clk)) / CLOCKS_PER_SEC, sum/conf->test_reps);
+	printf("test1: took %.6f seconds to finish, measurement %lu\n", ((double) (clock() - start_clk)) / CLOCKS_PER_SEC, time_buf);
 #endif	
 	return time_buf > conf->threshold? 1 : 0;
 } 
