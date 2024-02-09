@@ -290,6 +290,11 @@ static struct Node *create_minimal_eviction_set(void **candidate_set, uint64_t c
             cnt_e++; // added elem to evict set -> if enough, evict_set complete   
 			printf("when adding element %p, test result was %lu\n", &candidate_set[c], time_buf);
         }
+		else if(test(candidate_set, candidate_set_size, combined_set, target_adrs, conf)==0 && test(candidate_set, candidate_set_size, evict_set, target_adrs, conf)==0){
+            evict_set = addElement(evict_set, c);
+            cnt_e++; // added elem to evict set -> if enough, evict_set complete   
+			printf("when adding element %p, test result was %lu\n", &candidate_set[c], time_buf);
+        }
     }
     printf("cind set contains still %i elements\n", count(cand_ind_set));
     if (cand_ind_set==NULL && cnt_e < conf->ways) printf("create_minimal_eviction_set: not successful, eviction set contains less elements than cache ways!\n");
