@@ -642,8 +642,8 @@ static int64_t test(void **candidate_set, uint64_t candidate_set_size, struct No
 	// test 
 	int64_t ret = test1(candidate_set[test_index_set->value], count(test_index_set), target_adrs, conf);
 	
-	__asm__ volatile("mfence");
-	flushList(test_index_set, candidate_set);
+	// __asm__ volatile("mfence");
+	// flushList(test_index_set, candidate_set);
 	
 	return ret;
 }
