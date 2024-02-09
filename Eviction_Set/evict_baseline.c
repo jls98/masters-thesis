@@ -56,6 +56,8 @@ static void printList(struct Node* head);
 /* list                                                 */
 static void freeList(struct Node* head);
 
+static void flushList(struct Node *head, void **cand_set);
+
 /* #################################################### */
 /* ############## pseudo random generator ############# */
 /* #################################################### */
@@ -422,6 +424,15 @@ static void freeList(struct Node* head) {
     }
 }
 
+static void flushList(struct Node *head, void **cand_set){
+	struct Node* current = head;
+	if(cand_set==NULL) return;
+    while (current != NULL) {
+        flush(&cand_set[current->value]);
+	    current = current->next;
+    }
+}
+
 #define FEEDBACK 0x80000000000019E2ULL
 static uint64_t lfsr_create(void) {
   uint64_t lfsr;
@@ -618,5 +629,9 @@ static int64_t test(void **candidate_set, uint64_t candidate_set_size, struct No
 	create_pointer_chase(candidate_set, candidate_set_size, test_index_set);
 	
 	// test 
-	return test1(candidate_set[test_index_set->value], count(test_index_set), target_adrs, conf);
+	int64_t ret = test1(candidate_set[test_index_set->value], count(test_index_set), target_adrs, conf);
+	
+	flushList(test_index_set, candidate_set);
+	
+	return ret;
 }
