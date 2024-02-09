@@ -183,7 +183,7 @@ int main(int ac, char **av) {
 	if (ac==2){
 		int conf_choice = strtol(av[1], NULL, 10);
 		if (conf_choice==11) conf = initConfig(8, 64, 54, 32768, 1); 	// L1 i7
-		if (conf_choice==12) conf = initConfig(8, 64, 78, 262144, 1); 	// L2 i7 what value?
+		if (conf_choice==12) conf = initConfig(8, 64, 58, 262144, 1); 	// L2 i7 what value?
 		if (conf_choice==13) conf = initConfig(8, 64, 58, 262144, 1); 	// L3 i7 TODO or unneeded
 		
 		if (conf_choice==21) conf = initConfig(8, 64, 75, 32768, 1); 	// L1e i12
