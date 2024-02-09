@@ -491,44 +491,43 @@ static int64_t test1(void *addr, uint64_t size, void* target_adrs, struct Config
 	clock_t start_clk = clock();
 #endif	
 	volatile uint64_t time, sum=0;
-	for(uint64_t i=0;i<conf->test_reps;i++){
-		asm __volatile__ (
-			"lfence;"
-			"mfence;"
-			// load target and set 
-			"mov rdx, %2;"
-			"mov rsi, [%3];" // load target
-			"lfence;"
-			// BEGIN - read every entry in addr
-			"loop:"
-			"mov %1, [%1];"
-			"dec rdx;"
-			"jnz loop;"
-			// END - reading set
-			// measure start
-			"lfence;"
-			"mfence;"
-			"rdtscp;"		
-			"lfence;"
-			"mov rsi, rax;"
-			// high precision
-			"shl rdx, 32;"
-			"or rsi, rdx;"
-			"mov rax, [%3];" // load target 	
-			"lfence;"
-			"rdtscp;"
-			// start - high precision
-			"shl rdx, 32;"
-			"or rax, rdx;"
-			// end - high precision
-			"sub rax, rsi;"
-			"clflush [%3];" // flush data from candidate for repeated loading
-			: "=a" (time)
-			: "r" (addr), "r" (size), "r" (target_adrs)
-			: "rsi", "rdx", "rcx"
-		);
-		time_buf=time;
-	}
+	asm __volatile__ (
+		"lfence;"
+		"mfence;"
+		// load target and set 
+		"mov rdx, %2;"
+		"mov rsi, [%3];" // load target
+		"lfence;"
+		// BEGIN - read every entry in addr
+		"loop:"
+		"mov %1, [%1];"
+		"dec rdx;"
+		"jnz loop;"
+		// END - reading set
+		// measure start
+		"lfence;"
+		"mfence;"
+		"rdtscp;"		
+		"lfence;"
+		"mov rsi, rax;"
+		// high precision
+		"shl rdx, 32;"
+		"or rsi, rdx;"
+		"mov rax, [%3];" // load target 	
+		"lfence;"
+		"rdtscp;"
+		// start - high precision
+		"shl rdx, 32;"
+		"or rax, rdx;"
+		// end - high precision
+		"sub rax, rsi;"
+		"clflush [%3];" // flush data from candidate for repeated loading
+		: "=a" (time)
+		: "r" (addr), "r" (size), "r" (target_adrs)
+		: "rsi", "rdx", "rcx"
+	);
+	time_buf=time;
+	
 #ifdef TEST_EVICT_BASELINE
 	//printf("test1: measurement %lu\n", sum/conf->test_reps);
 	printf("test1: took %.6f seconds to finish, measurement %lu\n", ((double) (clock() - start_clk)) / CLOCKS_PER_SEC, time_buf);
