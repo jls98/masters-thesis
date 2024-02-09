@@ -637,7 +637,7 @@ static int64_t test(void **candidate_set, uint64_t candidate_set_size, struct No
 		
 	// prepare pointer chase between elements from candidate_set indexed by test_index_set 
 	create_pointer_chase(candidate_set, candidate_set_size, test_index_set);
-	// flushList(test_index_set, candidate_set);
+	flushList(test_index_set, candidate_set);
 	
 	// test 
 	int64_t ret = test1(candidate_set[test_index_set->value], count(test_index_set), target_adrs, conf);
