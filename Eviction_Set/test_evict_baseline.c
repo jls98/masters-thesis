@@ -8,7 +8,6 @@ static struct Config *conf;
 void test_test1(){
     wait(1E9);
     printf("\nTesting test1...\n\n");
-	// change to local system and cache in 8 bytes to check, a size of candidate set in index 
 
     uint64_t c_size = conf->cache_size/2; // two times cache size but as uint64_t
 
@@ -33,7 +32,6 @@ void test_test1(){
 		munmap(cand_set, 10* c_size * sizeof(void *));
     }
 	// works on L1, modification for other setups might be a TODO
- 
 
 	for(int i=1;i<64;i++){
 		evict_set = addElement(evict_set, i*8);
@@ -110,10 +108,8 @@ void test_pick(){
     candidate_set2 = addElement(candidate_set2, 66);
     val = pick(candidate_set2, base_size, &lfsr);
     
-    // TODO sometimes fail
     CU_ASSERT_TRUE(val > 64);
     if (val<65) printf("val<65 %lu\n", val); // debug for failed test
-    
 
     CU_ASSERT_TRUE(val < base_size); 
     if (val>= base_size) printf("val<bsize %lu\n", val);

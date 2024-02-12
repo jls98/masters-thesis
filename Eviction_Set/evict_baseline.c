@@ -285,20 +285,11 @@ static struct Node *create_minimal_eviction_set(void **candidate_set, uint64_t c
         struct Node *combined_set = unionLists(cand_ind_set, evict_set);
 
         // if not TEST(R union S\{c}), x)  
-		// if removing c results in not evicting x anymore, add c to current eviction set    
-        // majority voting for test, if 2 out of 3 times evicted -> >1, if only 1 time or less, <=1
-		
+		// if removing c results in not evicting x anymore, add c to current eviction set    	
 		if(test(candidate_set, candidate_set_size, combined_set, target_adrs, conf)==0 && test(candidate_set, candidate_set_size, evict_set, target_adrs, conf)==0){
             evict_set = addElement(evict_set, c);
             cnt_e++; // added elem to evict set -> if enough, evict_set complete   
-			// printf("when adding element %p, test result was %lu\n", &candidate_set[c], time_buf);
         }
-		// brings more reliability but increases the amount of elements
-		// else if(test(candidate_set, candidate_set_size, combined_set, target_adrs, conf)==0 && test(candidate_set, candidate_set_size, evict_set, target_adrs, conf)==0){
-            // evict_set = addElement(evict_set, c);
-            // cnt_e++; // added elem to evict set -> if enough, evict_set complete   
-			// printf("when adding element %p, test result was %lu\n", &candidate_set[c], time_buf);
-        // }
     }
     printf("cind set contains still %i elements\n", count(cand_ind_set));
     if (cand_ind_set==NULL && cnt_e < conf->ways) printf("create_minimal_eviction_set: not successful, eviction set contains less elements than cache ways!\n");
@@ -461,34 +452,7 @@ static uint64_t lfsr_step(uint64_t lfsr) {
   return (lfsr & 1) ? (lfsr >> 1) ^ FEEDBACK : (lfsr >> 1);
 }
 
-// delete */ to toggle test1 implementation -> keep in mind that change of threshold values is required
-/*
-static int64_t test1(void *addr, uint64_t size, void* cand, uint64_t threshold){
-    if (size==0 || addr==NULL || cand==NULL) return -1; // parameter check
-	uint64_t count = size;
-    void *cur_adrs = addr;
-    wait(1E9);
-    // load candidate
-    maccess(cand);
-    maccess(cand);
-    maccess(cand);
 
-    __asm__ volatile ("mfence");
-    // load eviction set
-    while (count-->0) cur_adrs = maccess(cur_adrs);
-    
-    // measure time to access candidate
-    uint64_t time = rdtscpfence();
-    maccess(cand);
-    uint64_t delta = rdtscpfence() - time;
-    printf("delta %lu\n", delta);
-    return delta > threshold;
-}
-
-
-
-
-/*/ // not sure what to use though -> Threshold values depend on implementation
 static int64_t test1(void *addr, uint64_t size, void* target_adrs, struct Config *conf){    
     // parameter check
     if (size==0){
@@ -553,7 +517,6 @@ static int64_t test1(void *addr, uint64_t size, void* target_adrs, struct Config
 		);
 	}
 #ifdef TEST_EVICT_BASELINE
-	//printf("test1: measurement %lu\n", sum/conf->test_reps);
 	printf("test1: took %.6f seconds to finish, measurement %lu\n", ((double) (clock() - start_clk)) / CLOCKS_PER_SEC, time_buf);
 #endif	
 	return time_buf > conf->threshold? 1 : 0;
@@ -619,7 +582,6 @@ static int64_t pick(struct Node* candidate_set, uint64_t base_size, uint64_t *lf
     return (int64_t) cur_node->value;
 }
 
-
 static int64_t test(void **candidate_set, uint64_t candidate_set_size, struct Node *test_index_set, void *target_adrs, struct Config *conf){
 	// empty candidate set, no array to create pointer chase on    
     if (candidate_set==NULL){
@@ -631,19 +593,15 @@ static int64_t test(void **candidate_set, uint64_t candidate_set_size, struct No
 		return -1;
 	} 
 	if (test_index_set==NULL){
-		//printf("test: test_index_set is NULL!\n");
 		return 0;
 	} 
 		
 	// prepare pointer chase between elements from candidate_set indexed by test_index_set 
 	create_pointer_chase(candidate_set, candidate_set_size, test_index_set);
-	// flushList(test_index_set, candidate_set);
 	
 	// test 
 	int64_t ret = test1(candidate_set[test_index_set->value], count(test_index_set), target_adrs, conf);
 	
-	// __asm__ volatile("mfence");
-	// flushList(test_index_set, candidate_set);
 	
 	return ret;
 }
