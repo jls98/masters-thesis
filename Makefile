@@ -1,6 +1,6 @@
 CC = gcc
 CFLAGS = -Wall -Wextra -masm=intel
-all: evict_baseline test_evict_baseline
+all: evict_baseline test_evict_baseline prefetchw
 
 workshop3: Cache_Reversing/workshop3.c
 	$(CC) $(CFLAGS) -o build/workshop3  Cache_Reversing/workshop3.c
@@ -16,6 +16,9 @@ evict1: Eviction_Set/evict1.c
 	
 evict2: Eviction_Set/evict2.c
 	$(CC) $(CFLAGS) -o build/evict2  Eviction_Set/evict2.c
+
+prefetchw: prefetch_experiments/prefetchw_characteristics_tests.c
+	$(CC) $(CFLAGS) -o build/prefetchw_characteristics_tests  prefetch_experiments/prefetchw_characteristics_tests.c
 
 evict_baseline: Eviction_Set/evict_baseline.c
 	$(CC) $(CFLAGS) -o build/evict_baseline -DEVICT_BASELINE Eviction_Set/evict_baseline.c
@@ -34,4 +37,4 @@ execute: utils/execute.c
 
 
 clean:
-	rm -f evict_baseline test_evict_baseline
+	rm -f evict_baseline test_evict_baseline prefetchw
