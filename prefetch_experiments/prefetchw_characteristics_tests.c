@@ -22,6 +22,10 @@ uint64_t probe(void *adrs){
 	return time;
 }
 
+void cpuid(){
+    __asm__ volatile ("cpuid"::: "eax", "ebx","ecx", "edx");
+}
+
 int main()
 {
 	void *map_read = mmap(NULL, 64, PROT_READ, MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);
@@ -32,6 +36,8 @@ int main()
     printf("Hello World %lu\n", probe(map_read));
 	_mm_mfence();
     _mm_clflush(map_read);
+    _mm_mfence();
+    cpuid();
     _mm_mfence();
 	_m_prefetchw(map_read);
     _mm_mfence();
