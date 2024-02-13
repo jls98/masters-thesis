@@ -29,7 +29,8 @@ void cpuid(){
 int main()
 {
 	void *map_read = mmap(NULL, 64, PROT_READ, MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);
-	_mm_clflush(map_read);
+	((uint64_t *) map_read) = 1;
+    _mm_clflush(map_read);
     _mm_mfence();
     uint64_t time = probe(map_read);
     _mm_mfence();
