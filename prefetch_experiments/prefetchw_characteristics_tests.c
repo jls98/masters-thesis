@@ -28,8 +28,8 @@ void cpuid(){
 
 int main()
 {
-	void *map_read = mmap(NULL, 64, PROT_READ, MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);
-	*((uint64_t *) map_read) = 1;
+	void *map_read = mmap(NULL, 64, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);
+	*((uint64_t *) map_read) = 1; // todo get file to avoid zero page
     _mm_clflush(map_read);
     _mm_mfence();
     uint64_t time = probe(map_read);
