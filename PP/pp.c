@@ -53,7 +53,7 @@ Target *initTarget(void *target_adrs){
 	return targ;
 }
 
-void freeTarget (Target *targ){
+/*void freeTarget (Target *targ){
     Target *current = targ;
     Target *next;
     while (current != NULL) {
@@ -61,7 +61,7 @@ void freeTarget (Target *targ){
         free(current);
         current = next;
     }
-}
+}*/
 
 // struct Eviction_Set
 Eviction_Set *initEviction_Set(Target *target){
@@ -78,7 +78,7 @@ Eviction_Set *initEviction_Set(Target *target){
 	return evset;
 }
 
-void freeEviction_Set (Eviction_Set *evset){
+/*void freeEviction_Set (Eviction_Set *evset){
     Target *current = evset;
     Target *next;
     while (current != NULL) {
@@ -86,7 +86,7 @@ void freeEviction_Set (Eviction_Set *evset){
         free(current);
         current = next;
     }
-}
+}*/
 
 void *pp_init() {
 	// Implement
