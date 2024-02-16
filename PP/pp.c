@@ -136,6 +136,8 @@ void pp_run(void *target_adrs, Config *conf) { // atm support only 1 adrs, exten
 	
 	pp_setup(evset, conf);
 	pp_monitor(evset, conf);
+	
+	free(cc_buffer);
 }
 
 
