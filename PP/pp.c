@@ -122,7 +122,7 @@ void pp_monitor(Eviction_Set *evset, Config *conf) {
 	
 }
 
-void pp_run(void *target_adrs) { // atm support only 1 adrs, extend later (easy w linked list)
+void pp_run(Eviction_Set *evset, Config *conf) { // atm support only 1 adrs, extend later (easy w linked list)
 	if (target_adrs==NULL){
 		printf("pp_run: target_adrs is NULL!\n");
 		return;
