@@ -26,8 +26,15 @@ void cpuid(){
     __asm__ volatile ("cpuid"::: "eax", "ebx","ecx", "edx");
 }
 
+static void wait(uint64_t cycles) {
+	unsigned int ignore;
+	uint64_t start = __rdtscp(&ignore);
+	while (__rdtscp(&ignore) - start < cycles);
+}
+
 int main()
 {
+	wait(1E9);
 	void *map_read = mmap(NULL, 64, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);
 	*((uint64_t *) map_read) = 1; // todo get file to avoid zero page
     _mm_clflush(map_read);
