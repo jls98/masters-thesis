@@ -143,7 +143,9 @@ void pp_run(void *target_adrs, Config *conf) { // atm support only 1 adrs, exten
 	printf("passed\n");
 	pp_monitor(evset, conf);
 	
+	printf("passed\n");
 	free(cc_buffer);
+	printf("passed\n");
 }
 
 
