@@ -148,14 +148,20 @@ void pp_setup(Eviction_Set *evset, Config *conf) {
 	for(u64 i=0;i<conf->cache_ways;i++){
 		// add multiple of pagesize to ensure to land in the same cache set
 		evset->evset_adrs[i]=evset->target->target_adrs+(i+1)*conf->pagesize; // void * -> exakt index value
-		printf("pp_setup: added addr %p at position %p\n", evset->evset_adrs[i], &evset->evset_adrs[i]);
+		// printf("pp_setup: added addr %p at position %p\n", evset->evset_adrs[i], &evset->evset_adrs[i]); // works
 	}
 }
 
 void pp_monitor(Eviction_Set *evset, Config *conf) {
-	printf("probe is %li\n", probe(evset->target->target_adrs));
-	printf("probe is %li\n", probe(evset->target->target_adrs));
-	printf("probe is %li\n", probe(evset->target->target_adrs));
+	printf("p\n");	
+	Target *targ = evset->target;
+	printf("p\n");
+	void *t_adrs=targ->target_adrs;
+	printf("p\n");
+
+	printf("probe is %li\n", probe(t_adrs));
+	printf("probe is %li\n", probe(t_adrs));
+	printf("probe is %li\n", probe(t_adrs));
 }
 
 void pp_run(void *target_adrs, Config *conf) { // atm support only 1 adrs, extend later (easy w linked list)
