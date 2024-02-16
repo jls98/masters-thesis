@@ -93,7 +93,7 @@ void *pp_init() {
 	// allocate 256 different cache lines on differenz mem pages
 	size_t total_size = 256 * 4096; // 256 cache lines, 4096 bytes apart (mem pages)
 	void *cc_buffer = mmap(NULL, total_size, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB, -1, 0);
-	if (ptr == MAP_FAILED) {
+	if (cc_buffer == MAP_FAILED) {
         perror("cc_init: mmap failed");
         return NULL;
 	}
