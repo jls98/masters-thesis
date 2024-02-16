@@ -67,7 +67,7 @@ Config *initConfig(u64 cache_ways, u64 pagesize, u64 cache_sets, u64 cacheline_s
 	conf->threshold_L1 = (threshold_L1 != 0) ? threshold_L1 : 100;
 	conf->threshold_L2 = (threshold_L2 != 0) ? threshold_L2 : 200;
 	conf->threshold_L3 = (threshold_L3 != 0) ? threshold_L3 : 300;
-	size_t buffer_size=0;
+	conf->buffer_size=0;
 	return conf;
 }
 
@@ -147,7 +147,7 @@ void pp_setup(Eviction_Set *evset, Config *conf) {
 	// create eviction set
 	for(u64 i=0;i<conf->cache_ways;i++){
 		// add multiple of pagesize to ensure to land in the same cache set
-		evset->evset_adrs[i]=evset->target->target_adrs+(i+1)*conf->pagesize; 
+		evset->evset_adrs[i]=evset->target->target_adrs+(i+1)*conf->pagesize; // void * -> exakt index value
 		printf("pp_setup: added addr %p at position %p\n", evset->evset_adrs[i], &evset->evset_adrs[i]);
 	}
 }
@@ -184,4 +184,9 @@ void pp_run(void *target_adrs, Config *conf) { // atm support only 1 adrs, exten
 int main(){
 	Config *conf=initConfig(0,0,0,0,0,0,0);
 	pp_run(conf, conf); // TODO change to real adrs and create a temp picker (file reader)
+	
+	
+	
+	
+	free(conf);
 }
