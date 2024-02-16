@@ -49,6 +49,7 @@ i64 probe(Eviction_Set *evset){
         : "r" (evset->target->target_adrs)
         : "ecx", "rdx", "r8", "memory"
 	);
+	printf("probe donew\n");
 	evset->cnt_measurement+=1;
 	return evset->measurements[evset->cnt_measurement];
 }
