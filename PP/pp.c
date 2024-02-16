@@ -38,7 +38,7 @@ i64 probe(Eviction_Set *evset){
 		return -1;
 	}
 	printf("check\n");
-	printf("check Target %p \n", &evset->target);
+	printf("check Target %p \n", evset->target);
 	printf("check void adrs %p\n", evset->target->target_adrs);
 	printf("check evset->cnt_measurement %lu\n", evset->cnt_measurement);
 	printf("check evset->measurements[evset->cnt_measurement] %p\n", &evset->measurements[evset->cnt_measurement]);
@@ -162,9 +162,9 @@ void pp_setup(Eviction_Set *evset, Config *conf) {
 void pp_monitor(Eviction_Set *evset, Config *conf) {
 	printf("p\n");	
 	Target *targ = evset->target;
-	printf("p\n");
+	printf("p %p\n", targ);
 	void *t_adrs=targ->target_adrs;
-	printf("p\n");
+	printf("p %p\n", adrs);
 
 	printf("probe is %li\n", probe(t_adrs));
 	printf("probe is %li\n", probe(t_adrs));
