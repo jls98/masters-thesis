@@ -24,12 +24,37 @@ typedef struct {
 	//Eviction_Set *next;
 	Target *target;				
 	void **evset_adrs; 			// size equals Config->cache_ways
-	u64 **measurements; 				// measured values
+	u64 *measurements; 				// measured values
 	u64 cnt_measurement; 				// amount of measured values
 } Eviction_Set;
 
 
 // utils 
+// measure time 
+
+i64 probe(Eviction_Set *evset){
+	if (evset==NULL){
+		printf("probe: evset is NULL!\n");
+		return -1;
+	}
+	__asm__ volatile (
+        " mfence            \n"
+        " lfence            \n"
+        " rdtscp             \n"
+        " mov r8, rax 		\n"
+        " mov rax, [%1]		\n"
+        " lfence            \n"
+        " rdtscp             \n"
+        " sub rax, r8 		\n"
+        : "=&a" (evset->measurements[evset->cnt_measurement])
+        : "r" (evset->target->target_adrs)
+        : "ecx", "rdx", "r8", "memory"
+	);
+	evset->cnt_measurement+=1;
+	return evset->measurements[evset->cnt_measurement];
+}
+
+
 
 // struct Config 
 // input 0 for params cache_ways, pagesize, threshold_L1, threshold_L2, threshold_L3 in that order to apply default values
@@ -126,7 +151,9 @@ void pp_setup(Eviction_Set *evset, Config *conf) {
 }
 
 void pp_monitor(Eviction_Set *evset, Config *conf) {
-	
+	printf("probe is %li\n", probe(evset->target->target_adrs));
+	printf("probe is %li\n", probe(evset->target->target_adrs));
+	printf("probe is %li\n", probe(evset->target->target_adrs));
 }
 
 void pp_run(void *target_adrs, Config *conf) { // atm support only 1 adrs, extend later (easy w linked list)
@@ -135,7 +162,10 @@ void pp_run(void *target_adrs, Config *conf) { // atm support only 1 adrs, exten
 		return;
 	}
 	void *cc_buffer=pp_init(conf);
-	
+	if (cc_buffer==NULL){
+		printf("pp_run: buffer could nnot be initialized!\n");
+		return;
+	}
 	// setup structs
 	Target *targ=initTarget(target_adrs);
 	
