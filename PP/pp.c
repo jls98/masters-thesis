@@ -12,6 +12,7 @@ typedef struct {
 	u64 threshold_L1;
 	u64 threshold_L2;
 	u64 threshold_L3;
+	size_t total_size;
 } Config;
 
 typedef struct {
@@ -42,6 +43,7 @@ Config *initConfig(u64 cache_ways, u64 pagesize, u64 cache_sets, u64 cacheline_s
 	conf->threshold_L1 = (threshold_L1 != 0) ? threshold_L1 : 100;
 	conf->threshold_L2 = (threshold_L2 != 0) ? threshold_L2 : 200;
 	conf->threshold_L3 = (threshold_L3 != 0) ? threshold_L3 : 300;
+	size_t buffer_size;
 	return conf;
 }
 
@@ -92,11 +94,11 @@ Eviction_Set *initEviction_Set(Target *target, Config *conf){
     }
 }*/
 
-void *pp_init() {
+void *pp_init(Config *conf) {
 	// Implement
 	// allocate 256 different cache lines on differenz mem pages
-	size_t total_size = 256 * 4096; // 256 cache lines, 4096 bytes apart (mem pages)
-	void *cc_buffer = mmap(NULL, total_size, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB, -1, 0);
+	conf->buffer_size = 256 * 4096; // 256 cache lines, 4096 bytes apart (mem pages)
+	void *cc_buffer = mmap(NULL, conf->buffer_size, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB, -1, 0);
 	if (cc_buffer == MAP_FAILED) {
         perror("cc_init: mmap failed");
         return NULL;
@@ -144,7 +146,7 @@ void pp_run(void *target_adrs, Config *conf) { // atm support only 1 adrs, exten
 	pp_monitor(evset, conf);
 	
 	printf("passed\n");
-	free(cc_buffer);
+	munmap(cc_buffer, conf->buffer_size);
 	printf("passed\n");
 }
 
