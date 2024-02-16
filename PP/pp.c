@@ -26,6 +26,8 @@ typedef struct {
 } Eviction_Set;
 
 
+// utils 
+
 // struct Config 
 // input 0 for params cache_ways, pagesize, threshold_L1, threshold_L2, threshold_L3 in that order to apply default values
 Config *initConfig(u64 cache_ways, u64 pagesize, u64 threshold_L1, u64 threshold_L2, u64 threshold_L3){
@@ -111,7 +113,8 @@ void pp_setup(Eviction_Set *evset, Config *conf) {
 	
 	// create eviction set
 	for(u64 i=0;i<conf->cache_ways;i++){
-		Eviction_Set->
+		// add multiple of pagesize to ensure to land in the same cache set
+		evset->evset_adrs[i]=evset->target->target_adrs+(i+1)*conf->pagesize; 
 	}
 }
 
