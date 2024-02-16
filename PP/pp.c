@@ -164,7 +164,7 @@ void pp_monitor(Eviction_Set *evset, Config *conf) {
 	Target *targ = evset->target;
 	printf("p %p\n", targ);
 	void *t_adrs=targ->target_adrs;
-	printf("p %p\n", adrs);
+	printf("p %p\n", t_adrs);
 
 	printf("probe is %li\n", probe(t_adrs));
 	printf("probe is %li\n", probe(t_adrs));
