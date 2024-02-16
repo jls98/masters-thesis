@@ -140,6 +140,7 @@ void pp_run(void *target_adrs, Config *conf) { // atm support only 1 adrs, exten
 	Eviction_Set *evset=initEviction_Set(targ, conf);
 	
 	pp_setup(evset, conf);
+	printf("passed\n");
 	pp_monitor(evset, conf);
 	
 	free(cc_buffer);
