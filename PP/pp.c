@@ -24,7 +24,7 @@ typedef struct {
 	//Eviction_Set *next;
 	Target *target;				
 	void **evset_adrs; 			// size equals Config->cache_ways
-	u64 *measurements; 				// measured values
+	i64 *measurements; 				// measured values
 	u64 cnt_measurement; 				// amount of measured values
 } Eviction_Set;
 
