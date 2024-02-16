@@ -134,7 +134,7 @@ void pp_run(void *target_adrs, Config *conf) { // atm support only 1 adrs, exten
 		printf("pp_run: target_adrs is NULL!\n");
 		return;
 	}
-	void *cc_buffer=pp_init();
+	void *cc_buffer=pp_init(conf);
 	
 	// setup structs
 	Target *targ=initTarget(target_adrs);
