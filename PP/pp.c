@@ -37,6 +37,12 @@ i64 probe(Eviction_Set *evset){
 		printf("probe: evset is NULL!\n");
 		return -1;
 	}
+	printf("check\n");
+	printf("check Target %p \n", &evset->target);
+	printf("check void adrs %p\n", evset->target->target_adrs);
+	printf("check evset->cnt_measurement %lu\n", evset->cnt_measurement);
+	printf("check evset->measurements[evset->cnt_measurement] %p\n", &evset->measurements[evset->cnt_measurement]);
+	
 	__asm__ volatile (
         " mfence            \n"
         " rdtscp             \n"
