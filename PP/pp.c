@@ -39,7 +39,6 @@ i64 probe(Eviction_Set *evset){
 	}
 	__asm__ volatile (
         " mfence            \n"
-        " lfence            \n"
         " rdtscp             \n"
         " mov r8, rax 		\n"
         " mov rax, [%1]		\n"
@@ -109,15 +108,18 @@ Eviction_Set *initEviction_Set(Target *target, Config *conf){
 	return evset;
 }
 
-/*void freeEviction_Set (Eviction_Set *evset){
-    Target *current = evset;
+void freeEviction_Set (Eviction_Set *evset){
+    /*Target *current = evset;
     Target *next;
     while (current != NULL) {
         next = current->next;
         free(current);
         current = next;
     }
-}*/
+	*/
+	free(evset->measurements);
+	free(evset);
+}
 
 void *pp_init(Config *conf) {
 	// Implement
@@ -146,7 +148,7 @@ void pp_setup(Eviction_Set *evset, Config *conf) {
 	for(u64 i=0;i<conf->cache_ways;i++){
 		// add multiple of pagesize to ensure to land in the same cache set
 		evset->evset_adrs[i]=evset->target->target_adrs+(i+1)*conf->pagesize; 
-		printf("pp_setup: added addr %p at position %lu\n", &evset->evset_adrs[i], i);
+		printf("pp_setup: added addr %p at position %p\n", evset->evset_adrs[i], &evset->evset_adrs[i]);
 	}
 }
 
@@ -172,12 +174,10 @@ void pp_run(void *target_adrs, Config *conf) { // atm support only 1 adrs, exten
 	Eviction_Set *evset=initEviction_Set(targ, conf);
 	
 	pp_setup(evset, conf);
-	printf("passed\n");
+
 	pp_monitor(evset, conf);
 	
-	printf("passed\n");
 	munmap(cc_buffer, conf->buffer_size);
-	printf("passed\n");
 }
 
 
