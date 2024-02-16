@@ -119,6 +119,7 @@ void pp_setup(Eviction_Set *evset, Config *conf) {
 	for(u64 i=0;i<conf->cache_ways;i++){
 		// add multiple of pagesize to ensure to land in the same cache set
 		evset->evset_adrs[i]=evset->target->target_adrs+(i+1)*conf->pagesize; 
+		printf("pp_setup: added addr %p at position %lu\n", &evset->evset_adrs[i], i);
 	}
 }
 
