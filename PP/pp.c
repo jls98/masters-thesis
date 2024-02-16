@@ -141,5 +141,5 @@ void pp_run(void *target_adrs, Config *conf) { // atm support only 1 adrs, exten
 
 int main(){
 	Config *conf=initConfig(0,0,0,0,0);
-	pp_run(conf); // TODO change to real adrs and create a temp picker (file reader)
+	pp_run(conf, conf); // TODO change to real adrs and create a temp picker (file reader)
 }
