@@ -6,6 +6,8 @@
 
 typedef struct {
 	u64 cache_ways;
+	u64 cache_sets;
+	u64 cacheline_size;
 	u64 pagesize;
 	u64 threshold_L1;
 	u64 threshold_L2;
@@ -30,11 +32,13 @@ typedef struct {
 
 // struct Config 
 // input 0 for params cache_ways, pagesize, threshold_L1, threshold_L2, threshold_L3 in that order to apply default values
-Config *initConfig(u64 cache_ways, u64 pagesize, u64 threshold_L1, u64 threshold_L2, u64 threshold_L3){
+Config *initConfig(u64 cache_ways, u64 pagesize, u64 cache_sets, u64 cacheline_size, u64 threshold_L1, u64 threshold_L2, u64 threshold_L3){
 	Config *conf = malloc(sizeof(Config));
 	// setting default values or apply input
 	conf->cache_ways = (cache_ways != 0) ? cache_ways : 8;
 	conf->pagesize = (pagesize != 0) ? pagesize : 4096;
+	conf->cache_sets = (cache_sets != 0) ? cache_sets : 64; //  default, 32768 L1 cache
+	conf->cacheline_size = (cacheline_size != 0) ? cacheline_size : 64;
 	conf->threshold_L1 = (threshold_L1 != 0) ? threshold_L1 : 100;
 	conf->threshold_L2 = (threshold_L2 != 0) ? threshold_L2 : 200;
 	conf->threshold_L3 = (threshold_L3 != 0) ? threshold_L3 : 300;
@@ -64,7 +68,7 @@ Target *initTarget(void *target_adrs){
 }*/
 
 // struct Eviction_Set
-Eviction_Set *initEviction_Set(Target *target){
+Eviction_Set *initEviction_Set(Target *target, Config *conf){
 	if (target == NULL){
 		printf("initEviction_Set: target is NULL!\n");
 		return NULL;
@@ -72,8 +76,8 @@ Eviction_Set *initEviction_Set(Target *target){
 	Eviction_Set *evset = malloc(sizeof(Eviction_Set));
 	evset->target=target;
 	//evset->next=NULL;
-	evset->evset_adrs=NULL;
-	evset->measurements=NULL;
+	evset->evset_adrs=malloc(conf->cache_ways*sizeof(void *));
+	evset->measurements=malloc(100000*sizeof(u64 *)); // amount of max measurement (if too small increase)
 	evset->cnt_measurement=0;
 	return evset;
 }
@@ -132,7 +136,7 @@ void pp_run(void *target_adrs, Config *conf) { // atm support only 1 adrs, exten
 	// setup structs
 	Target *targ=initTarget(target_adrs);
 	
-	Eviction_Set *evset=initEviction_Set(targ);
+	Eviction_Set *evset=initEviction_Set(targ, conf);
 	
 	pp_setup(evset, conf);
 	pp_monitor(evset, conf);
