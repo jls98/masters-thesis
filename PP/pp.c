@@ -12,7 +12,7 @@ typedef struct {
 	u64 threshold_L1;
 	u64 threshold_L2;
 	u64 threshold_L3;
-	size_t total_size;
+	size_t buffer_size;
 } Config;
 
 typedef struct {
@@ -43,7 +43,7 @@ Config *initConfig(u64 cache_ways, u64 pagesize, u64 cache_sets, u64 cacheline_s
 	conf->threshold_L1 = (threshold_L1 != 0) ? threshold_L1 : 100;
 	conf->threshold_L2 = (threshold_L2 != 0) ? threshold_L2 : 200;
 	conf->threshold_L3 = (threshold_L3 != 0) ? threshold_L3 : 300;
-	size_t buffer_size;
+	size_t buffer_size=0;
 	return conf;
 }
 
