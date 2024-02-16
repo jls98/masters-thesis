@@ -49,7 +49,7 @@ Target *initTarget(void *target_adrs){
 	}
 	Target *targ = malloc(sizeof(Target));
 	targ->target_adrs=target_adrs;
-	targ->next=NULL;
+	//targ->next=NULL;
 	return targ;
 }
 
@@ -71,7 +71,7 @@ Eviction_Set *initEviction_Set(Target *target){
 	}
 	Eviction_Set *evset = malloc(sizeof(Eviction_Set));
 	evset->target=target;
-	evset->next=NULL;
+	//evset->next=NULL;
 	evset->evset_adrs=NULL;
 	evset->measurements=NULL;
 	evset->cnt_measurement=0;
