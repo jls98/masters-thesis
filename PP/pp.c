@@ -13,12 +13,12 @@ typedef struct {
 } Config;
 
 typedef struct {
-	Target *next;
+	//Target *next;
 	void *target_adrs;
 } Target;
 
 typedef struct {
-	Eviction_Set *next;
+	//Eviction_Set *next;
 	Target *target;				
 	void **evset_adrs; 			// size equals Config->cache_ways
 	u64 **measurements; 				// measured values
@@ -95,7 +95,7 @@ void *pp_init() {
 	void *cc_buffer = mmap(NULL, total_size, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB, -1, 0);
 	if (ptr == MAP_FAILED) {
         perror("cc_init: mmap failed");
-        return;
+        return NULL;
 	}
 	return cc_buffer;
 }
@@ -118,7 +118,7 @@ void pp_setup(Eviction_Set *evset, Config *conf) {
 	}
 }
 
-void pp_monitor(Eviction_Set *evset) {
+void pp_monitor(Eviction_Set *evset, Config *conf) {
 	
 }
 
@@ -134,8 +134,8 @@ void pp_run(void *target_adrs) { // atm support only 1 adrs, extend later (easy 
 	
 	Eviction_Set *evset=initEviction_Set(targ);
 	
-	pp_setup();
-	pp_monitor();
+	pp_setup(evset, conf);
+	pp_monitor(evset, conf);
 }
 
 
