@@ -56,8 +56,7 @@ i64 probe(Eviction_Set *evset){
         : "ecx", "rdx", "r8", "memory"
 	);
 	printf("probe donew %lu\n", evset->measurements[evset->cnt_measurement]);
-	evset->cnt_measurement+=1;
-	return evset->measurements[evset->cnt_measurement];
+	return evset->measurements[evset->cnt_measurement++];
 }
 
 
