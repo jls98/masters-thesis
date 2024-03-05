@@ -1,6 +1,6 @@
 CC = gcc
 CFLAGS = -Wall -Wextra -masm=intel
-all: pp
+all: pp test_pp
 
 workshop3: Cache_Reversing/workshop3.c
 	$(CC) $(CFLAGS) -o build/workshop3  Cache_Reversing/workshop3.c
@@ -27,7 +27,10 @@ file_generator: utils/file_generator.c
 	$(CC) $(CFLAGS) -o build/file_generator utils/file_generator.c
 
 pp: PP/pp.c
-	$(CC) $(CFLAGS) -o build/pp  PP/pp.c
+	$(CC) $(CFLAGS) -o build/pp -DPP PP/pp.c
 
+test_pp: PP/test_pp.c 
+	$(CC) $(CFLAGS) -o build/test_pp -DTEST_PP PP/test_pp.c PP/pp.c -lcunit
+    
 clean:
-	rm -f pp
+	rm -f pp test_pp
