@@ -35,17 +35,17 @@ typedef struct {
 
 // struct Config 
 // input 0 for params cache_ways, pagesize, threshold_L1, threshold_L2, threshold_L3 in that order to apply default values
-static Config * initConfig(u64 cache_ways, u64 pagesize, u64 cache_sets, u64 cacheline_size, u64 threshold_L1, u64 threshold_L2, u64 threshold_L3){
+static Config * initConfig(i64 cache_ways, i64 pagesize, i64 cache_sets, i64 cacheline_size, i64 threshold_L1, i64 threshold_L2, i64 threshold_L3, i64 buffer_size){
 	Config *conf = malloc(sizeof(Config));
 	// setting default values or apply input
-	conf->cache_ways = (cache_ways != 0) ? cache_ways : 8;
-	conf->pagesize = (pagesize != 0) ? pagesize : 4096;
-	conf->cache_sets = (cache_sets != 0) ? cache_sets : 64; //  default, 32768 L1 cache
-	conf->cacheline_size = (cacheline_size != 0) ? cacheline_size : 64;
-	conf->threshold_L1 = (threshold_L1 != 0) ? threshold_L1 : 100;
-	conf->threshold_L2 = (threshold_L2 != 0) ? threshold_L2 : 200;
-	conf->threshold_L3 = (threshold_L3 != 0) ? threshold_L3 : 300;
-	conf->buffer_size=0;
+	conf->cache_ways = (cache_ways != -1) ? cache_ways : 8;
+	conf->pagesize = (pagesize != -1) ? pagesize : 4096;
+	conf->cache_sets = (cache_sets != -1) ? cache_sets : 64; //  default, 32768 L1 cache
+	conf->cacheline_size = (cacheline_size != -1) ? cacheline_size : 64;
+	conf->threshold_L1 = (threshold_L1 != -1) ? threshold_L1 : 100;
+	conf->threshold_L2 = (threshold_L2 != -1) ? threshold_L2 : 200;
+	conf->threshold_L3 = (threshold_L3 != -1) ? threshold_L3 : 300;
+	conf->buffer_size= (buffer_size != -1) ? buffer_size : 8*4096;;
 	return conf;
 }
 

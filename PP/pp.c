@@ -39,7 +39,7 @@ static void *pp_init(Config *conf) {
 	//conf->buffer_size = 258 * 4096; // 256 cache lines, 4096 bytes apart (mem pages)
 	void *cc_buffer = mmap(NULL, conf->buffer_size, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB, -1, 0);
 	if (cc_buffer == MAP_FAILED) {
-        printf("cc_init: mmap failed");
+        printf("cc_init: mmap failed\n");
         return NULL;
 	}
 	return cc_buffer;
@@ -79,7 +79,7 @@ static void pp_run(Config *conf, void *target_adrs) { // atm support only 1 adrs
 	}
 	void *cc_buffer=pp_init(conf);
 	if (cc_buffer==NULL){
-		printf("pp_run: buffer could nnot be initialized!\n");
+		printf("pp_run: buffer could not be initialized!\n");
 		return;
 	}
 	// setup structs
@@ -96,7 +96,7 @@ static void pp_run(Config *conf, void *target_adrs) { // atm support only 1 adrs
 
 #ifdef PP
 int main(){
-	Config *conf=initConfig(0,0,0,0,0,0,0);
+	Config *conf=initConfig(-1,-1,-1,-1,-1,-1,-1);
 	void *target = malloc(sizeof(void));
 	pp_run(conf, target); // TODO change to real adrs and create a temp picker (file reader)
 	
