@@ -1,6 +1,11 @@
 #define u64 uint64_t
 #define i64 int64_t
 
+#include <stdint.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <sys/mman.h>
+
 typedef struct {
 	u64 cache_ways;
 	u64 cache_sets;
