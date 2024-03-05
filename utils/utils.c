@@ -33,7 +33,7 @@ typedef struct {
 	u64 cnt_measurement; 				// amount of measured values
 } Eviction_Set;
 
-static u64 rng;
+static u64* rng;
 // lfsr
 #define FEEDBACK 0x80000000000019E2ULL
 static u64 lfsr_create(void) {
@@ -93,7 +93,7 @@ static Eviction_Set *initEviction_Set(Config *conf){
 	evset->cnt_measurement=0;
 	evset->size =0;
 	evset->max_size=conf->cache_ways;
-	rng=lfsr_create();
+	rng=&lfsr_create();
 	return evset;
 }
 
