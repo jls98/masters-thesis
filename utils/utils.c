@@ -120,6 +120,10 @@ static uint64_t lfsr_create(void) {
   return lfsr;
 }
 
+static uint64_t lfsr_step(uint64_t lfsr) {
+  return (lfsr & 1) ? (lfsr >> 1) ^ FEEDBACK : (lfsr >> 1);
+}
+
 static uint64_t lfsr_rand(uint64_t* lfsr) {
     for (uint64_t i = 0; i < 8*sizeof(uint64_t); i++) {
         *lfsr = lfsr_step(*lfsr);
@@ -127,6 +131,3 @@ static uint64_t lfsr_rand(uint64_t* lfsr) {
     return *lfsr;
 }
 
-static uint64_t lfsr_step(uint64_t lfsr) {
-  return (lfsr & 1) ? (lfsr >> 1) ^ FEEDBACK : (lfsr >> 1);
-}
