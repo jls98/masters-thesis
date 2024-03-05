@@ -5,6 +5,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/mman.h>
+#include <x86intrin.h>
+#include <time.h>
 
 typedef struct {
 	u64 cache_ways;
