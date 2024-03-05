@@ -96,7 +96,7 @@ static void pp_run(Config *conf, void *target_adrs) { // atm support only 1 adrs
 
 #ifdef PP
 int main(){
-	Config *conf=initConfig(-1,-1,-1,-1,-1,-1,-1);
+	Config *conf=initConfig(-1,-1,-1,-1,-1,-1,-1, -1);
 	void *target = malloc(sizeof(void));
 	pp_run(conf, target); // TODO change to real adrs and create a temp picker (file reader)
 	

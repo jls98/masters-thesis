@@ -8,7 +8,7 @@ void test_pp_init(){
 	// no conf
 	CU_ASSERT_PTR_NULL(pp_init(NULL));
 	
-	Config *conf=initConfig(-1,-1,-1,-1,-1,-1,0); // init conf with default values and buffer size of 0
+	Config *conf=initConfig(-1,-1,-1,-1,-1,-1, -1,0); // init conf with default values and buffer size of 0
 	CU_ASSERT_PTR_NULL(pp_init(conf));
 	
 }
