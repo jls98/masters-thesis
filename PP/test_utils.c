@@ -15,6 +15,7 @@ void test_add_eviction_adrs(){
 	
 	evset=initEviction_Set(conf);
 	
+	// regular fill of evset
 	for (int i=0;i<conf->cache_ways;i++){
 		u64 cur_size = evset->size;
 		addEvictionAdrs(evset, adrs);
@@ -22,6 +23,7 @@ void test_add_eviction_adrs(){
 		CU_ASSERT_EQUAL(evset->adrs[evset->size-1], adrs); // correct adrs set
 	}
 	
+	// case evset full
 	u64 cur_size = evset->size;
 	void *adrs2=malloc(8);
 	addEvictionAdrs(evset, adrs2);
@@ -30,6 +32,10 @@ void test_add_eviction_adrs(){
 	CU_ASSERT_NOT_EQUAL(evset->adrs[evset->size-1], adrs2); // correct adrs set
 	
 	printf("End test_add_eviction_adrs\n\n");
+}
+
+void test_create_pointer_chase_in_eviction_set(){
+	
 }
 
 int main(int ac, char **av) {
