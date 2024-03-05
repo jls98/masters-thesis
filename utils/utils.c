@@ -80,7 +80,7 @@ static void addEvictionAdrs(Eviction_Set *evset, void *evset_adrs){
 		printf("addEvictionAdrs: evset_adrs NULL!\n");
 		return;
 	}
-	if (evset_size <16) evset[evset->evset_size++] = evset_adrs;	
+	if (evset_size <16) evset->evset_adrs[evset->evset_size++] = evset_adrs;	
 	else printf("addEvictionAdrs: evset->evset_adrs exceeding 16 elements!\n");
 }
 
