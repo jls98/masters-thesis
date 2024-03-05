@@ -21,7 +21,7 @@ static i64 pp_probe(Eviction_Set *evset){
         " rdtscp             \n" // end time 
         " sub rax, r8 		\n" // diff = end - start
         : "=&a" (evset->measurements[evset->cnt_measurement])
-        : "r" (evset->target->target_adrs)
+        : "r" (evset) // TODO change
         : "ecx", "rdx", "r8", "memory"
 	);
 	printf("probe donew %lu\n", evset->measurements[evset->cnt_measurement]);
@@ -45,7 +45,7 @@ static void *pp_init(Config *conf) {
 	return cc_buffer;
 }
 
-static void pp_setup(Eviction_Set *evset, Config *conf) {
+static void pp_setup(Config *conf, Eviction_Set *evset, void *target) {
 	if(evset==NULL){
 		printf("pp_setup: evset is NULL!\n");
 		return;
@@ -59,7 +59,7 @@ static void pp_setup(Eviction_Set *evset, Config *conf) {
 	// create eviction set
 	for(u64 i=0;i<conf->cache_ways;i++){
 		// add multiple of pagesize to ensure to land in the same cache set
-		evset->evset_adrs[i]=evset->target->target_adrs+(i+1)*conf->pagesize; // void * -> exakt index value
+		addEvictionAdrs(evset, target+(i+1)*conf->pagesize); // void * -> exakt index value
 		// printf("pp_setup: added addr %p at position %p\n", evset->evset_adrs[i], &evset->evset_adrs[i]); // works
 	}
 }
@@ -72,7 +72,7 @@ static void pp_monitor(Config *conf, Eviction_Set *evset, void *target) {
 	printf("probe is %li\n", pp_probe(evset));
 }
 
-static void pp_run(void *target_adrs, Config *conf) { // atm support only 1 adrs, extend later (easy w linked list)
+static void pp_run(void *target_adrs, Config *conf, void *target) { // atm support only 1 adrs, extend later (easy w linked list)
 	if (target_adrs==NULL){
 		printf("pp_run: target_adrs is NULL!\n");
 		return;
@@ -87,9 +87,9 @@ static void pp_run(void *target_adrs, Config *conf) { // atm support only 1 adrs
 	
 	Eviction_Set *evset=initEviction_Set(conf);
 	
-	pp_setup(evset, conf);
+	pp_setup(evset, conf, target);
 
-	pp_monitor(evset, conf);
+	pp_monitor(evset, conf, target);
 	
 	munmap(cc_buffer, conf->buffer_size);
 }

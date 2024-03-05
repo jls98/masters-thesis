@@ -28,6 +28,7 @@ typedef struct {
 	//Eviction_Set *next;			
 	void **evset_adrs; 			// size equals Config->cache_ways
 	u64 evset_size;
+	u64 evset_max_size;
 	i64 *measurements; 				// measured values
 	u64 cnt_measurement; 				// amount of measured values
 } Eviction_Set;
@@ -62,12 +63,13 @@ static Target *initTarget(void *target_adrs){
 
 // struct Eviction_Set
 static Eviction_Set *initEviction_Set(Config *conf){
-	Eviction_Set *evset = malloc(16*sizeof(Eviction_Set));
+	Eviction_Set *evset = malloc(2*conf->cache_ways*sizeof(Eviction_Set));
 	//evset->next=NULL;
 	evset->evset_adrs=malloc(conf->cache_ways*sizeof(void *));
 	evset->measurements=malloc(100000*sizeof(u64 *)); // amount of max measurement (if too small increase)
 	evset->cnt_measurement=0;
 	evset->evset_size =0;
+	evset->evset_max_size=cache_ways;
 	return evset;
 }
 
@@ -80,8 +82,8 @@ static void addEvictionAdrs(Eviction_Set *evset, void *evset_adrs){
 		printf("addEvictionAdrs: evset_adrs NULL!\n");
 		return;
 	}
-	if (evset->evset_size <16) evset->evset_adrs[evset->evset_size++] = evset_adrs;	
-	else printf("addEvictionAdrs: evset->evset_adrs exceeding 16 elements!\n");
+	if (evset->evset_size <evset_max_size) evset->evset_adrs[evset->evset_size++] = evset_adrs;	
+	else printf("addEvictionAdrs: evset exceeding evset_max_size %lu elements!\n", evset->evset_max_size);
 }
 
 /*void freeTarget (Target *targ){
