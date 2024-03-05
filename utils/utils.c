@@ -50,11 +50,11 @@ static Config * initConfig(u64 cache_ways, u64 pagesize, u64 cache_sets, u64 cac
 static Target *initTarget(void *target_adrs){
 	if (target_adrs == NULL){
 		printf("initTarget: target_adrs is NULL!\n");
-		return NULL;
+		return NULL; // avoid null pointers
 	}
 	Target *targ = malloc(sizeof(Target));
 	targ->target_adrs=target_adrs;
-	//targ->next=NULL;
+	targ->next=NULL;
 	return targ;
 }
 
@@ -95,4 +95,38 @@ static void freeEviction_Set (Eviction_Set *evset){
 	*/
 	free(evset->measurements);
 	free(evset);
+}
+
+// say hi to cache
+static void wait(uint64_t cycles) {
+	unsigned int ignore;
+	uint64_t start = __rdtscp(&ignore);
+	while (__rdtscp(&ignore) - start < cycles);
+}
+
+static void load(void *adrs){
+	__asm__ volatile("mov rax, [%0];"::"r" (adrs): "rax", "memory");
+}
+
+static void flush(void *adrs){
+	__asm__ volatile("clflush [%0];lfence" ::"r" (adrs));
+}
+
+// lfsr
+#define FEEDBACK 0x80000000000019E2ULL
+static uint64_t lfsr_create(void) {
+  uint64_t lfsr;
+  asm volatile("rdrand %0": "=r" (lfsr)::"flags");
+  return lfsr;
+}
+
+static uint64_t lfsr_rand(uint64_t* lfsr) {
+    for (uint64_t i = 0; i < 8*sizeof(uint64_t); i++) {
+        *lfsr = lfsr_step(*lfsr);
+    }
+    return *lfsr;
+}
+
+static uint64_t lfsr_step(uint64_t lfsr) {
+  return (lfsr & 1) ? (lfsr >> 1) ^ FEEDBACK : (lfsr >> 1);
 }

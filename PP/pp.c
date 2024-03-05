@@ -1,8 +1,5 @@
 #include "../utils/utils.c"
 
-
-
-
 // utils 
 // measure time 
 
@@ -71,7 +68,8 @@ static void pp_monitor(Eviction_Set *evset, Config *conf) {
 	printf("p %p\n", targ);
 	void *t_adrs=targ->target_adrs;
 	printf("p %p\n", t_adrs);
-
+	
+	load(targ->adrs);
 	printf("probe is %li\n", probe(evset));
 	printf("probe is %li\n", probe(evset));
 	printf("probe is %li\n", probe(evset));
