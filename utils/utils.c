@@ -36,10 +36,10 @@ typedef struct {
 static u64* rng;
 // lfsr
 #define FEEDBACK 0x80000000000019E2ULL
-static u64 lfsr_create(void) {
+static u64* lfsr_create(void) {
   u64 lfsr;
   asm volatile("rdrand %0": "=r" (lfsr)::"flags");
-  return lfsr;
+  return &lfsr;
 }
 
 static u64 lfsr_step(u64 lfsr) {
@@ -93,7 +93,7 @@ static Eviction_Set *initEviction_Set(Config *conf){
 	evset->cnt_measurement=0;
 	evset->size =0;
 	evset->max_size=conf->cache_ways;
-	rng=&lfsr_create();
+	rng=lfsr_create();
 	return evset;
 }
 
