@@ -1,4 +1,4 @@
-#include "../Utils/utils.c"
+#include "../utils/utils.c"
 #include <CUnit/CUnit.h>
 #include <CUnit/Basic.h>
 
