@@ -14,7 +14,7 @@ void test_pp_init(){
 	CU_ASSERT_PTR_NULL(pp_init(conf));
 	
 	
-	*conf=initConfig(-1,-1,-1,-1,-1,-1, -1,1);
+	conf=initConfig(-1,-1,-1,-1,-1,-1, -1,1);
 	CU_ASSERT_PTR_NOT_NULL(pp_init(conf));
 	printf("End test_pp_init\n\n");
 
