@@ -32,7 +32,7 @@ typedef struct {
 
 // struct Config 
 // input 0 for params cache_ways, pagesize, threshold_L1, threshold_L2, threshold_L3 in that order to apply default values
-inline Config * initConfig(u64 cache_ways, u64 pagesize, u64 cache_sets, u64 cacheline_size, u64 threshold_L1, u64 threshold_L2, u64 threshold_L3){
+static Config * initConfig(u64 cache_ways, u64 pagesize, u64 cache_sets, u64 cacheline_size, u64 threshold_L1, u64 threshold_L2, u64 threshold_L3){
 	Config *conf = malloc(sizeof(Config));
 	// setting default values or apply input
 	conf->cache_ways = (cache_ways != 0) ? cache_ways : 8;
@@ -47,7 +47,7 @@ inline Config * initConfig(u64 cache_ways, u64 pagesize, u64 cache_sets, u64 cac
 }
 
 // struct Target 
-inline Target *initTarget(void *target_adrs){
+static Target *initTarget(void *target_adrs){
 	if (target_adrs == NULL){
 		printf("initTarget: target_adrs is NULL!\n");
 		return NULL;
@@ -59,7 +59,7 @@ inline Target *initTarget(void *target_adrs){
 }
 
 // struct Eviction_Set
-inline Eviction_Set * initEviction_Set(Target *target, Config *conf){
+static Eviction_Set * initEviction_Set(Target *target, Config *conf){
 	if (target == NULL){
 		printf("initEviction_Set: target is NULL!\n");
 		return NULL;
@@ -84,7 +84,7 @@ inline Eviction_Set * initEviction_Set(Target *target, Config *conf){
 }*/
 
 
-inline void freeEviction_Set (Eviction_Set *evset){
+static void freeEviction_Set (Eviction_Set *evset){
     /*Target *current = evset;
     Target *next;
     while (current != NULL) {
