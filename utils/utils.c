@@ -54,7 +54,7 @@ static Target *initTarget(void *target_adrs){
 	}
 	Target *targ = malloc(sizeof(Target));
 	targ->target_adrs=target_adrs;
-	targ->next=NULL;
+	// targ->next=NULL;
 	return targ;
 }
 
