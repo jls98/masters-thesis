@@ -13,8 +13,20 @@ void test_pp_init(){
 	Config *conf=initConfig(-1,-1,-1,-1,-1,-1, -1,0); // init conf with default values and buffer size of 0
 	CU_ASSERT_PTR_NULL(pp_init(conf));
 	
-	
+	// works
 	conf=initConfig(-1,-1,-1,-1,-1,-1, -1,1);
+	CU_ASSERT_PTR_NOT_NULL(pp_init(conf));
+	
+	// limit testing
+	conf=initConfig(-1,-1,-1,-1,-1,-1, -1,512*4096);
+	CU_ASSERT_PTR_NOT_NULL(pp_init(conf));
+	
+	// limit testing
+	conf=initConfig(-1,-1,-1,-1,-1,-1, -1,4096*4096);
+	CU_ASSERT_PTR_NOT_NULL(pp_init(conf));
+	
+	// limit testing
+	conf=initConfig(-1,-1,-1,-1,-1,-1, -1,16000000);
 	CU_ASSERT_PTR_NOT_NULL(pp_init(conf));
 	printf("End test_pp_init\n\n");
 
