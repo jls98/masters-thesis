@@ -7,6 +7,7 @@
 #include <sys/mman.h>
 #include <x86intrin.h>
 #include <time.h>
+#include <string.h>
 
 typedef struct {
 	u64 cache_ways;
