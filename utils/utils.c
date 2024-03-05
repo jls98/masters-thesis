@@ -69,7 +69,7 @@ static Eviction_Set *initEviction_Set(Config *conf){
 	evset->measurements=malloc(100000*sizeof(u64 *)); // amount of max measurement (if too small increase)
 	evset->cnt_measurement=0;
 	evset->evset_size =0;
-	evset->evset_max_size=cache_ways;
+	evset->evset_max_size=conf->cache_ways;
 	return evset;
 }
 

@@ -87,9 +87,9 @@ static void pp_run(void *target_adrs, Config *conf, void *target) { // atm suppo
 	
 	Eviction_Set *evset=initEviction_Set(conf);
 	
-	pp_setup(evset, conf, target);
+	pp_setup(conf, evset, target);
 
-	pp_monitor(evset, conf, target);
+	pp_monitor(conf, evset, target);
 	
 	munmap(cc_buffer, conf->buffer_size);
 }
