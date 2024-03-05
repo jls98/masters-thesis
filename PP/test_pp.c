@@ -19,25 +19,25 @@ void test_pp_init(){
 	// works
 	conf=initConfig(-1,-1,-1,-1,-1,-1, -1,1);
 	return_value=pp_init(conf);
-	CU_ASSERT_PTR_NULL(return_value);
+	CU_ASSERT_PTR_NOT_NULL(return_value);
 	munmap(return_value, 1);
 	
 	// limit testing
 	conf=initConfig(-1,-1,-1,-1,-1,-1, -1,512*4096);
 	return_value=pp_init(conf);
-	CU_ASSERT_PTR_NULL(return_value);
+	CU_ASSERT_PTR_NOT_NULL(return_value);
 	munmap(return_value, 512*4096);
 	
 	// limit testing
 	conf=initConfig(-1,-1,-1,-1,-1,-1, -1,4096*4096);
 	return_value=pp_init(conf);
-	CU_ASSERT_PTR_NULL(return_value);
+	CU_ASSERT_PTR_NOT_NULL(return_value);
 	munmap(return_value, 4096*4096);
 	
 	// limit testing
 	conf=initConfig(-1,-1,-1,-1,-1,-1, -1,16000000);
 	return_value=pp_init(conf);
-	CU_ASSERT_PTR_NULL(return_value);
+	CU_ASSERT_PTR_NOT_NULL(return_value);
 	munmap(return_value, 16000000);
 
 	printf("End test_pp_init\n\n");
