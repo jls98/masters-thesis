@@ -72,7 +72,7 @@ static void pp_monitor(Config *conf, Eviction_Set *evset, void *target) {
 	printf("probe is %li\n", pp_probe(evset));
 }
 
-static void pp_run(void *target_adrs, Config *conf, void *target) { // atm support only 1 adrs, extend later (easy w linked list)
+static void pp_run(Config *conf, void *target_adrs) { // atm support only 1 adrs, extend later (easy w linked list)
 	if (target_adrs==NULL){
 		printf("pp_run: target_adrs is NULL!\n");
 		return;
@@ -87,9 +87,9 @@ static void pp_run(void *target_adrs, Config *conf, void *target) { // atm suppo
 	
 	Eviction_Set *evset=initEviction_Set(conf);
 	
-	pp_setup(conf, evset, target);
+	pp_setup(conf, evset, target_adrs);
 
-	pp_monitor(conf, evset, target);
+	pp_monitor(conf, evset, target_adrs);
 	
 	munmap(cc_buffer, conf->buffer_size);
 }
@@ -98,7 +98,7 @@ static void pp_run(void *target_adrs, Config *conf, void *target) { // atm suppo
 int main(){
 	Config *conf=initConfig(0,0,0,0,0,0,0);
 	void *target = malloc(sizeof(void));
-	pp_run(target, conf); // TODO change to real adrs and create a temp picker (file reader)
+	pp_run(conf, target); // TODO change to real adrs and create a temp picker (file reader)
 	
 	
 	
