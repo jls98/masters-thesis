@@ -6,7 +6,7 @@
 // utils 
 // measure time 
 
-i64 probe(Eviction_Set *evset){
+static i64 probe(Eviction_Set *evset){
 	if (evset==NULL){
 		printf("probe: evset is NULL!\n");
 		return -1;
@@ -34,7 +34,7 @@ i64 probe(Eviction_Set *evset){
 }
 
 
-void *pp_init(Config *conf) {
+static void *pp_init(Config *conf) {
 	// Implement
 	// allocate 256 different cache lines on differenz mem pages
 	conf->buffer_size = 256 * 4096; // 256 cache lines, 4096 bytes apart (mem pages)
@@ -46,7 +46,7 @@ void *pp_init(Config *conf) {
 	return cc_buffer;
 }
 
-void pp_setup(Eviction_Set *evset, Config *conf) {
+static void pp_setup(Eviction_Set *evset, Config *conf) {
 	if(evset==NULL){
 		printf("pp_setup: evset is NULL!\n");
 		return;
@@ -65,7 +65,7 @@ void pp_setup(Eviction_Set *evset, Config *conf) {
 	}
 }
 
-void pp_monitor(Eviction_Set *evset, Config *conf) {
+static void pp_monitor(Eviction_Set *evset, Config *conf) {
 	printf("p\n");	
 	Target *targ = evset->target;
 	printf("p %p\n", targ);
@@ -77,7 +77,7 @@ void pp_monitor(Eviction_Set *evset, Config *conf) {
 	printf("probe is %li\n", probe(evset));
 }
 
-void pp_run(void *target_adrs, Config *conf) { // atm support only 1 adrs, extend later (easy w linked list)
+static void pp_run(void *target_adrs, Config *conf) { // atm support only 1 adrs, extend later (easy w linked list)
 	if (target_adrs==NULL){
 		printf("pp_run: target_adrs is NULL!\n");
 		return;
