@@ -5,7 +5,7 @@
 
 
 void test_pp_init(){
-	ptinf("\n\nStart test_pp_init ... \n")
+	ptinf("\n\nStart test_pp_init ... \n");
 	
 	// no conf
 	CU_ASSERT_PTR_NULL(pp_init(NULL));
