@@ -1,6 +1,6 @@
 CC = gcc
 CFLAGS = -Wall -Wextra -masm=intel
-all: pp test_pp
+all: pp test_pp test_utils
 
 workshop3: Cache_Reversing/workshop3.c
 	$(CC) $(CFLAGS) -o build/workshop3  Cache_Reversing/workshop3.c
@@ -32,5 +32,8 @@ pp: PP/pp.c
 test_pp: PP/test_pp.c 
 	$(CC) $(CFLAGS) -o build/test_pp -DTEST_PP PP/test_pp.c PP/pp.c -lcunit
     
+test_utils: PP/test_utils.c 
+	$(CC) $(CFLAGS) -o build/test_utils -DTEST_UTILS UTILS/test_utils.c PP/test_utils.c -lcunit
+    
 clean:
-	rm -f pp test_pp
+	rm -f pp test_pp test_utils
