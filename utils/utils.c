@@ -103,11 +103,7 @@ static void addEvictionAdrs(Eviction_Set *evset, void *evset_adrs){
 		printf("addEvictionAdrs: evset NULL!\n");
 		return;
 	}
-	if (evset_adrs == NULL){
-		printf("addEvictionAdrs: evset_adrs NULL!\n");
-		return;
-	}
-	if (evset->size <evset->max_size) evset->adrs[evset->size++] = evset_adrs;	
+	if (evset->size < evset->max_size) evset->adrs[evset->size++] = evset_adrs;	
 	else printf("addEvictionAdrs: evset exceeding evset_max_size %lu elements!\n", evset->max_size);
 }
 

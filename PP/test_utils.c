@@ -7,15 +7,21 @@
 void test_add_eviction_adrs(){
 	printf("\n\nStart test_add_eviction_adrs ... \n");
 	Config *conf = initConfig(D);
-	Eviction_Set *evset; // evset 
+	Eviction_Set *evset = NULL; // evset 
 	void *adrs=malloc(8); // just some pointer
 	addEvictionAdrs(evset, adrs); // call with null evset
 	
 	CU_ASSERT_PTR_NULL(evset);
 	
-	// evset=initEviction_Set()
-
-
+	evset=initEviction_Set(conf);
+	
+	for (int i=0;i<10;i++){
+		u64 cur_size = evset->size;
+		addEvictionAdrs(evset, adrs);
+		CU_ASSERT_EQUAL(cur_size+1, evset->size); // +1 compared to before
+		CU_ASSERT_EQUAL(evset->adrs[evset->size-1], adrs); // correct adrs set
+	}
+	
 	printf("End test_add_eviction_adrs\n\n");
 }
 
