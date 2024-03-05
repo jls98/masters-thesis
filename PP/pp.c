@@ -64,14 +64,9 @@ static void pp_setup(Eviction_Set *evset, Config *conf) {
 	}
 }
 
-static void pp_monitor(Eviction_Set *evset, Config *conf) {
-	printf("p\n");	
-	Target *targ = evset->target;
-	printf("p %p\n", targ);
-	void *t_adrs=targ->target_adrs;
-	printf("p %p\n", t_adrs);
+static void pp_monitor(Config *conf, Eviction_Set *evset, void *target) {
 	
-	load(t_adrs);
+	load(target);
 	printf("probe is %li\n", pp_probe(evset));
 	printf("probe is %li\n", pp_probe(evset));
 	printf("probe is %li\n", pp_probe(evset));
