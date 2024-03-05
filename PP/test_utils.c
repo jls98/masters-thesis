@@ -15,12 +15,19 @@ void test_add_eviction_adrs(){
 	
 	evset=initEviction_Set(conf);
 	
-	for (int i=0;i<10;i++){
+	for (int i=0;i<conf->cache_ways;i++){
 		u64 cur_size = evset->size;
 		addEvictionAdrs(evset, adrs);
 		CU_ASSERT_EQUAL(cur_size+1, evset->size); // +1 compared to before
 		CU_ASSERT_EQUAL(evset->adrs[evset->size-1], adrs); // correct adrs set
 	}
+	
+	u64 cur_size = evset->size;
+	void *adrs2=malloc(8);
+	addEvictionAdrs(evset, adrs2);
+	CU_ASSERT_EQUAL(cur_size, evset->size); // +1 compared to before
+	CU_ASSERT_EQUAL(evset->adrs[evset->size-1], adrs); // correct adrs set
+	CU_ASSERT_NOT_EQUAL(evset->adrs[evset->size-1], adrs2); // correct adrs set
 	
 	printf("End test_add_eviction_adrs\n\n");
 }
