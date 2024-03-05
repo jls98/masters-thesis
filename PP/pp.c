@@ -3,25 +3,24 @@
 // utils 
 // measure time 
 
-static i64 probe(Eviction_Set *evset){
+static i64 pp_probe(Eviction_Set *evset){
 	if (evset==NULL){
 		printf("probe: evset is NULL!\n");
 		return -1;
 	}
 	printf("check\n");
-	printf("check Target %p \n", evset->target);
 	printf("check void adrs %p\n", evset->target->target_adrs);
 	printf("check evset->cnt_measurement %lu\n", evset->cnt_measurement);
 	printf("check evset->measurements[evset->cnt_measurement] %p\n", &evset->measurements[evset->cnt_measurement]);
 	
 	__asm__ volatile (
         " mfence            \n"
-        " rdtscp             \n"
-        " mov r8, rax 		\n"
-        " mov rax, [%1]		\n"
-        " lfence            \n"
-        " rdtscp             \n"
-        " sub rax, r8 		\n"
+        " rdtscp             \n" // start time 
+        " mov r8, rax 		\n" // move time to r8 
+        " mov rax, [%1]		\n" // load target adrs 
+        " lfence            \n" 
+        " rdtscp             \n" // end time 
+        " sub rax, r8 		\n" // diff = end - start
         : "=&a" (evset->measurements[evset->cnt_measurement])
         : "r" (evset->target->target_adrs)
         : "ecx", "rdx", "r8", "memory"
@@ -34,10 +33,14 @@ static i64 probe(Eviction_Set *evset){
 static void *pp_init(Config *conf) {
 	// Implement
 	// allocate 256 different cache lines on differenz mem pages
-	conf->buffer_size = 256 * 4096; // 256 cache lines, 4096 bytes apart (mem pages)
+	if (conf == NULL){
+		printf("pp_init: conf NULL!\n");
+		return NULL;
+	}
+	//conf->buffer_size = 258 * 4096; // 256 cache lines, 4096 bytes apart (mem pages)
 	void *cc_buffer = mmap(NULL, conf->buffer_size, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB, -1, 0);
 	if (cc_buffer == MAP_FAILED) {
-        perror("cc_init: mmap failed");
+        printf("cc_init: mmap failed");
         return NULL;
 	}
 	return cc_buffer;
@@ -88,7 +91,7 @@ static void pp_run(void *target_adrs, Config *conf) { // atm support only 1 adrs
 	// setup structs
 	Target *targ=initTarget(target_adrs);
 	
-	Eviction_Set *evset=initEviction_Set(targ, conf);
+	Eviction_Set *evset=initEviction_Set(conf);
 	
 	pp_setup(evset, conf);
 

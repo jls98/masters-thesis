@@ -4,7 +4,10 @@
 
 
 
-
+void test_pp_init(){
+	// no conf
+	CU_ASSERT_PTR_NULL(pp_init(NULL));
+}
 
 int main(int ac, char **av) {
     CU_initialize_registry();
