@@ -125,6 +125,7 @@ static void createPointerChaseInEvictionSet(Eviction_Set *evset){
 	
 	// marker array with all indexes
 	int marker[evset->size]={0}, counter=0, valid_pick=0;
+	memset(marker, 0, evset->size*sizeof(int));
 	u64 index_next=rng%evset->size, index_current=0;
 	
 	while(counter!=evset->size){ // repeat until all evset adrs are set
