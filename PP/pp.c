@@ -8,9 +8,9 @@ static i64 pp_probe(Eviction_Set *evset){
 		printf("probe: evset is NULL!\n");
 		return -1;
 	}
-	printf("check\n");
-	printf("check evset->cnt_measurement %lu\n", evset->cnt_measurement);
-	printf("check evset->measurements[evset->cnt_measurement] %p\n", &evset->measurements[evset->cnt_measurement]);
+	// printf("check\n");
+	// printf("check evset->cnt_measurement %lu\n", evset->cnt_measurement);
+	// printf("check evset->measurements[evset->cnt_measurement] %p\n", &evset->measurements[evset->cnt_measurement]);
 	
 	__asm__ volatile (
         " mfence            \n"

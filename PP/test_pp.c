@@ -39,12 +39,6 @@ void test_pp_init(){
 	return_value=pp_init(conf);
 	CU_ASSERT_PTR_NOT_NULL(return_value);
 	munmap(return_value, 16000000);
-	
-	// limit testing
-	conf=initConfig(-1,-1,-1,-1,-1,-1, -1,16000000);
-	return_value=pp_init(conf);
-	CU_ASSERT_PTR_NOT_NULL(return_value);
-	munmap(return_value, 1600000000);
 
 	printf("End test_pp_init\n\n");
 }

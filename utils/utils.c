@@ -33,6 +33,29 @@ typedef struct {
 	u64 cnt_measurement; 				// amount of measured values
 } Eviction_Set;
 
+static u64 rng;
+// lfsr
+#define FEEDBACK 0x80000000000019E2ULL
+static u64 lfsr_create(void) {
+  u64 lfsr;
+  asm volatile("rdrand %0": "=r" (lfsr)::"flags");
+  return lfsr;
+}
+
+static u64 lfsr_step(u64 lfsr) {
+  return (lfsr & 1) ? (lfsr >> 1) ^ FEEDBACK : (lfsr >> 1);
+}
+
+static u64 lfsr_rand(u64* lfsr) {
+    for (u64 i = 0; i < 8*sizeof(u64); i++) {
+        *lfsr = lfsr_step(*lfsr);
+    }
+    return *lfsr;
+}
+
+
+
+
 // struct Config 
 // input 0 for params cache_ways, pagesize, threshold_L1, threshold_L2, threshold_L3 in that order to apply default values
 static Config * initConfig(i64 cache_ways, i64 pagesize, i64 cache_sets, i64 cacheline_size, i64 threshold_L1, i64 threshold_L2, i64 threshold_L3, i64 buffer_size){
@@ -70,6 +93,7 @@ static Eviction_Set *initEviction_Set(Config *conf){
 	evset->cnt_measurement=0;
 	evset->size =0;
 	evset->max_size=conf->cache_ways;
+	rng=lfsr_create();
 	return evset;
 }
 
@@ -84,6 +108,39 @@ static void addEvictionAdrs(Eviction_Set *evset, void *evset_adrs){
 	}
 	if (evset->size <evset->max_size) evset->adrs[evset->size++] = evset_adrs;	
 	else printf("addEvictionAdrs: evset exceeding evset_max_size %lu elements!\n", evset->max_size);
+}
+
+static void createPointerChaseInEvictionSet(Eviction_Set *evset){
+	if (evset==NULL){ // no evset object
+		printf("createPointerChaseInEvictionSet: evset is NULL!\n");
+		return;
+	}
+	if(evset->size==0){ // no eviction set adresses
+		return;
+	}
+	if (evset->adrs==NULL){ // no eviction set adresses
+		printf("createPointerChaseInEvictionSet: evset->adrs is NULL but size is not 0!\n");
+		return;
+	}
+	
+	// marker array with all indexes
+	int marker[evset->size]={0}, counter=0, valid_pick=0;
+	u64 index_next=rng%evset->size, index_current=0;
+	
+	while(counter!=evset->size){ // repeat until all evset adrs are set
+		// set adrs
+		evset->adrs[index_current] = &evset->adrs[index_next]; 
+		// mark current index
+		marker[index_current] =1;
+		counter++;
+		index_current=index_next;		
+		// pick next index at random w lfsr
+		do{		
+			index_next = lfsr_rand(rng) % evset->size; // rng is set to next random number in lfsr, mod amount of adrs in evset 
+		}while(counter!=evset->size && marker[index_next]); // do while not all adrs are picked yet and next index had not been picked yet
+	}
+	// apply pointer from last index to 0 
+	evset->adrs[index_current] = &evset->adrs[0];
 }
 
 /*void freeTarget (Target *targ){
@@ -123,24 +180,5 @@ static void load(void *adrs){
 
 static void flush(void *adrs){
 	__asm__ volatile("clflush [%0];lfence" ::"r" (adrs));
-}
-
-// lfsr
-#define FEEDBACK 0x80000000000019E2ULL
-static uint64_t lfsr_create(void) {
-  uint64_t lfsr;
-  asm volatile("rdrand %0": "=r" (lfsr)::"flags");
-  return lfsr;
-}
-
-static uint64_t lfsr_step(uint64_t lfsr) {
-  return (lfsr & 1) ? (lfsr >> 1) ^ FEEDBACK : (lfsr >> 1);
-}
-
-static uint64_t lfsr_rand(uint64_t* lfsr) {
-    for (uint64_t i = 0; i < 8*sizeof(uint64_t); i++) {
-        *lfsr = lfsr_step(*lfsr);
-    }
-    return *lfsr;
 }
 
