@@ -9,7 +9,6 @@ static i64 pp_probe(Eviction_Set *evset){
 		return -1;
 	}
 	printf("check\n");
-	printf("check void adrs %p\n", evset->target->target_adrs);
 	printf("check evset->cnt_measurement %lu\n", evset->cnt_measurement);
 	printf("check evset->measurements[evset->cnt_measurement] %p\n", &evset->measurements[evset->cnt_measurement]);
 	
