@@ -31,10 +31,48 @@ void test_add_eviction_adrs(){
 	CU_ASSERT_EQUAL(evset->adrs[evset->size-1], adrs); // correct adrs set
 	CU_ASSERT_NOT_EQUAL(evset->adrs[evset->size-1], adrs2); // correct adrs set
 	
+	free(evset);
+	free(conf);
+	free(adrs);
+	free(adrs2);
+	
 	printf("End test_add_eviction_adrs\n\n");
 }
 
+int contains(Eviction_Set *evset, void *candidate){
+	void *current=(void *)evset->adrs;
+	for(int i=0;i<evset->size;i++){
+		if (candidate==current) return 1;
+		current=*current;
+	}
+	return 0;
+}
+
 void test_create_pointer_chase_in_eviction_set(){
+	
+	Eviction_Set *evset=NULL;
+	createPointerChaseInEvictionSet(evset); // evset NULL
+	CU_ASSERT_PTR_NULL(evset);	
+	
+	Config *conf = initConfig(D);
+	evset = initEviction_Set(conf);
+	void **adrs=malloc(conf->cache_ways*sizeof(void *)); // just some pointer
+	
+	createPointerChaseInEvictionSet(evset); // 
+	u64 cur_rng=rng;
+	CU_ASSERT_EQUAL(rng, cur_rng); // rng did not change -> instant return	
+	
+	// add cache_ways many different addresses to 
+	for (int i=0;i<conf->cache_ways;i++){
+		addEvictionAdrs(evset, adrs+8*i);
+	}
+	
+	createPointerChaseInEvictionSet(evset);
+	for (int i=0;i<conf->cache_ways;i++){
+		CU_ASSERT_TRUE(contains(evset, adrs+8*i), 1);
+	}
+	CU_ASSERT_FALSE(contains(evset, adrs+8*conf->cache_ways)); // adrs behind should not be contained
+
 	
 }
 
