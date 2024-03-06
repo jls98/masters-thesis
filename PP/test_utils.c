@@ -81,6 +81,7 @@ int main(int ac, char **av) {
 
     CU_pSuite suite = CU_add_suite("Test Suite pp", NULL, NULL);
     CU_add_test(suite, "test_add_eviction_adrs", test_add_eviction_adrs);
+    CU_add_test(suite, "test_create_pointer_chase_in_eviction_set", test_create_pointer_chase_in_eviction_set);
 
     CU_basic_run_tests();
     CU_cleanup_registry();
