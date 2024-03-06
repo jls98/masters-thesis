@@ -43,6 +43,7 @@ int contains(Eviction_Set *evset, void *candidate){
 	u64 *current=(u64 *)evset->adrs;
 	for(u64 i=0;i<evset->size;i++){
 		if (candidate==current) return 1;
+		printf("contains: cand %lu cur %lu\n", candidate, current);
 		current=*current;
 	}
 	return 0;
