@@ -147,7 +147,7 @@ static void createPointerChaseInEvictionSet(Eviction_Set *evset){
 	// apply pointer from last index to 0 
 	// *pointer_current=(u64 *)evset->adrs[0];
 	for(int i=0; i<evset->size;i++){
-		printf("marker[%i]=%i\n", marker[i]);
+		printf("marker[%i]=%i\n", i, marker[i]);
 	}
 	printf("counter %lu\n", counter);
 }
