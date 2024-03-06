@@ -16,7 +16,7 @@ void test_add_eviction_adrs(){
 	evset=initEviction_Set(conf);
 	
 	// regular fill of evset
-	for (int i=0;i<conf->cache_ways;i++){
+	for (u64 i=0;i<conf->cache_ways;i++){
 		u64 cur_size = evset->size;
 		addEvictionAdrs(evset, adrs);
 		CU_ASSERT_EQUAL(cur_size+1, evset->size); // +1 compared to before
@@ -40,8 +40,8 @@ void test_add_eviction_adrs(){
 }
 
 int contains(Eviction_Set *evset, void *candidate){
-	void *current=(void *)evset->adrs;
-	for(int i=0;i<evset->size;i++){
+	u64 *current=(u64 *)evset->adrs;
+	for(u64 i=0;i<evset->size;i++){
 		if (candidate==current) return 1;
 		current=*current;
 	}
@@ -63,12 +63,12 @@ void test_create_pointer_chase_in_eviction_set(){
 	CU_ASSERT_EQUAL(rng, cur_rng); // rng did not change -> instant return	
 	
 	// add cache_ways many different addresses to 
-	for (int i=0;i<conf->cache_ways;i++){
+	for (u64 i=0;i<conf->cache_ways;i++){
 		addEvictionAdrs(evset, adrs+8*i);
 	}
 	
 	createPointerChaseInEvictionSet(evset);
-	for (int i=0;i<conf->cache_ways;i++){
+	for (u64 i=0;i<conf->cache_ways;i++){
 		CU_ASSERT_TRUE(contains(evset, adrs+8*i));
 	}
 	CU_ASSERT_FALSE(contains(evset, adrs+8*conf->cache_ways)); // adrs behind should not be contained
