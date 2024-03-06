@@ -37,7 +37,7 @@ typedef struct {
 static u64 rng;
 // lfsr
 #define FEEDBACK 0x80000000000019E2ULL
-static u64* lfsr_create(void) {
+static u64 lfsr_create(void) {
   u64 lfsr;
   asm volatile("rdrand %0": "=r" (lfsr)::"flags");
   return lfsr;
