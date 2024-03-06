@@ -34,13 +34,13 @@ typedef struct {
 	u64 cnt_measurement; 				// amount of measured values
 } Eviction_Set;
 
-static u64* rng;
+static u64 rng;
 // lfsr
 #define FEEDBACK 0x80000000000019E2ULL
 static u64* lfsr_create(void) {
   u64 lfsr;
   asm volatile("rdrand %0": "=r" (lfsr)::"flags");
-  return &lfsr;
+  return lfsr;
 }
 
 static u64 lfsr_step(u64 lfsr) {
@@ -121,10 +121,10 @@ static void createPointerChaseInEvictionSet(Eviction_Set *evset){
 	}
 	
 	// marker array with all indexes
-	u64 counter=0, valid_pick=0;
+	u64 counter=0;
 	int *marker=malloc(sizeof(int)*evset->size);
 	memset(marker, 0, evset->size*sizeof(int));
-	u64 index_next=(*rng)%evset->size, index_current=0;
+	u64 index_next=rng%evset->size, index_current=0;
 	
 	while(counter!=evset->size){ // repeat until all evset adrs are set
 		// set adrs
@@ -135,7 +135,7 @@ static void createPointerChaseInEvictionSet(Eviction_Set *evset){
 		index_current=index_next;		
 		// pick next index at random w lfsr
 		do{		
-			index_next = lfsr_rand(rng) % evset->size; // rng is set to next random number in lfsr, mod amount of adrs in evset 
+			index_next = lfsr_rand(&rng) % evset->size; // rng is set to next random number in lfsr, mod amount of adrs in evset 
 		}while(counter!=evset->size && marker[index_next]); // do while not all adrs are picked yet and next index had not been picked yet
 	}
 	// apply pointer from last index to 0 
