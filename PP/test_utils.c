@@ -70,9 +70,9 @@ void test_create_pointer_chase_in_eviction_set(){
 	
 	createPointerChaseInEvictionSet(evset);
 	for (u64 i=0;i<conf->cache_ways;i++){
-		CU_ASSERT_TRUE(contains(evset, adrs+8*i));
+		CU_ASSERT_TRUE(contains(evset, adrs+i));
 	}
-	CU_ASSERT_FALSE(contains(evset, adrs+8*conf->cache_ways)); // adrs behind should not be contained
+	CU_ASSERT_FALSE(contains(evset, adrs+conf->cache_ways)); // adrs behind should not be contained
 
 	
 }
