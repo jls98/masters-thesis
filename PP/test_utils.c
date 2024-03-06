@@ -73,6 +73,7 @@ void test_create_pointer_chase_in_eviction_set(){
 	for (u64 i=0;i<conf->cache_ways;i++){
 		printf("adrs: %p\n", adrs+i);
 		CU_ASSERT_TRUE(contains(evset, adrs+i));
+		if(contains(evset, adrs+i)==0) printf("hm: %p\n", adrs+i);
 	}
 	CU_ASSERT_FALSE(contains(evset, adrs+conf->cache_ways)); // adrs behind should not be contained
 
