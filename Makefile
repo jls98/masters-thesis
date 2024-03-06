@@ -27,13 +27,13 @@ file_generator: utils/file_generator.c
 	$(CC) $(CFLAGS) -o build/file_generator utils/file_generator.c
 
 pp: PP/pp.c
-	$(CC) $(CFLAGS) -o build/pp -DPP PP/pp.c
+	$(CC) $(CFLAGS) -o -g build/pp -DPP PP/pp.c
 
 test_pp: PP/test_pp.c 
-	$(CC) $(CFLAGS) -o build/test_pp -DTEST_PP PP/test_pp.c PP/pp.c -lcunit
+	$(CC) $(CFLAGS) -o -g build/test_pp -DTEST_PP PP/test_pp.c PP/pp.c -lcunit
     
 test_utils: PP/test_utils.c 
-	$(CC) $(CFLAGS) -o build/test_utils -DTEST_UTILS PP/test_utils.c utils/utils.c -lcunit
+	$(CC) $(CFLAGS) -o -g build/test_utils -DTEST_UTILS PP/test_utils.c utils/utils.c -lcunit
     
 clean:
 	rm -f pp test_pp test_utils
