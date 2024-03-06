@@ -145,7 +145,7 @@ static void createPointerChaseInEvictionSet(Eviction_Set *evset){
 		}while(counter!=evset->size && marker[index_next]); // do while not all adrs are picked yet and next index had not been picked yet
 	}
 	// apply pointer from last index to 0 
-	*pointer_current=(u64 *)evset->adrs[0];
+	// *pointer_current=(u64 *)evset->adrs[0];
 }
 
 /*void freeTarget (Target *targ){
