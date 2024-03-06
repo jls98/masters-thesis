@@ -65,13 +65,13 @@ void test_create_pointer_chase_in_eviction_set(){
 	
 	// add cache_ways many different addresses to 
 	for (u64 i=0;i<conf->cache_ways;i++){
-		printf("adrs: %p\n", adrs+i);
+		printf("adrs add: %p\n", adrs+i);
 		addEvictionAdrs(evset, adrs+i);
 	}
 	
 	createPointerChaseInEvictionSet(evset);
 	for (u64 i=0;i<conf->cache_ways;i++){
-		printf("adrs: %p\n", adrs+i);
+		printf("adrs check: %p\n", adrs+i);
 		CU_ASSERT_TRUE(contains(evset, adrs+i));
 		if(contains(evset, adrs+i)==0) printf("hm: %p\n", adrs+i);
 	}
