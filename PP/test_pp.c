@@ -57,12 +57,16 @@ void test_pp_setup(){
 	debug =pp_probe(evset);
 	printf("timing evset %i \n", debug);
 	my_fence();
+	debug =pp_probe(evset);
 	printf("timing evset %i \n", debug);
 	my_fence();
+	debug =pp_probe(evset);
 	printf("timing evset %i \n", debug);
 	my_fence();
+	debug =pp_probe(evset);
 	printf("timing evset %i \n", debug);
 	my_fence();
+	debug =pp_probe(evset);
 	printf("timing evset %i \n", debug);
 	my_fence();
 
