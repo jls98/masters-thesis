@@ -206,5 +206,4 @@ static void set_msr_bits(int32_t value){
 	: "eax", "memory");
 
 	printf("%i %x %b\n", to_and,to_and,to_and);
-	printf("%b\n", *((int32_t *) msr));
 }
