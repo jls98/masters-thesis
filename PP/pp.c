@@ -40,7 +40,7 @@ static void *pp_init(Config *conf) {
 	//conf->buffer_size = 258 * 4096; // 256 cache lines, 4096 bytes apart (mem pages)
 	void *cc_buffer = mmap(NULL, conf->buffer_size, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB, -1, 0);
 	if (cc_buffer == MAP_FAILED) {
-        printf("cc_init: mmap failed\n");
+        printf("pp_init: mmap failed\n");
         return NULL;
 	}
 	return cc_buffer;

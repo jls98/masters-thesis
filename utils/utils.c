@@ -195,6 +195,25 @@ static void my_fence(){
 	__asm__ volatile("mfence");
 }
 
+static u64 probe(void *adrs){
+	volatile uint64_t time;  
+	__asm__ volatile (
+        " mfence            \n"
+        " lfence            \n"
+        " rdtscp             \n"
+        " mov r8, rax 		\n"
+        " mov rax, [%1]		\n"
+        " lfence            \n"
+        " rdtscp             \n"
+        " sub rax, r8 		\n"
+        : "=&a" (time)
+        : "r" (adrs)
+        : "ecx", "rdx", "r8", "memory"
+	);
+	return time;
+}
+
+
 static void set_msr_bits(i64 value){
 	i64 to_and = 0xfffffff0+value;
 	__asm__ volatile(

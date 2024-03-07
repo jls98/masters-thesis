@@ -118,6 +118,32 @@ void test_pp_setup(){
 		// printf("load: %li\n", debug);
 
 	// }
+	
+	// testing target
+	
+	load(target);
+	my_fence();
+	debug = probe(target);
+	printf("cached target: %lu\n", debug);
+	flush(target);
+	my_fence();
+	debug = probe(target);
+	printf("flushed target: %lu\n", debug);
+	my_fence();
+	load(target);
+	my_fence();
+	debug = pp_probe(evset);
+	my_fence();
+	printf("timing evset: %lu\n", debug);
+	my_fence();
+	debug = probe(target);
+	printf("evset target: %lu\n", debug);
+	my_fence();
+	pp_probe(evset);
+	my_fence();
+	debug = pp_probe(evset);
+	my_fence();
+	printf("evset cached: %lu\n", debug);
 
 	printf("End test_pp_setup\n\n");
 }
