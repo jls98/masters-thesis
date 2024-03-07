@@ -145,7 +145,7 @@ static void createPointerChaseInEvictionSet(Eviction_Set *evset){
 		do{		
 			index_next = lfsr_rand(&rng) % evset->size; // rng is set to next random number in lfsr, mod amount of adrs in evset 
 		}while(counter!=evset->size && marker[index_next]); // do while not all adrs are picked yet and next index had not been picked yet
-		pointer_next =(u64 *)evset->adrs[index_next];
+		pointer_next =(u64)evset->adrs[index_next];
 	}
 	// apply pointer from last index to 0 
 	*pointer_current=(u64)evset->adrs[0];
