@@ -122,9 +122,8 @@ static void createPointerChaseInEvictionSet(Eviction_Set *evset){
 	
 	// marker array with all indexes
 	u64 counter=0;
-	int *marker=malloc(sizeof(int)*evset->size);
+	int *marker=calloc(evset->size, sizeof(int));
 	// memset(marker, 0, evset->size*sizeof(int));
-	for(int i=0;i<evset->size;i++) marker[i]=1;
 	u64 index_next=rng%evset->size, index_current=0;
 	u64 *pointer_current= (u64 *)evset->adrs[index_current], pointer_next= (u64 *)evset->adrs[index_next];
 	while(counter!=evset->size){ // repeat until all evset adrs are set
