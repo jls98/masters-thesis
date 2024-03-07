@@ -120,7 +120,7 @@ void test_pp_setup(){
 	// }
 	
 	// testing target
-	
+	pp_probe(evset);
 	load(target);
 	my_fence();
 	debug = probe(target);
