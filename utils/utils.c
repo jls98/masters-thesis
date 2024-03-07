@@ -127,18 +127,18 @@ static void createPointerChaseInEvictionSet(Eviction_Set *evset){
 	int *marker=calloc(evset->size, sizeof(int));
 	// memset(marker, 0, evset->size*sizeof(int));
 	u64 index_next=rng%evset->size, index_current=0;
-	u64 *pointer_current= (u64)evset->adrs[index_current], pointer_next= (u64 *)evset->adrs[index_next];
+	u64 *pointer_current= (u64 *)evset->adrs[index_current], pointer_next= (u64 *)evset->adrs[index_next];
 	marker[0]=1;
 	while(counter!=evset->size){ // repeat until all evset adrs are set
 		// set adrs
-		*pointer_current=(u64)pointer_next; // set current pointer value to next adrs
+		*pointer_current=(u64 *)pointer_next; // set current pointer value to next adrs
 		
 		// mark current index
 		marker[index_next] =1;
 		counter++;
 
 		// all set, next block
-		pointer_current=(u64 *)pointer_next;
+		pointer_current=pointer_next;
 		index_current=index_next;
 		
 		// pick next index at random w lfsr
