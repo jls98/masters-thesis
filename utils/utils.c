@@ -191,7 +191,7 @@ static void flush(void *adrs){
 	__asm__ volatile("clflush [%0];lfence" ::"r" (adrs));
 }
 
-static void fence(){
+static void my_fence(){
 	__asm__ volatile("mfence");
 }
 
