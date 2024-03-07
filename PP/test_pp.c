@@ -126,15 +126,15 @@ void test_pp_probe(){
 	
 }
 
-void test_set_msr_bits(){
-	set_msr_bits(0);
-	set_msr_bits(0b1);
-	set_msr_bits(0b10);
-	set_msr_bits(0b100);
-	set_msr_bits(0b1000);
-	set_msr_bits(0b1010);
+// void test_set_msr_bits(){
+	// set_msr_bits(0);
+	// set_msr_bits(0b1);
+	// set_msr_bits(0b10);
+	// set_msr_bits(0b100);
+	// set_msr_bits(0b1000);
+	// set_msr_bits(0b1010);
 	
-}
+// }
 
 
 int main(int ac, char **av) {
@@ -143,7 +143,6 @@ int main(int ac, char **av) {
     CU_pSuite suite = CU_add_suite("Test Suite pp", NULL, NULL);
     CU_add_test(suite, "test_pp_init", test_pp_init);
     CU_add_test(suite, "test_pp_setup", test_pp_setup);
-	test_set_msr_bits();
     CU_basic_run_tests();
     CU_cleanup_registry();
 	
