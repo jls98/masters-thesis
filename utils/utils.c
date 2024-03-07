@@ -131,7 +131,7 @@ static void createPointerChaseInEvictionSet(Eviction_Set *evset){
 	marker[0]=1;
 	while(counter!=evset->size){ // repeat until all evset adrs are set
 		// set adrs
-		*pointer_current=(u64 *)pointer_next; // set current pointer value to next adrs
+		*pointer_current=(u64)pointer_next; // set current pointer value to next adrs
 		
 		// mark current index
 		marker[index_next] =1;
