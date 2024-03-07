@@ -52,6 +52,7 @@ void test_pp_setup(){
 	
 	// does it evict?
 	pp_setup(conf, evset, target);
+	load(target);
 	
 	for(int i=0;i<REPS;i++){
 		// no evict
