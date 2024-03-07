@@ -56,12 +56,16 @@ void test_pp_setup(){
 		// no evict
 		flush(target);
 		// SET CORRECT THRESHOLD!!
-		CU_ASSERT_TRUE(pp_probe(evset) > (i64) conf->threshold_L1);
-		
+		i64 debug =pp_probe(evset);
+		CU_ASSERT_TRUE( debug> (i64) conf->threshold_L1);
+		printf("flush: %li\n", debug);
 		// evict
 		load(target);
 		// SET CORRECT THRESHOLD!!
-		CU_ASSERT_TRUE(pp_probe(evset) < (i64) conf->threshold_L1);
+		debug =pp_probe(evset);
+		CU_ASSERT_TRUE(debug < (i64) conf->threshold_L1);
+		printf("load: %li\n", debug);
+
 	}
 
 	printf("End test_pp_setup\n\n");
