@@ -64,6 +64,7 @@ void test_pp_setup(){
 	// evict
 	my_fence();
 	load(target);
+	my_fence();
 	// SET CORRECT THRESHOLD!!
 	debug =pp_probe(evset);
 	CU_ASSERT_TRUE(debug < (i64) conf->threshold_L1);
@@ -79,6 +80,7 @@ void test_pp_setup(){
 	// evict
 	my_fence();
 	load(target);
+	my_fence();
 	// SET CORRECT THRESHOLD!!
 	debug =pp_probe(evset);
 	CU_ASSERT_TRUE(debug < (i64) conf->threshold_L1);
