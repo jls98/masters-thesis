@@ -77,6 +77,7 @@ int main(int ac, char **av) {
 
     CU_pSuite suite = CU_add_suite("Test Suite pp", NULL, NULL);
     CU_add_test(suite, "test_pp_init", test_pp_init);
+    CU_add_test(suite, "test_pp_setup", test_pp_setup);
 
     CU_basic_run_tests();
     CU_cleanup_registry();
