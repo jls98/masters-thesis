@@ -45,6 +45,7 @@ void test_pp_init(){
 // SET CORRECT THRESHOLD!!
 void test_pp_setup(){
 	printf("\n\nStart test_pp_setup ... \n");
+	wait(1E9);
 	Config *conf = initConfig_D;
 	Eviction_Set *evset =initEviction_Set(conf);
 	u64 *target = malloc(100*sizeof(u64));
