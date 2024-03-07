@@ -199,9 +199,9 @@ static void set_msr_bits(int32_t value){
 	int32_t to_and = 0xfff0+value;
 	void *msr = (void *) 0x1a4;
 	__asm__ volatile(
-	"mov eax, [%1];" 
+	"mov eax, %1;" 
 	"and eax, %0;" 
-	"mov [%1], rax;"
+	"mov %1, rax;"
 	: 
 	: "r" (to_and), "r" (msr)
 	: "eax", "memory");
