@@ -198,9 +198,9 @@ static void my_fence(){
 static void set_msr_bits(i64 value){
 	i64 to_and = 0xfffffff0+value;
 	__asm__ volatile(
-	"mov rax, [0x1a4];" 
-	"and rax, %0;" 
-	"mov [0x1a4], rax;"
+	"rdmsr;" 
+	"and eax, %0;" 
+	"wrmsr;"
 	:: "r" (to_and)
 	: "eax", "memory");
 
