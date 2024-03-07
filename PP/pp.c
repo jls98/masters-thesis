@@ -67,6 +67,7 @@ static void pp_setup(Config *conf, Eviction_Set *evset, void *target) {
 		addEvictionAdrs(evset, target+(i+1)*conf->pagesize); // void * -> exakt index value
 		// printf("pp_setup: added addr %p at position %p\n", evset->evset_adrs[i], &evset->evset_adrs[i]); // works
 	}
+	createPointerChaseInEvictionSet(evset);
 }
 
 static void pp_monitor(Config *conf, Eviction_Set *evset, void *target) {
