@@ -89,7 +89,7 @@ static void pp_run(Config *conf, void *target_adrs) { // atm support only 1 adrs
 		return;
 	}
 	// setup structs
-	Target *targ=initTarget(target_adrs);
+	// Target *targ=initTarget(target_adrs);
 	
 	Eviction_Set *evset=initEviction_Set(conf);
 	

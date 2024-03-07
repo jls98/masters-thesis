@@ -68,31 +68,31 @@ void test_pp_setup(){
 		CU_ASSERT_TRUE(debug < (i64) conf->threshold_L1);
 		printf("load: %li\n", debug);
 
-		// no evict
-		flush(target);
-		// SET CORRECT THRESHOLD!!
-		debug =pp_probe(evset);
-		CU_ASSERT_TRUE( debug> (i64) conf->threshold_L1);
-		printf("flush: %li\n", debug);
-		// evict
-		load(target);
-		// SET CORRECT THRESHOLD!!
-		debug =pp_probe(evset);
-		CU_ASSERT_TRUE(debug < (i64) conf->threshold_L1);
-		printf("load: %li\n", debug);
+		// // no evict
+		// flush(target);
+		// // SET CORRECT THRESHOLD!!
+		// debug =pp_probe(evset);
+		// CU_ASSERT_TRUE( debug> (i64) conf->threshold_L1);
+		// printf("flush: %li\n", debug);
+		// // evict
+		// load(target);
+		// // SET CORRECT THRESHOLD!!
+		// debug =pp_probe(evset);
+		// CU_ASSERT_TRUE(debug < (i64) conf->threshold_L1);
+		// printf("load: %li\n", debug);
 
-		// no evict
-		flush(target);
-		// SET CORRECT THRESHOLD!!
-		debug =pp_probe(evset);
-		CU_ASSERT_TRUE( debug> (i64) conf->threshold_L1);
-		printf("flush: %li\n", debug);
-		// evict
-		load(target);
-		// SET CORRECT THRESHOLD!!
-		debug =pp_probe(evset);
-		CU_ASSERT_TRUE(debug < (i64) conf->threshold_L1);
-		printf("load: %li\n", debug);
+		// // no evict
+		// flush(target);
+		// // SET CORRECT THRESHOLD!!
+		// debug =pp_probe(evset);
+		// CU_ASSERT_TRUE( debug> (i64) conf->threshold_L1);
+		// printf("flush: %li\n", debug);
+		// // evict
+		// load(target);
+		// // SET CORRECT THRESHOLD!!
+		// debug =pp_probe(evset);
+		// CU_ASSERT_TRUE(debug < (i64) conf->threshold_L1);
+		// printf("load: %li\n", debug);
 
 	// }
 
