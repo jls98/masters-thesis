@@ -43,7 +43,6 @@ int contains(Eviction_Set *evset, void *candidate){
 	u64 *current=*((u64 *)evset->adrs);
 	for(u64 i=0;i<evset->size;i++){
 		if (candidate==current) return 1;
-		printf("contains: cand %p cur %p\n", candidate, current);
 		current=*current;
 	}
 	return 0;
@@ -65,23 +64,14 @@ void test_create_pointer_chase_in_eviction_set(){
 	
 	// add cache_ways many different addresses to 
 	for (u64 i=0;i<conf->cache_ways;i++){
-		printf("adrs add: %p\n", adrs+i);
 		addEvictionAdrs(evset, adrs+i);
 	}
 	
 	createPointerChaseInEvictionSet(evset);
 	for (u64 i=0;i<conf->cache_ways;i++){
-		printf("adrs check: %p\n", adrs+i);
-		int debug = contains(evset, adrs+i);
-		CU_ASSERT_TRUE(debug);
-		if(debug==0) printf("hm: %p\n", adrs+i);
+		CU_ASSERT_TRUE(contains(evset, adrs+i));
 	}
-	CU_ASSERT_FALSE(contains(evset, adrs+conf->cache_ways)); // adrs behind should not be contained
-	
-	for (u64 i=0;i<conf->cache_ways;i++){
-		printf("adrs no %i: %p %p\n", i, evset->adrs[i], *((u64 *)evset->adrs[i]));
-	}
-	
+	CU_ASSERT_FALSE(contains(evset, adrs+conf->cache_ways)); // adrs behind should not be contained	
 }
 
 int main(int ac, char **av) {
