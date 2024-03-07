@@ -49,24 +49,28 @@ void test_pp_setup(){
 	Config *conf = initConfig_D;
 	Eviction_Set *evset =initEviction_Set(conf);
 	u64 *target = malloc(100*sizeof(u64));
-	
+	i64 debug;
 	// does it evict?
 	pp_setup(conf, evset, target);
 	load(target);
 	my_fence();
-	printf("timing evset %i \n", pp_probe(evset));
+	debug =pp_probe(evset);
+	printf("timing evset %i \n", debug);
 	my_fence();
-	printf("timing evset %i \n", pp_probe(evset));
+	printf("timing evset %i \n", debug);
 	my_fence();
-	printf("timing evset %i \n", pp_probe(evset));
+	printf("timing evset %i \n", debug);
 	my_fence();
-	printf("timing evset %i \n", pp_probe(evset));
+	printf("timing evset %i \n", debug);
 	my_fence();
+	printf("timing evset %i \n", debug);
+	my_fence();
+
 	// for(int i=0;i<REPS;i++){
 	// no evict
 	flush(target);
 	// SET CORRECT THRESHOLD!!
-	i64 debug =pp_probe(evset);
+	debug =pp_probe(evset);
 	CU_ASSERT_TRUE( debug> (i64) conf->threshold_L1);
 	printf("flush: %li\n", debug);
 	// evict
