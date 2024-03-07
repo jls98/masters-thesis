@@ -197,7 +197,7 @@ static void my_fence(){
 
 static void set_msr_bits(int32_t value){
 	int32_t to_and = 0xfff0+value;
-	void *msr = 0x1a4;
+	void *msr = (void *) 0x1a4;
 	__asm__ volatile(
 	"mov rax, [%1];" 
 	"and rax, %0;" 
