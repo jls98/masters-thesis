@@ -199,7 +199,7 @@ static void set_msr_bits(i64 value){
 	i64 to_and = 0xfffffff0+value;
 	__asm__ volatile(
 	"rdmsr;" 
-	"and eax, %0;" 
+	"and rax, %0;" 
 	"wrmsr;"
 	:: "r" (to_and)
 	: "eax", "memory");
