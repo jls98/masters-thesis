@@ -53,7 +53,15 @@ void test_pp_setup(){
 	// does it evict?
 	pp_setup(conf, evset, target);
 	load(target);
-	pp_probe(evset);
+	my_fence();
+	printf("timing evset %i \n", pp_probe(evset));
+	my_fence();
+	printf("timing evset %i \n", pp_probe(evset));
+	my_fence();
+	printf("timing evset %i \n", pp_probe(evset));
+	my_fence();
+	printf("timing evset %i \n", pp_probe(evset));
+	my_fence();
 	// for(int i=0;i<REPS;i++){
 	// no evict
 	flush(target);
