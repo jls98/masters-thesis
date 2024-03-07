@@ -195,3 +195,7 @@ static void my_fence(){
 	__asm__ volatile("mfence");
 }
 
+static void set_msr_bits(int32_t value){
+	int32_t to_and = 0x1110+value;
+	printf("%i %x %b\n", to_and,to_and,to_and);
+}
