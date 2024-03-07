@@ -88,6 +88,8 @@ void test_pp_setup(){
 	// evict
 	my_fence();
 	load(target);
+	load(target);
+	load(target);
 	my_fence();
 	// SET CORRECT THRESHOLD!!
 	debug =pp_probe(evset);
