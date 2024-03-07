@@ -148,7 +148,7 @@ static void createPointerChaseInEvictionSet(Eviction_Set *evset){
 		pointer_next =(u64 *)evset->adrs[index_next];
 	}
 	// apply pointer from last index to 0 
-	*pointer_current=(u64 *)evset->adrs[0];
+	*pointer_current=(u64)evset->adrs[0];
 
 }
 
