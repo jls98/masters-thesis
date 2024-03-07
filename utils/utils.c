@@ -201,8 +201,8 @@ static void set_msr_bits(i64 value){
 	"mov eax, 0x1a4;" 
 	"and eax, %0;" 
 	"mov 0x1a4, rax;"
-	: "r" (to_and)
+	:: "r" (to_and)
 	: "eax", "memory");
 
-	printf("%i %x %b\n", to_and,to_and,to_and);
+	printf("%li %lx %lb\n", to_and,to_and,to_and);
 }
