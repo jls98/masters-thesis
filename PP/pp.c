@@ -17,7 +17,7 @@ static i64 pp_probe(Eviction_Set *evset){
 		" mov rax, [%1]		\n" // load target adrs
         " loop: mov rax, [rax]\n" // pointer chase
 		" dec r9\n"
-		// " lfence\n"
+		" lfence\n"
 		" jnz loop\n"
         " lfence            \n" 
         " rdtscp             \n" // end time 
