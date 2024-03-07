@@ -5,7 +5,7 @@
 
 void test_add_eviction_adrs(){
 	printf("\n\nStart test_add_eviction_adrs ... \n");
-	Config *conf = initConfig(D);
+	Config *conf = initConfig_D;
 	Eviction_Set *evset = NULL; // evset 
 	void *adrs=malloc(8); // just some pointer
 	addEvictionAdrs(evset, adrs); // call with null evset
@@ -53,7 +53,7 @@ void test_create_pointer_chase_in_eviction_set(){
 	createPointerChaseInEvictionSet(evset); // evset NULL
 	CU_ASSERT_PTR_NULL(evset);	
 	
-	Config *conf = initConfig(D);
+	Config *conf = initConfig_D;
 	evset = initEviction_Set(conf);
 	void **adrs=malloc(conf->cache_ways*sizeof(void *)); // just some pointer
 	
