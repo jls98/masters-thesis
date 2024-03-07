@@ -68,7 +68,7 @@ static Config * initConfig(i64 cache_ways, i64 pagesize, i64 cache_sets, i64 cac
 	conf->pagesize = (pagesize != -1) ? pagesize : 4096;
 	conf->cache_sets = (cache_sets != -1) ? cache_sets : 64; //  default, 32768 L1 cache
 	conf->cacheline_size = (cacheline_size != -1) ? cacheline_size : 64;
-	conf->threshold_L1 = (threshold_L1 != -1) ? threshold_L1 : 100;
+	conf->threshold_L1 = (threshold_L1 != -1) ? threshold_L1 : 170;
 	conf->threshold_L2 = (threshold_L2 != -1) ? threshold_L2 : 200;
 	conf->threshold_L3 = (threshold_L3 != -1) ? threshold_L3 : 300;
 	conf->buffer_size= (buffer_size != -1) ? buffer_size : 8*4096;;
