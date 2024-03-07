@@ -55,19 +55,19 @@ void test_pp_setup(){
 	load(target);
 	my_fence();
 	debug =pp_probe(evset);
-	printf("timing evset %i \n", debug);
+	printf("timing evset %li \n", debug);
 	my_fence();
 	debug =pp_probe(evset);
-	printf("timing evset %i \n", debug);
+	printf("timing evset %li \n", debug);
 	my_fence();
 	debug =pp_probe(evset);
-	printf("timing evset %i \n", debug);
+	printf("timing evset %li \n", debug);
 	my_fence();
 	debug =pp_probe(evset);
-	printf("timing evset %i \n", debug);
+	printf("timing evset %li \n", debug);
 	my_fence();
 	debug =pp_probe(evset);
-	printf("timing evset %i \n", debug);
+	printf("timing evset %li \n", debug);
 	my_fence();
 
 	// for(int i=0;i<REPS;i++){
@@ -124,26 +124,26 @@ void test_pp_setup(){
 	load(target);
 	my_fence();
 	debug = probe(target);
-	printf("cached target: %lu\n", debug);
+	printf("cached target: %li\n", debug);
 	flush(target);
 	my_fence();
 	debug = probe(target);
-	printf("flushed target: %lu\n", debug);
+	printf("flushed target: %li\n", debug);
 	my_fence();
 	load(target);
 	my_fence();
 	debug = pp_probe(evset);
 	my_fence();
-	printf("timing evset: %lu\n", debug);
+	printf("timing evset: %li\n", debug);
 	my_fence();
 	debug = probe(target);
-	printf("evset target: %lu\n", debug);
+	printf("evset target: %li\n", debug);
 	my_fence();
 	pp_probe(evset);
 	my_fence();
 	debug = pp_probe(evset);
 	my_fence();
-	printf("evset cached: %lu\n", debug);
+	printf("evset cached: %li\n", debug);
 
 	printf("End test_pp_setup\n\n");
 }
