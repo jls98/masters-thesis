@@ -47,7 +47,7 @@ void test_pp_setup(){
 	printf("\n\nStart test_pp_setup ... \n");
 	Config *conf = initConfig_D;
 	Eviction_Set *evset =initEviction_Set(conf);
-	u64 *target = malloc(sizeof(u64));
+	u64 *target = malloc(100*sizeof(u64));
 	
 	// does it evict?
 	pp_setup(conf, evset, target);
