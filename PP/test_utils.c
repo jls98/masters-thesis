@@ -2,7 +2,6 @@
 #include <CUnit/CUnit.h>
 #include <CUnit/Basic.h>
 
-#define initConfig(D) initConfig(-1,-1,-1,-1,-1,-1,-1,-1)
 
 void test_add_eviction_adrs(){
 	printf("\n\nStart test_add_eviction_adrs ... \n");

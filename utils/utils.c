@@ -9,6 +9,8 @@
 #include <time.h>
 #include <string.h>
 
+#define initConfig(D) initConfig(-1,-1,-1,-1,-1,-1,-1,-1)
+
 typedef struct {
 	u64 cache_ways;
 	u64 cache_sets;
