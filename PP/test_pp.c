@@ -2,8 +2,6 @@
 #include <CUnit/CUnit.h>
 #include <CUnit/Basic.h>
 
-
-
 void test_pp_init(){
 	printf("\n\nStart test_pp_init ... \n");
 	
@@ -42,6 +40,37 @@ void test_pp_init(){
 
 	printf("End test_pp_init\n\n");
 }
+
+#define REPS 10
+// SET CORRECT THRESHOLD!!
+void test_pp_setup(){
+	printf("\n\nStart test_pp_setup ... \n");
+	Config *conf = initConfig(D);
+	Eviction_Set *evset =initEviction_Set(conf);
+	u64 *target = malloc(sizeof(u64));
+	
+	// does it evict?
+	pp_setup(conf, evset, target);
+	
+	for(int i=0;i<REPS;i++){
+		// no evict
+		flush(target);
+		// SET CORRECT THRESHOLD!!
+		CU_ASSERT_TRUE(pp_probe(evset) > evset->threshold_L1);
+		
+		// evict
+		load(target);
+		// SET CORRECT THRESHOLD!!
+		CU_ASSERT_TRUE(pp_probe(evset) < evset->threshold_L1);
+	}
+
+	printf("End test_pp_setup\n\n");
+}
+
+void test_pp_probe(){
+	
+}
+
 
 int main(int ac, char **av) {
     CU_initialize_registry();

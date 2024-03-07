@@ -8,23 +8,23 @@ static i64 pp_probe(Eviction_Set *evset){
 		printf("probe: evset is NULL!\n");
 		return -1;
 	}
-	// printf("check\n");
-	// printf("check evset->cnt_measurement %lu\n", evset->cnt_measurement);
-	// printf("check evset->measurements[evset->cnt_measurement] %p\n", &evset->measurements[evset->cnt_measurement]);
-	
+
 	__asm__ volatile (
+		" mov r9, %2\n" // 
         " mfence            \n"
         " rdtscp             \n" // start time 
         " mov r8, rax 		\n" // move time to r8 
-        " mov rax, [%1]		\n" // load target adrs 
+		" mov rax, [%1]		\n" // load target adrs
+        " loop: mov rax, [rax]\n" // pointer chase
+		" dec r9\n"
+		" jnz loop\n"
         " lfence            \n" 
         " rdtscp             \n" // end time 
         " sub rax, r8 		\n" // diff = end - start
         : "=&a" (evset->measurements[evset->cnt_measurement])
-        : "r" (evset) // TODO change
-        : "ecx", "rdx", "r8", "memory"
+        : "r" (evset->adrs), "r" (evset->size) 
+        : "ecx", "rdx", "r8", "r9", "memory"
 	);
-	printf("probe donew %lu\n", evset->measurements[evset->cnt_measurement]);
 	return evset->measurements[evset->cnt_measurement++];
 }
 
@@ -56,7 +56,12 @@ static void pp_setup(Config *conf, Eviction_Set *evset, void *target) {
 		return;
 	}
 	
-	// create eviction set
+	if(target==NULL){
+		printf("pp_setup: target is NULL!\n");
+		return;
+	}
+	
+	// create eviction set / TODO dont hardcode
 	for(u64 i=0;i<conf->cache_ways;i++){
 		// add multiple of pagesize to ensure to land in the same cache set
 		addEvictionAdrs(evset, target+(i+1)*conf->pagesize); // void * -> exakt index value
