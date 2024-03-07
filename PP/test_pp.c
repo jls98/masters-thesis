@@ -53,56 +53,57 @@ void test_pp_setup(){
 	// does it evict?
 	pp_setup(conf, evset, target);
 	load(target);
-	my_fence();
-	debug =pp_probe(evset);
-	printf("timing evset %li \n", debug);
-	my_fence();
-	debug =pp_probe(evset);
-	printf("timing evset %li \n", debug);
-	my_fence();
-	debug =pp_probe(evset);
-	printf("timing evset %li \n", debug);
-	my_fence();
-	debug =pp_probe(evset);
-	printf("timing evset %li \n", debug);
-	my_fence();
-	debug =pp_probe(evset);
-	printf("timing evset %li \n", debug);
-	my_fence();
+	// my_fence();
+	// debug =pp_probe(evset);
+	// printf("timing evset %li \n", debug);
+	// my_fence();
+	// debug =pp_probe(evset);
+	// printf("timing evset %li \n", debug);
+	// my_fence();
+	// debug =pp_probe(evset);
+	// printf("timing evset %li \n", debug);
+	// my_fence();
+	// debug =pp_probe(evset);
+	// printf("timing evset %li \n", debug);
+	// my_fence();
+	// debug =pp_probe(evset);
+	// printf("timing evset %li \n", debug);
+	// my_fence();
 
 	// for(int i=0;i<REPS;i++){
 	// no evict
 	flush(target);
+	pp_probe(evset);
 	// SET CORRECT THRESHOLD!!
+	// case no target access
 	debug =pp_probe(evset);
-	CU_ASSERT_TRUE( debug> (i64) conf->threshold_L1);
-	printf("flush: %li\n", debug);
-	// evict
-	my_fence();
-	load(target);
-	my_fence();
-	// SET CORRECT THRESHOLD!!
-	debug =pp_probe(evset);
-	CU_ASSERT_TRUE(debug < (i64) conf->threshold_L1);
-	printf("load: %li\n", debug);
+	CU_ASSERT_TRUE( debug< (i64) conf->threshold_L1);
+	printf("evset timiing w no access by target: %li\n", debug);
 	
-	my_fence();
-	// no evict
-	flush(target);
-	// SET CORRECT THRESHOLD!!
-	debug =pp_probe(evset);
-	CU_ASSERT_TRUE( debug < (i64) conf->threshold_L1);
-	printf("flush: %li\n", debug);
 	// evict
 	my_fence();
-	load(target);
-	load(target);
-	load(target);
+	load(target); // target access in between
 	my_fence();
 	// SET CORRECT THRESHOLD!!
 	debug =pp_probe(evset);
 	CU_ASSERT_TRUE(debug > (i64) conf->threshold_L1);
-	printf("load: %li\n", debug);
+	printf("evset timiing w loaded target: %li\n", debug);
+	
+	// no evict
+	my_fence();
+	// case no target access
+	debug =pp_probe(evset);
+	CU_ASSERT_TRUE( debug< (i64) conf->threshold_L1);
+	printf("evset timiing w no access by target: %li\n", debug);
+	
+	// evict
+	my_fence();
+	load(target); // target access in between
+	my_fence();
+	// SET CORRECT THRESHOLD!!
+	debug =pp_probe(evset);
+	CU_ASSERT_TRUE(debug > (i64) conf->threshold_L1);
+	printf("evset timiing w loaded target: %li\n", debug);
 
 		// // no evict
 		// flush(target);
