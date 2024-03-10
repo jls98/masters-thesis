@@ -89,6 +89,7 @@ void test_pp_setup(){
 	CU_ASSERT_TRUE(debug > (i64) conf->threshold_L1);
 	printf("evset timing w loaded target: %li\n", debug);
 	
+	
 	// no evict
 	my_fence();
 	// case no target access
