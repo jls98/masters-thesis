@@ -28,6 +28,7 @@ static i64 pp_probe(Eviction_Set *evset){
 }
 
 #define TEST_REPS 100
+#define OUTSIDER_TRESHOLD 1000
 void test_L1_cache(){
 	Config *conf=initConfig_D;
 	void *buffer = mmap(NULL, 10*conf->buffer_size, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB, -1, 0);
@@ -88,7 +89,7 @@ void test_L1_cache(){
 			my_fence();
 			do{
 				time = probe(evset->adrs[i]);
-			} while(time > 1000);
+			} while(time > OUTSIDER_TRESHOLD);
 			my_fence();			
 			evset->measurements[i] += time;
 			my_fence();
@@ -119,7 +120,7 @@ void test_L1_cache(){
 			my_fence();
 			do{
 				time = probe(evset->adrs[i]);
-			} while(time > 1000);
+			} while(time > OUTSIDER_TRESHOLD);
 			my_fence();			
 			evset->measurements[i] += time;
 			my_fence();
@@ -148,7 +149,7 @@ void test_L1_cache(){
 			my_fence();
 			do{
 				time = probe(evset->adrs[i]);
-			} while(time > 1000);			
+			} while(time > OUTSIDER_TRESHOLD);			
 			my_fence();
 			evset->measurements[i] += time;
 			my_fence();
@@ -192,7 +193,7 @@ void test_L1_cache(){
 			my_fence();
 			do{
 				time = probe(evset->adrs[i]);
-			} while(time > 1000);			
+			} while(time > OUTSIDER_TRESHOLD);			
 			my_fence();
 			evset->measurements[i] += time;
 			my_fence();
@@ -221,7 +222,7 @@ void test_L1_cache(){
 			my_fence();
 			do{
 				time = probe(evset->adrs[i]);
-			} while(time > 200);			
+			} while(time > OUTSIDER_TRESHOLD);			
 			my_fence();
 			evset->measurements[i] += time;
 			my_fence();
@@ -250,7 +251,7 @@ void test_L1_cache(){
 			my_fence();
 			do{
 				time = probe(evset->adrs[i]);
-			} while(time > 200);			
+			} while(time > OUTSIDER_TRESHOLD);			
 			my_fence();
 			evset->measurements[i] += time;
 			my_fence();
