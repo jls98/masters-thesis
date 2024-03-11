@@ -72,95 +72,36 @@ void test_L1_cache(){
 	for(int i=0;i<8;i++){ // empty measurements
 		evset->measurements[i]=0;
 	}	
+
 	
-	printf("\nNo element loaded from target set with pp probe:\n");
-	for (int j=0;j<TEST_REPS;j++){
+	// printf("\nNo element loaded from target set with pp probe:\n");
+	// for (int j=0;j<TEST_REPS;j++){
 		
-		for(int i=0;i<8;i++) {
-			flush(target_set->adrs[i]);
-			flush(evset->adrs[i]);
-		}
+		// for(int i=0;i<8;i++) {
+			// flush(target_set->adrs[i]);
+			// flush(evset->adrs[i]);
+		// }
 		
-		my_fence();
+		// my_fence();
 	
-		for(int i=0;i<8;i++){
-			my_fence();
-			pp_probe(evset); // load all evset elems
-			my_fence();
-			do{
-				time = probe(evset->adrs[i]);
-			} while(time > OUTSIDER_TRESHOLD);
-			my_fence();			
-			evset->measurements[i] += time;
-			my_fence();
-			// printf("Time of element %i is %lu\n", i, time);
-		}
-	}
+		// for(int i=0;i<8;i++){
+			// my_fence();
+			// pp_probe(evset); // load all evset elems
+			// my_fence();
+			// do{
+				// time = probe(evset->adrs[i]);
+			// } while(time > OUTSIDER_TRESHOLD);			
+			// my_fence();
+			// evset->measurements[i] += time;
+			// my_fence();
+			// // printf("Time of element %i is %lu\n", i, time);
+		// }
+	// }
 	
-	
-	
-	for(int i=0;i<8;i++){ // print and reset measurements
-		printf("Time sum of element %i is %lu, avg per iteration is %lu\n", i, evset->measurements[i], evset->measurements[i]/TEST_REPS);
-		evset->measurements[i]=0;
-	}	
-	
-	printf("\nNo element loaded from target set with pp probe:\n");
-	for (int j=0;j<TEST_REPS;j++){
-		
-		for(int i=0;i<8;i++) {
-			flush(target_set->adrs[i]);
-			flush(evset->adrs[i]);
-		}
-		
-		my_fence();
-	
-		for(int i=0;i<8;i++){
-			my_fence();
-			pp_probe(evset); // load all evset elems
-			my_fence();
-			do{
-				time = probe(evset->adrs[i]);
-			} while(time > OUTSIDER_TRESHOLD);
-			my_fence();			
-			evset->measurements[i] += time;
-			my_fence();
-			// printf("Time of element %i is %lu\n", i, time);
-		}
-	}
-	
-	for(int i=0;i<8;i++){ // print and reset measurements
-		printf("Time sum of element %i is %lu, avg per iteration is %lu\n", i, evset->measurements[i], evset->measurements[i]/TEST_REPS);
-		evset->measurements[i]=0;
-	}	
-	
-	printf("\nNo element loaded from target set with pp probe:\n");
-	for (int j=0;j<TEST_REPS;j++){
-		
-		for(int i=0;i<8;i++) {
-			flush(target_set->adrs[i]);
-			flush(evset->adrs[i]);
-		}
-		
-		my_fence();
-	
-		for(int i=0;i<8;i++){
-			my_fence();
-			pp_probe(evset); // load all evset elems
-			my_fence();
-			do{
-				time = probe(evset->adrs[i]);
-			} while(time > OUTSIDER_TRESHOLD);			
-			my_fence();
-			evset->measurements[i] += time;
-			my_fence();
-			// printf("Time of element %i is %lu\n", i, time);
-		}
-	}
-	
-	for(int i=0;i<8;i++){ // print and reset measurements
-		printf("Time sum of element %i is %lu, avg per iteration is %lu\n", i, evset->measurements[i], evset->measurements[i]/TEST_REPS);
-		evset->measurements[i]=0;
-	}	
+	// for(int i=0;i<8;i++){ // print and reset measurements
+		// printf("Time sum of element %i is %lu, avg per iteration is %lu\n", i, evset->measurements[i], evset->measurements[i]/TEST_REPS);
+		// evset->measurements[i]=0;
+	// }	
 	
 	printf("\nNo element loaded from target set with load:\n");
 	for (int j=0;j<TEST_REPS;j++){
