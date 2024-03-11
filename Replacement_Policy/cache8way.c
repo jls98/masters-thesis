@@ -141,9 +141,39 @@ void test_L1_cache(){
 			// printf("Time of element %i is %lu\n", i, time);
 		}
 	}
-	
+
+
 	for(int i=0;i<8;i++){ // print and reset measurements
 		printf("Time sum of element %i at %p is %lu, avg per iteration is %lu\n", i, evset->adrs[i], evset->measurements[i], evset->measurements[i]/TEST_REPS);
+		evset->measurements[i]=0;
+	}	
+	
+	printf("\n1 element loaded from loaded target set:\n");
+	for(int j=0;j<TEST_REPS;j++){
+		
+		for(int i=0;i<8;i++) {
+			flush(target_set->adrs[i]);
+			flush(evset->adrs[i]);
+		}
+		my_fence();
+		for(int i=0;i<8;i++){
+			my_fence();
+			pp_probe(evset); // load all evset elems
+			my_fence();
+			load(target_set->adrs[0]); // load "1" target adrs 
+			my_fence();
+			do{
+				time = probe(evset->adrs[i]);
+			} while(time > OUTSIDER_TRESHOLD);			
+			my_fence();
+			evset->measurements[i] += time;
+			my_fence();
+			
+			// printf("Time of element %i is %lu\n", i, time);
+		}
+	}
+	for(int i=0;i<8;i++){ // print and reset measurements
+		printf("Time sum of element %i is %lu, avg per iteration is %lu\n", i, evset->measurements[i], evset->measurements[i]/TEST_REPS);
 		evset->measurements[i]=0;
 	}	
 	
@@ -176,34 +206,7 @@ void test_L1_cache(){
 		evset->measurements[i]=0;
 	}	
 	
-	printf("\n1 element loaded from loaded target set:\n");
-	for(int j=0;j<TEST_REPS;j++){
-		
-		for(int i=0;i<8;i++) {
-			flush(target_set->adrs[i]);
-			flush(evset->adrs[i]);
-		}
-		my_fence();
-		for(int i=0;i<8;i++){
-			my_fence();
-			pp_probe(evset); // load all evset elems
-			my_fence();
-			load(target_set->adrs[0]); // load "1" target adrs 
-			my_fence();
-			do{
-				time = probe(evset->adrs[i]);
-			} while(time > OUTSIDER_TRESHOLD);			
-			my_fence();
-			evset->measurements[i] += time;
-			my_fence();
-			
-			// printf("Time of element %i is %lu\n", i, time);
-		}
-	}
-	for(int i=0;i<8;i++){ // print and reset measurements
-		printf("Time sum of element %i is %lu, avg per iteration is %lu\n", i, evset->measurements[i], evset->measurements[i]/TEST_REPS);
-		evset->measurements[i]=0;
-	}	
+
 	// repeat 
 	
 	// load evset, load target, load another target test each evset member
