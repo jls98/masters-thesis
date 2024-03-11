@@ -27,6 +27,7 @@ static i64 pp_probe(Eviction_Set *evset){
 	return evset->measurements[evset->cnt_measurement++];
 }
 
+#define TEST_REPS 100
 void test_L1_cache(){
 	Config *conf=initConfig_D;
 	void *buffer = mmap(NULL, 10*conf->buffer_size, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB, -1, 0);
@@ -51,31 +52,61 @@ void test_L1_cache(){
 	my_fence();
 	
 	// load evset, load target, test each evset member
-	u64 time;
+	// u64 time;
+	
+	for(int i=0;i<8;i++){ // empty measurements
+		evset->measurements[i]=0;
+	}	
 	
 	printf("No element loaded from target set:\n");
-	for(int i=0;i<8;i++){
+	for (int j=0;j<TEST_REPS;j++){
+		
+		for(int i=0;i<8;i++) {
+			flush(target_set->adrs[i]);
+			flush(evset->adrs[i]);
+		}
 		my_fence();
-		pp_probe(evset); // load all evset elems
-		my_fence();
-		time = probe(evset->adrs[i]);
-		my_fence();
-		printf("Time of element %i is %lu\n", i, time);
+	
+		for(int i=0;i<8;i++){
+			my_fence();
+			pp_probe(evset); // load all evset elems
+			my_fence();
+			evset->measurements[i] += probe(evset->adrs[i]);
+			my_fence();
+			// printf("Time of element %i is %lu\n", i, time);
+		}
 	}
+	
+	for(int i=0;i<8;i++){ // print and reset measurements
+		printf("Time sum of element %i is %lu, avg per iteration is %lu\n", i, evset->measurements[i], evset->measurements[i]/TEST_REPS);
+		evset->measurements[i]=0;
+	}	
 	
 	
 	printf("1 element loaded from target set:\n");
-	for(int i=0;i<8;i++){
+	for(int j=0;j<TEST_REPS;j++){
+		
+		for(int i=0;i<8;i++) {
+			flush(target_set->adrs[i]);
+			flush(evset->adrs[i]);
+		}
 		my_fence();
-		pp_probe(evset); // load all evset elems
-		my_fence();
-		pp_probe(target_set); // load "1" target adrs 
-		my_fence();
-		time = probe(evset->adrs[i]);
-		my_fence();
-		printf("Time of element %i is %lu\n", i, time);
+		for(int i=0;i<8;i++){
+			my_fence();
+			pp_probe(evset); // load all evset elems
+			my_fence();
+			pp_probe(target_set); // load "1" target adrs 
+			my_fence();
+			evset->measurements[i] += probe(evset->adrs[i]);
+			my_fence();
+			
+			// printf("Time of element %i is %lu\n", i, time);
+		}
 	}
-	
+	for(int i=0;i<8;i++){ // print and reset measurements
+		printf("Time sum of element %i is %lu, avg per iteration is %lu\n", i, evset->measurements[i], evset->measurements[i]/TEST_REPS);
+		evset->measurements[i]=0;
+	}	
 	// repeat 
 	
 	// load evset, load target, load another target test each evset member
