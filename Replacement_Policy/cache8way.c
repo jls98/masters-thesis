@@ -12,10 +12,10 @@ static i64 pp_probe(Eviction_Set *evset){
         " rdtscp             \n" // start time 
         " mov r8, rax 		\n" // move time to r8 
 		" mov rax, [%1]		\n" // load target adrs
-        " loop: lfence;"		
+        " loop: mfence;"		
 		" mov rax, [rax]\n" // pointer chase
 		" dec r9\n"
-		" lfence\n"
+		" mfence\n"
 		" jnz loop\n"
         " lfence            \n" 
         " rdtscp             \n" // end time 
@@ -143,7 +143,7 @@ void test_L1_cache(){
 	}
 	
 	for(int i=0;i<8;i++){ // print and reset measurements
-		printf("Time sum of element %i is %lu, avg per iteration is %lu\n", i, evset->measurements[i], evset->measurements[i]/TEST_REPS);
+		printf("Time sum of element %i at %p is %lu, avg per iteration is %lu\n", i, evset->adrs[i], evset->measurements[i], evset->measurements[i]/TEST_REPS);
 		evset->measurements[i]=0;
 	}	
 	
