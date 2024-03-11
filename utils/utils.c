@@ -57,8 +57,6 @@ static u64 lfsr_rand(u64* lfsr) {
 }
 
 
-
-
 // struct Config 
 // input 0 for params cache_ways, pagesize, threshold_L1, threshold_L2, threshold_L3 in that order to apply default values
 static Config * initConfig(i64 cache_ways, i64 pagesize, i64 cache_sets, i64 cacheline_size, i64 threshold_L1, i64 threshold_L2, i64 threshold_L3, i64 buffer_size){
