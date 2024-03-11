@@ -81,12 +81,8 @@ void test_L1_cache(){
 			my_fence();
 			do{
 				time = probe(evset->adrs[i]);
-			} while(time > 200);
+			} while(time > 1000);
 			my_fence();			
-			do{
-				time = probe(evset->adrs[i]);
-			} while(time > 200);
-			my_fence();
 			evset->measurements[i] += time;
 			my_fence();
 			// printf("Time of element %i is %lu\n", i, time);
@@ -116,12 +112,8 @@ void test_L1_cache(){
 			my_fence();
 			do{
 				time = probe(evset->adrs[i]);
-			} while(time > 200);
+			} while(time > 1000);
 			my_fence();			
-			do{
-				time = probe(evset->adrs[i]);
-			} while(time > 200);
-			my_fence();
 			evset->measurements[i] += time;
 			my_fence();
 			// printf("Time of element %i is %lu\n", i, time);
@@ -149,7 +141,7 @@ void test_L1_cache(){
 			my_fence();
 			do{
 				time = probe(evset->adrs[i]);
-			} while(time > 200);			
+			} while(time > 1000);			
 			my_fence();
 			evset->measurements[i] += time;
 			my_fence();
@@ -193,7 +185,7 @@ void test_L1_cache(){
 			my_fence();
 			do{
 				time = probe(evset->adrs[i]);
-			} while(time > 200);			
+			} while(time > 1000);			
 			my_fence();
 			evset->measurements[i] += time;
 			my_fence();
