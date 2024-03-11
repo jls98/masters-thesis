@@ -89,11 +89,18 @@ void test_L1_cache(){
 			my_fence();
 			evset->measurements[i] += time;
 			my_fence();
-			printf("Time of element %i is %lu\n", i, time);
+			// printf("Time of element %i is %lu\n", i, time);
 		}
 	}
 	
-		printf("\nNo element loaded from target set with pp probe:\n");
+	
+	
+	for(int i=0;i<8;i++){ // print and reset measurements
+		printf("Time sum of element %i is %lu, avg per iteration is %lu\n", i, evset->measurements[i], evset->measurements[i]/TEST_REPS);
+		evset->measurements[i]=0;
+	}	
+	
+	printf("\nNo element loaded from target set with pp probe:\n");
 	for (int j=0;j<TEST_REPS;j++){
 		
 		for(int i=0;i<8;i++) {
@@ -117,7 +124,7 @@ void test_L1_cache(){
 			my_fence();
 			evset->measurements[i] += time;
 			my_fence();
-			printf("Time of element %i is %lu\n", i, time);
+			// printf("Time of element %i is %lu\n", i, time);
 		}
 	}
 	
