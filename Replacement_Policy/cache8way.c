@@ -70,3 +70,8 @@ void test_L1_cache(){
 	// load evset, load 3 targets, test each evset member
 
 }
+
+
+int main(){
+	test_L1_cache();
+}
