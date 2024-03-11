@@ -79,7 +79,13 @@ void test_L1_cache(){
 			my_fence();
 			pp_probe(evset); // load all evset elems
 			my_fence();
-			time = probe(evset->adrs[i]);
+			do{
+				time = probe(evset->adrs[i]);
+			} while(time > 200);
+			my_fence();			
+			do{
+				time = probe(evset->adrs[i]);
+			} while(time > 200);
 			my_fence();
 			evset->measurements[i] += time;
 			my_fence();
@@ -106,7 +112,9 @@ void test_L1_cache(){
 			my_fence();
 			pp_probe(evset); // load all evset elems
 			my_fence();
-			time = probe(evset->adrs[i]);
+			do{
+				time = probe(evset->adrs[i]);
+			} while(time > 200);			
 			my_fence();
 			evset->measurements[i] += time;
 			my_fence();
@@ -148,7 +156,9 @@ void test_L1_cache(){
 			my_fence();
 			load(evset->adrs[7]);
 			my_fence();
-			time = probe(evset->adrs[i]);
+			do{
+				time = probe(evset->adrs[i]);
+			} while(time > 200);			
 			my_fence();
 			evset->measurements[i] += time;
 			my_fence();
@@ -175,7 +185,9 @@ void test_L1_cache(){
 			my_fence();
 			pp_probe(target_set); // load "1" target adrs 
 			my_fence();
-			time = probe(evset->adrs[i]);
+			do{
+				time = probe(evset->adrs[i]);
+			} while(time > 200);			
 			my_fence();
 			evset->measurements[i] += time;
 			my_fence();
