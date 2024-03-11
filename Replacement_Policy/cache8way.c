@@ -83,7 +83,7 @@ void test_L1_cache(){
 			my_fence();
 			evset->measurements[i] += time;
 			my_fence();
-			// printf("Time of element %i is %lu\n", i, time);
+			printf("Time of element %i is %lu\n", i, time);
 		}
 	}
 	
