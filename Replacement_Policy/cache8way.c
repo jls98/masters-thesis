@@ -50,6 +50,19 @@ void test_L1_cache(){
 	
 	// load evset, load target, test each evset member
 	u64 time;
+	
+	printf("No element loaded from target set:\n");
+	for(int i=0;i<8;i++){
+		my_fence();
+		pp_probe(evset); // load all evset elems
+		my_fence();
+		time = probe(evset->adrs[i]);
+		my_fence();
+		printf("Time of element %i is %lu\n", i, time);
+	}
+	
+	
+	printf("1 element loaded from target set:\n");
 	for(int i=0;i<8;i++){
 		my_fence();
 		pp_probe(evset); // load all evset elems
