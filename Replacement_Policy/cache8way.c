@@ -104,12 +104,19 @@ void test_L1_cache(){
 			my_fence();
 			// load all evset elems
 			load(evset->adrs[0]);
+			my_fence();
 			load(evset->adrs[1]);
+			my_fence();
 			load(evset->adrs[2]);
+			my_fence();
 			load(evset->adrs[3]);
+			my_fence();
 			load(evset->adrs[4]);
+			my_fence();
 			load(evset->adrs[5]);
+			my_fence();
 			load(evset->adrs[6]);
+			my_fence();
 			load(evset->adrs[7]);
 			my_fence();
 			evset->measurements[i] += probe(evset->adrs[i]);
