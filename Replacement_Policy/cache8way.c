@@ -65,7 +65,7 @@ void test_L1_cache(){
 		evset->measurements[i]=0;
 	}	
 	
-	printf("No element loaded from target set with pp probe:\n");
+	printf("\nNo element loaded from target set with pp probe:\n");
 	for (int j=0;j<TEST_REPS;j++){
 		
 		for(int i=0;i<8;i++) {
@@ -90,7 +90,32 @@ void test_L1_cache(){
 		evset->measurements[i]=0;
 	}	
 	
-	printf("No element loaded from target set with load:\n");
+	printf("\nNo element loaded from target set with pp probe:\n");
+	for (int j=0;j<TEST_REPS;j++){
+		
+		for(int i=0;i<8;i++) {
+			flush(target_set->adrs[i]);
+			flush(evset->adrs[i]);
+		}
+		
+		my_fence();
+	
+		for(int i=0;i<8;i++){
+			my_fence();
+			pp_probe(evset); // load all evset elems
+			my_fence();
+			evset->measurements[i] += probe(evset->adrs[i]);
+			my_fence();
+			// printf("Time of element %i is %lu\n", i, time);
+		}
+	}
+	
+	for(int i=0;i<8;i++){ // print and reset measurements
+		printf("Time sum of element %i is %lu, avg per iteration is %lu\n", i, evset->measurements[i], evset->measurements[i]/TEST_REPS);
+		evset->measurements[i]=0;
+	}	
+	
+	printf("\nNo element loaded from target set with load:\n");
 	for (int j=0;j<TEST_REPS;j++){
 		
 		for(int i=0;i<8;i++) {
@@ -130,7 +155,7 @@ void test_L1_cache(){
 		evset->measurements[i]=0;
 	}	
 	
-	printf("1 element loaded from target set:\n");
+	printf("\n1 element loaded from target set:\n");
 	for(int j=0;j<TEST_REPS;j++){
 		
 		for(int i=0;i<8;i++) {
