@@ -250,7 +250,7 @@ void test_L1_cache(){
 	// repeat 
 	
 	// load evset, load 3 targets, test each evset member
-
+	munmap(buffer, 10*conf->buffer_size);
 }
 
 
