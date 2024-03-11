@@ -1,6 +1,6 @@
 CC = gcc
 CFLAGS = -Wall -Wextra -masm=intel
-all: pp test_pp test_utils
+all: pp test_pp test_utils cache8way
 
 workshop3: Cache_Reversing/workshop3.c
 	$(CC) $(CFLAGS) -o build/workshop3  Cache_Reversing/workshop3.c
@@ -35,5 +35,8 @@ test_pp: PP/test_pp.c
 test_utils: PP/test_utils.c 
 	$(CC) $(CFLAGS) -g -o build/test_utils -DTEST_UTILS PP/test_utils.c utils/utils.c -lcunit
     
+cache8way: Replacement_Policy/cache8way.c 
+	$(CC) $(CFLAGS) -g -o build/cache8way -DREPLACEMENT Replacement_Policy/cache8way.c utils/utils.c
+    
 clean:
-	rm -f pp test_pp test_utils
+	rm -f pp test_pp test_utils cache8way
