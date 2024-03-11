@@ -46,6 +46,8 @@ void test_L1_cache(){
 		flush(target_set->adrs[i]);
 		flush(evset->adrs[i]);
 	}
+	
+	wait(1e9);
 	my_fence();
 	
 	// load evset, load target, test each evset member
