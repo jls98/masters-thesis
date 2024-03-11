@@ -41,7 +41,14 @@ void test_L1_cache(){
 	createPointerChaseInEvictionSet(evset);
 	target_set->size =1; // case 1 target
 	createPointerChaseInEvictionSet(target_set);
-	
+	load(evset->adrs[0]);
+	load(evset->adrs[1]);
+	load(evset->adrs[2]);
+	load(evset->adrs[3]);
+	load(evset->adrs[4]);
+	load(evset->adrs[5]);
+	load(evset->adrs[6]);
+	load(evset->adrs[7]);
 	// clean
 	for(int i=0;i<8;i++) {
 		flush(target_set->adrs[i]);
