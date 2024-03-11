@@ -179,7 +179,7 @@ void test_L1_cache(){
 			printf("%lu, ", evset->measurements[i+j*8]);
 			sum+= evset->measurements[i+j*8];
 		}
-		printf("%lu\n", sum/TEST_REPS);
+		printf("%i\n", sum/TEST_REPS);
 		
 		evset->measurements[i]=0;
 	}	
