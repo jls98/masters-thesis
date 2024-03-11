@@ -136,7 +136,7 @@ void test_L1_cache(){
 				time = probe(evset->adrs[i]);
 			} while(time > OUTSIDER_TRESHOLD);			
 			my_fence();
-			evset->measurements[i+j*8] += time;
+			evset->measurements[i] += time;
 			my_fence();
 			// printf("Time of element %i is %lu\n", i, time);
 		}
