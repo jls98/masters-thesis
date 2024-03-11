@@ -41,6 +41,10 @@ void test_L1_cache(){
 	createPointerChaseInEvictionSet(evset);
 	target_set->size =1; // case 1 target
 	createPointerChaseInEvictionSet(target_set);
+	load(target_set->adrs[0]);
+	my_fence();
+	printf("Time loading cached target at %p takes %lu\n", target_set->adrs[0], probe(target_set->adrs[0]));
+	my_fence();
 	load(evset->adrs[0]);
 	load(evset->adrs[1]);
 	load(evset->adrs[2]);
@@ -49,6 +53,8 @@ void test_L1_cache(){
 	load(evset->adrs[5]);
 	load(evset->adrs[6]);
 	load(evset->adrs[7]);
+	my_fence();
+	printf("Time loading target at %p after evset takes %lu\n", target_set->adrs[0], probe(target_set->adrs[0]));
 	// clean
 	for(int i=0;i<8;i++) {
 		flush(target_set->adrs[i]);
@@ -211,6 +217,35 @@ void test_L1_cache(){
 			pp_probe(evset); // load all evset elems
 			my_fence();
 			pp_probe(target_set); // load "1" target adrs 
+			my_fence();
+			do{
+				time = probe(evset->adrs[i]);
+			} while(time > 200);			
+			my_fence();
+			evset->measurements[i] += time;
+			my_fence();
+			
+			// printf("Time of element %i is %lu\n", i, time);
+		}
+	}
+	for(int i=0;i<8;i++){ // print and reset measurements
+		printf("Time sum of element %i is %lu, avg per iteration is %lu\n", i, evset->measurements[i], evset->measurements[i]/TEST_REPS);
+		evset->measurements[i]=0;
+	}	
+	
+	printf("\n1 element loaded from loaded target set:\n");
+	for(int j=0;j<TEST_REPS;j++){
+		
+		for(int i=0;i<8;i++) {
+			flush(target_set->adrs[i]);
+			flush(evset->adrs[i]);
+		}
+		my_fence();
+		for(int i=0;i<8;i++){
+			my_fence();
+			pp_probe(evset); // load all evset elems
+			my_fence();
+			load(target_set->adrs[0]); // load "1" target adrs 
 			my_fence();
 			do{
 				time = probe(evset->adrs[i]);
