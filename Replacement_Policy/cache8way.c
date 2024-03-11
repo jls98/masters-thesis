@@ -41,6 +41,8 @@ void test_L1_cache(){
 	createPointerChaseInEvictionSet(evset);
 	target_set->size =1; // case 1 target
 	createPointerChaseInEvictionSet(target_set);
+
+	wait(1e9);
 	load(target_set->adrs[0]);
 	my_fence();
 	printf("Time loading cached target at %p takes %lu\n", target_set->adrs[0], probe(target_set->adrs[0]));
@@ -61,7 +63,6 @@ void test_L1_cache(){
 		flush(evset->adrs[i]);
 	}
 	
-	wait(1e9);
 	my_fence();
 	
 	// load evset, load target, test each evset member
