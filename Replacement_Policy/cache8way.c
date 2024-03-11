@@ -59,7 +59,7 @@ void test_L1_cache(){
 	my_fence();
 	
 	// load evset, load target, test each evset member
-	// u64 time;
+	u64 time;
 	
 	for(int i=0;i<8;i++){ // empty measurements
 		evset->measurements[i]=0;
