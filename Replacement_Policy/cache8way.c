@@ -136,7 +136,7 @@ void test_L1_cache(){
 				time = probe(evset->adrs[i]);
 			} while(time > OUTSIDER_TRESHOLD);			
 			my_fence();
-			evset->measurements[i] += time;
+			evset->measurements[i+j*8] += time;
 			my_fence();
 			// printf("Time of element %i is %lu\n", i, time);
 		}
@@ -166,14 +166,21 @@ void test_L1_cache(){
 				time = probe(evset->adrs[i]);
 			} while(time > OUTSIDER_TRESHOLD);			
 			my_fence();
-			evset->measurements[i] += time;
+			evset->measurements[i+j*8] = time;
 			my_fence();
 			
 			// printf("Time of element %i is %lu\n", i, time);
 		}
 	}
 	for(int i=0;i<8;i++){ // print and reset measurements
-		printf("Time sum of element %i is %lu, avg per iteration is %lu\n", i, evset->measurements[i], evset->measurements[i]/TEST_REPS);
+		printf("Element %i at %p:\n", i, evset->adrs[i]);
+		int sum=0;
+		for (int j=0;j<TEST_REPS;j++) {			
+			printf("%lu, ", evset->measurements[i+j*8]);
+			sum+= evset->measurements[i+j*8];
+		}
+		printf("%lu\n", sum/TEST_REPS);
+		
 		evset->measurements[i]=0;
 	}	
 	
