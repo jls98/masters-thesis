@@ -79,6 +79,11 @@ void test_pointer_chase(Eviction_Set *evset, Eviction_Set *cleanup_evset, Evicti
 	i64_evset_fence(probe_evset, cleanup_evset);
 	time = 	u64_voidptr_fence(probe, evset->adrs[0]);
 	printf("load target %p after load evset with time %lu\n", evset->adrs[0], time);	
+	
+	i64_evset_fence(probe_evset, cleanup_evset);
+	i64_evset_fence(probe_evset, cleanup_evset);
+	time = 	u64_voidptr_fence(probe, evset->adrs[0]);
+	printf("load target %p after load evset with time %lu\n", evset->adrs[0], time);	
 
 }
 
