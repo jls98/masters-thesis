@@ -71,7 +71,7 @@ void test_L1_cache(){
 	Eviction_Set *cleanup_evset = initEviction_Set(conf);
 	
 	for(int i=0;i<8;i++){
-		addEvictionAdrs(target_set, buffer+i*conf->pagesize); // clean up eviction set 
+		addEvictionAdrs(cleanup_evset, buffer+i*conf->pagesize); // clean up eviction set 
 		addEvictionAdrs(evset, buffer+(8+i)*conf->pagesize); // eviction set 
 		addEvictionAdrs(target_set, buffer+(16+i)*conf->pagesize); // target set 
 	}
