@@ -15,6 +15,7 @@ static i64 probe_evset(Eviction_Set *evset){
         " loop: lfence;"		
 		" mov rbx, [rbx]\n" // pointer chase
 		" dec r9\n"
+		" mfence;"
 		" jnz loop\n"
         " mfence            \n" 
         " rdtscp             \n" // end time 
