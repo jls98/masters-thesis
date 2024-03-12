@@ -8,21 +8,20 @@ static i64 probe_evset(Eviction_Set *evset){
 
 	__asm__ volatile (
 		" mov r9, %2\n" // 
+		" mov rbx, [%1]		\n" // load target adrs
         " mfence            \n"
         " rdtscp             \n" // start time 
         " mov r8, rax 		\n" // move time to r8 
-		" mov rax, [%1]		\n" // load target adrs
-        " loop: mfence;"		
-		" mov rax, [rax]\n" // pointer chase
+        " loop: lfence;"		
+		" mov rbx, [rbx]\n" // pointer chase
 		" dec r9\n"
-		" mfence\n"
 		" jnz loop\n"
-        " lfence            \n" 
+        " mfence            \n" 
         " rdtscp             \n" // end time 
         " sub rax, r8 		\n" // diff = end - start
         : "=&a" (evset->measurements[evset->cnt_measurement])
         : "r" (evset->adrs), "r" (evset->size) 
-        : "ecx", "rdx", "r8", "r9", "memory"
+        : "ecx", "rbx", "rdx", "r8", "r9", "memory"
 	);
 	return evset->measurements[evset->cnt_measurement++];
 }
@@ -54,28 +53,30 @@ void test_pointer_chase(Eviction_Set *evset, Eviction_Set *cleanup_evset, Evicti
 	void_voidptr_fence(load, target_set->adrs[0]);
 	u64 time = 	u64_voidptr_fence(probe, target_set->adrs[0]);
 	printf("reload target %p with time %lu\n", target_set->adrs[0], time);
-	void_voidptr_fence(load, evset->adrs[0]);
-	void_voidptr_fence(load, evset->adrs[1]);
-	void_voidptr_fence(load, evset->adrs[2]);
-	void_voidptr_fence(load, evset->adrs[3]);
-	void_voidptr_fence(load, evset->adrs[4]);
-	void_voidptr_fence(load, evset->adrs[5]);
-	void_voidptr_fence(load, evset->adrs[6]);
-	void_voidptr_fence(load, evset->adrs[7]);
+	// void_voidptr_fence(load, evset->adrs[0]);
+	// void_voidptr_fence(load, evset->adrs[1]);
+	// void_voidptr_fence(load, evset->adrs[2]);
+	// void_voidptr_fence(load, evset->adrs[3]);
+	// void_voidptr_fence(load, evset->adrs[4]);
+	// void_voidptr_fence(load, evset->adrs[5]);
+	// void_voidptr_fence(load, evset->adrs[6]);
+	// void_voidptr_fence(load, evset->adrs[7]);
+	i64_evset_fence(probe_evset, evset);
 	time = 	u64_voidptr_fence(probe, target_set->adrs[0]);
 	printf("load target %p after load evset with time %lu\n", target_set->adrs[0], time);
 	
 	void_voidptr_fence(load, evset->adrs[0]);
 	time = 	u64_voidptr_fence(probe, evset->adrs[0]);
 	printf("reload target %p with time %lu\n", evset->adrs[0], time);
-	void_voidptr_fence(load, cleanup_evset->adrs[0]);
-	void_voidptr_fence(load, cleanup_evset->adrs[1]);
-	void_voidptr_fence(load, cleanup_evset->adrs[2]);
-	void_voidptr_fence(load, cleanup_evset->adrs[3]);
-	void_voidptr_fence(load, cleanup_evset->adrs[4]);
-	void_voidptr_fence(load, cleanup_evset->adrs[5]);
-	void_voidptr_fence(load, cleanup_evset->adrs[6]);
-	void_voidptr_fence(load, cleanup_evset->adrs[7]);	
+	// void_voidptr_fence(load, cleanup_evset->adrs[0]);
+	// void_voidptr_fence(load, cleanup_evset->adrs[1]);
+	// void_voidptr_fence(load, cleanup_evset->adrs[2]);
+	// void_voidptr_fence(load, cleanup_evset->adrs[3]);
+	// void_voidptr_fence(load, cleanup_evset->adrs[4]);
+	// void_voidptr_fence(load, cleanup_evset->adrs[5]);
+	// void_voidptr_fence(load, cleanup_evset->adrs[6]);
+	// void_voidptr_fence(load, cleanup_evset->adrs[7]);	
+	i64_evset_fence(probe_evset, cleanup_evset);
 	time = 	u64_voidptr_fence(probe, evset->adrs[0]);
 	printf("load target %p after load evset with time %lu\n", evset->adrs[0], time);	
 
