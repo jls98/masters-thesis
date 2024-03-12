@@ -52,14 +52,17 @@ void test_only_evset(Eviction_Set *evset, Eviction_Set *cleanup_evset){
 	i64_evset_fence(probe_evset, evset);
 	i64_evset_fence(probe_evset, evset);
 	printf("Loading evset second time takes %li\n", evset->measurements[evset->cnt_measurement-1]);
+
+	i64_evset_fence(probe_evset, cleanup_evset);
+	i64_evset_fence(probe_evset, cleanup_evset);
+	i64_evset_fence(probe_evset, cleanup_evset);
+	i64_evset_fence(probe_evset, evset);
+	printf("Loading evset after cleanup evset 3 times takes %li\n", evset->measurements[evset->cnt_measurement-1]);
+
 	i64_evset_fence(probe_evset, cleanup_evset);
 	i64_evset_fence(probe_evset, evset);
 	printf("Loading evset after cleanup evset once takes %li\n", evset->measurements[evset->cnt_measurement-1]);
-	i64_evset_fence(probe_evset, cleanup_evset);
-	i64_evset_fence(probe_evset, cleanup_evset);
-	i64_evset_fence(probe_evset, cleanup_evset);
-	i64_evset_fence(probe_evset, evset);
-	printf("Loading evset after cleanup evset 3 times takes %li\n", evset->measurements[evset->cnt_measurement-1]);	
+	
 
 }
 
