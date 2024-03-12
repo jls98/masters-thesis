@@ -27,18 +27,18 @@ static i64 probe_evset(Eviction_Set *evset){
 	return evset->measurements[evset->cnt_measurement++];
 }
 
-void void_voidptr_fence(foo(void *), void *adrs){
+void void_voidptr_fence(void (*foo)(void *), void *adrs){
 	foo(adrs);
 	my_fence();
 }
 
-u64 u64_voidptr_fence(foo(void *), void *adrs){
-	u64 ret = foo(adrs);
+u64 u64_voidptr_fence(u64 (*foo)(void *), void *adrs){
+	u64 ret = (*foo)(adrs);
 	my_fence();
 	return ret;	
 }
 
-i64 i64_evset_fence(foo(Eviction_Set *), Eviction_Set *evset){
+i64 i64_evset_fence(i64(*foo)(Eviction_Set *), Eviction_Set *evset){
 	i64 ret = foo(evset);
 	my_fence();
 	return ret;
