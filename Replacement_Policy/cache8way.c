@@ -46,6 +46,40 @@ i64 i64_evset_fence(i64(*foo)(Eviction_Set *), Eviction_Set *evset){
 
 #define TEST_REPS 100
 #define OUTSIDER_TRESHOLD 1000
+void test_pointer_chase(Eviction_Set *evset, Eviction_Set *cleanup_evset, Eviction_Set *target_set){
+	i64_evset_fence(probe_evset, target_set);
+	i64_evset_fence(probe_evset, evset);
+	i64_evset_fence(probe_evset, cleanup_evset);
+	
+	void_voidptr_fence(load, target_set->adrs[0]);
+	u64 time = 	u64_voidptr_fence(probe, target_set->adrs[0]);
+	printf("reload target %p with time %lu\n", target_set->adrs[0], time);
+	void_voidptr_fence(load, evset->adrs[0]);
+	void_voidptr_fence(load, evset->adrs[1]);
+	void_voidptr_fence(load, evset->adrs[2]);
+	void_voidptr_fence(load, evset->adrs[3]);
+	void_voidptr_fence(load, evset->adrs[4]);
+	void_voidptr_fence(load, evset->adrs[5]);
+	void_voidptr_fence(load, evset->adrs[6]);
+	void_voidptr_fence(load, evset->adrs[7]);
+	time = 	u64_voidptr_fence(probe, target_set->adrs[0]);
+	printf("load target %p after load evset with time %lu\n", target_set->adrs[0], time);
+	
+	void_voidptr_fence(load, evset->adrs[0]);
+	time = 	u64_voidptr_fence(probe, evset->adrs[0]);
+	printf("reload target %p with time %lu\n", evset->adrs[0], time);
+	void_voidptr_fence(load, cleanup_evset->adrs[0]);
+	void_voidptr_fence(load, cleanup_evset->adrs[1]);
+	void_voidptr_fence(load, cleanup_evset->adrs[2]);
+	void_voidptr_fence(load, cleanup_evset->adrs[3]);
+	void_voidptr_fence(load, cleanup_evset->adrs[4]);
+	void_voidptr_fence(load, cleanup_evset->adrs[5]);
+	void_voidptr_fence(load, cleanup_evset->adrs[6]);
+	void_voidptr_fence(load, cleanup_evset->adrs[7]);	
+	time = 	u64_voidptr_fence(probe, evset->adrs[0]);
+	printf("load target %p after load evset with time %lu\n", evset->adrs[0], time);	
+
+}
 
 void test_only_evset(Eviction_Set *evset, Eviction_Set *cleanup_evset){
 	my_fence();
@@ -92,7 +126,8 @@ void test_L1_cache(){
 	createPointerChaseInEvictionSet(target_set);
 
 	wait(1e9);
-	test_only_evset(evset, cleanup_evset);
+	// test_only_evset(evset, cleanup_evset);
+	test_pointer_chase(evset, cleanup_evset, target_set);
 	// load_fence(target_set->adrs[0]);
 	// printf("Time loading cached target at %p takes %lu\n", target_set->adrs[0], probe(target_set->adrs[0]));
 	// my_fence();
