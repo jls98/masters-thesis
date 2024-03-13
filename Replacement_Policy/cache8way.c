@@ -7,19 +7,19 @@ static i64 probe_evset(Eviction_Set *evset){
 	}
 
 	__asm__ volatile (
-		" mov r9, %2\n" // 
-		" mov rbx, [%1]		\n" // load target adrs
+		" mov r9, %2\n" 			// hold evset size, to count down
+		" mov rbx, [%1]		\n" 	// load target adrs
         " mfence            \n"
-        " rdtscp             \n" // start time 
-        " mov r8, rax 		\n" // move time to r8 
+        " rdtscp             \n" 	// start time 
+        " mov r8, rax 		\n"	 	// move time to r8 
         " loop: lfence;"		
-		" mov rbx, [rbx]\n" // pointer chase
+		" mov rbx, [rbx]\n" 		// pointer chase
 		" dec r9\n"
 		" mfence;"
-		" jnz loop\n"
+		" jnz loop\n"				// if zero, all evset elements had been accessed 
         " mfence            \n" 
-        " rdtscp             \n" // end time 
-        " sub rax, r8 		\n" // diff = end - start
+        " rdtscp             \n" 	// end time 
+        " sub rax, r8 		\n" 	// diff = end - start
         : "=&a" (evset->measurements[evset->cnt_measurement])
         : "r" (evset->adrs), "r" (evset->size) 
         : "ecx", "rbx", "rdx", "r8", "r9", "memory"
