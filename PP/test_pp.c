@@ -51,7 +51,8 @@ void test_pp_setup(){
 	u64 *target = malloc(100*sizeof(u64));
 	i64 debug;
 	// does it evict?
-	pp_setup(conf, evset, target);
+    void *cc_buffer=pp_init(conf);
+	pp_setup(conf, evset, target, cc_buffer);
 	load(target);
 	// my_fence();
 	// debug =pp_probe(evset);
