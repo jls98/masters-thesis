@@ -115,9 +115,12 @@ static void pp_setup(Config *conf, Eviction_Set *evset, void *target) {
 	}
 	
 	// create eviction set / TODO dont hardcode
+    void *diff = cc_buffer-target;
+    u64 offset = ((u64)((intptr_t) diff)) % 4096;
+    
 	for(u64 i=0;i<conf->cache_ways;i++){
 		// add multiple of pagesize to ensure to land in the same cache set
-		addEvictionAdrs(evset, target+(i+1)*conf->pagesize); // void * -> exakt index value
+		addEvictionAdrs(evset, cc_buffer+offset+(i+1)*conf->pagesize); // void * -> exakt index value
 		// printf("pp_setup: added addr %p at position %p\n", evset->evset_adrs[i], &evset->evset_adrs[i]); // works
 	}
 	createPointerChaseInEvictionSet(evset);
