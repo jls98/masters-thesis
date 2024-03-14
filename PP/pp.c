@@ -87,8 +87,12 @@ static i64 pp_probe_simple(Eviction_Set *evset){
     u64 *adrs=(u64 *)evset->adrs[0];
     my_fence();
     u64 start = __rdtscp(&ignore);
+    // for (int i=0;i<evset->size;i++){
+        // adrs=*adrs;
+        // my_fence();
+    // }
     for (int i=0;i<evset->size;i++){
-        adrs=*adrs;
+        load(evset->adrs[i])
         my_fence();
     }
     u64 end = __rdtscp(&ignore);
@@ -146,6 +150,7 @@ static void pp_setup(Config *conf, Eviction_Set *evset, void *target, void *cc_b
 static void pp_monitor(Config *conf, Eviction_Set *evset, void *target) {
     for(int i=0;i<evset->size;i++){
         load(evset->adrs[i]);
+        my_fence();
     }	
 	printf("probe is %li\n", pp_probe(evset));
     my_fence();
@@ -172,7 +177,7 @@ static void pp_monitor(Config *conf, Eviction_Set *evset, void *target) {
     my_fence();
     for(int i=0;i<evset->size;i++){
         load(evset->adrs[i]);
-    my_fence();
+        my_fence();
     }
     my_fence();
 	printf("probe is %li\n", pp_probe(evset));
