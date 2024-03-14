@@ -71,7 +71,7 @@ static i64 pp_probe2(Eviction_Set *evset){
         " lfence;"
         " jne loop3;"
         " lfence;"
-        "rdtscp;"
+        " rdtscp;"
         " sub rax, r8;"   
         
         " mov "
