@@ -54,7 +54,7 @@ static i64 pp_probe2(Eviction_Set *evset){
         
         " mov r9, %2;" // load two more times
         " add r9, r9;"
-        " mov rax [%1];"
+        " mov rax, [%1];"
         " loop2: lfence;"
         " mov rax, [rax];"
         " dec r9;"
