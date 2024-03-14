@@ -48,7 +48,6 @@ static i64 pp_probe2(Eviction_Set *evset){
 		" lfence\n"
 		" jnz loop1\n"
         " lfence            \n" 
-        
         " rdtscp             \n" // end time 
         " sub rax, r8 		\n" // diff = end - start
         " mov rbx, rax;"
@@ -76,7 +75,7 @@ static i64 pp_probe2(Eviction_Set *evset){
         " sub rax, r8;"   
         
         " mov "
-        : "=&b" (evset->measurements[evset->cnt_measurement++]), "=&a" (evset->measurements[evset->cnt_measurement])
+        : "b" (evset->measurements[evset->cnt_measurement++]), "=&a" (evset->measurements[evset->cnt_measurement])
         : "r" (evset->adrs), "r" (evset->size)
         : "ecx", "rdx", "r8", "r9", "memory"
 	);
