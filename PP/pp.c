@@ -3,7 +3,9 @@
 // utils 
 // measure time 
 
-static i64 pp_probe(Eviction_Set *evset){
+
+
+static i64 pp_probe1(Eviction_Set *evset){
 	if (evset==NULL){
 		printf("probe: evset is NULL!\n");
 		return -1;
@@ -101,6 +103,11 @@ static i64 pp_probe_simple(Eviction_Set *evset){
     return diff;
 }
 
+static i64 pp_probe(Eviction_Set *evset){
+    i64 ret = pp_probe1(evset);
+    my_fence();
+    return ret;
+}
 
 static void *pp_init(Config *conf) {
 	// Implement
@@ -153,26 +160,19 @@ static void pp_monitor(Config *conf, Eviction_Set *evset, void *target) {
         my_fence();
     }	
 	printf("probe is %li\n", pp_probe(evset));
-    my_fence();
 	printf("probe is %li\n", pp_probe(evset));
-    my_fence();
 	printf("probe is %li\n", pp_probe(evset));
-    my_fence();
 	load(target);
     my_fence();
 	printf("probe target is %li\n", probe(target));
     my_fence();
 	printf("probe is %li\n", pp_probe(evset));
-    my_fence();
 	printf("probe target is %li\n", probe(target));
     my_fence();
     
 	printf("probe is %li\n", pp_probe(evset));
-    my_fence();
 	printf("probe is %li\n", pp_probe(evset));
-    my_fence();
 	printf("probe is %li\n", pp_probe(evset));
-    my_fence();
 	printf("probe target is %li\n", probe(target));
     my_fence();
     for(int i=0;i<evset->size;i++){
@@ -181,7 +181,6 @@ static void pp_monitor(Config *conf, Eviction_Set *evset, void *target) {
     }
     my_fence();
 	printf("probe is %li\n", pp_probe(evset));
-    my_fence();
    	printf("probe target is %li\n", probe(target));
     my_fence();
 
