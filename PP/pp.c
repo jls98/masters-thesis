@@ -81,6 +81,18 @@ static i64 pp_probe2(Eviction_Set *evset){
 	return evset->measurements[evset->cnt_measurement++];
 }
 
+static i64 pp_probe_simple(Eviction_Set *evset){
+	unsigned int ignore;
+    u64 start = __rdtscp(&ignore);
+    void *adrs=evset->adrs[0];
+    for (int i=0;i<evset->size;i++){
+        adrs=*adrs;
+    }
+    u64 end = __rdtscp(&ignore);
+    evset->measurements[evset->cnt_measurement++]=end;
+    return end;
+}
+
 
 static void *pp_init(Config *conf) {
 	// Implement
@@ -150,6 +162,11 @@ static void pp_monitor(Config *conf, Eviction_Set *evset, void *target) {
     for(int i=0;i<evset->size;i++){
         printf("evset[%i] %p\n",i, evset->adrs[i]);
     }
+    
+	printf("probe simple is %li\n", pp_probe_simple(evset));
+	printf("probe simple is %li\n", pp_probe_simple(evset));
+	printf("probe simple is %li\n", pp_probe_simple(evset));
+
 }
 
 static void pp_run(Config *conf, void *target_adrs) { // atm support only 1 adrs, extend later (easy w linked list)
