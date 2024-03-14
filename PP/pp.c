@@ -173,6 +173,7 @@ static void pp_monitor(Config *conf, Eviction_Set *evset, void *target) {
 	printf("probe simple is %li\n", pp_probe_simple(evset));
 	load(target);
     printf("probe simple is %li\n", pp_probe_simple(evset));
+    printf("target %p\n",target);
 
 }
 
