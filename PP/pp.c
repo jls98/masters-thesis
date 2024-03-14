@@ -92,7 +92,7 @@ static i64 pp_probe_simple(Eviction_Set *evset){
         // my_fence();
     // }
     for (int i=0;i<evset->size;i++){
-        load(evset->adrs[i])
+        load(evset->adrs[i]);
         my_fence();
     }
     u64 end = __rdtscp(&ignore);
