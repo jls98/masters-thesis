@@ -84,9 +84,9 @@ static i64 pp_probe2(Eviction_Set *evset){
 static i64 pp_probe_simple(Eviction_Set *evset){
 	unsigned int ignore;
     u64 start = __rdtscp(&ignore);
-    void *adrs=evset->adrs[0];
+    u64 *adrs=(u64 *)evset->adrs[0];
     for (int i=0;i<evset->size;i++){
-        adrs=(void *) *adrs;
+        adrs=*adrs;
     }
     u64 end = __rdtscp(&ignore);
     evset->measurements[evset->cnt_measurement++]=end;
