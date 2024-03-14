@@ -37,11 +37,11 @@ static i64 pp_probe2(Eviction_Set *evset){
 	}
 
 	__asm__ volatile (
-		" mov r9, %2\n" // 
+		" mov r9, %3\n" // 
         " mfence            \n"
         " rdtscp             \n" // start time 
         " mov r8, rax 		\n" // move time to r8 
-		" mov rax, [%1]		\n" // load target adrs
+		" mov rax, [%2]		\n" // load target adrs
         " loop1: lfence;"		
 		" mov rax, [rax]\n" // pointer chase
 		" dec r9\n"
@@ -52,19 +52,19 @@ static i64 pp_probe2(Eviction_Set *evset){
         " sub rax, r8 		\n" // diff = end - start
         " mov rbx, rax;"
         
-        " mov r9, %2;" // load two more times
+        " mov r9, %3;" // load two more times
         " add r9, r9;"
-        " mov rax, [%1];"
+        " mov rax, [%2];"
         " loop2: lfence;"
         " mov rax, [rax];"
         " dec r9;"
         " jne loop2;"
         " lfence;"
-        " mov r9, %2;"
+        " mov r9, %3;"
         " mfence;"
         " rdtscp;"
         " mov r8, rax;"
-        " mov rax, [%1];"
+        " mov rax, [%2];"
         " loop3: lfence;"
         " mov rax, [rax];"
         " dec r9;"
