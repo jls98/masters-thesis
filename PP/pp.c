@@ -88,6 +88,7 @@ static i64 pp_probe_simple(Eviction_Set *evset){
     my_fence();
     u64 start = __rdtscp(&ignore);
     for (int i=0;i<evset->size;i++){
+        printf("laoded %p\n", adrs);
         adrs=*adrs;
         my_fence();
     }
