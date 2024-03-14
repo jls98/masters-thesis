@@ -98,7 +98,7 @@ static void *pp_init(Config *conf) {
 	return cc_buffer;
 }
 
-static void pp_setup(Config *conf, Eviction_Set *evset, void *target) {
+static void pp_setup(Config *conf, Eviction_Set *evset, void *target, void *cc_buffer) {
 	if(evset==NULL){
 		printf("pp_setup: evset is NULL!\n");
 		return;
@@ -154,7 +154,7 @@ static void pp_run(Config *conf, void *target_adrs) { // atm support only 1 adrs
 	
 	Eviction_Set *evset=initEviction_Set(conf);
 	
-	pp_setup(conf, evset, target_adrs);
+	pp_setup(conf, evset, target_adrs, cc_buffer);
 
 	pp_monitor(conf, evset, target_adrs);
 	
