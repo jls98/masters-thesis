@@ -30,6 +30,58 @@ static i64 pp_probe(Eviction_Set *evset){
 	return evset->measurements[evset->cnt_measurement++];
 }
 
+static i64 pp_probe2(Eviction_Set *evset){
+	if (evset==NULL){
+		printf("probe: evset is NULL!\n");
+		return -1;
+	}
+
+	__asm__ volatile (
+		" mov r9, %2\n" // 
+        " mfence            \n"
+        " rdtscp             \n" // start time 
+        " mov r8, rax 		\n" // move time to r8 
+		" mov rax, [%1]		\n" // load target adrs
+        " loop: lfence;"		
+		" mov rax, [rax]\n" // pointer chase
+		" dec r9\n"
+		" lfence\n"
+		" jnz loop\n"
+        " lfence            \n" 
+        " rdtscp             \n" // end time 
+        " sub rax, r8 		\n" // diff = end - start
+        " mov rbx, rax;"
+        
+        " mov r9, %2;" // load two more times
+        " add r9, r9;"
+        " mov rax [%1];"
+        " loop2: lfence;"
+        " mov rax, [rax];"
+        " dec r9;"
+        " jne loop2;"
+        " lfence;"
+        " mov r9, %2;"
+        " mfence;"
+        " rdtscp;"
+        " mov r8, rax;"
+        " mov rax, [%1];"
+        " loop3: lfence;"
+        " mov rax, [rax];"
+        " dec r9;"
+        " lfence;"
+        " jne loop3;"
+        " lfence;"
+        "rdtscp;"
+        " sub rax, r8;"   
+        
+        " mov "
+        : "=&b" (evset->measurements[evset->cnt_measurement++]), "=&a" (evset->measurements[evset->cnt_measurement])
+        : "r" (evset->adrs), "r" (evset->size)
+        : "ecx", "rdx", "r8", "r9", "memory"
+	);
+	return evset->measurements[evset->cnt_measurement++];
+}
+
 
 static void *pp_init(Config *conf) {
 	// Implement
@@ -77,7 +129,7 @@ static void pp_monitor(Config *conf, Eviction_Set *evset, void *target) {
 	load(target);
 	printf("probe is %li\n", pp_probe(evset));
 	printf("probe is %li\n", pp_probe(evset));
-	printf("probe is %li\n", pp_probe(evset));
+	printf("probe2 is %li\n", pp_probe2(evset));
 }
 
 static void pp_run(Config *conf, void *target_adrs) { // atm support only 1 adrs, extend later (easy w linked list)
@@ -106,6 +158,7 @@ static void pp_run(Config *conf, void *target_adrs) { // atm support only 1 adrs
 int main(){
 	Config *conf=initConfig(-1,-1,-1,-1,-1,-1,-1, -1);
 	void *target = malloc(sizeof(void));
+    wait(1E9);
 	pp_run(conf, target); // TODO change to real adrs and create a temp picker (file reader)
 	
 	
