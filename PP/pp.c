@@ -125,10 +125,12 @@ static void pp_setup(Config *conf, Eviction_Set *evset, void *target) {
 
 static void pp_monitor(Config *conf, Eviction_Set *evset, void *target) {
 	
+	printf("probe is %li\n", pp_probe(evset));
+	printf("probe is %li\n", pp_probe(evset));
 	load(target);
 	printf("probe is %li\n", pp_probe(evset));
 	printf("probe is %li\n", pp_probe(evset));
-	printf("probe2 is %li\n", pp_probe2(evset));
+	printf("probe is %li\n", pp_probe(evset));
 }
 
 static void pp_run(Config *conf, void *target_adrs) { // atm support only 1 adrs, extend later (easy w linked list)
