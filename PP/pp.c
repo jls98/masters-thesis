@@ -83,14 +83,18 @@ static i64 pp_probe2(Eviction_Set *evset){
 
 static i64 pp_probe_simple(Eviction_Set *evset){
 	unsigned int ignore;
-    u64 start = __rdtscp(&ignore);
+    
     u64 *adrs=(u64 *)evset->adrs[0];
+    my_fence();
+    u64 start = __rdtscp(&ignore);
     for (int i=0;i<evset->size;i++){
         adrs=*adrs;
+        my_fence();
     }
     u64 end = __rdtscp(&ignore);
-    evset->measurements[evset->cnt_measurement++]=end;
-    return end;
+    u64 diff = end-start;
+    evset->measurements[evset->cnt_measurement++]=diff;
+    return diff;
 }
 
 
