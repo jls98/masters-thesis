@@ -161,7 +161,8 @@ static void pp_monitor(Config *conf, Eviction_Set *evset, void *target) {
         load(evset->adrs[i]);
     }
 	printf("probe is %li\n", pp_probe(evset));
-   
+   	printf("probe target is %li\n", probe(target));
+
     printf("target %p\n",target);
     for(int i=0;i<evset->size;i++){
         printf("evset[%i] %p\n",i, evset->adrs[i]);
