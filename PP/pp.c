@@ -24,7 +24,7 @@ static i64 pp_probe(Eviction_Set *evset){
         " rdtscp             \n" // end time 
         " sub rax, r8 		\n" // diff = end - start
         : "=&a" (evset->measurements[evset->cnt_measurement])
-        : "r" (evset->adrs), "r" (evset->size) 
+        : "r" (evset->adrs), "r" (evset->size+1) 
         : "ecx", "rdx", "r8", "r9", "memory"
 	);
 	return evset->measurements[evset->cnt_measurement++];
