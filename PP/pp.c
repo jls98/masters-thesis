@@ -42,11 +42,11 @@ static i64 pp_probe2(Eviction_Set *evset){
         " rdtscp             \n" // start time 
         " mov r8, rax 		\n" // move time to r8 
 		" mov rax, [%1]		\n" // load target adrs
-        " loop: lfence;"		
+        " loop1: lfence;"		
 		" mov rax, [rax]\n" // pointer chase
 		" dec r9\n"
 		" lfence\n"
-		" jnz loop\n"
+		" jnz loop1\n"
         " lfence            \n" 
         " rdtscp             \n" // end time 
         " sub rax, r8 		\n" // diff = end - start
