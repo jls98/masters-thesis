@@ -148,35 +148,59 @@ static void pp_monitor(Config *conf, Eviction_Set *evset, void *target) {
         load(evset->adrs[i]);
     }	
 	printf("probe is %li\n", pp_probe(evset));
+    my_fence();
 	printf("probe is %li\n", pp_probe(evset));
+    my_fence();
 	printf("probe is %li\n", pp_probe(evset));
+    my_fence();
 	load(target);
+    my_fence();
 	printf("probe target is %li\n", probe(target));
+    my_fence();
 	printf("probe is %li\n", pp_probe(evset));
+    my_fence();
 	printf("probe target is %li\n", probe(target));
+    my_fence();
     
 	printf("probe is %li\n", pp_probe(evset));
+    my_fence();
 	printf("probe is %li\n", pp_probe(evset));
+    my_fence();
 	printf("probe is %li\n", pp_probe(evset));
+    my_fence();
 	printf("probe target is %li\n", probe(target));
+    my_fence();
     for(int i=0;i<evset->size;i++){
         load(evset->adrs[i]);
+    my_fence();
     }
+    my_fence();
 	printf("probe is %li\n", pp_probe(evset));
+    my_fence();
    	printf("probe target is %li\n", probe(target));
+    my_fence();
 
-    printf("target %p\n",target);
-    for(int i=0;i<evset->size;i++){
-        printf("evset[%i] %p\n",i, evset->adrs[i]);
-    }
+    // printf("target %p\n",target);
+    // my_fence();
+    // for(int i=0;i<evset->size;i++){
+        // printf("evset[%i] %p\n",i, evset->adrs[i]);
+    // my_fence();
+    // }
     
 	printf("probe simple is %li\n", pp_probe_simple(evset));
+    my_fence();
 	printf("probe simple is %li\n", pp_probe_simple(evset));
+    my_fence();
 	printf("probe simple is %li\n", pp_probe_simple(evset));
+    my_fence();
 	printf("probe simple is %li\n", pp_probe_simple(evset));
+    my_fence();
 	load(target);
+    my_fence();
     printf("probe simple is %li\n", pp_probe_simple(evset));
+    my_fence();
 	printf("probe target is %li\n", probe(target));
+    my_fence();
 
 }
 
