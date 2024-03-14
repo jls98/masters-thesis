@@ -133,7 +133,7 @@ static void pp_setup(Config *conf, Eviction_Set *evset, void *target, void *cc_b
 	// create eviction set / TODO dont hardcode
     intptr_t buf = (intptr_t) cc_buffer;
     intptr_t tar = (intptr_t) target;    
-    i64 offset = 4096 - (abs(((i64) cc_buffer) - ((i64) target)) % 4096);
+    i64 offset = 4096 - (abs(((i64) cc_buffer) - ((i64) target)) % 4096) + 10*4096;
     // printf("computed offset %li from buf %p and tar %p\n", offset, buf, tar);
 	for(u64 i=0;i<conf->cache_ways;i++){
 		// add multiple of pagesize to ensure to land in the same cache set
