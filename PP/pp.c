@@ -3,7 +3,27 @@
 // utils 
 // measure time 
 
+static void pp_load(Eviction_Set *evset){
+    if (evset==NULL){
+		printf("probe: evset is NULL!\n");
+		return -1;
+	}
 
+	__asm__ volatile (
+		" mov rbx, %1\n" // 
+        " mfence            \n"
+		" mov rax, [%0]		\n" // load target adrs
+        " loop: lfence;"		
+		" mov rax, [rax]\n" // pointer chase
+		" dec rbx\n"
+		" lfence\n"
+		" jnz loop\n"
+        " lfence            \n" 
+        : 
+        : "r" (evset->adrs), "r" (evset->size) 
+        : "rax", "rbx", "memory"
+	);
+}
 
 static i64 pp_probe1(Eviction_Set *evset){
 	if (evset==NULL){
@@ -155,56 +175,35 @@ static void pp_setup(Config *conf, Eviction_Set *evset, void *target, void *cc_b
 }
 
 static void pp_monitor(Config *conf, Eviction_Set *evset, void *target) {
-    for(int i=0;i<evset->size;i++){
-        load(evset->adrs[i]);
-        my_fence();
-    }	
-	printf("probe is %li\n", pp_probe(evset));
-	printf("probe is %li\n", pp_probe(evset));
-	printf("probe is %li\n", pp_probe(evset));
-	load(target);
-    my_fence();
-	printf("probe target is %li\n", probe(target));
-    my_fence();
-	printf("probe is %li\n", pp_probe(evset));
-	printf("probe target is %li\n", probe(target));
-    my_fence();
+    i64 tar_buf[100];
+    // load evset (memory or hard drive)
+    pp_load(evset);
+    // probe evset (cached)
+    pp_probe(evset); // size 1
+    // probe evset (cached)
+    pp_probe(evset); // size 2
+    // load target (memory or hard drive)
+    load(target);
+    // probe evset (cached)
+    pp_probe(evset); // size 3
+    // probe evset (cached)
+    pp_probe(evset); // size 4
+    // probe target (L2/L3)
+    tar_buf[0] = probe(target);
+    // probe target (cached)
+    tar_buf[1] = probe(target);
+    // probe evset (cached)
+    pp_probe(evset); // size 5
+    // probe evset (cached)
+    pp_probe(evset); // size 6
     
-	printf("probe is %li\n", pp_probe(evset));
-	printf("probe is %li\n", pp_probe(evset));
-	printf("probe is %li\n", pp_probe(evset));
-	printf("probe target is %li\n", probe(target));
-    my_fence();
-    for(int i=0;i<evset->size;i++){
-        load(evset->adrs[i]);
-        my_fence();
+    for(int i=0;i<2;i++){
+        printf("Target %i: %li\n", i, tar_buf[i]);
     }
-    my_fence();
-	printf("probe is %li\n", pp_probe(evset));
-   	printf("probe target is %li\n", probe(target));
-    my_fence();
+    for (int i=0;i<6;i++){
+        printf("Evset %i: %li\n", i, evset->measurements[i]);
+    }
 
-    // printf("target %p\n",target);
-    // my_fence();
-    // for(int i=0;i<evset->size;i++){
-        // printf("evset[%i] %p\n",i, evset->adrs[i]);
-    // my_fence();
-    // }
-    
-	printf("probe simple is %li\n", pp_probe_simple(evset));
-    my_fence();
-	printf("probe simple is %li\n", pp_probe_simple(evset));
-    my_fence();
-	printf("probe simple is %li\n", pp_probe_simple(evset));
-    my_fence();
-	printf("probe simple is %li\n", pp_probe_simple(evset));
-    my_fence();
-	load(target);
-    my_fence();
-    printf("probe simple is %li\n", pp_probe_simple(evset));
-    my_fence();
-	printf("probe target is %li\n", probe(target));
-    my_fence();
 
 }
 
