@@ -13,11 +13,11 @@ static void pp_load(Eviction_Set *evset){
 		" mov rbx, %1\n" // 
         " mfence            \n"
 		" mov rax, [%0]		\n" // load target adrs
-        " loop: lfence;"		
+        " loop0: lfence;"		
 		" mov rax, [rax]\n" // pointer chase
 		" dec rbx\n"
 		" lfence\n"
-		" jnz loop\n"
+		" jnz loop0\n"
         " lfence            \n" 
         : 
         : "r" (evset->adrs), "r" (evset->size) 
