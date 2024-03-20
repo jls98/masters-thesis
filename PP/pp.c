@@ -176,26 +176,26 @@ static void pp_setup(Config *conf, Eviction_Set *evset, void *target, void *cc_b
 
 static void pp_monitor(Config *conf, Eviction_Set *evset, void *target) {
     i64 tar_buf[100];
-    // load evset (memory or hard drive)
-    pp_load(evset);
+    // // load evset (memory or hard drive)
+    // pp_load(evset);
     // probe evset (cached)
-    pp_probe(evset); // size 1
+    pp_probe(evset); // evset 1
     // probe evset (cached)
-    pp_probe(evset); // size 2
+    pp_probe(evset); // evset 2
     // load target (memory or hard drive)
     load(target);
     // probe evset (cached)
-    pp_probe(evset); // size 3
+    pp_probe(evset); // evset 3
     // probe evset (cached)
-    pp_probe(evset); // size 4
+    pp_probe(evset); // evset 4
     // probe target (L2/L3)
     tar_buf[0] = probe(target);
     // probe target (cached)
     tar_buf[1] = probe(target);
     // probe evset (cached)
-    pp_probe(evset); // size 5
+    pp_probe(evset); // evset 5
     // probe evset (cached)
-    pp_probe(evset); // size 6
+    pp_probe(evset); // evset 6
     
     for(int i=0;i<2;i++){
         printf("Target %i: %li\n", i, tar_buf[i]);
