@@ -124,7 +124,7 @@ static i64 pp_probe_simple(Eviction_Set *evset){
 }
 
 static i64 pp_probe(Eviction_Set *evset){
-    i64 ret = pp_probe1(evset);
+    i64 ret = pp_probe_simple(evset);
     my_fence();
     return ret;
 }
