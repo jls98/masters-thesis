@@ -197,11 +197,18 @@ static void pp_monitor(Config *conf, Eviction_Set *evset, void *target) {
     // probe evset (cached)
     pp_probe(evset); // evset 6
     
+    my_fence();
     for(int i=0;i<2;i++){
         printf("Target %i: %li\n", i, tar_buf[i]);
     }
     for (int i=0;i<6;i++){
         printf("Evset %i: %li\n", i, evset->measurements[i]);
+    }
+    
+    printf("Target adrs %p\n", target);
+    printf("Evset adrs:\n");
+    for(int i=0;i<evset->size;i++){
+        printf("%p\n", evset->adrs[i]);
     }
 
 
