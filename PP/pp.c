@@ -183,7 +183,7 @@ static void pp_monitor(Config *conf, Eviction_Set *evset, void *target) {
     // probe evset (cached)
     pp_probe(evset); // evset 2
     // load target (memory or hard drive)
-    tar_buf[0] = load(target);
+    tar_buf[0] = probe(target);
     // probe evset (cached)
     pp_probe(evset); // evset 3
     // probe evset (cached)
