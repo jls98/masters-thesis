@@ -198,10 +198,38 @@ static void pp_monitor(Config *conf, Eviction_Set *evset, void *target) {
     pp_probe(evset); // evset 5
     
     my_fence();
-    for(int i=0;i<3;i++){
+    
+    flush(target);
+    flush(evset->adrs[0]);
+    flush(evset->adrs[1]);
+    flush(evset->adrs[2]);
+    flush(evset->adrs[3]);
+    flush(evset->adrs[4]);
+    flush(evset->adrs[5]);
+    flush(evset->adrs[6]);
+    flush(evset->adrs[7]);
+    
+    pp_probe(evset); // evset 6
+    // probe evset (cached)
+    pp_probe(evset); // evset 7
+    // load target (memory or hard drive)
+    tar_buf[3] = probe(target);
+    // probe evset (cached)
+    pp_probe(evset); // evset 8
+    // probe evset (cached)
+    pp_probe(evset); // evset 9
+    // probe target (L2/L3)
+    tar_buf[4] = probe(target);
+    // probe target (cached)
+    tar_buf[5] = probe(target);
+    // probe evset (cached)
+    pp_probe(evset); // evset 10
+    // probe evset (cached)
+    pp_probe(evset); // evset 11
+    for(int i=0;i<6;i++){
         printf("Target %i: %li\n", i, tar_buf[i]);
     }
-    for (int i=0;i<6;i++){
+    for (int i=0;i<12;i++){
         printf("Evset %i: %li\n", i, evset->measurements[i]);
     }
     
