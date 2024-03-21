@@ -5,7 +5,7 @@
 static void pp_load(Eviction_Set *evset){
     if (evset==NULL){
 		printf("probe: evset is NULL!\n");
-		return -1;
+		return;
 	}
 
 	__asm__ volatile (
