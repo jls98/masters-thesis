@@ -2,7 +2,6 @@
 
 // utils 
 // measure time 
-
 static void pp_load(Eviction_Set *evset){
     if (evset==NULL){
 		printf("probe: evset is NULL!\n");
@@ -124,7 +123,7 @@ static i64 pp_probe_simple(Eviction_Set *evset){
 }
 
 static i64 pp_probe(Eviction_Set *evset){
-    i64 ret = pp_probe_simple(evset);
+    i64 ret = pp_probe1(evset);
     my_fence();
     return ret;
 }
@@ -180,23 +179,23 @@ static void pp_monitor(Config *conf, Eviction_Set *evset, void *target) {
     // pp_load(evset);
     // probe evset (cached)
     flush(target);
-    pp_probe(evset); // evset 1
+    pp_probe(evset); // evset 0
     // probe evset (cached)
-    pp_probe(evset); // evset 2
+    pp_probe(evset); // evset 1
     // load target (memory or hard drive)
     tar_buf[0] = probe(target);
     // probe evset (cached)
-    pp_probe(evset); // evset 3
+    pp_probe(evset); // evset 2
     // probe evset (cached)
-    pp_probe(evset); // evset 4
+    pp_probe(evset); // evset 3
     // probe target (L2/L3)
     tar_buf[1] = probe(target);
     // probe target (cached)
     tar_buf[2] = probe(target);
     // probe evset (cached)
-    pp_probe(evset); // evset 5
+    pp_probe(evset); // evset 4
     // probe evset (cached)
-    pp_probe(evset); // evset 6
+    pp_probe(evset); // evset 5
     
     my_fence();
     for(int i=0;i<3;i++){
