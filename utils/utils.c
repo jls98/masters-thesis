@@ -78,10 +78,10 @@ static Config * initConfig(i64 cache_ways, i64 pagesize, i64 cache_sets, i64 cac
 static Config *initConfigDSkylakeThreshold(i64 threshold, u64 level){
     if (threshold>4){
         if (level==1){
-            return initConfig(8, 4096, 64, threshold, -1, -1, 16*4096);
+            return initConfig(8, 4096, 64, 64, threshold, -1, -1, 16*4096);
         }    
         else if (level==2){
-            return initConfig(8, 4096, 64, threshold, -1, -1, 2*262144);
+            return initConfig(8, 4096, 32768, 64, threshold, -1, -1, 2*262144);
         } 
     }        
     // if (level==3){ // complete later
