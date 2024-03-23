@@ -268,7 +268,7 @@ static void pp_run(Config *conf, void *target_adrs) { // atm support only 1 adrs
 	
 	Eviction_Set *evset=initEviction_Set(conf);
 	
-	pp_setup(conf, evset, cc_buffer, cc_buffer+4096);
+	pp_setup(conf, evset, cc_buffer, cc_buffer+4096); // just using cc buffer target rn for test purpose
 
 	pp_monitor(conf, evset, cc_buffer);
 	

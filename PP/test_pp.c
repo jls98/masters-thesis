@@ -43,15 +43,16 @@ void test_pp_init(){
 
 #define REPS 10
 // SET CORRECT THRESHOLD!!
+#define THRESHOLD 210
 void test_pp_setup(){
 	printf("\n\nStart test_pp_setup ... \n");
 	wait(1E9);
-	Config *conf = initConfig_D;
+	Config *conf = initConfigDSkylakeThreshold(THRESHOLD, 1);
 	Eviction_Set *evset =initEviction_Set(conf);
-	u64 *target = malloc(100*sizeof(u64));
 	i64 debug;
 	// does it evict?
-    void *cc_buffer=pp_init(conf);
+    void *target=pp_init(conf);
+    void *cc_buffer = target + 4096;
 	pp_setup(conf, evset, target, cc_buffer);
 	load(target);
 	// my_fence();
@@ -72,81 +73,19 @@ void test_pp_setup(){
 	// my_fence();
 
 	// for(int i=0;i<REPS;i++){
-	// no evict
 	flush(target);
-	pp_probe(evset);
-	// SET CORRECT THRESHOLD!!
+	pp_probe(evset); // evset 0
+	pp_probe(evset); // evset 1 no evict/target access
 	// case no target access
-	debug =pp_probe(evset);
-	CU_ASSERT_TRUE( debug< (i64) conf->threshold_L1);
-	printf("evset timing w no access by target: %li\n", debug);
+	CU_ASSERT_TRUE( evset->measurements[1] < conf->threshold_L1);
 	
+    load(evset);
 	// evict
 	my_fence();
 	load(target); // target access in between
 	my_fence();
-	// SET CORRECT THRESHOLD!!
-	debug =pp_probe(evset);
-	CU_ASSERT_TRUE(debug > (i64) conf->threshold_L1);
-	printf("evset timing w loaded target: %li\n", debug);
-	
-	
-	// no evict
-	my_fence();
-	// case no target access
-	debug =pp_probe(evset);
-	CU_ASSERT_TRUE( debug< (i64) conf->threshold_L1);
-	printf("evset timing w no access by target: %li\n", debug);
-	
-	// evict
-	my_fence();
-	load(target); // target access in between
-	my_fence();
-	// SET CORRECT THRESHOLD!!
-	debug =pp_probe(evset);
-	CU_ASSERT_TRUE(debug > (i64) conf->threshold_L1);
-	printf("evset timing w loaded target: %li\n", debug);
-
-		// // no evict
-		// flush(target);
-		// // SET CORRECT THRESHOLD!!
-		// debug =pp_probe(evset);
-		// CU_ASSERT_TRUE( debug> (i64) conf->threshold_L1);
-		// printf("flush: %li\n", debug);
-		// // evict
-		// load(target);
-		// // SET CORRECT THRESHOLD!!
-		// debug =pp_probe(evset);
-		// CU_ASSERT_TRUE(debug < (i64) conf->threshold_L1);
-		// printf("load: %li\n", debug);
-
-	// }
-	
-	// testing target
-	pp_probe(evset);
-	load(target);
-	my_fence();
-	debug = probe(target);
-	printf("cached target: %li\n", debug);
-	flush(target);
-	my_fence();
-	debug = probe(target);
-	printf("flushed target: %li\n", debug);
-	my_fence();
-	load(target);
-	my_fence();
-	debug = pp_probe(evset);
-	my_fence();
-	printf("timing evset: %li\n", debug);
-	my_fence();
-	debug = probe(target);
-	printf("evset target: %li\n", debug);
-	my_fence();
-	pp_probe(evset);
-	my_fence();
-	debug = pp_probe(evset);
-	my_fence();
-	printf("evset cached: %li\n", debug);
+	pp_probe(evset); // evset 2 target access
+	CU_ASSERT_TRUE(evset->measurements[2] > conf->threshold_L1);	
 
 	printf("End test_pp_setup\n\n");
 }
