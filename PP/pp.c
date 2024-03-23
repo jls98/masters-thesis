@@ -1,5 +1,6 @@
 #include "../utils/utils.c"
 
+#define THRESHOLD_EVSET_L1 210
 // utils 
 // measure time 
 static void pp_load(Eviction_Set *evset){
@@ -226,18 +227,28 @@ static void pp_monitor(Config *conf, Eviction_Set *evset, void *target) {
     pp_probe(evset); // evset 10
     // probe evset (cached)
     pp_probe(evset); // evset 11
-    for(int i=0;i<6;i++){
+    tar_buf[6] = probe(target);
+    // probe target (cached)
+    tar_buf[7] = probe(target);
+    // probe target (cached)
+    tar_buf[8] = probe(target);
+    // probe evset (cached)
+    pp_probe(evset); // evset 12
+    // probe evset (cached)
+    pp_probe(evset); // evset 13
+    for(int i=0;i<9;i++){
         printf("Target %i: %li\n", i, tar_buf[i]);
     }
-    for (int i=0;i<12;i++){
+    
+    for (int i=0;i<14;i++){
         printf("Evset %i: %li\n", i, evset->measurements[i]);
     }
     
-    printf("Target adrs %p\n", target);
-    printf("Evset adrs:\n");
-    for(int i=0;i<evset->size;i++){
-        printf("%p\n", evset->adrs[i]);
-    }
+    // printf("Target adrs %p\n", target);
+    // printf("Evset adrs:\n");
+    // for(int i=0;i<evset->size;i++){
+        // printf("%p\n", evset->adrs[i]);
+    // }
 
 
 }
