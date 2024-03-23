@@ -55,22 +55,6 @@ void test_pp_setup(){
     void *cc_buffer = target + 4096;
 	pp_setup(conf, evset, target, cc_buffer);
 	load(target);
-	// my_fence();
-	// debug =pp_probe(evset);
-	// printf("timing evset %li \n", debug);
-	// my_fence();
-	// debug =pp_probe(evset);
-	// printf("timing evset %li \n", debug);
-	// my_fence();
-	// debug =pp_probe(evset);
-	// printf("timing evset %li \n", debug);
-	// my_fence();
-	// debug =pp_probe(evset);
-	// printf("timing evset %li \n", debug);
-	// my_fence();
-	// debug =pp_probe(evset);
-	// printf("timing evset %li \n", debug);
-	// my_fence();
 
 	// for(int i=0;i<REPS;i++){
 	flush(target);
