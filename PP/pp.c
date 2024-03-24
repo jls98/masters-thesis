@@ -277,12 +277,10 @@ static void pp_run(Config *conf, void *target_adrs) { // atm support only 1 adrs
 
 #ifdef PP
 int main(){
-	Config *conf=initConfig(-1,-1,-1,-1,-1,-1,-1, 20*4096);
+	Config *conf=initConfigDSkylakeThreshold(THRESHOLD_EVSET_L1, 1);
 	void *target = malloc(sizeof(void));
     wait(1E9);
-	pp_run(conf, target); // TODO change to real adrs and create a temp picker (file reader)
-	
-	
+	pp_run(conf, target); // TODO change to real adrs and create a temp picker (file reader)	
 	
 	
 	free(conf);

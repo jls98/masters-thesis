@@ -42,12 +42,11 @@ void test_pp_init(){
 }
 
 #define REPS 10
-// SET CORRECT THRESHOLD!!
-#define THRESHOLD 210
+
 void test_pp_setup(){
 	printf("\n\nStart test_pp_setup ... \n");
 	wait(1E9);
-	Config *conf = initConfigDSkylakeThreshold(THRESHOLD, 1);
+	Config *conf = initConfigDSkylakeThreshold(THRESHOLD_EVSET_L1, 1);
 	Eviction_Set *evset =initEviction_Set(conf);
 	i64 debug;
 	// does it evict?
