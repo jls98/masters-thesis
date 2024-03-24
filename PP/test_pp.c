@@ -69,7 +69,8 @@ void test_pp_setup(){
 	my_fence();
 	pp_probe(evset); // evset 2 target access
 	CU_ASSERT_TRUE(evset->measurements[2] > conf->threshold_L1);	
-
+    printf("1 %lu\n", evset->measurements[1]);
+    printf("2 %lu\n", evset->measurements[2]);
 	printf("End test_pp_setup\n\n");
 }
 
