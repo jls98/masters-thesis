@@ -452,36 +452,37 @@ static uint64_t lfsr_step(uint64_t lfsr) {
   return (lfsr & 1) ? (lfsr >> 1) ^ FEEDBACK : (lfsr >> 1);
 }
 
+static uint64_t msrmts[1000]={0};
+static uint64_t m_ind =0; 
 
 static int64_t test1(void *addr, uint64_t size, void* target_adrs, struct Config *conf){    
     // parameter check
     if (size==0){
-		printf("test1: size is 0!\n");
+		// printf("test1: size is 0!\n");
 		return -1;
 	} 	
 	 
 	if (addr==NULL){
-		printf("test1: addr is NULL!\n");
+		// printf("test1: addr is NULL!\n");
 		return -1;
 	} 	
 	
 	if (target_adrs==NULL){
-		printf("test1: target_adrs is NULL!\n");
+		// printf("test1: target_adrs is NULL!\n");
 		return -1;
 	} 	
 	
 	if (conf==NULL){
-		printf("test1: conf is NULL!\n");
+		// printf("test1: conf is NULL!\n");
 		return -1;
 	} 	
 	
 #ifdef TEST_EVICT_BASELINE
 	
-	clock_t start_clk = clock();
+	// clock_t start_clk = clock();
 #endif	
 	for(uint64_t i=0;i<conf->test_reps;i++){ // test reps = 1, removeing loop results in frequently occurring 100 cycle measurements
 		asm __volatile__ (
-			"lfence;"
 			"mfence;"
 			// load target and set 
 			"mov rdx, %2;"
@@ -495,7 +496,6 @@ static int64_t test1(void *addr, uint64_t size, void* target_adrs, struct Config
 			// END - reading set
 			// measure start
 			"lfence;"
-			"mfence;"
 			"rdtscp;"		
 			"lfence;"
 			"mov rsi, rax;"
@@ -511,15 +511,15 @@ static int64_t test1(void *addr, uint64_t size, void* target_adrs, struct Config
 			// end - high precision
 			"sub rax, rsi;"
 			// "clflush [%3];" // flush data from candidate for repeated loading
-			: "=a" (time_buf)
+			: "=a" (msrmts[m_ind])
 			: "r" (addr), "r" (size), "r" (target_adrs)
 			: "rsi", "rdx", "rcx"
 		);
 	}
 #ifdef TEST_EVICT_BASELINE
-	printf("test1: took %.6f seconds to finish, measurement %lu\n", ((double) (clock() - start_clk)) / CLOCKS_PER_SEC, time_buf);
+	// printf("test1: took %.6f seconds to finish, measurement %lu\n", ((double) (clock() - start_clk)) / CLOCKS_PER_SEC, time_buf);
 #endif	
-	return time_buf > conf->threshold? 1 : 0;
+	return msrmts[m_ind++] > conf->threshold? 1 : 0;
 } 
 
 static void create_pointer_chase(void **candidate_set, uint64_t c_size, struct Node* set){
