@@ -117,6 +117,11 @@ void test_pick(){
     freeList(candidate_set1);
     freeList(candidate_set2);
     freeList(empty_set);
+    
+    for(int i=0;i<m_ind;i++){
+        printf("%lu\n" , msrmts[i]);
+    }
+    
     printf("     ... finished!\n");
 }
 

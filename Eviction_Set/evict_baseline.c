@@ -452,7 +452,7 @@ static uint64_t lfsr_step(uint64_t lfsr) {
   return (lfsr & 1) ? (lfsr >> 1) ^ FEEDBACK : (lfsr >> 1);
 }
 
-static uint64_t msrmts[1000]={0};
+static uint64_t msrmts[10000]={0};
 static uint64_t m_ind =0; 
 
 static int64_t test1(void *addr, uint64_t size, void* target_adrs, struct Config *conf){    
