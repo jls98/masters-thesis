@@ -57,6 +57,14 @@ void test_pp_setup(){
 
 	// for(int i=0;i<REPS;i++){
 	flush(target);
+    flush(evset->adrs[0]);
+    flush(evset->adrs[1]);
+    flush(evset->adrs[2]);
+    flush(evset->adrs[3]);
+    flush(evset->adrs[4]);
+    flush(evset->adrs[5]);
+    flush(evset->adrs[6]);
+    flush(evset->adrs[7]);
 	pp_probe(evset); // evset 0
 	pp_probe(evset); // evset 1 no evict/target access
 	// case no target access
