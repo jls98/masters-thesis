@@ -2,7 +2,7 @@
 #include <CUnit/CUnit.h>
 #include <CUnit/Basic.h>
 
-#define reps_test1 64 // at 64 segmentation fault
+#define reps_test1 200 // at 64 segmentation fault
 static struct Config *conf;
 
 void test_test1(){
