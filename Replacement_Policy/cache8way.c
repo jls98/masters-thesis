@@ -72,6 +72,8 @@ void test_pointer_chase(Eviction_Set *evset, Eviction_Set *cleanup_evset, Evicti
 	void_voidptr_fence(load, evset->adrs[7]);
 	i64_evset_fence(probe_evset, evset);
 	target_set->measurements[3] = 	u64_voidptr_fence(probe, target_set->adrs[0]);
+	target_set->measurements[4] = 	u64_voidptr_fence(probe, target_set->adrs[0]);
+	target_set->measurements[5] = 	u64_voidptr_fence(probe, target_set->adrs[0]);
 	
 	void_voidptr_fence(load, evset->adrs[0]);
 	evset->measurements[2] = 	u64_voidptr_fence(probe, evset->adrs[0]);
@@ -95,6 +97,8 @@ void test_pointer_chase(Eviction_Set *evset, Eviction_Set *cleanup_evset, Evicti
     printf("cleanset %lu %lu %lu %lu\n", cleanup_evset->measurements[0], cleanup_evset->measurements[1], cleanup_evset->measurements[2], cleanup_evset->measurements[3]);
 	printf("reload target %p with time %lu\n", target_set->adrs[0], target_set->measurements[2]);
 	printf("load target %p after load evset with time %lu\n", target_set->adrs[0], target_set->measurements[3]);
+	printf("load target %p after load evset with time %lu\n", target_set->adrs[0], target_set->measurements[4]);
+	printf("load target %p after load evset with time %lu\n", target_set->adrs[0], target_set->measurements[5]);
 	printf("reload target %p with time %lu\n", evset->adrs[0], evset->measurements[2]);
 	printf("load target %p after load evset with time %lu\n", evset->adrs[0], evset->measurements[3]);	
 	printf("load target %p after load evset with time %lu\n", evset->adrs[0], evset->measurements[4]);	
