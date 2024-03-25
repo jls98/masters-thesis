@@ -48,7 +48,10 @@ i64 i64_evset_fence(i64(*foo)(Eviction_Set *), Eviction_Set *evset){
 #define TEST_REPS 100
 #define OUTSIDER_TRESHOLD 1000
 void test_pointer_chase(Eviction_Set *evset, Eviction_Set *cleanup_evset, Eviction_Set *target_set){
-	i64_evset_fence(probe_evset, target_set);
+	wait(1e9);
+    my_fence();
+    
+    i64_evset_fence(probe_evset, target_set);
 	i64_evset_fence(probe_evset, evset);
 	i64_evset_fence(probe_evset, cleanup_evset);
 	i64_evset_fence(probe_evset, target_set);
