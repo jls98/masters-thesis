@@ -16,7 +16,7 @@ static i64 probe_evset(Eviction_Set *evset){
 		" mov rbx, [rbx]\n" 		// pointer chase
 		" dec r9\n"
 		" jnz loop\n"				// if zero, all evset elements had been accessed 
-        " mfence            \n" 
+        " lfence            \n" 
         " rdtscp             \n" 	// end time 
         " sub rax, r8 		\n" 	// diff = end - start
         : "=&a" (evset->measurements[evset->cnt_measurement])
