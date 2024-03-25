@@ -1,6 +1,6 @@
 CC = gcc
 CFLAGS = -Wall -Wextra -masm=intel
-all: cache8way
+all: evict_baseline test_evict_baseline
 
 workshop3: Cache_Reversing/workshop3.c
 	$(CC) $(CFLAGS) -o build/workshop3  Cache_Reversing/workshop3.c
@@ -39,4 +39,4 @@ cache8way: Replacement_Policy/cache8way.c
 	$(CC) $(CFLAGS) -g -o build/cache8way -DREPLACEMENT Replacement_Policy/cache8way.c utils/utils.c
     
 clean:
-	rm -f cache8way
+	rm -f evict_baseline test_evict_baseline
