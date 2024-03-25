@@ -74,7 +74,7 @@ static i64 pp_probe12(Eviction_Set *evset){
         " sub rax, r8 		\n" // diff = end - start
         " mov r9, %2;"
         " add r9, r9;"
-        " loop122: mfence;"
+        " loop122: lfence;"
 		" mov rbx, [rbx]\n" // pointer chase
 		" dec r9\n"
 		" lfence\n"

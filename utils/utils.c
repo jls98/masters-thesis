@@ -208,7 +208,7 @@ static void flush(void *adrs){
 }
 
 static void my_fence(){
-	__asm__ volatile("mfence");
+	__asm__ volatile("lfence");
 }
 
 static u64 probe(void *adrs){
