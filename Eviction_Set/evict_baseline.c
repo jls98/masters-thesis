@@ -86,17 +86,17 @@ static uint64_t lfsr_step(uint64_t lfsr);
 // returns -1 if there is an error
 static int64_t test(void **candidate_set, uint64_t candidate_set_size, struct Node *test_index_set, void *target_adrs, struct Config *conf);
 
-/* test1: eviction test for the specific address target_adrs.  */
-/* Loads target_adrs and then all elements from eviction set   */
-/* test. Finally, loads target_adrs and measures time.         */
-/* addr: pointer to first element from eviction set     */
-/* target_adrs: target adrs.                                */
-/* returns true/1 if measurement is above a threshold.    */
+/* test1: eviction test for the specific address target_adrs.  
+ * Loads target_adrs and then all elements from eviction set   
+ * test. Finally, loads target_adrs and measures time.         
+ * addr: pointer to first element from eviction set     
+ * target_adrs: target adrs.                                
+ * returns true/1 if measurement is above a threshold.    */
 static int64_t test1(void *addr, uint64_t size, void* target_adrs, struct Config *conf);
 
-/* pointer chase: creates pointer chase in subset of    */
-/* by candidate_set mapped set with c_size elements.    */
-/* set contains set of indexes for pointer chase        */
+/* pointer chase: creates pointer chase in subset of    
+ * by candidate_set mapped set with c_size elements.    
+ * set contains set of indexes for pointer chase        */
 static void create_pointer_chase(void **candidate_set, uint64_t c_size, struct Node* set);
 
 /* Pick lfsr pseudo-randomized next candidate (index).   
@@ -115,6 +115,9 @@ static struct Config *initConfig(uint64_t ways,	uint64_t cache_line_size, uint64
 
 /* configure Config */
 static void updateConfig(struct Config *conf, uint64_t ways, uint64_t cache_line_size, uint64_t threshold, uint64_t cache_size, uint64_t test_reps, uint64_t hugepages);
+
+static uint64_t msrmts[10000]={0};
+static uint64_t m_ind =0; 
 
 /* #################################################### */
 /* ################## implementation ################## */
@@ -238,6 +241,11 @@ int main(int ac, char **av){
 
     freeList(evict_set); // delete eviction set	
     freeList(tmp_evict_set); // delete eviction set	
+    
+    printf("msrmts %lu\n", m_ind);
+    for(int i=0;i<m_ind;i++){
+        printf("%lu\n" , msrmts[i]);
+    }
     return 0;
 }
 #endif
@@ -452,8 +460,7 @@ static uint64_t lfsr_step(uint64_t lfsr) {
   return (lfsr & 1) ? (lfsr >> 1) ^ FEEDBACK : (lfsr >> 1);
 }
 
-static uint64_t msrmts[10000]={0};
-static uint64_t m_ind =0; 
+
 
 static int64_t test1(void *addr, uint64_t size, void* target_adrs, struct Config *conf){    
     // parameter check
