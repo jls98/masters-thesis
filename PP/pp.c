@@ -33,12 +33,12 @@ static i64 pp_probe1(Eviction_Set *evset){
 
 	__asm__ volatile (
 		" mov r9, %2\n" // 
+		" mov rbx, [%1]		\n" // load target adrs
         " mfence            \n"
         " rdtscp             \n" // start time 
         " mov r8, rax 		\n" // move time to r8 
-		" mov rax, [%1]		\n" // load target adrs
         " loop: lfence;"		
-		" mov rax, [rax]\n" // pointer chase
+		" mov rbx, [rbx]\n" // pointer chase
 		" dec r9\n"
 		" lfence\n"
 		" jnz loop\n"
@@ -47,7 +47,42 @@ static i64 pp_probe1(Eviction_Set *evset){
         " sub rax, r8 		\n" // diff = end - start
         : "=&a" (evset->measurements[evset->cnt_measurement])
         : "r" (evset->adrs), "r" (evset->size) 
-        : "ecx", "rdx", "r8", "r9", "memory"
+        : "rbx", "ecx", "rdx", "r8", "r9", "memory"
+	);
+	return evset->measurements[evset->cnt_measurement++];
+}
+
+static i64 pp_probe12(Eviction_Set *evset){
+	if (evset==NULL){
+		printf("probe: evset is NULL!\n");
+		return -1;
+	}
+
+	__asm__ volatile (
+		" mov r9, %2\n" // 
+		" mov rbx, [%1]		\n" // load target adrs
+        " mfence            \n"
+        " rdtscp             \n" // start time 
+        " mov r8, rax 		\n" // move time to r8 
+        " loop12: lfence;"		
+		" mov rbx, [rbx]\n" // pointer chase
+		" dec r9\n"
+		" lfence\n"
+		" jnz loop12\n"
+        " lfence            \n" 
+        " rdtscp             \n" // end time 
+        " sub rax, r8 		\n" // diff = end - start
+        " mov r9, %2;"
+        " add r9, r9;"
+        " loop122: mfence;"
+		" mov rbx, [rbx]\n" // pointer chase
+		" dec r9\n"
+		" lfence\n"
+		" jnz loop122\n"
+
+        : "=&a" (evset->measurements[evset->cnt_measurement])
+        : "r" (evset->adrs), "r" (evset->size) 
+        : "rbx", "ecx", "rdx", "r8", "r9", "memory"
 	);
 	return evset->measurements[evset->cnt_measurement++];
 }
@@ -84,17 +119,17 @@ static i64 pp_probe2(Eviction_Set *evset){
         " lfence;"
         " mov r9, %3;"
         " mfence;"
-        " rdtscp;"
-        " mov r8, rax;"
-        " mov rax, [%2];"
-        " loop3: lfence;"
-        " mov rax, [rax];"
-        " dec r9;"
-        " lfence;"
-        " jne loop3;"
-        " lfence;"
-        " rdtscp;"
-        " sub rax, r8;"   
+        // " rdtscp;"
+        // " mov r8, rax;"
+        // " mov rax, [%2];"
+        // " loop3: lfence;"
+        // " mov rax, [rax];"
+        // " dec r9;"
+        // " lfence;"
+        // " jne loop3;"
+        // " lfence;"
+        // " rdtscp;"
+        // " sub rax, r8;"   
         
         : "=&b" (evset->measurements[evset->cnt_measurement++]), "=&a" (evset->measurements[evset->cnt_measurement])
         : "r" (evset->adrs), "r" (evset->size)
