@@ -222,11 +222,13 @@ int main(int ac, char **av){
 
 	// measure time when cached	
 	load(target_adrs);
+    __asm__ volatile("lfence");    
 	uint64_t time = probe(target_adrs);
 	
 	printf("main: Time loading victim cached %lu\n", time);
 	// measure time when uncached	
 	flush(target_adrs);
+    __asm__ volatile("lfence");
 	time = probe(target_adrs);
 
 	printf("main: Time loading victim uncached %lu\n", time);
@@ -504,7 +506,6 @@ static int64_t test1(void *addr, uint64_t size, void* target_adrs, struct Config
 			// measure start
 			"lfence;"
 			"rdtscp;"		
-			"lfence;"
 			"mov rsi, rax;"
 			// high precision
 			"shl rdx, 32;"
