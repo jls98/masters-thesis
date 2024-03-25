@@ -197,8 +197,8 @@ static u64 probe(void *adrs){
 	volatile uint64_t time;  
 	__asm__ volatile (
         " mfence            \n"
-        " lfence            \n"
         " rdtscp             \n"
+        " lfence;"
         " mov r8, rax 		\n"
         " mov rax, [%1]		\n"
         " lfence            \n"
