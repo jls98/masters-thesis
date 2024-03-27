@@ -4,6 +4,7 @@
 #include <sys/mman.h>
 #include <x86intrin.h>
 #include <time.h>
+#include "evset.h"
 
 /* #################################################### */
 /* ####################### utils ###################### */
@@ -26,9 +27,10 @@ static struct Config {
 
 /* linked list containing an index and a pointer to     */
 /* the next element                                     */
-static struct Node {
-    uint64_t value;
-    struct Node* next;
+typedef struct Node {
+    struct Node *next;
+    struct Node *prev;
+    size_t delta;
 } Node;
 
 /* Function to initialize an empty linked list          */
@@ -147,6 +149,17 @@ static uint64_t probe(void *adrs){
         : "ecx", "rdx", "r8", "memory"
 	);
 	return time;
+}
+// eax lsb, edx msb
+static uint64_t rdtscpfence(){
+    unsigned a, d;
+    __asm__ volatile(
+    "lfence;"
+    "rdtscp\n"
+    "lfence;"
+	: "=a" (a), "=d" (d)
+	:: "rcx");
+	return ((uint64_t)d << 32) | a;
 }
 
 #ifdef EVICT_BASELINE
@@ -462,7 +475,37 @@ static uint64_t lfsr_step(uint64_t lfsr) {
   return (lfsr & 1) ? (lfsr >> 1) ^ FEEDBACK : (lfsr >> 1);
 }
 
+static void traverse_list(uint64_t *addr, uint64_t size){
+    uint64_t c=size;
+    while(c-2){
+        load(addr);
+        load(*addr);
+        load(*(*addr));
+        load(addr);
+        load(*addr);
+        load(*(*addr));
+        c--;
+    }
+}
 
+static_int64_t new_test1(void *addr, uint64_t size, void *target_adrs, struct Config *conf){
+    if(size==0 || addr ==NULL || target_adrs ==NULL || conf==NULL){
+        return -1;
+    } // TODO rm later // toggle if working
+    load(target_adrs);
+    load(target_adrs);
+    load(target_adrs);
+    load(target_adrs);
+    traverse_list(addr, size);
+    
+    // victim + 222 access for page walk, maybe figure out later
+    
+    uint64_t delta, time;
+    time=rdtscpfence();
+    load(target_adrs);
+    delta=rdtscpfence() - time;
+    return delta;
+}
 
 static int64_t test1(void *addr, uint64_t size, void* target_adrs, struct Config *conf){    
     // parameter check
