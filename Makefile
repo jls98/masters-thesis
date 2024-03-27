@@ -1,30 +1,19 @@
 CC = gcc
-CFLAGS = -Wall -Wextra -masm=intel
-all: evict_baseline test_evict_baseline
+CFLAGS = -Wall -Wextra -g -masm=intel
+TARGETS = 
 
-workshop3: Cache_Reversing/workshop3.c
-	$(CC) $(CFLAGS) -o build/workshop3  Cache_Reversing/workshop3.c
-    
-task1: Cache_Reversing/task1.c
-	$(CC) $(CFLAGS) -o build/task1  Cache_Reversing/task1.c
-    
-task2: Cache_Reversing/task2.c
-	$(CC) $(CFLAGS) -o build/task2  Cache_Reversing/task2.c
+.PHONY: all clean
 
-evict1: Eviction_Set/evict1.c
-	$(CC) $(CFLAGS) -o build/evict1  Eviction_Set/evict1.c
-	
-evict2: Eviction_Set/evict2.c
-	$(CC) $(CFLAGS) -o build/evict2  Eviction_Set/evict2.c
+all: $(TARGETS)
 
 evict_baseline: Eviction_Set/evict_baseline.c
 	$(CC) $(CFLAGS) -o build/evict_baseline -DEVICT_BASELINE Eviction_Set/evict_baseline.c
-    
+   
 test_evict_baseline: Eviction_Set/test_evict_baseline.c 
 	$(CC) $(CFLAGS) -o build/test_evict_baseline -DTEST_EVICT_BASELINE Eviction_Set/test_evict_baseline.c Eviction_Set/evict_baseline.c -lcunit
-    
-file_generator: utils/file_generator.c
-	$(CC) $(CFLAGS) -o build/file_generator utils/file_generator.c
+
+evset: Eviction_Set/evset.c
+	$(CC) $(CFLAGS) -o build/evset Eviction_Set/evset.c
 
 pp: PP/pp.c
 	$(CC) $(CFLAGS) -g -o build/pp -DPP PP/pp.c
@@ -39,4 +28,4 @@ cache8way: Replacement_Policy/cache8way.c
 	$(CC) $(CFLAGS) -g -o build/cache8way -DREPLACEMENT Replacement_Policy/cache8way.c utils/utils.c
     
 clean:
-	rm -f evict_baseline test_evict_baseline
+	rm -f $(TARGETS)
