@@ -1,16 +1,25 @@
 CC = gcc
 CFLAGS = -Wall -Wextra -g -masm=intel
-TARGETS = evset test_evset
+#TARGETS = evset
 
 .PHONY: all clean
 
-all: $(TARGETS)
+all: evset test_evset
 
 evict_baseline: Eviction_Set/evict_baseline.c
 	$(CC) $(CFLAGS) -o build/evict_baseline -DEVICT_BASELINE Eviction_Set/evict_baseline.c
    
 test_evict_baseline: Eviction_Set/test_evict_baseline.c 
 	$(CC) $(CFLAGS) -o build/test_evict_baseline -DTEST_EVICT_BASELINE Eviction_Set/test_evict_baseline.c Eviction_Set/evict_baseline.c -lcunit
+
+#evset: evset.o test_evset.o
+#    $(CC) $(CFLAGS) $^ -o $@
+
+evset.o: Eviction_Set/evset.c Eviction_Set/evset.h
+	$(CC) $(CFLAGS) -c $< -o $@
+
+test_evset.o: Eviction_Set/test_evset.c  Eviction_Set/evset.h
+	$(CC) $(CFLAGS) -DNOMAIN -c $< -o $@ -lcunit
 
 evset: Eviction_Set/evset.c Eviction_Set/evset.h
 	$(CC) $(CFLAGS) -o build/evset Eviction_Set/evset.c
@@ -31,4 +40,4 @@ cache8way: Replacement_Policy/cache8way.c
 	$(CC) $(CFLAGS) -g -o build/cache8way -DREPLACEMENT Replacement_Policy/cache8way.c utils/utils.c
     
 clean:
-	rm -f $(TARGETS)
+	rm -f evset test_evset
