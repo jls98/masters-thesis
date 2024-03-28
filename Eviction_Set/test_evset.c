@@ -54,7 +54,7 @@ int main(int ac, char **av) {
 
     CU_basic_run_tests();
     CU_cleanup_registry();
-	free(conf);
+	// free(conf);
 	
     return 0;
 }
