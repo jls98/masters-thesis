@@ -187,81 +187,81 @@ int main(int ac, char **av){
 }
 #endif
 
-inline Node *create_minimal_eviction_set(void **candidate_set, u64 candidate_set_size, Node* evict_set, void *target_adrs, Config *conf){
-    if (conf==NULL){
-		printf("create_minimal_eviction_set: Conf is NULL!\n");
-		return NULL;
-	}
+// inline Node *create_minimal_eviction_set(void **candidate_set, u64 candidate_set_size, Node* evict_set, void *target_adrs, Config *conf){
+    // if (conf==NULL){
+		// printf("create_minimal_eviction_set: Conf is NULL!\n");
+		// return NULL;
+	// }
 	
-	// if candidate set is empty, no eviction set can be created
-	if (candidate_set==NULL){
-		printf("create_minimal_eviction_set: candidate_set is NULL!\n");
-		return NULL;
-	}
+	// // if candidate set is empty, no eviction set can be created
+	// if (candidate_set==NULL){
+		// printf("create_minimal_eviction_set: candidate_set is NULL!\n");
+		// return NULL;
+	// }
 	
-	if (candidate_set_size==0){
-		printf("create_minimal_eviction_set: candidate_set_size is 0!\n");
-		return NULL;
-	}
+	// if (candidate_set_size==0){
+		// printf("create_minimal_eviction_set: candidate_set_size is 0!\n");
+		// return NULL;
+	// }
 	
-	clock_t track_start = clock();
-    // init lfsr, variable c stores currently picked candidate integer/index value
-    u64 lfsr = lfsr_create(), c, cnt_e=0; 
-	int64_t c_tmp;
+	// clock_t track_start = clock();
+    // // init lfsr, variable c stores currently picked candidate integer/index value
+    // u64 lfsr = lfsr_create(), c, cnt_e=0; 
+	// int64_t c_tmp;
 	
-	// create current candidate set containing the indexes of unchecked candidates and initialize with all indexes
-    Node* cand_ind_set = initLinkedList();
-    for (u64 i=0; i<candidate_set_size-1;i+=8) cand_ind_set = addElement(cand_ind_set, i); 
+	// // create current candidate set containing the indexes of unchecked candidates and initialize with all indexes
+    // Node* cand_ind_set = initLinkedList();
+    // for (u64 i=0; i<candidate_set_size-1;i+=8) cand_ind_set = addElement(cand_ind_set, i); 
     
-    // while |R| < a and cind still contains possible and unchecked candidates
-    while(cand_ind_set!=NULL /*&& test(candidate_set, candidate_set_size, evict_set, target_adrs, conf) !=1*/){        
-        // c <- pick(S) pick candidate index c from candidate set S/cand_ind_set
-		do{
-			c_tmp=pick(cand_ind_set, candidate_set_size, &lfsr);
-		}
-        while(c_tmp==-1 || containsValue(evict_set, (u64) c_tmp) || !containsValue(cand_ind_set, (u64) c_tmp)); // prevent picking duplicate candidates and continuing on error
+    // // while |R| < a and cind still contains possible and unchecked candidates
+    // while(cand_ind_set!=NULL /*&& test(candidate_set, candidate_set_size, evict_set, target_adrs, conf) !=1*/){        
+        // // c <- pick(S) pick candidate index c from candidate set S/cand_ind_set
+		// do{
+			// c_tmp=pick(cand_ind_set, candidate_set_size, &lfsr);
+		// }
+        // while(c_tmp==-1 || containsValue(evict_set, (u64) c_tmp) || !containsValue(cand_ind_set, (u64) c_tmp)); // prevent picking duplicate candidates and continuing on error
 				
-		c = (u64) c_tmp;
-		// remove c from S S <- S\{c}
-		cand_ind_set = deleteElement(cand_ind_set, c);         
+		// c = (u64) c_tmp;
+		// // remove c from S S <- S\{c}
+		// cand_ind_set = deleteElement(cand_ind_set, c);         
 
-        // R union S\{c}
-        Node *combined_set = unionLists(cand_ind_set, evict_set);
+        // // R union S\{c}
+        // Node *combined_set = unionLists(cand_ind_set, evict_set);
 
-        // if not TEST(R union S\{c}), x)  
-		// if removing c results in not evicting x anymore, add c to current eviction set    	
-		if(test(candidate_set, candidate_set_size, combined_set, target_adrs, conf)==0 && test(candidate_set, candidate_set_size, evict_set, target_adrs, conf)==0){
-            evict_set = addElement(evict_set, c);
-            cnt_e++; // added elem to evict set -> if enough, evict_set complete   
-        }
-    }
-    printf("cind set contains still %i elements\n", count(cand_ind_set));
-    if (cand_ind_set==NULL && cnt_e < conf->ways) printf("create_minimal_eviction_set: not successful, eviction set contains less elements than cache ways!\n");
+        // // if not TEST(R union S\{c}), x)  
+		// // if removing c results in not evicting x anymore, add c to current eviction set    	
+		// if(test(candidate_set, candidate_set_size, combined_set, target_adrs, conf)==0 && test(candidate_set, candidate_set_size, evict_set, target_adrs, conf)==0){
+            // evict_set = addElement(evict_set, c);
+            // cnt_e++; // added elem to evict set -> if enough, evict_set complete   
+        // }
+    // }
+    // printf("cind set contains still %i elements\n", count(cand_ind_set));
+    // if (cand_ind_set==NULL && cnt_e < conf->ways) printf("create_minimal_eviction_set: not successful, eviction set contains less elements than cache ways!\n");
     
-    /* baseline algorithm */
-	printList(evict_set);
+    // /* baseline algorithm */
+	// printList(evict_set);
 	
-	// measure time needed for this algorithm
-	double  cpu_time_used = ((double) (clock() - track_start)) / CLOCKS_PER_SEC;
-    // Print the measured time
-    printf("Time taken by myFunction: %.6f seconds\n", cpu_time_used);
+	// // measure time needed for this algorithm
+	// double  cpu_time_used = ((double) (clock() - track_start)) / CLOCKS_PER_SEC;
+    // // Print the measured time
+    // printf("Time taken by myFunction: %.6f seconds\n", cpu_time_used);
 	
-	printf("test of evict set %li\n", test(candidate_set, candidate_set_size, evict_set, target_adrs, conf));
-	return evict_set;
-}
+	// printf("test of evict set %li\n", test(candidate_set, candidate_set_size, evict_set, target_adrs, conf));
+	// return evict_set;
+// }
 
-inline void traverse_list(u64 *addr, u64 size){
-    u64 c=size;
-    while(c-2){
-        load(addr);
-        load(*addr);
-        load(*(*addr));
-        load(addr);
-        load(*addr);
-        load(*(*addr));
-        c--;
-    }
-}
+// inline void traverse_list(u64 *addr, u64 size){
+    // u64 c=size;
+    // while(c-2){
+        // load(addr);
+        // load(*addr);
+        // load(*(*addr));
+        // load(addr);
+        // load(*addr);
+        // load(*(*addr));
+        // c--;
+    // }
+// }
 
 
 
