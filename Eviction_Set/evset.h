@@ -3,6 +3,23 @@
 
 #define u64 uint64_t
 
+typedef struct config {
+	u64 ways; // cache ways 
+	u64 cache_line_size; // cache line size (usually 64)
+	u64 threshold; // threshold for cache (eg ~45 for L1 on i7)
+	u64 cache_size; // cache size in bytes 
+	u64 test_reps; // amount of repetitions in test function
+	u64 hugepages;
+} Config;
+
+/* linked list containing an index and a pointer to     
+ * prev and next element                                */
+typedef struct node {
+    struct node *next;
+    struct node *prev;
+    size_t delta;
+} Node;
+
 // Utils #################################################
 /* wait for cycles cycles and activate cache            */
 inline void wait(u64 cycles);
