@@ -132,21 +132,22 @@ inline Node *list_pop(Node **head) {
 
 // TODO
 inline Node *list_union(Node* list1, Node* list2) {
-    Node* result = initLinkedList();
-    Node* current;
-    // Add elements from the first list
-    current = list1;
-    while (current != NULL) {
-        result = addElement(result, current->value);
-        current = current->next;
-    }
-    // Add elements from the second list (avoid duplicates)
-    current = list2;
-    while (current != NULL) {
-        if (!containsValue(result, current->value)) result = addElement(result, current->value);
-        current = current->next;
-    }
-    return result;
+    // Node* result = initLinkedList();
+    // Node* current;
+    // // Add elements from the first list
+    // current = list1;
+    // while (current != NULL) {
+        // result = addElement(result, current->value);
+        // current = current->next;
+    // }
+    // // Add elements from the second list (avoid duplicates)
+    // current = list2;
+    // while (current != NULL) {
+        // if (!containsValue(result, current->value)) result = addElement(result, current->value);
+        // current = current->next;
+    // }
+    // return result;
+    return NULL;
 }
 
 inline Node *list_get(Node **head, u64 *index) {
