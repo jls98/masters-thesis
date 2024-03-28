@@ -12,10 +12,10 @@ evict_baseline: Eviction_Set/evict_baseline.c
 test_evict_baseline: Eviction_Set/test_evict_baseline.c 
 	$(CC) $(CFLAGS) -o build/test_evict_baseline -DTEST_EVICT_BASELINE Eviction_Set/test_evict_baseline.c Eviction_Set/evict_baseline.c -lcunit
 
-evset: Eviction_Set/evset.c
+evset: Eviction_Set/evset.c Eviction_Set/evset.h
 	$(CC) $(CFLAGS) -o build/evset Eviction_Set/evset.c
 
-test_evset: Eviction_Set/test_evset.c 
+test_evset: Eviction_Set/test_evset.c  Eviction_Set/evset.h
 	$(CC) $(CFLAGS) -o build/test_evset -DNOMAIN Eviction_Set/test_evset.c Eviction_Set/evset.c -lcunit
 
 pp: PP/pp.c
