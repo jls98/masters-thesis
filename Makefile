@@ -1,6 +1,6 @@
 CC = gcc
 CFLAGS = -Wall -Wextra -g -masm=intel
-TARGETS = 
+TARGETS = test_evset evset
 
 .PHONY: all clean
 
