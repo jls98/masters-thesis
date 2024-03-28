@@ -73,7 +73,7 @@ inline u64 lfsr_step(u64 lfsr) {
 
 // --- config ---
 inline Config *initConfig(u64 ways,	u64 cache_line_size, u64 threshold, u64 cache_size, u64 test_reps, u64 hugepages){
-	struct Config *conf= (struct Config *) malloc(sizeof(struct Config));
+	Config *conf= (Config *) malloc(sizeof(Config));
 	updateConfig(conf, ways, cache_line_size, threshold, cache_size, test_reps, hugepages);
 	return conf;
 }
@@ -181,7 +181,7 @@ inline Node *list_take(Node **head, u64 *index) {
 
 
 // --- algorithms ---
-#ifdef EVICT_BASELINE
+#ifndef NOMAIN
 int main(int ac, char **av){
     wait(1E9);
     return 0;
