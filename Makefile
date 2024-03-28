@@ -15,6 +15,9 @@ test_evict_baseline: Eviction_Set/test_evict_baseline.c
 evset: Eviction_Set/evset.c
 	$(CC) $(CFLAGS) -o build/evset Eviction_Set/evset.c
 
+test_evset: Eviction_Set/test_evset.c 
+	$(CC) $(CFLAGS) -o build/test_evset -DNOMAIN Eviction_Set/test_evset.c Eviction_Set/evset.c -lcunit
+
 pp: PP/pp.c
 	$(CC) $(CFLAGS) -g -o build/pp -DPP PP/pp.c
 
