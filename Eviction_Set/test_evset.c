@@ -8,8 +8,10 @@ void test_node(){
     // test get 
     uint64_t zero=0;
     for(int i=0;i<100;i++){
-        CU_ASSERT_EQUAL(nodes[i], list_get(&(&nodes[i]), &zero));
-        CU_ASSERT_EQUAL(nodes[i], list_take(&(&nodes[i]), &zero));
+        Node *ptr_node = &nodes[i];
+        Node **ptr_ptr_node = &ptr_node;
+        CU_ASSERT_EQUAL(&nodes[i], list_get(ptr_ptr_node, &zero));
+        CU_ASSERT_EQUAL(&nodes[i], list_take(ptr_ptr_node, &zero));
     }
     
     uint64_t index;
