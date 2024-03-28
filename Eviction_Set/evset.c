@@ -90,13 +90,13 @@ inline void updateConfig(Config *conf, u64 ways, u64 cache_line_size, u64 thresh
 // --- node ---
 // Function to initialize an empty linked list
 inline void list_init() { // big fat TODO
-    return NULL;  // Return NULL to indicate an empty list
+    return;  // Return NULL to indicate an empty list
 }
 
 // add to beginning
 inline void list_push(Node **head, Node *e) {
     if (!e)  return;
-    d->prev = NULL;
+    e->prev = NULL;
     e->next = *head;
     if(*head) (*head)->prev = e;
     *head=e;
