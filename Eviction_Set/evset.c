@@ -281,106 +281,106 @@ inline void traverse_list(u64 *addr, u64 size){
 
 
 
-inline void create_pointer_chase(void **candidate_set, u64 c_size, Node* set){
-#ifdef TEST_EVICT_BASELINE
-	clock_t start = clock();
-#endif
-	if (set == NULL) {
-		printf("create_pointer_chase: set is NULL!\n");
-		return; // no pointer chase 
-	}
+// inline void create_pointer_chase(void **candidate_set, u64 c_size, Node* set){
+// #ifdef TEST_EVICT_BASELINE
+	// clock_t start = clock();
+// #endif
+	// if (set == NULL) {
+		// printf("create_pointer_chase: set is NULL!\n");
+		// return; // no pointer chase 
+	// }
 
-    // create pointer chase between set elements
-    Node* cur_no;  // current index (from set)
-    for (cur_no=set;cur_no->next !=NULL; cur_no=cur_no->next){
-        if (cur_no->next->value >= c_size){
-            printf("create_pointer_chase: current index from set greater than size! Element not contained in candidate_set!\n");
-            return;
-        } 
-        // set pointer to next element cur_no holds current index, cur_no->next holds next index, &addr[cur_no->next->value] is ptr to respective elem
-        candidate_set[cur_no->value] = &candidate_set[cur_no->next->value];    
-    }
-    candidate_set[cur_no->value] = &candidate_set[set->value]; // set pointer from last element to first element
+    // // create pointer chase between set elements
+    // Node* cur_no;  // current index (from set)
+    // for (cur_no=set;cur_no->next !=NULL; cur_no=cur_no->next){
+        // if (cur_no->next->value >= c_size){
+            // printf("create_pointer_chase: current index from set greater than size! Element not contained in candidate_set!\n");
+            // return;
+        // } 
+        // // set pointer to next element cur_no holds current index, cur_no->next holds next index, &addr[cur_no->next->value] is ptr to respective elem
+        // candidate_set[cur_no->value] = &candidate_set[cur_no->next->value];    
+    // }
+    // candidate_set[cur_no->value] = &candidate_set[set->value]; // set pointer from last element to first element
 
-#ifdef TESTCASE
-	clock_t end = clock();
-	double  cpu_time_used = ((double) (end - start)) / CLOCKS_PER_SEC;
-	printf("create_pointer_chase: took %.6f seconds to finish\n", cpu_time_used);
-#endif	
+// #ifdef TESTCASE
+	// clock_t end = clock();
+	// double  cpu_time_used = ((double) (end - start)) / CLOCKS_PER_SEC;
+	// printf("create_pointer_chase: took %.6f seconds to finish\n", cpu_time_used);
+// #endif	
 
-}
+// }
 
-inline int64_t pick(Node* candidate_set, u64 base_size, u64 *lfsr) {
-    // uninitialized parameters
-    if (lfsr==NULL){
-		printf("pick: lfsr is NULL!\n");
-		return -1;
-	} 
-	if (candidate_set==NULL){
-		printf("pick: candidate_set is NULL!\n");
-		return -1;
-	} 
-	if (base_size==0){
-		printf("pick: base_size is 0!\n");
-		return -1;
-	} 
+// inline int64_t pick(Node* candidate_set, u64 base_size, u64 *lfsr) {
+    // // uninitialized parameters
+    // if (lfsr==NULL){
+		// printf("pick: lfsr is NULL!\n");
+		// return -1;
+	// } 
+	// if (candidate_set==NULL){
+		// printf("pick: candidate_set is NULL!\n");
+		// return -1;
+	// } 
+	// if (base_size==0){
+		// printf("pick: base_size is 0!\n");
+		// return -1;
+	// } 
 	
-    u64 c=0, j, c_size; // c picked candidate, j index in candidate_set, c_size current candidate set size
+    // u64 c=0, j, c_size; // c picked candidate, j index in candidate_set, c_size current candidate set size
 
-    // pick a random number, compute modulo amount of elements left in candidate set and take the value from the node element at the resulting position
-    c_size = (u64) count(candidate_set);
-    Node *cur_node = candidate_set;
-    j = lfsr_rand(lfsr) % c_size;
-    do{
-        if (c==j) break;
-        c++;
-        cur_node = cur_node->next;
-    }
-    while(cur_node->next != NULL);
+    // // pick a random number, compute modulo amount of elements left in candidate set and take the value from the node element at the resulting position
+    // c_size = (u64) count(candidate_set);
+    // Node *cur_node = candidate_set;
+    // j = lfsr_rand(lfsr) % c_size;
+    // do{
+        // if (c==j) break;
+        // c++;
+        // cur_node = cur_node->next;
+    // }
+    // while(cur_node->next != NULL);
 
-    return (int64_t) cur_node->value;
-}
+    // return (int64_t) cur_node->value;
+// }
 
-inline int64_t test_intern(void *addr, u64 size, void *target_adrs){
-    if(size==0 || addr ==NULL || target_adrs ==NULL || conf==NULL){
-        return -1;
-    } // TODO rm later // toggle if working
-    load(target_adrs);
-    load(target_adrs);
-    load(target_adrs);
-    load(target_adrs);
-    traverse_list(addr, size);
+// inline int64_t test_intern(void *addr, u64 size, void *target_adrs){
+    // if(size==0 || addr ==NULL || target_adrs ==NULL || conf==NULL){
+        // return -1;
+    // } // TODO rm later // toggle if working
+    // load(target_adrs);
+    // load(target_adrs);
+    // load(target_adrs);
+    // load(target_adrs);
+    // traverse_list(addr, size);
     
-    // victim + 222 access for page walk, maybe figure out later
+    // // victim + 222 access for page walk, maybe figure out later
     
-    u64 delta, time;
-    time=rdtscpfence();
-    load(target_adrs);
-    delta=rdtscpfence() - time;
-    return delta;
-}
+    // u64 delta, time;
+    // time=rdtscpfence();
+    // load(target_adrs);
+    // delta=rdtscpfence() - time;
+    // return delta;
+// }
 
 
-inline int64_t test(void **candidate_set, u64 candidate_set_size, Node *test_index_set, void *target_adrs, Config *conf){
-	// // empty candidate set, no array to create pointer chase on    
-    // if (candidate_set==NULL){
-		// printf("test: candidate_set is NULL!\n");
-		// return -1;
-	// } 
-	// if (candidate_set_size==0){
-		// printf("test: candidate_set_size is 0!\n");
-		// return -1;
-	// } 
-	// if (test_index_set==NULL){
-		// return 0;
-	// } // toggle/use if debugging
+// inline int64_t test(void **candidate_set, u64 candidate_set_size, Node *test_index_set, void *target_adrs, Config *conf){
+	// // // empty candidate set, no array to create pointer chase on    
+    // // if (candidate_set==NULL){
+		// // printf("test: candidate_set is NULL!\n");
+		// // return -1;
+	// // } 
+	// // if (candidate_set_size==0){
+		// // printf("test: candidate_set_size is 0!\n");
+		// // return -1;
+	// // } 
+	// // if (test_index_set==NULL){
+		// // return 0;
+	// // } // toggle/use if debugging
 		
-	// prepare pointer chase between elements from candidate_set indexed by test_index_set 
-	create_pointer_chase(candidate_set, candidate_set_size, test_index_set);
+	// // prepare pointer chase between elements from candidate_set indexed by test_index_set 
+	// create_pointer_chase(candidate_set, candidate_set_size, test_index_set);
 	
-	// test 
-	int64_t ret = test_intern(candidate_set[test_index_set->value], count(test_index_set), target_adrs);
+	// // test 
+	// int64_t ret = test_intern(candidate_set[test_index_set->value], count(test_index_set), target_adrs);
 	
 	
-	return ret;
-}
+	// return ret;
+// }
