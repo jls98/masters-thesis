@@ -6,138 +6,36 @@
 #include <time.h>
 #include "evset.h"
 
-/* #################################################### */
-/* ####################### utils ###################### */
-/* #################################################### */
-
-static uint64_t time_buf;
-
-/* wait for cycles cycles and activate cache            */
-static void wait(uint64_t cycles);
-
-
-static struct Config {
-	uint64_t ways; // cache ways 
-	uint64_t cache_line_size; // cache line size (usually 64)
-	uint64_t threshold; // threshold for cache (eg ~45 for L1 on i7)
-	uint64_t cache_size; // cache size in bytes 
-	uint64_t test_reps; // amount of repetitions in test function
-	uint64_t hugepages;
+typedef struct config {
+	u64 ways; // cache ways 
+	u64 cache_line_size; // cache line size (usually 64)
+	u64 threshold; // threshold for cache (eg ~45 for L1 on i7)
+	u64 cache_size; // cache size in bytes 
+	u64 test_reps; // amount of repetitions in test function
+	u64 hugepages;
 } Config;
 
-/* linked list containing an index and a pointer to     */
-/* the next element                                     */
-typedef struct Node {
-    struct Node *next;
-    struct Node *prev;
+/* linked list containing an index and a pointer to     
+ * prev and next element                                */
+typedef struct node {
+    struct node *next;
+    struct node *prev;
     size_t delta;
 } Node;
 
-/* Function to initialize an empty linked list          */
-static struct Node* initLinkedList();
-
-/* Function to add a new element to the linked list     */
-static struct Node* addElement(struct Node* head, uint64_t value);
-
-/* Function to delete an element with a specific value  */
-/* from the linked list                                 */
-static struct Node* deleteElement(struct Node* head, uint64_t value);
-
-/* Function to union two lists                          */
-static struct Node* unionLists(struct Node* list1, struct Node* list2);
-
-/*  helper func for unionLists                          */
-static int containsValue(struct Node* head, uint64_t value);
-
-/* helper function to count elements in Node linked list */
-static int count(struct Node *head);
-
-/* Function to print the elements of the linked list    */
-static void printList(struct Node* head);
-
-/* Function to free the memory allocated for the linked */
-/* list                                                 */
-static void freeList(struct Node* head);
-
-static void flushList(struct Node *head, void **cand_set);
-
-/* #################################################### */
-/* ############## pseudo random generator ############# */
-/* #################################################### */
-
-/* create random seed.                                  */
-static uint64_t lfsr_create(void);
-    
-/* get pseudo randomly generated number.                */
-static uint64_t lfsr_rand(uint64_t* lfsr);
-
-/* helper function for lfsr_rand to shift lfsr.         */
-static uint64_t lfsr_step(uint64_t lfsr);
-
-
-/* #################################################### */
-/* #################### algorithms #################### */
-/* #################################################### */
-
-// candidate_set pointer to the first location of the candidate_set addresses
-// candidate_set_size size of the candidate_set 
-// test_index_set set containing all indexes from a set under test, e.g. the eviction set
-// target_adrs the address to be evicted 
-// threshold the threshold in cycles required to determine if something is cached. Depends on machine and cache level.
-// returns 1 if target_adrs is being evicted (1 on miss) and measurement takes longer than threshold time, 0 if time measurement is lower than threshold
-// returns -1 if there is an error
-static int64_t test(void **candidate_set, uint64_t candidate_set_size, struct Node *test_index_set, void *target_adrs, struct Config *conf);
-
-/* test1: eviction test for the specific address target_adrs.  
- * Loads target_adrs and then all elements from eviction set   
- * test. Finally, loads target_adrs and measures time.         
- * addr: pointer to first element from eviction set     
- * target_adrs: target adrs.                                
- * returns true/1 if measurement is above a threshold.    */
-static int64_t test1(void *addr, uint64_t size, void* target_adrs, struct Config *conf);
-
-/* pointer chase: creates pointer chase in subset of    
- * by candidate_set mapped set with c_size elements.    
- * set contains set of indexes for pointer chase        */
-static void create_pointer_chase(void **candidate_set, uint64_t c_size, struct Node* set);
-
-/* Pick lfsr pseudo-randomized next candidate (index).   
- * The new candidate should not be part of eviction set     
- * evict_set, be part of candidate set and picked with lfsr  
- * state in possible range.                              
- * returns candidate index, if none found base_size+1   */
-static int64_t pick(struct Node* candidate_set, uint64_t base_size, uint64_t *lfsr);
-
-/* create minimal eviction set from candidate set for   */
-/* target_adrs in evict_set                             */
-static struct Node *create_minimal_eviction_set(void **candidate_set, uint64_t candidate_set_size, struct Node* evict_set, void *target_adrs, struct Config *conf);
-
-/* init Config */
-static struct Config *initConfig(uint64_t ways,	uint64_t cache_line_size, uint64_t threshold, uint64_t cache_size, uint64_t test_reps, uint64_t hugepages);
-
-/* configure Config */
-static void updateConfig(struct Config *conf, uint64_t ways, uint64_t cache_line_size, uint64_t threshold, uint64_t cache_size, uint64_t test_reps, uint64_t hugepages);
-
-static uint64_t msrmts[10000]={0};
-static uint64_t m_ind =0; 
-
-/* #################################################### */
-/* ################## implementation ################## */
-/* #################################################### */
-
-static void load(void *adrs){
+// --- utils ---
+inline void access(void *adrs){
 	__asm__ volatile("mov rax, [%0];"::"r" (adrs): "rax", "memory");
 }
 
-static void flush(void *adrs){
-	__asm__ volatile("clflush [%0];lfence" ::"r" (adrs));
+inline void flush(void *adrs){
+	__asm__ volatile("clflush [%0]" ::"r" (adrs));
 }
 
-static uint64_t probe(void *adrs){
-	volatile uint64_t time;  
+inline u64 probe(void *adrs){
+	volatile u64 time;  
 	__asm__ volatile (
         " mfence            \n"
-        " lfence            \n"
         " rdtscp             \n"
         " mov r8, rax 		\n"
         " mov rax, [%1]		\n"
@@ -150,8 +48,16 @@ static uint64_t probe(void *adrs){
 	);
 	return time;
 }
+
+// say hi to cache
+inline void wait(u64 cycles) {
+	unsigned int ignore;
+	u64 start = __rdtscp(&ignore);
+	while (__rdtscp(&ignore) - start < cycles);
+}
+
 // eax lsb, edx msb
-static uint64_t rdtscpfence(){
+inline u64 rdtscpfence(){
     unsigned a, d;
     __asm__ volatile(
     "lfence;"
@@ -159,114 +65,144 @@ static uint64_t rdtscpfence(){
     "lfence;"
 	: "=a" (a), "=d" (d)
 	:: "rcx");
-	return ((uint64_t)d << 32) | a;
+	return ((u64)d << 32) | a;
 }
 
+#define FEEDBACK 0x80000000000019E2ULL
+inline u64 lfsr_create(void) {
+  u64 lfsr;
+  asm volatile("rdrand %0": "=r" (lfsr)::"flags");
+  return lfsr;
+}
+
+inline u64 lfsr_rand(u64* lfsr) {
+    for (u64 i = 0; i < 8*sizeof(u64); i++) {
+        *lfsr = lfsr_step(*lfsr);
+    }
+    return *lfsr;
+}
+
+inline u64 lfsr_step(u64 lfsr) {
+  return (lfsr & 1) ? (lfsr >> 1) ^ FEEDBACK : (lfsr >> 1);
+}
+
+// --- config ---
+inline Config *initConfig(u64 ways,	u64 cache_line_size, u64 threshold, u64 cache_size, u64 test_reps, u64 hugepages){
+	struct Config *conf= (struct Config *) malloc(sizeof(struct Config));
+	updateConfig(conf, ways, cache_line_size, threshold, cache_size, test_reps, hugepages);
+	return conf;
+}
+
+inline void updateConfig(Config *conf, u64 ways, u64 cache_line_size, u64 threshold, u64 cache_size, u64 test_reps, u64 hugepages){
+	conf->ways=ways;
+	conf->cache_line_size=cache_line_size;
+	conf->threshold=threshold;
+	conf->cache_size=cache_size;
+	conf->test_reps=test_reps;
+	conf->hugepages=hugepages;
+}
+
+// --- node ---
+// Function to initialize an empty linked list
+inline void list_init() { // big fat TODO
+    return NULL;  // Return NULL to indicate an empty list
+}
+
+// add to beginning
+inline void list_push(Node **head, Node *e) {
+    if (!e)  return;
+    d->prev = NULL;
+    e->next = *head;
+    if(*head) (*head)->prev = e;
+    *head=e;
+}
+
+// add to end
+inline void list_append(Node **head, Node *e){
+    if(!e) return;
+    if(!*head){
+        *head=e;
+        return;
+    }
+    
+    Node *tmp=*head;
+    while(tmp->next){ // iterate to end
+        tmp=tmp->next;        
+    }
+    tmp->next=e;
+    e->prev=tmp;
+    e->next=NULL;
+}
+
+// remove e and return first element of list
+inline Node *list_pop(Node **head) {
+    Node *tmp = (head)? *head : NULL;
+    if (!tmp) return NULL;  // rm nothing
+    if (tmp->next) tmp->next->prev=NULL;
+    *head = tmp->next;
+    tmp->next=NULL;
+    tmp->prev=NULL;
+    return tmp;
+}
+
+// TODO
+inline Node *list_union(Node* list1, Node* list2) {
+    Node* result = initLinkedList();
+    Node* current;
+    // Add elements from the first list
+    current = list1;
+    while (current != NULL) {
+        result = addElement(result, current->value);
+        current = current->next;
+    }
+    // Add elements from the second list (avoid duplicates)
+    current = list2;
+    while (current != NULL) {
+        if (!containsValue(result, current->value)) result = addElement(result, current->value);
+        current = current->next;
+    }
+    return result;
+}
+
+inline Node *list_get(Node **head, u64 *index) {
+    Node *tmp = *head;
+    u64 i=0;
+    if(!tmp) return NULL;
+    while (tmp && i<=*index) {
+        tmp=tmp->next;
+        i++;
+    }
+    // *index=i; // DEBUG purposes, toggle, to count list elements, use large index and retrieve value from pointer
+    return tmp;
+}
+
+// remove when found
+inline Node *list_take(Node **head, u64 *index) {
+    Node *tmp = *head;
+    u64 i=0;
+    if(!tmp) return NULL;
+    while (tmp && i<=*index) {
+        tmp=tmp->next;
+        i++;
+    }
+    if(!tmp) return NULL;
+    if(tmp->prev) tmp->prev->next=tmp->next;
+    else *head=tmp->next;
+    tmp->prev=NULL;
+    tmp->next=NULL;
+    return tmp;
+}
+
+
+// --- algorithms ---
 #ifdef EVICT_BASELINE
 int main(int ac, char **av){
-    /* preparation */
-    
-	struct Config *conf=NULL;
-	
-	if (ac==1) conf = initConfig(8, 64, 47, 32768, 1, 1); // default L1 lab machine, no inputs
-	if (ac==2){
-		int conf_choice = strtol(av[1], NULL, 10);
-		if (conf_choice==11) conf = initConfig(8, 64, 54, 32768, 1, 1); 	// L1 i7
-		if (conf_choice==12) conf = initConfig(8, 64, 58, 262144, 1, 1); 	// L2 i7
-		if (conf_choice==13) conf = initConfig(8, 64, 58, 262144, 1, 1); 	// L3 i7 TODO or unneeded
-		
-		if (conf_choice==21) conf = initConfig(8, 64, 75, 32768, 1, 1); 	// L1e i12
-		if (conf_choice==22) conf = initConfig(8, 64, 90, 262144, 1, 1); 	// L2e i12 TODO
-		if (conf_choice==23) conf = initConfig(8, 64, 58, 262144, 1, 1); 	// L3e i12 TODO or unneeded
-		if (conf==NULL){
-			printf("Error, no valid choice, XY, whereby X is the CPU (1:i7, 2:i12) and Y the cache Level (1-3)");
-			return 0;
-		}
-	}
-	if (ac==7){ // self, ways, cache line size, threshold, cache size, test reps
-		conf = initConfig(strtol(av[1], NULL, 10), strtol(av[2], NULL, 10), strtol(av[3], NULL, 10), strtol(av[4], NULL, 10), strtol(av[5], NULL, 10), strtol(av[6], NULL, 10));
-	}
-	
-    
-    
-    wait(1E9); // boost cache 
-	uint64_t c_size = conf->cache_size/2; // uint64_t = 4 Bytes -> 16384 indexes address 65536 Bytes
-    int64_t target_index=((int64_t) c_size)+8*512;
-    // R <- {}
-    // allocate space for eviction set
-    struct Node* evict_set = initLinkedList();
-
-    // map candidate_set (using hugepages, twice the size of cache in bytes (4 times to have space for target))
-    void **candidate_set = conf->hugepages==1 ? mmap(NULL, 10* c_size * sizeof(void *), PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB, -1, 0) : mmap(NULL, 10* c_size * sizeof(void *), PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);
-	
-	
-    candidate_set[target_index] = &candidate_set[target_index];
-    candidate_set[target_index-1] = &candidate_set[target_index-1];
-    candidate_set[target_index+1] = &candidate_set[target_index+1];
-    void *target_adrs = &candidate_set[target_index]; // take target somewhere in the middle of allocated memory
-    
-	printf("main: c[] %p and &c[] %p \n", candidate_set[target_index], &candidate_set[target_index]);
-	// create handmade eviction set: M memory addresses = 32768/8=4096, S sets = 64 -> stride of 64 in indexes
-	for(int i=512;i<4137;i+=512){ // 512, 1024, 1536, 2048, 2560, 3112, 3624, 4136  index +1 == 8 bytes
-		evict_set = addElement(evict_set, i); 
-	}
-	
-	printf("main: test %li\n", test(candidate_set, c_size, evict_set, target_adrs, conf)); // works
-	
-	for(struct Node *it = evict_set;it!=NULL;it=it->next) printf("-%p, %p, %lu\n", candidate_set[it->value], &candidate_set[it->value], it->value);
-	
-	freeList(evict_set);
-	evict_set = initLinkedList();
-	
-	// --------------------------------
-	// create evict set
-    struct Node *tmp_evict_set = create_minimal_eviction_set(candidate_set, c_size, evict_set, target_adrs, conf);
-	
-    printf("main: Eviction set for target at %p %i\n", target_adrs, tmp_evict_set==NULL);
-
-	printf("main: Indexes in minimal eviction set:\n"); // print indexes of eviction set
-	int hits=0;
-	for(struct Node *it = tmp_evict_set;it!=NULL;it=it->next) {
-		printf("-%p, %p, %lu\n", candidate_set[it->value], &candidate_set[it->value], it->value);
-		if((((uintptr_t) &candidate_set[it->value]) & 0xFFF) == 0x0) hits++;
-	}
-	printf("This evset contains %i hits\n", hits);
-	printf("\nmain: Testing target adrs %p now: \n", target_adrs);
-
-	// measure time when cached	
-	load(target_adrs);
-    __asm__ volatile("lfence");    
-	uint64_t time = probe(target_adrs); // TODO change to test
-	
-	printf("main: Time loading victim cached %lu\n", time);
-	// measure time when uncached	
-	flush(target_adrs);
-    __asm__ volatile("lfence");
-	time = probe(target_adrs);
-
-	printf("main: Time loading victim uncached %lu\n", time); // change to test
-    
-    flush(&candidate_set[target_index+8]);
-    flush(&candidate_set[target_index+7]);
-    flush(&candidate_set[target_index]);
-	printf("main: tmp_evict_set contains %i elements\n", count(tmp_evict_set));
-	printf("main: test %li %li %p\n", target_index, test(candidate_set, c_size, tmp_evict_set, &candidate_set[target_index], conf), &candidate_set[target_index]);
-	printf("main: test %li %li %p\n", target_index+7, test(candidate_set, c_size, tmp_evict_set, &candidate_set[target_index+7], conf), &candidate_set[target_index+7]);
-	printf("main: test %li %li %p\n", target_index+8, test(candidate_set, c_size, tmp_evict_set, &candidate_set[target_index+8], conf), &candidate_set[target_index+8]);
-
-    freeList(evict_set); // delete eviction set	
-    freeList(tmp_evict_set); // delete eviction set	
-    
-    printf("msrmts %lu\n", m_ind);
-    for(int i=0;i<m_ind;i++){
-        printf("%lu\n" , msrmts[i]);
-    }
+    wait(1E9);
     return 0;
 }
 #endif
 
-
-static struct Node *create_minimal_eviction_set(void **candidate_set, uint64_t candidate_set_size, struct Node* evict_set, void *target_adrs, struct Config *conf){
+inline Node *create_minimal_eviction_set(void **candidate_set, u64 candidate_set_size, Node* evict_set, void *target_adrs, Config *conf){
     if (conf==NULL){
 		printf("create_minimal_eviction_set: Conf is NULL!\n");
 		return NULL;
@@ -285,12 +221,12 @@ static struct Node *create_minimal_eviction_set(void **candidate_set, uint64_t c
 	
 	clock_t track_start = clock();
     // init lfsr, variable c stores currently picked candidate integer/index value
-    uint64_t lfsr = lfsr_create(), c, cnt_e=0; 
+    u64 lfsr = lfsr_create(), c, cnt_e=0; 
 	int64_t c_tmp;
 	
 	// create current candidate set containing the indexes of unchecked candidates and initialize with all indexes
-    struct Node* cand_ind_set = initLinkedList();
-    for (uint64_t i=0; i<candidate_set_size-1;i+=8) cand_ind_set = addElement(cand_ind_set, i); 
+    Node* cand_ind_set = initLinkedList();
+    for (u64 i=0; i<candidate_set_size-1;i+=8) cand_ind_set = addElement(cand_ind_set, i); 
     
     // while |R| < a and cind still contains possible and unchecked candidates
     while(cand_ind_set!=NULL /*&& test(candidate_set, candidate_set_size, evict_set, target_adrs, conf) !=1*/){        
@@ -298,14 +234,14 @@ static struct Node *create_minimal_eviction_set(void **candidate_set, uint64_t c
 		do{
 			c_tmp=pick(cand_ind_set, candidate_set_size, &lfsr);
 		}
-        while(c_tmp==-1 || containsValue(evict_set, (uint64_t) c_tmp) || !containsValue(cand_ind_set, (uint64_t) c_tmp)); // prevent picking duplicate candidates and continuing on error
+        while(c_tmp==-1 || containsValue(evict_set, (u64) c_tmp) || !containsValue(cand_ind_set, (u64) c_tmp)); // prevent picking duplicate candidates and continuing on error
 				
-		c = (uint64_t) c_tmp;
+		c = (u64) c_tmp;
 		// remove c from S S <- S\{c}
 		cand_ind_set = deleteElement(cand_ind_set, c);         
 
         // R union S\{c}
-        struct Node *combined_set = unionLists(cand_ind_set, evict_set);
+        Node *combined_set = unionLists(cand_ind_set, evict_set);
 
         // if not TEST(R union S\{c}), x)  
 		// if removing c results in not evicting x anymore, add c to current eviction set    	
@@ -329,154 +265,8 @@ static struct Node *create_minimal_eviction_set(void **candidate_set, uint64_t c
 	return evict_set;
 }
 
-static struct Config *initConfig(uint64_t ways,	uint64_t cache_line_size, uint64_t threshold, uint64_t cache_size, uint64_t test_reps, uint64_t hugepages){
-	struct Config *conf= (struct Config *) malloc(sizeof(struct Config));
-	updateConfig(conf, ways, cache_line_size, threshold, cache_size, test_reps, hugepages);
-	return conf;
-}
-
-static void updateConfig(struct Config *conf, uint64_t ways, uint64_t cache_line_size, uint64_t threshold, uint64_t cache_size, uint64_t test_reps, uint64_t hugepages){
-	conf->ways=ways;
-	conf->cache_line_size=cache_line_size;
-	conf->threshold=threshold;
-	conf->cache_size=cache_size;
-	conf->test_reps=test_reps;
-	conf->hugepages=hugepages;
-}
-
-
-// say hi to cache
-static void wait(uint64_t cycles) {
-	unsigned int ignore;
-	uint64_t start = __rdtscp(&ignore);
-	while (__rdtscp(&ignore) - start < cycles);
-}
-
-// Function to initialize an empty linked list
-static struct Node* initLinkedList() {
-    return NULL;  // Return NULL to indicate an empty list
-}
-
-static struct Node* addElement(struct Node* head, uint64_t value) {
-    // Allocate memory for a new node
-    struct Node* newNode = (struct Node*) malloc(sizeof(struct Node));
-    if (newNode == NULL) {
-        fprintf(stderr, "Memory allocation error\n");
-        exit(EXIT_FAILURE);
-    }
-    // Set the value and next pointer for the new node
-    newNode->value = value;
-    newNode->next = head;
-    // Update the head to point to the new node
-    head = newNode;
-    return head;
-}
-
-static struct Node* deleteElement(struct Node* head, uint64_t value) {
-    struct Node* current = head;
-    struct Node* previous = NULL;
-
-    // Traverse the list to find the node with the specified value
-    while (current != NULL && current->value != value) {
-        previous = current;
-        current = current->next;
-    }
-
-    // If the value is not found, return the original head
-	if (current == NULL){
-		printf("deleteElement: value %lu not found in Node %p\n", value, head);
-		return head;
-	}
-
-    // Update the next pointer of the previous node or the head if the first node is deleted
-    if (previous != NULL) previous->next = current->next;
-    else head = current->next;
-    
-    free(current);
-    return head;
-}
-
-static struct Node* unionLists(struct Node* list1, struct Node* list2) {
-    struct Node* result = initLinkedList();
-    struct Node* current;
-    // Add elements from the first list
-    current = list1;
-    while (current != NULL) {
-        result = addElement(result, current->value);
-        current = current->next;
-    }
-    // Add elements from the second list (avoid duplicates)
-    current = list2;
-    while (current != NULL) {
-        if (!containsValue(result, current->value)) result = addElement(result, current->value);
-        current = current->next;
-    }
-    return result;
-}
-
-static int containsValue(struct Node* head, uint64_t value) {
-    struct Node* current = head;
-    while (current != NULL) {
-        if (current->value == value) return 1;  // Value found
-        current = current->next;
-    }
-    return 0;  // Value not found
-}
-
-static int count(struct Node *head){
-	int ctr = 0;
-	for(struct Node *it=head;it!=NULL;it=it->next) ctr+=1;
-	return ctr;
-}
-
-static void printList(struct Node* head) {
-    printf("Linked List: ");
-    while (head != NULL) {
-        printf("%lu ", head->value);
-        head = head->next;
-    }
-    printf("\n");
-}
-
-static void freeList(struct Node* head) {
-    struct Node* current = head;
-    struct Node* next;
-    while (current != NULL) {
-        next = current->next;
-        free(current);
-        current = next;
-    }
-}
-
-static void flushList(struct Node *head, void **cand_set){
-	struct Node* current = head;
-	if(cand_set==NULL) return;
-    while (current != NULL) {
-        flush(&cand_set[current->value]);
-	    current = current->next;
-    }
-}
-
-#define FEEDBACK 0x80000000000019E2ULL
-static uint64_t lfsr_create(void) {
-  uint64_t lfsr;
-  asm volatile("rdrand %0": "=r" (lfsr)::"flags");
-  return lfsr;
-}
-
-static uint64_t lfsr_rand(uint64_t* lfsr) {
-    for (uint64_t i = 0; i < 8*sizeof(uint64_t); i++) {
-        *lfsr = lfsr_step(*lfsr);
-    }
-    return *lfsr;
-}
-
-static uint64_t lfsr_step(uint64_t lfsr) {
-  return (lfsr & 1) ? (lfsr >> 1) ^ FEEDBACK : (lfsr >> 1);
-}
-
-static void traverse_list(uint64_t *addr, uint64_t size){
-    uint64_t c=size;
+inline void traverse_list(u64 *addr, u64 size){
+    u64 c=size;
     while(c-2){
         load(addr);
         load(*addr);
@@ -488,92 +278,10 @@ static void traverse_list(uint64_t *addr, uint64_t size){
     }
 }
 
-static_int64_t new_test1(void *addr, uint64_t size, void *target_adrs, struct Config *conf){
-    if(size==0 || addr ==NULL || target_adrs ==NULL || conf==NULL){
-        return -1;
-    } // TODO rm later // toggle if working
-    load(target_adrs);
-    load(target_adrs);
-    load(target_adrs);
-    load(target_adrs);
-    traverse_list(addr, size);
-    
-    // victim + 222 access for page walk, maybe figure out later
-    
-    uint64_t delta, time;
-    time=rdtscpfence();
-    load(target_adrs);
-    delta=rdtscpfence() - time;
-    return delta;
-}
 
-static int64_t test1(void *addr, uint64_t size, void* target_adrs, struct Config *conf){    
-    // parameter check
-    if (size==0){
-		// printf("test1: size is 0!\n");
-		return -1;
-	} 	
-	 
-	if (addr==NULL){
-		// printf("test1: addr is NULL!\n");
-		return -1;
-	} 	
-	
-	if (target_adrs==NULL){
-		// printf("test1: target_adrs is NULL!\n");
-		return -1;
-	} 	
-	
-	if (conf==NULL){
-		// printf("test1: conf is NULL!\n");
-		return -1;
-	} 	
-	
-#ifdef TEST_EVICT_BASELINE
-	
-	// clock_t start_clk = clock();
-#endif	
-	for(uint64_t i=0;i<conf->test_reps;i++){ // test reps = 1, removeing loop results in frequently occurring 100 cycle measurements
-		asm __volatile__ (
-			"mfence;"
-			// load target and set 
-			"mov rdx, %2;"
-			"mov rsi, [%3];" // load target
-			"lfence;"
-			// BEGIN - read every entry in addr
-			"loop:"
-			"mov %1, [%1];"
-			"dec rdx;"
-			"jnz loop;"
-			// END - reading set
-			// measure start
-			"lfence;"
-			"rdtscp;"		
-			"mov rsi, rax;"
-			// high precision
-			"shl rdx, 32;"
-			"or rsi, rdx;"
-			"mov rax, [%3];" // load target 	
-			"lfence;"
-			"rdtscp;"
-			// start - high precision
-			"shl rdx, 32;"
-			"or rax, rdx;"
-			// end - high precision
-			"sub rax, rsi;"
-			// "clflush [%3];" // flush data from candidate for repeated loading
-			: "=a" (msrmts[m_ind])
-			: "r" (addr), "r" (size), "r" (target_adrs)
-			: "rsi", "rdx", "rcx"
-		);
-	}
-#ifdef TEST_EVICT_BASELINE
-	// printf("test1: took %.6f seconds to finish, measurement %lu\n", ((double) (clock() - start_clk)) / CLOCKS_PER_SEC, time_buf);
-#endif	
-	return msrmts[m_ind++] > conf->threshold? 1 : 0;
-} 
 
-static void create_pointer_chase(void **candidate_set, uint64_t c_size, struct Node* set){
+
+inline void create_pointer_chase(void **candidate_set, u64 c_size, Node* set){
 #ifdef TEST_EVICT_BASELINE
 	clock_t start = clock();
 #endif
@@ -583,7 +291,7 @@ static void create_pointer_chase(void **candidate_set, uint64_t c_size, struct N
 	}
 
     // create pointer chase between set elements
-    struct Node* cur_no;  // current index (from set)
+    Node* cur_no;  // current index (from set)
     for (cur_no=set;cur_no->next !=NULL; cur_no=cur_no->next){
         if (cur_no->next->value >= c_size){
             printf("create_pointer_chase: current index from set greater than size! Element not contained in candidate_set!\n");
@@ -602,7 +310,7 @@ static void create_pointer_chase(void **candidate_set, uint64_t c_size, struct N
 
 }
 
-static int64_t pick(struct Node* candidate_set, uint64_t base_size, uint64_t *lfsr) {
+inline int64_t pick(Node* candidate_set, u64 base_size, u64 *lfsr) {
     // uninitialized parameters
     if (lfsr==NULL){
 		printf("pick: lfsr is NULL!\n");
@@ -617,11 +325,11 @@ static int64_t pick(struct Node* candidate_set, uint64_t base_size, uint64_t *lf
 		return -1;
 	} 
 	
-    uint64_t c=0, j, c_size; // c picked candidate, j index in candidate_set, c_size current candidate set size
+    u64 c=0, j, c_size; // c picked candidate, j index in candidate_set, c_size current candidate set size
 
     // pick a random number, compute modulo amount of elements left in candidate set and take the value from the node element at the resulting position
-    c_size = (uint64_t) count(candidate_set);
-    struct Node *cur_node = candidate_set;
+    c_size = (u64) count(candidate_set);
+    Node *cur_node = candidate_set;
     j = lfsr_rand(lfsr) % c_size;
     do{
         if (c==j) break;
@@ -633,25 +341,45 @@ static int64_t pick(struct Node* candidate_set, uint64_t base_size, uint64_t *lf
     return (int64_t) cur_node->value;
 }
 
-static int64_t test(void **candidate_set, uint64_t candidate_set_size, struct Node *test_index_set, void *target_adrs, struct Config *conf){
-	// empty candidate set, no array to create pointer chase on    
-    if (candidate_set==NULL){
-		printf("test: candidate_set is NULL!\n");
-		return -1;
-	} 
-	if (candidate_set_size==0){
-		printf("test: candidate_set_size is 0!\n");
-		return -1;
-	} 
-	if (test_index_set==NULL){
-		return 0;
-	} 
+inline int64_t test_intern(void *addr, u64 size, void *target_adrs){
+    if(size==0 || addr ==NULL || target_adrs ==NULL || conf==NULL){
+        return -1;
+    } // TODO rm later // toggle if working
+    load(target_adrs);
+    load(target_adrs);
+    load(target_adrs);
+    load(target_adrs);
+    traverse_list(addr, size);
+    
+    // victim + 222 access for page walk, maybe figure out later
+    
+    u64 delta, time;
+    time=rdtscpfence();
+    load(target_adrs);
+    delta=rdtscpfence() - time;
+    return delta;
+}
+
+
+inline int64_t test(void **candidate_set, u64 candidate_set_size, Node *test_index_set, void *target_adrs, Config *conf){
+	// // empty candidate set, no array to create pointer chase on    
+    // if (candidate_set==NULL){
+		// printf("test: candidate_set is NULL!\n");
+		// return -1;
+	// } 
+	// if (candidate_set_size==0){
+		// printf("test: candidate_set_size is 0!\n");
+		// return -1;
+	// } 
+	// if (test_index_set==NULL){
+		// return 0;
+	// } // toggle/use if debugging
 		
 	// prepare pointer chase between elements from candidate_set indexed by test_index_set 
 	create_pointer_chase(candidate_set, candidate_set_size, test_index_set);
 	
 	// test 
-	int64_t ret = test1(candidate_set[test_index_set->value], count(test_index_set), target_adrs, conf);
+	int64_t ret = test_intern(candidate_set[test_index_set->value], count(test_index_set), target_adrs);
 	
 	
 	return ret;
