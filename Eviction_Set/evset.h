@@ -1,7 +1,7 @@
 #ifndef evset
 #define evset
 
-#define uint64_t u64
+#define u64 uint64_t
 
 // Utils #################################################
 /* wait for cycles cycles and activate cache            */
