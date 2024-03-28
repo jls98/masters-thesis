@@ -13,6 +13,7 @@ inline void access(void *adrs);
 
 inline u64 rdtscpfence();
 
+
 // Node functions ########################################
 // TODO
 inline void list_init();
@@ -23,6 +24,7 @@ inline Node *list_pop(Node **head);
 inline Node *list_union(Node* list1, Node* list2);
 inline Node *list_get(Node **head, u64 *index);
 inline Node *list_take(Node **head, u64 *index);
+
 
 //Config functions #######################################
 /* init Config */
