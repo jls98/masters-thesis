@@ -18,7 +18,7 @@ evset: evset.o test_evset.o
 evset.o: Eviction_Set/evset.c Eviction_Set/evset.h
 	$(CC) $(CFLAGS) -c $< -o $@
 
-test_evset.o: Eviction_Set/test_evset.c  Eviction_Set/evset.h
+test_evset.o: Eviction_Set/test_evset.c Eviction_Set/evset.c Eviction_Set/evset.h
 	$(CC) $(CFLAGS) -DNOMAIN -c $< -o $@ -lcunit
 
 #evset: Eviction_Set/evset.c Eviction_Set/evset.h
