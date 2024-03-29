@@ -1,5 +1,5 @@
 CC = gcc
-CFLAGS = -Wall -Wextra -masm=intel
+CFLAGS = -Wall -Wextra -masm=intel -O0 -fPIC
 TARGETS = test_evset evset
 
 all: $(TARGETS)
