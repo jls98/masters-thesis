@@ -8,8 +8,8 @@ void test_node(){
     // test init 
     list_init(nodes, 100*sizeof(Node));
     for(int i=0;i<100;i++){  
-        CU_ASSERT_NULL(nodes[i].prev);
-        CU_ASSERT_NULL(nodes[i].next);
+        CU_ASSERT_PTR_NULL(nodes[i].prev);
+        CU_ASSERT_PTR_NULL(nodes[i].next);
         CU_ASSERT_EQUAL(nodes[i].delta, 0);
     }
     
