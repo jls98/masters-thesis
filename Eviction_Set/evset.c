@@ -248,8 +248,8 @@ static Node *list_take(Node **head, u64 *index) {
 #ifndef NOMAIN
 int main(int ac, char **av){
     wait(1E9);
-    printf("size of Node %zu\n", sizeof(Node))
-    Config con=config_init(8, 4096, 64, 47, 32768, 1, 1);
+    printf("size of Node %zu\n", sizeof(Node));
+    Config *con=config_init(8, 4096, 64, 47, 32768, 1, 1);
     printf("main: return init evsets %p\n", init_evset(con));
     return 0;
 }
