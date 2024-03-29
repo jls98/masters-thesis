@@ -251,12 +251,12 @@ inline Node *list_take(Node **head, u64 *index) {
 
 
 // --- algorithms ---
-// #ifdef MAIN
-// int main(int ac, char **av){
-    // wait(1E9);
-    // return 0;
-// }
-// #endif
+#ifdef MAIN
+int main(int ac, char **av){
+    wait(1E9);
+    return 0;
+}
+#endif
 
 // inline Node *create_minimal_eviction_set(void **candidate_set, u64 candidate_set_size, Node* evict_set, void *target_adrs, Config *conf){
     // if (conf==NULL){
