@@ -250,7 +250,8 @@ int main(int ac, char **av){
     wait(1E9);
     printf("size of Node %zu\n", sizeof(Node));
     Config *con=config_init(8, 4096, 64, 47, 32768, 1, 1);
-    printf("main: return init evsets %p\n", init_evset(con));
+    init_evset(con);
+    find_evset();
     return 0;
 }
 #endif
@@ -271,11 +272,16 @@ static Node *init_evset(Config *conf_ptr){
         return NULL;
     }
     list_init(buffer, buffer_size);
-    printf("init_evset: returning %p\n", buffer);
+    printf("init_evset: buffer %p\n", buffer);
+    printf("init_evset: conf %p\n", conf);
+    printf("init_evset: buffer_size %lu\n", buffer_size);
     return buffer;
 }   
 
-static Node *find_evset(/* TODO */){
+static Node *find_evset(){
+    printf("find_evset: buffer %p\n", buffer);
+    printf("find_evset: conf %p\n", conf);
+    printf("find_evset: buffer_size %lu\n", buffer_size);
     return NULL;
 }
 
