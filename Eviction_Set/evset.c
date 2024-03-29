@@ -251,7 +251,7 @@ inline Node *list_take(Node **head, u64 *index) {
 
 
 // --- algorithms ---
-#ifndef NOMAIN
+#ifdef MAIN
 int main(int ac, char **av){
     wait(1E9);
     return 0;

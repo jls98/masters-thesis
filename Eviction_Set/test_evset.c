@@ -25,7 +25,7 @@ void test_node(){
 }
 
 
-
+#ifdef NOMAIN
 int main(int ac, char **av) {
 	// if (ac==1) conf = initConfig(8, 64, 41, 32768, 1, 1); // default L1 lab machine, no inputs
 	// if (ac==2){
@@ -58,3 +58,4 @@ int main(int ac, char **av) {
 	
     return 0;
 }
+#endif
