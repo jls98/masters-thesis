@@ -2,8 +2,6 @@ CC = gcc
 CFLAGS = -Wall -Wextra -masm=intel
 TARGETS = evset test_evset
 
-.PHONY: all clean
-
 all: $(TARGETS)
 
 evict_baseline: Eviction_Set/evict_baseline.c
