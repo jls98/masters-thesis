@@ -276,7 +276,7 @@ static Node *init_evset(Config *conf_ptr){
     list_init(buffer, buffer_size);
     pool = &buffer[20];
     if((buffer_size-20*sizeof(Node)) < (conf->ways*conf->sets*pool_factor)){
-        printf("[!] init_evset: buffer too small!\n")
+        printf("[!] init_evset: buffer too small!\n");
     }
     pool_size = conf->ways*conf->sets*pool_factor;
     // printf("init_evset: buffer %p\n", buffer);
