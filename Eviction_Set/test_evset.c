@@ -11,6 +11,7 @@ void test_node(){
         Node *ptr_node = &nodes[i];
         Node **ptr_ptr_node = &ptr_node;
         CU_ASSERT_EQUAL(&nodes[i], list_get(ptr_ptr_node, &zero));
+        printf("%p %p", &nodes[i], list_get(ptr_ptr_node, &zero));
         CU_ASSERT_EQUAL(&nodes[i], list_take(ptr_ptr_node, &zero));
     }
     
