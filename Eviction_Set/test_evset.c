@@ -31,11 +31,12 @@ void test_node(){
     }
     
     // test push
+    head=nodes;
     for(int i=0;i<10;i++){
         index=i;
-        list_push(&nodes, &nodes[i]);
-        CU_ASSERT_EQUAL(&nodes[0], list_get(&nodes, &index));
-        CU_ASSERT_EQUAL(&nodes[i], list_get(&nodes, &zero));
+        list_push(&head, &nodes[i]);
+        CU_ASSERT_EQUAL(&head[0], list_get(&head, &index));
+        CU_ASSERT_EQUAL(&head[i], list_get(&head, &zero));
     }
     // later TODO init 
 }
