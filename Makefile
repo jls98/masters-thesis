@@ -1,6 +1,6 @@
 CC = gcc
 CFLAGS = -Wall -Wextra -masm=intel
-TARGETS = evset test_evset
+TARGETS = test_evset evset
 
 all: $(TARGETS)
 

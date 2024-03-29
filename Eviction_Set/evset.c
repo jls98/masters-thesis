@@ -28,66 +28,66 @@ typedef struct node {
 
 // Utils #################################################
 /* wait for cycles cycles and activate cache            */
-inline void wait(u64 cycles);
+static void wait(u64 cycles);
 
-inline void flush(void *adrs);
+static void flush(void *adrs);
 
-inline void access(void *adrs);
+static void access(void *adrs);
 
-inline u64 rdtscpfence();
+static u64 rdtscpfence();
 
 
 // Node functions ########################################
 // TODO
-inline void list_init();
-inline void list_push(Node **head, Node *e);
-inline void list_append(Node **head, Node *e);
-inline Node *list_pop(Node **head);
+static void list_init();
+static void list_push(Node **head, Node *e);
+static void list_append(Node **head, Node *e);
+static Node *list_pop(Node **head);
 // TODO
-inline Node *list_union(Node* list1, Node* list2);
-inline Node *list_get(Node **head, u64 *index);
-inline Node *list_take(Node **head, u64 *index);
+static Node *list_union(Node* list1, Node* list2);
+static Node *list_get(Node **head, u64 *index);
+static Node *list_take(Node **head, u64 *index);
 
 
 //Config functions #######################################
 /* init Config */
-inline Config *initConfig(u64 ways,	u64 cache_line_size, u64 threshold, u64 cache_size, u64 test_reps, u64 hugepages);
+static Config *initConfig(u64 ways,	u64 cache_line_size, u64 threshold, u64 cache_size, u64 test_reps, u64 hugepages);
 
 /* configure Config */
-inline void updateConfig(Config *conf, u64 ways, u64 cache_line_size, u64 threshold, u64 cache_size, u64 test_reps, u64 hugepages);
+static void updateConfig(Config *conf, u64 ways, u64 cache_line_size, u64 threshold, u64 cache_size, u64 test_reps, u64 hugepages);
 
 
 // PRG ###################################################
 /* create random seed.                                  */
-inline u64 lfsr_create(void);
+static u64 lfsr_create(void);
     
 /* get pseudo randomly generated number.                */
-inline u64 lfsr_rand(u64* lfsr);
+static u64 lfsr_rand(u64* lfsr);
 
 /* helper function for lfsr_rand to shift lfsr.         */
-inline u64 lfsr_step(u64 lfsr);
+static u64 lfsr_step(u64 lfsr);
 
 
 // algorithms ############################################
-inline void traverse_list(u64 *addr, u64 size);
+static void traverse_list(u64 *addr, u64 size);
 
-inline Node *init_evset(void **candidate_set, u64 candidate_set_size, Node* evict_set, void *target_adrs, Config *conf);
+static Node *init_evset(void **candidate_set, u64 candidate_set_size, Node* evict_set, void *target_adrs, Config *conf);
 
-inline Node *find_evset(/* TODO */);
+static Node *find_evset(/* TODO */);
 
-inline int64_t test(void *addr, u64 size, void *target_adrs);
+static int64_t test(void *addr, u64 size, void *target_adrs);
 
 
 // --- utils ---
-inline void access(void *adrs){
+static void access(void *adrs){
 	__asm__ volatile("mov rax, [%0];"::"r" (adrs): "rax", "memory");
 }
 
-inline void flush(void *adrs){
+static void flush(void *adrs){
 	__asm__ volatile("clflush [%0]" ::"r" (adrs));
 }
 
-inline u64 probe(void *adrs){
+static u64 probe(void *adrs){
 	volatile u64 time;  
 	__asm__ volatile (
         " mfence            \n"
@@ -105,14 +105,14 @@ inline u64 probe(void *adrs){
 }
 
 // say hi to cache
-inline void wait(u64 cycles) {
+static void wait(u64 cycles) {
 	unsigned int ignore;
 	u64 start = __rdtscp(&ignore);
 	while (__rdtscp(&ignore) - start < cycles);
 }
 
 // eax lsb, edx msb
-inline u64 rdtscpfence(){
+static u64 rdtscpfence(){
     unsigned a, d;
     __asm__ volatile(
     "lfence;"
@@ -124,31 +124,31 @@ inline u64 rdtscpfence(){
 }
 
 #define FEEDBACK 0x80000000000019E2ULL
-inline u64 lfsr_create(void) {
+static u64 lfsr_create(void) {
   u64 lfsr;
   asm volatile("rdrand %0": "=r" (lfsr)::"flags");
   return lfsr;
 }
 
-inline u64 lfsr_rand(u64* lfsr) {
+static u64 lfsr_rand(u64* lfsr) {
     for (u64 i = 0; i < 8*sizeof(u64); i++) {
         *lfsr = lfsr_step(*lfsr);
     }
     return *lfsr;
 }
 
-inline u64 lfsr_step(u64 lfsr) {
+static u64 lfsr_step(u64 lfsr) {
   return (lfsr & 1) ? (lfsr >> 1) ^ FEEDBACK : (lfsr >> 1);
 }
 
 // --- config ---
-inline Config *initConfig(u64 ways,	u64 cache_line_size, u64 threshold, u64 cache_size, u64 test_reps, u64 hugepages){
+static Config *initConfig(u64 ways,	u64 cache_line_size, u64 threshold, u64 cache_size, u64 test_reps, u64 hugepages){
 	Config *conf= (Config *) malloc(sizeof(Config));
 	updateConfig(conf, ways, cache_line_size, threshold, cache_size, test_reps, hugepages);
 	return conf;
 }
 
-inline void updateConfig(Config *conf, u64 ways, u64 cache_line_size, u64 threshold, u64 cache_size, u64 test_reps, u64 hugepages){
+static void updateConfig(Config *conf, u64 ways, u64 cache_line_size, u64 threshold, u64 cache_size, u64 test_reps, u64 hugepages){
 	conf->ways=ways;
 	conf->cache_line_size=cache_line_size;
 	conf->threshold=threshold;
@@ -159,12 +159,12 @@ inline void updateConfig(Config *conf, u64 ways, u64 cache_line_size, u64 thresh
 
 // --- node ---
 // Function to initialize an empty linked list
-inline void list_init() { // big fat TODO
+static void list_init() { // big fat TODO
     return;  // Return NULL to indicate an empty list
 }
 
 // add to beginning
-inline void list_push(Node **head, Node *e) {
+static void list_push(Node **head, Node *e) {
     if (!e)  return;
     e->prev = NULL;
     e->next = *head;
@@ -173,7 +173,7 @@ inline void list_push(Node **head, Node *e) {
 }
 
 // add to end
-inline void list_append(Node **head, Node *e){
+static void list_append(Node **head, Node *e){
     if(!e) return;
     if(!*head){
         *head=e;
@@ -190,7 +190,7 @@ inline void list_append(Node **head, Node *e){
 }
 
 // remove e and return first element of list
-inline Node *list_pop(Node **head) {
+static Node *list_pop(Node **head) {
     Node *tmp = (head)? *head : NULL;
     if (!tmp) return NULL;  // rm nothing
     if (tmp->next) tmp->next->prev=NULL;
@@ -201,7 +201,7 @@ inline Node *list_pop(Node **head) {
 }
 
 // TODO
-inline Node *list_union(Node* list1, Node* list2) {
+static Node *list_union(Node* list1, Node* list2) {
     // Node* result = initLinkedList();
     // Node* current;
     // // Add elements from the first list
@@ -220,7 +220,7 @@ inline Node *list_union(Node* list1, Node* list2) {
     return NULL;
 }
 
-inline Node *list_get(Node **head, u64 *index) {
+static Node *list_get(Node **head, u64 *index) {
     Node *tmp = *head;
     u64 i=0;
     if(!tmp) return NULL;
@@ -233,7 +233,7 @@ inline Node *list_get(Node **head, u64 *index) {
 }
 
 // remove when found
-inline Node *list_take(Node **head, u64 *index) {
+static Node *list_take(Node **head, u64 *index) {
     Node *tmp = *head;
     u64 i=0;
     if(!tmp) return NULL;
@@ -258,7 +258,7 @@ int main(int ac, char **av){
 }
 #endif
 
-// inline Node *create_minimal_eviction_set(void **candidate_set, u64 candidate_set_size, Node* evict_set, void *target_adrs, Config *conf){
+// static Node *create_minimal_eviction_set(void **candidate_set, u64 candidate_set_size, Node* evict_set, void *target_adrs, Config *conf){
     // if (conf==NULL){
 		// printf("create_minimal_eviction_set: Conf is NULL!\n");
 		// return NULL;
@@ -321,7 +321,7 @@ int main(int ac, char **av){
 	// return evict_set;
 // }
 
-// inline void traverse_list(u64 *addr, u64 size){
+// static void traverse_list(u64 *addr, u64 size){
     // u64 c=size;
     // while(c-2){
         // load(addr);
@@ -337,7 +337,7 @@ int main(int ac, char **av){
 
 
 
-// inline void create_pointer_chase(void **candidate_set, u64 c_size, Node* set){
+// static void create_pointer_chase(void **candidate_set, u64 c_size, Node* set){
 // #ifdef TEST_EVICT_BASELINE
 	// clock_t start = clock();
 // #endif
@@ -366,7 +366,7 @@ int main(int ac, char **av){
 
 // }
 
-// inline int64_t pick(Node* candidate_set, u64 base_size, u64 *lfsr) {
+// static int64_t pick(Node* candidate_set, u64 base_size, u64 *lfsr) {
     // // uninitialized parameters
     // if (lfsr==NULL){
 		// printf("pick: lfsr is NULL!\n");
@@ -397,7 +397,7 @@ int main(int ac, char **av){
     // return (int64_t) cur_node->value;
 // }
 
-// inline int64_t test_intern(void *addr, u64 size, void *target_adrs){
+// static int64_t test_intern(void *addr, u64 size, void *target_adrs){
     // if(size==0 || addr ==NULL || target_adrs ==NULL || conf==NULL){
         // return -1;
     // } // TODO rm later // toggle if working
@@ -417,7 +417,7 @@ int main(int ac, char **av){
 // }
 
 
-// inline int64_t test(void **candidate_set, u64 candidate_set_size, Node *test_index_set, void *target_adrs, Config *conf){
+// static int64_t test(void **candidate_set, u64 candidate_set_size, Node *test_index_set, void *target_adrs, Config *conf){
 	// // // empty candidate set, no array to create pointer chase on    
     // // if (candidate_set==NULL){
 		// // printf("test: candidate_set is NULL!\n");
