@@ -257,7 +257,8 @@ int main(int ac, char **av){
 
 
 static Node *init_evset(Config *conf_ptr){
-    memcpy(conf, conf_ptr, sizeof(Config));
+    //memcpy(conf, conf_ptr, sizeof(Config));
+    conf=conf_ptr;
     buffer_size = conf->ways*conf->sets*20*sizeof(Node);
     if(conf->hugepages){
         buffer = (Node *) mmap(NULL, buffer_size, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB, 0, 0);
