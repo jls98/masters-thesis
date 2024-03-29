@@ -23,7 +23,8 @@ void test_node(){
     }
     
     // test pop
-    Node *head=nodes, tmp;
+    Node *head=nodes;
+    Node *tmp;
     for(int i=0;i<10;i++){
         tmp = list_pop(&head);
         CU_ASSERT_EQUAL(&nodes[i], tmp);
