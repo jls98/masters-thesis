@@ -4,6 +4,8 @@
 #include <sys/mman.h>
 #include <x86intrin.h>
 #include <time.h>
+#include <string.h>
+
 // #include "evset.h"
 
 // header
@@ -27,7 +29,7 @@ typedef struct node {
     size_t delta;
 } Node;
 
-static Config conf;
+static Config *conf;
 static Node **evsets = NULL;
 static Node *pool = NULL;
 static u64 pool_size = 0;
@@ -151,19 +153,19 @@ static u64 lfsr_step(u64 lfsr) {
 
 // --- config ---
 static Config *config_init(u64 ways, u64 sets, u64 cache_line_size, u64 threshold, u64 cache_size, u64 test_reps, u64 hugepages){
-	Config *conf = malloc(sizeof(Config));
-	config_update(conf, ways, sets, cache_line_size, threshold, cache_size, test_reps, hugepages);
-	return conf;
+	Config *con = malloc(sizeof(Config));
+	config_update(con, ways, sets, cache_line_size, threshold, cache_size, test_reps, hugepages);
+	return con;
 }
 
-static void config_update(Config *conf, u64 ways, u64 sets, u64 cache_line_size, u64 threshold, u64 cache_size, u64 test_reps, u64 hugepages){
-	conf->ways=ways;
-	conf->sets=sets;
-	conf->cache_line_size=cache_line_size;
-	conf->threshold=threshold;
-	conf->cache_size=cache_size;
-	conf->test_reps=test_reps;
-	conf->hugepages=hugepages;
+static void config_update(Config *con, u64 ways, u64 sets, u64 cache_line_size, u64 threshold, u64 cache_size, u64 test_reps, u64 hugepages){
+	con->ways=ways;
+	con->sets=sets;
+	con->cache_line_size=cache_line_size;
+	con->threshold=threshold;
+	con->cache_size=cache_size;
+	con->test_reps=test_reps;
+	con->hugepages=hugepages;
 }
 
 // --- node ---
@@ -255,7 +257,7 @@ int main(int ac, char **av){
 
 
 static Node *init_evsets(Config *conf_ptr){
-    memcpy(&conf, conf_ptr, sizeof(Config));
+    memcpy(conf, conf_ptr, sizeof(Config));
     buffer_size = conf->ways*conf->sets*20*sizeof(Node);
     if(conf->hugepages){
         buffer = (Node *) mmap(NULL, buffer_size, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB, 0, 0);
