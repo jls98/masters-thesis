@@ -80,7 +80,7 @@ static u64 lfsr_step(u64 lfsr);
 // algorithms ############################################
 static void traverse_list(u64 *addr, u64 size);
 
-static Node *init_evset(void **candidate_set, u64 candidate_set_size, Node* evict_set, void *target_adrs, Config *conf);
+static Node *init_evset(Config *conf_ptr);
 
 static Node *find_evset(/* TODO */);
 static Node *get_evset(Config *conf_ptr);
