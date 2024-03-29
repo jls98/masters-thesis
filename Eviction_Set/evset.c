@@ -39,7 +39,7 @@ static u64 rdtscpfence();
 
 // Node functions ########################################
 // TODO
-static void list_init();
+static void list_init(Node *src, u64 size);
 static void list_push(Node **head, Node *e);
 static void list_append(Node **head, Node *e);
 static Node *list_pop(Node **head);
@@ -158,9 +158,12 @@ static void updateConfig(Config *conf, u64 ways, u64 cache_line_size, u64 thresh
 }
 
 // --- node ---
-// Function to initialize an empty linked list
-static void list_init() { // big fat TODO
-    return;  // Return NULL to indicate an empty list
+static void list_init(Node *src, u64 size) {
+    for(u64 i=0;i<(size/sizeof(Node));i++){
+        src[i].prev = NULL;
+        src[i].next = NULL;
+        src[i].delta = 0;
+    }
 }
 
 // add to beginning

@@ -5,6 +5,15 @@
 void test_node(){
     Node *nodes= malloc(100*sizeof(Node));
     
+    // test init 
+    list_init(nodes, 100*sizeof(Node));
+    for(int i=0;i<100;i++){  
+        CU_ASSERT_NULL(nodes[i].prev);
+        CU_ASSERT_NULL(nodes[i].next);
+        CU_ASSERT_EQUAL(nodes[i].delta, 0);
+    }
+    
+    
     // test get, take
     uint64_t zero=0;
     for(int i=0;i<100;i++){
@@ -36,7 +45,6 @@ void test_node(){
         index=i;
         list_push(&head, &nodes[i]);
         CU_ASSERT_EQUAL(nodes, list_get(&head, &index));
-        printf("%p %p \n", nodes, list_get(&head, &index));
         CU_ASSERT_EQUAL(head, list_get(&head, &zero));
     }
     // later TODO init 
