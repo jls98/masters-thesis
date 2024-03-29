@@ -258,7 +258,7 @@ int main(int ac, char **av){
 }
 #endif
 
-
+#define pool_factor 4
 static Node *init_evset(Config *conf_ptr){
     //memcpy(conf, conf_ptr, sizeof(Config));
     conf=conf_ptr;
@@ -285,12 +285,11 @@ static Node *init_evset(Config *conf_ptr){
     return buffer;
 }   
 
-#define pool_factor 4
 static Node *find_evset(){
     // printf("find_evset: buffer %p\n", buffer);
     // printf("find_evset: conf %p\n", conf);
     // printf("find_evset: buffer_size %lu\n", buffer_size);
-    char *target= (char *)buffer[10]; // TODO modify later
+    char *target= (char *) &buffer[10]; // TODO modify later
     *target=0;
     
     
