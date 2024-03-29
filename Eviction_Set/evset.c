@@ -224,7 +224,7 @@ static Node *list_get(Node **head, u64 *index) {
     Node *tmp = *head;
     u64 i=0;
     if(!tmp) return NULL;
-    while (tmp && i<=*index) {
+    while (tmp && i<*index) {
         printf("list_get: %p\n", tmp);
         tmp=tmp->next;
         i++;
