@@ -11,6 +11,7 @@
 
 typedef struct config {
 	u64 ways; // cache ways 
+    u64 sets;
 	u64 cache_line_size; // cache line size (usually 64)
 	u64 threshold; // threshold for cache (eg ~45 for L1 on i7)
 	u64 cache_size; // cache size in bytes 
@@ -25,6 +26,14 @@ typedef struct node {
     struct node *prev;
     size_t delta;
 } Node;
+
+static Config conf;
+static Node **evsets = NULL;
+static Node *pool = NULL;
+static u64 pool_size = 0;
+static Node *buffer = NULL;
+static u64 buffer_size = 0;
+
 
 // Utils #################################################
 /* wait for cycles cycles and activate cache            */
@@ -43,18 +52,16 @@ static void list_init(Node *src, u64 size);
 static void list_push(Node **head, Node *e);
 static void list_append(Node **head, Node *e);
 static Node *list_pop(Node **head);
-// TODO
-static Node *list_union(Node* list1, Node* list2);
 static Node *list_get(Node **head, u64 *index);
 static Node *list_take(Node **head, u64 *index);
 
 
 //Config functions #######################################
 /* init Config */
-static Config *initConfig(u64 ways,	u64 cache_line_size, u64 threshold, u64 cache_size, u64 test_reps, u64 hugepages);
+static Config *config_init(u64 ways, u64 sets, u64 cache_line_size, u64 threshold, u64 cache_size, u64 test_reps, u64 hugepages);
 
 /* configure Config */
-static void updateConfig(Config *conf, u64 ways, u64 cache_line_size, u64 threshold, u64 cache_size, u64 test_reps, u64 hugepages);
+static void config_update(Config *conf, u64 ways, u64 cache_line_size, u64 threshold, u64 cache_size, u64 test_reps, u64 hugepages);
 
 
 // PRG ###################################################
@@ -74,7 +81,8 @@ static void traverse_list(u64 *addr, u64 size);
 static Node *init_evset(void **candidate_set, u64 candidate_set_size, Node* evict_set, void *target_adrs, Config *conf);
 
 static Node *find_evset(/* TODO */);
-
+static Node *get_evset(Config *conf_ptr);
+static void close_evsets();
 static int64_t test(void *addr, u64 size, void *target_adrs);
 
 
@@ -142,14 +150,15 @@ static u64 lfsr_step(u64 lfsr) {
 }
 
 // --- config ---
-static Config *initConfig(u64 ways,	u64 cache_line_size, u64 threshold, u64 cache_size, u64 test_reps, u64 hugepages){
-	Config *conf= (Config *) malloc(sizeof(Config));
-	updateConfig(conf, ways, cache_line_size, threshold, cache_size, test_reps, hugepages);
+static Config *config_init(u64 ways, u64 sets, u64 cache_line_size, u64 threshold, u64 cache_size, u64 test_reps, u64 hugepages){
+	Config *conf = malloc(sizeof(Config));
+	config_update(conf, ways, sets, cache_line_size, threshold, cache_size, test_reps, hugepages);
 	return conf;
 }
 
-static void updateConfig(Config *conf, u64 ways, u64 cache_line_size, u64 threshold, u64 cache_size, u64 test_reps, u64 hugepages){
+static void config_update(Config *conf, u64 ways, u64 sets, u64 cache_line_size, u64 threshold, u64 cache_size, u64 test_reps, u64 hugepages){
 	conf->ways=ways;
+	conf->sets=sets;
 	conf->cache_line_size=cache_line_size;
 	conf->threshold=threshold;
 	conf->cache_size=cache_size;
@@ -203,26 +212,6 @@ static Node *list_pop(Node **head) {
     return tmp;
 }
 
-// TODO
-static Node *list_union(Node* list1, Node* list2) {
-    // Node* result = initLinkedList();
-    // Node* current;
-    // // Add elements from the first list
-    // current = list1;
-    // while (current != NULL) {
-        // result = addElement(result, current->value);
-        // current = current->next;
-    // }
-    // // Add elements from the second list (avoid duplicates)
-    // current = list2;
-    // while (current != NULL) {
-        // if (!containsValue(result, current->value)) result = addElement(result, current->value);
-        // current = current->next;
-    // }
-    // return result;
-    return NULL;
-}
-
 static Node *list_get(Node **head, u64 *index) {
     Node *tmp = *head;
     u64 i=0;
@@ -257,9 +246,43 @@ static Node *list_take(Node **head, u64 *index) {
 #ifndef NOMAIN
 int main(int ac, char **av){
     wait(1E9);
+    printf("size of Node %zu\n", sizeof(Node))
+    Config con=config_init(8, 4096, 64, 47, 32768, 1, 1);
+    printf("main: return init evsets %p\n", init_evsets(con));
     return 0;
 }
 #endif
+
+
+static Node *init_evsets(Config *conf_ptr){
+    memcpy(&conf, conf_ptr, sizeof(Config));
+    buffer_size = conf->ways*conf->sets*20*sizeof(Node);
+    if(conf->hugepages){
+        buffer = (Node *) mmap(NULL, buffer_size, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB, 0, 0);
+    }else{
+        buffer = (Node *) mmap(NULL, buffer_size, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS, 0, 0);        
+    }
+    
+    if(buffer==MAP_FAILED){
+        printf("[!] init_evsets: mmap failed\n");
+        return NULL;
+    }
+    list_init(buffer, buffer_size);
+    return buffer;
+}   
+
+static Node *get_evset(Config *conf_ptr){
+    if(!evsets){
+        init_evsets(conf_ptr);
+        find_evsets(/*TODO*/);
+    }
+    return *evsets;
+}
+
+static void close_evsets(){
+    free(evsets);
+    munmap(buffer, buffer_size);
+}
 
 // static Node *create_minimal_eviction_set(void **candidate_set, u64 candidate_set_size, Node* evict_set, void *target_adrs, Config *conf){
     // if (conf==NULL){
