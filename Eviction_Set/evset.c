@@ -275,8 +275,8 @@ static Node *init_evset(Config *conf_ptr){
 
 static Node *get_evset(Config *conf_ptr){
     if(!evsets){
-        init_evsets(conf_ptr);
-        find_evsets(/*TODO*/);
+        init_evset(conf_ptr);
+        find_evset(/*TODO*/);
     }
     return *evsets;
 }
