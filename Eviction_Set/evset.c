@@ -27,6 +27,7 @@ typedef struct node {
     struct node *next;
     struct node *prev;
     size_t delta;
+    char offset[8];// offset to multiple of 2
 } Node;
 
 static Config *conf;
@@ -78,13 +79,14 @@ static u64 lfsr_step(u64 lfsr);
 
 
 // algorithms ############################################
-static void traverse_list(u64 *addr, u64 size);
+
 
 static Node *init_evset(Config *conf_ptr);
-
 static Node *find_evset(/* TODO */);
 static Node *get_evset(Config *conf_ptr);
 static void close_evsets();
+static void generate_conflict_set();
+static void traverse_list(u64 *addr, u64 size);
 static int64_t test(void *addr, u64 size, void *target_adrs);
 
 
@@ -268,23 +270,40 @@ static Node *init_evset(Config *conf_ptr){
     }
     
     if(buffer==MAP_FAILED){
-        printf("[!] init_evsets: mmap failed\n");
+        printf("[!] init_evsets: mmap failed!\n");
         return NULL;
     }
     list_init(buffer, buffer_size);
-    printf("init_evset: buffer %p\n", buffer);
-    printf("init_evset: conf %p\n", conf);
-    printf("init_evset: buffer_size %lu\n", buffer_size);
+    pool = &buffer[20];
+    if((buffer_size-20*sizeof(Node)) < (conf->ways*conf->sets*pool_factor)){
+        printf("[!] init_evset: buffer too small!\n")
+    }
+    pool_size = conf->ways*conf->sets*pool_factor;
+    // printf("init_evset: buffer %p\n", buffer);
+    // printf("init_evset: conf %p\n", conf);
+    // printf("init_evset: buffer_size %lu\n", buffer_size);
     return buffer;
 }   
 
+#define pool_factor 4
 static Node *find_evset(){
-    printf("find_evset: buffer %p\n", buffer);
-    printf("find_evset: conf %p\n", conf);
-    printf("find_evset: buffer_size %lu\n", buffer_size);
+    // printf("find_evset: buffer %p\n", buffer);
+    // printf("find_evset: conf %p\n", conf);
+    // printf("find_evset: buffer_size %lu\n", buffer_size);
+    char *target= (char *)buffer[10]; // TODO modify later
+    *target=0;
+    
+    
+    generate_conflict_set(conf, target);
+    
+    
+    
+    
+    
+    
+    
     return NULL;
 }
-
 
 static Node *get_evset(Config *conf_ptr){
     if(!evsets){
@@ -299,6 +318,22 @@ static void close_evsets(){
     munmap(buffer, buffer_size);
 }
 
+static void generate_conflict_set(Config *conf_ptr, char *target){
+    if(!evsets) return;
+    if(!pool){
+        printf("generate_conflict_set: pool is uninitialized! Trying to initialize...\n");
+        init_evset(conf_ptr);
+    }
+    if(!pool){
+        printf("generate_conflict_set: pool still NULL, requirements not met!\n");   
+        return;        
+    }
+    
+    u64 pool_elems = pool_size/sizeof(Node);
+    u64 lfsr = lfsr_create();
+    
+    // 
+}
 // static Node *create_minimal_eviction_set(void **candidate_set, u64 candidate_set_size, Node* evict_set, void *target_adrs, Config *conf){
     // if (conf==NULL){
 		// printf("create_minimal_eviction_set: Conf is NULL!\n");
