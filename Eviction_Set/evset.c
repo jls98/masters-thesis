@@ -250,13 +250,13 @@ int main(int ac, char **av){
     wait(1E9);
     printf("size of Node %zu\n", sizeof(Node))
     Config con=config_init(8, 4096, 64, 47, 32768, 1, 1);
-    printf("main: return init evsets %p\n", init_evsets(con));
+    printf("main: return init evsets %p\n", init_evset(con));
     return 0;
 }
 #endif
 
 
-static Node *init_evsets(Config *conf_ptr){
+static Node *init_evset(Config *conf_ptr){
     memcpy(conf, conf_ptr, sizeof(Config));
     buffer_size = conf->ways*conf->sets*20*sizeof(Node);
     if(conf->hugepages){
