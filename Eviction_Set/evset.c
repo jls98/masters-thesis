@@ -273,6 +273,11 @@ static Node *init_evset(Config *conf_ptr){
     return buffer;
 }   
 
+static Node *find_evset(/* TODO */){
+    return NULL;
+}
+
+
 static Node *get_evset(Config *conf_ptr){
     if(!evsets){
         init_evset(conf_ptr);
