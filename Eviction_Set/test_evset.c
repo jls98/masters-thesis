@@ -35,8 +35,8 @@ void test_node(){
     for(int i=0;i<10;i++){
         index=i;
         list_push(&head, &nodes[i]);
-        CU_ASSERT_EQUAL(&head[i], list_get(&head, &index));
-        printf("%p %p \n", &head[i], list_get(&head, &index));
+        CU_ASSERT_EQUAL(nodes, list_get(&head, &index));
+        printf("%p %p \n", nodes, list_get(&head, &index));
         CU_ASSERT_EQUAL(head, list_get(&head, &zero));
     }
     // later TODO init 
