@@ -5,7 +5,7 @@
 void test_node(){
     Node *nodes= malloc(100*sizeof(Node));
     
-    // test get 
+    // test get, take
     uint64_t zero=0;
     for(int i=0;i<100;i++){
         Node *ptr_node = &nodes[i];
@@ -14,14 +14,30 @@ void test_node(){
         CU_ASSERT_EQUAL(&nodes[i], list_take(ptr_ptr_node, &zero));
     }
     
+    // test append
     uint64_t index;
     for(int i=0;i<10;i++){
         index=i;
         list_append(&nodes, &nodes[i]);
         CU_ASSERT_EQUAL(&nodes[i], list_get(&nodes, &index));
-
     }
     
+    // test pop
+    Node *head=nodes, tmp;
+    for(int i=0;i<10;i++){
+        tmp = list_pop(&head);
+        CU_ASSERT_EQUAL(&nodes[i], tmp);
+    }
+    
+    // test push
+    uint64_t zero=0;
+    for(int i=0;i<10;i++){
+        index=i;
+        list_push(&nodes, &nodes[i]);
+        CU_ASSERT_EQUAL(&nodes[0], list_get(&nodes, &index));
+        CU_ASSERT_EQUAL(&nodes[i], list_get(&nodes, &zero));
+    }
+    // later TODO init 
 }
 
 
