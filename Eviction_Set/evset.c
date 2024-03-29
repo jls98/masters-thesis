@@ -331,8 +331,47 @@ static void generate_conflict_set(Config *conf_ptr, char *target){
     u64 pool_elems = pool_size/sizeof(Node);
     u64 lfsr = lfsr_create();
     
-    // 
+    // evsets <- {} // otherweise returned
+    while
 }
+
+static void traverse_list(u64 *ptr, u64 size){
+    u64 c=size;
+    while(c-2){
+        access(ptr);
+        access(*ptr);
+        access(*(*ptr));
+        access(ptr);
+        access(*ptr);
+        access(*(*ptr));
+        c--;
+    }
+}
+
+static u64 test_intern(void *ptr, u64 size, void *target){
+     // TODO rm later // toggle if working
+    access(target);
+    access(target);
+    access(target);
+    access(target);
+    traverse_list(ptr, size);
+    
+    // victim + 222 access for page walk, maybe figure out later
+    
+    u64 delta, time;
+    time=rdtscpfence(); // TODO write asm code
+    access(target);
+    delta=rdtscpfence() - time;
+    return delta;
+}
+
+static u64 test(Node *ptr, u64 size, void *target){
+    if(size==0 || ptr ==NULL || target_adrs ==NULL){
+        return 0;
+    }
+    return test_intern((void *)ptr, size, target) > conf->threshold;
+}
+
 // static Node *create_minimal_eviction_set(void **candidate_set, u64 candidate_set_size, Node* evict_set, void *target_adrs, Config *conf){
     // if (conf==NULL){
 		// printf("create_minimal_eviction_set: Conf is NULL!\n");
@@ -396,18 +435,7 @@ static void generate_conflict_set(Config *conf_ptr, char *target){
 	// return evict_set;
 // }
 
-// static void traverse_list(u64 *addr, u64 size){
-    // u64 c=size;
-    // while(c-2){
-        // load(addr);
-        // load(*addr);
-        // load(*(*addr));
-        // load(addr);
-        // load(*addr);
-        // load(*(*addr));
-        // c--;
-    // }
-// }
+
 
 
 
@@ -472,24 +500,7 @@ static void generate_conflict_set(Config *conf_ptr, char *target){
     // return (int64_t) cur_node->value;
 // }
 
-// static int64_t test_intern(void *addr, u64 size, void *target_adrs){
-    // if(size==0 || addr ==NULL || target_adrs ==NULL || conf==NULL){
-        // return -1;
-    // } // TODO rm later // toggle if working
-    // load(target_adrs);
-    // load(target_adrs);
-    // load(target_adrs);
-    // load(target_adrs);
-    // traverse_list(addr, size);
-    
-    // // victim + 222 access for page walk, maybe figure out later
-    
-    // u64 delta, time;
-    // time=rdtscpfence();
-    // load(target_adrs);
-    // delta=rdtscpfence() - time;
-    // return delta;
-// }
+
 
 
 // static int64_t test(void **candidate_set, u64 candidate_set_size, Node *test_index_set, void *target_adrs, Config *conf){
