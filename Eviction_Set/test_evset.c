@@ -50,6 +50,18 @@ void test_node(){
     // later TODO init 
 }
 
+void test_test(){
+    // TODO
+    Node *test = malloc(2*sizeof(Node));
+    list_init(test, 2*sizeof(Node));
+    uint64_t msrmts[10];
+    for(int i=0;i<10;i++){
+        msrmts[i]=probe((void *)test);
+    }
+    for(int i=0;i<10;i++){
+        printf("%lu\n", msrmts[i]);
+    }    
+}
 
 int main(int ac, char **av) {
 	// if (ac==1) conf = initConfig(8, 64, 41, 32768, 1, 1); // default L1 lab machine, no inputs
@@ -76,6 +88,7 @@ int main(int ac, char **av) {
     CU_pSuite suite = CU_add_suite("Test Suite evict_baseline", NULL, NULL);
 
     CU_add_test(suite, "Test test_node", test_node);
+    CU_add_test(suite, "Test test_test", test_test);
 
     CU_basic_run_tests();
     CU_cleanup_registry();

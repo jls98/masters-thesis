@@ -285,10 +285,6 @@ static Node *init_evset(Config *conf_ptr){
     }
     list_init(buffer, buffer_size);
     list_init(pool, buffer_size);
-    
-    // printf("init_evset: buffer %p\n", buffer);
-    // printf("init_evset: conf %p\n", conf);
-    // printf("init_evset: buffer_size %lu\n", buffer_size);
     return pool;
 }   
 
@@ -302,7 +298,7 @@ static Node *find_evset(){
     
     generate_conflict_set(conf, target);
     
-    
+    // WIP
     
     
     
