@@ -129,7 +129,7 @@ void test_test(){
        
     
     for(int i=0;i<13;i++){
-        printf("a: %lu\n", msrmts[i]);
+        printf("b: %lu\n", msrmts[i]);
     }  
     for(int i=1;i<9;i++){
         printf("%p\n", &test[i*128]);
