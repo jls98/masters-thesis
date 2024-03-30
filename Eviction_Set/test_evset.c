@@ -68,13 +68,13 @@ void test_test(){
     }
     
     for(int i=offset;i<LALALALAL1+offset;i++){
-        access(&test[i*512]);
+        access(&test[i*256]);
     }
     for(int i=offset;i<LALALALAL1+offset;i++){
-        access(&test[i*512]);
+        access(&test[i*256]);
     }
     for(int i=offset;i<LALALALAL1+offset;i++){
-        access(&test[i*512]);
+        access(&test[i*256]);
     }
     // probe(((void *)test)+222);
     
@@ -128,7 +128,7 @@ void test_test(){
     // }
        
     
-    for(int i=0;i<7;i++){
+    for(int i=0;i<8;i++){
         printf("a: %lu\n", msrmts[i]);
     }  
     for(int i=1;i<9;i++){
