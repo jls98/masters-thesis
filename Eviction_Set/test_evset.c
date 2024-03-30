@@ -67,7 +67,6 @@ void test_test(){
     uint64_t msrmts1=0;
     uint64_t msrmts2=0;
     uint64_t msrmts3=0;
-    flush(test);
     uint64_t offset = 3;
     probe((void *)test);
     __asm__ volatile("lfence;");
@@ -85,32 +84,32 @@ void test_test(){
             access(&test[i*512]);
         }
         probe(((void *)test)+222);
-        
-        for(int i=5;i<8;i++){
-            msrmts[i]=probe((void *)test);
-        }
+        __asm__ volatile("lfence;");
+        msrmts2+=probe((void *)test);        
+        __asm__ volatile("lfence;");
     }
-    for(int i=offset;i<LALALALAL2+offset;i++){
-        access(&test[i*512]);
-    }
-    for(int i=offset;i<LALALALAL2+offset;i++){
-        access(&test[i*512]);
-    }
-    for(int i=offset;i<LALALALAL2+offset;i++){
-        access(&test[i*512]);
-    }
-    probe(((void *)test)+222);
     
-    for(int i=8;i<11;i++){
-        msrmts[i]=probe((void *)test);
+    probe((void *)test);
+    __asm__ volatile("lfence;");
+    for(int i=0;i<REPS;i++){
+        for(int i=offset;i<LALALALAL2+offset;i++){
+            access(&test[i*512]);
+        }
+        for(int i=offset;i<LALALALAL2+offset;i++){
+            access(&test[i*512]);
+        }
+        for(int i=offset;i<LALALALAL2+offset;i++){
+            access(&test[i*512]);
+        }
+        probe(((void *)test)+222);    
+        __asm__ volatile("lfence;");
+        msrmts3+=probe((void *)test);
+        __asm__ volatile("lfence;");
     }
     
     for(int i=0;i<11;i++){
-        printf("a: %lu\n", msrmts[i]);
+        printf("a: %lu %lu %lu\n", msrmts1, msrmts2, msrmts3);
     }  
-    for(int i=1;i<9;i++){
-        printf("%p\n", &test[i*512]);
-    }
     munmap(test, size_factor*sizeof(Node));    
 }
 
