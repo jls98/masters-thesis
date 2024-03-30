@@ -50,7 +50,7 @@ void test_node(){
     // later TODO init 
 }
 
-#define LALALALAL1 11
+#define LALALALAL1 12
 #define LALALALAL2 35
 #define LALALALAL3 1026
 #define LALALALAL4 1027
@@ -128,7 +128,7 @@ void test_test(){
        
     
     for(int i=0;i<13;i++){
-        printf("b: %lu\n", msrmts[i]);
+        printf("c: %lu\n", msrmts[i]);
     }  
     for(int i=1;i<9;i++){
         printf("%p\n", &test[i*128]);
