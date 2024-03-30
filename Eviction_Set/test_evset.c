@@ -93,7 +93,7 @@ void test_test(){
     for(int i=offset;i<LALALALAL2+offset;i++){
         access(&test[i*512]);
     }
-    // probe(((void *)test)+222);
+    probe(((void *)test)+222);
     
     for(int i=8;i<11;i++){
         msrmts[i]=probe((void *)test);
