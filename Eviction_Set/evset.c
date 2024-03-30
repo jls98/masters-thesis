@@ -257,7 +257,9 @@ int main(int ac, char **av){
     printf("size of Node %zu\n", sizeof(Node));
     Config *con=config_init(8, 4096, 64, 47, 32768, 1, 1);
     init_evset(con);
+    printf("init\n");
     find_evset();
+    printf("find\n");
     return 0;
 }
 #endif
