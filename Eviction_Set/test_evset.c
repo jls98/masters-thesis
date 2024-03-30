@@ -50,8 +50,8 @@ void test_node(){
     // later TODO init 
 }
 
-#define LALALALAL1 8
-#define LALALALAL2 32
+#define LALALALAL1 16
+#define LALALALAL2 31
 #define LALALALAL3 1023
 #define LALALALAL4 1024
 void test_test(){
