@@ -172,9 +172,13 @@ static void config_update(Config *con, u64 ways, u64 sets, u64 cache_line_size, 
 
 // --- node ---
 static void list_init(Node *src, u64 size) {
-    for(u64 i=0;i<(size/sizeof(Node));i++){
-        src[i].prev = NULL;
-        src[i].next = NULL;
+    src[0].prev=NULL;
+    src[0].next=NULL;
+    src[0].delta=0;
+    for(u64 i=1;i<(size/sizeof(Node));i++){
+        src[i].prev = &src[i-1];
+        src[i].prev->next = &src[i];
+        src[i].next=NULL;
         src[i].delta = 0;
     }
 }
@@ -258,31 +262,33 @@ int main(int ac, char **av){
 }
 #endif
 
-#define pool_factor 4
+#define pool_factor 20
+#define buffer_factor 20
 static Node *init_evset(Config *conf_ptr){
-    //memcpy(conf, conf_ptr, sizeof(Config));
-    conf=conf_ptr;
-    buffer_size = conf->ways*conf->sets*20*sizeof(Node);
+    memcpy(conf, conf_ptr, sizeof(Config));
+    // conf=conf_ptr;
+    buffer_size = conf->ways*conf->sets*buffer_factor*sizeof(Node);
+    pool_size = conf->ways*conf->sets*pool_factor*sizeof(Node);
+    
     if(conf->hugepages){
         buffer = (Node *) mmap(NULL, buffer_size, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB, 0, 0);
+        pool = (Node *) mmap(NULL, pool_size, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB, 0, 0);
     }else{
         buffer = (Node *) mmap(NULL, buffer_size, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS, 0, 0);        
+        pool = (Node *) mmap(NULL, pool_size, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS, 0, 0);        
     }
     
-    if(buffer==MAP_FAILED){
+    if(buffer==MAP_FAILED || pool==MAP_FAILED){
         printf("[!] init_evsets: mmap failed!\n");
         return NULL;
     }
     list_init(buffer, buffer_size);
-    pool = &buffer[20];
-    if((buffer_size-20*sizeof(Node)) < (conf->ways*conf->sets*pool_factor)){
-        printf("[!] init_evset: buffer too small!\n");
-    }
-    pool_size = conf->ways*conf->sets*pool_factor;
+    list_init(pool, buffer_size);
+    
     // printf("init_evset: buffer %p\n", buffer);
     // printf("init_evset: conf %p\n", conf);
     // printf("init_evset: buffer_size %lu\n", buffer_size);
-    return buffer;
+    return pool;
 }   
 
 static Node *find_evset(){
