@@ -52,8 +52,8 @@ void test_node(){
 
 #define LALALALAL1 12
 #define LALALALAL2 35
-#define LALALALAL3 1026
-#define LALALALAL4 1027
+#define LALALALAL3 1027
+#define LALALALAL4 1028
 void test_test(){
     // TODO
     Node *test = (Node *) mmap(NULL, 99999999*sizeof(Node), PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB, 0, 0);    
