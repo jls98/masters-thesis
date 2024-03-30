@@ -77,7 +77,7 @@ void test_test(){
     }
     probe(((void *)test)+222);
     
-    for(int i=5;i<10;i++){
+    for(int i=5;i<7;i++){
         msrmts[i]=probe((void *)test);
     }
     
@@ -92,7 +92,7 @@ void test_test(){
     }
     probe(((void *)test)+222);
     
-     for(int i=10;i<15;i++){
+     for(int i=7;i<9;i++){
         msrmts[i]=probe((void *)test);
     }
     
@@ -107,7 +107,7 @@ void test_test(){
     }
     probe(((void *)test)+222);
     
-     for(int i=15;i<20;i++){
+     for(int i=9;i<11;i++){
         msrmts[i]=probe((void *)test);
     }
     
@@ -122,12 +122,12 @@ void test_test(){
     }
     probe(((void *)test)+222);
     
-     for(int i=20;i<25;i++){
+     for(int i=11;i<13;i++){
         msrmts[i]=probe((void *)test);
     }
        
     
-    for(int i=0;i<25;i++){
+    for(int i=0;i<13;i++){
         printf("%lu\n", msrmts[i]);
     }  
     for(int i=1;i<9;i++){
