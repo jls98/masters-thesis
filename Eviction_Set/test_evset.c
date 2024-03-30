@@ -107,9 +107,8 @@ void test_test(){
         __asm__ volatile("lfence;");
     }
     
-    for(int i=0;i<11;i++){
-        printf("a: %lu %lu %lu\n", msrmts1, msrmts2, msrmts3);
-    }  
+    printf("a: %lu %lu %lu\n", msrmts1, msrmts2, msrmts3);
+    
     munmap(test, size_factor*sizeof(Node));    
 }
 
