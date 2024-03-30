@@ -50,10 +50,10 @@ void test_node(){
     // later TODO init 
 }
 
-#define LALALALAL1 12
-#define LALALALAL2 35
-#define LALALALAL3 1027
-#define LALALALAL4 1028
+#define LALALALAL1 8
+#define LALALALAL2 32
+#define LALALALAL3 1023
+#define LALALALAL4 1024
 void test_test(){
     // TODO
     Node *test = (Node *) mmap(NULL, 99999999*sizeof(Node), PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB, 0, 0);    
@@ -62,17 +62,18 @@ void test_test(){
     list_init(test, 99999999*sizeof(Node));
     uint64_t msrmts[2000];
     flush(test);
+    uint64_t offset = 3;
     for(int i=0;i<5;i++){
         msrmts[i]=probe((void *)test);
     }
     
-    for(int i=3;i<LALALALAL1;i++){
+    for(int i=3;i<LALALALAL1+offset;i++){
         access(&test[i*256]);
     }
-    for(int i=3;i<LALALALAL1;i++){
+    for(int i=3;i<LALALALAL1+offset;i++){
         access(&test[i*256]);
     }
-    for(int i=3;i<LALALALAL1;i++){
+    for(int i=3;i<LALALALAL1+offset;i++){
         access(&test[i*256]);
     }
     probe(((void *)test)+222);
@@ -81,13 +82,13 @@ void test_test(){
         msrmts[i]=probe((void *)test);
     }
     
-    for(int i=3;i<LALALALAL2;i++){
+    for(int i=3;i<LALALALAL2+offset;i++){
         access(&test[i*256]);
     }
-    for(int i=3;i<LALALALAL2;i++){
+    for(int i=3;i<LALALALAL2+offset;i++){
         access(&test[i*256]);
     }
-    for(int i=3;i<LALALALAL2;i++){
+    for(int i=3;i<LALALALAL2+offset;i++){
         access(&test[i*256]);
     }
     probe(((void *)test)+222);
@@ -96,13 +97,13 @@ void test_test(){
         msrmts[i]=probe((void *)test);
     }
     
-    for(int i=3;i<LALALALAL3;i++){
+    for(int i=3;i<LALALALAL3+offset;i++){
         access(&test[i*256]);
     }
-    for(int i=3;i<LALALALAL3;i++){
+    for(int i=3;i<LALALALAL3+offset;i++){
         access(&test[i*256]);
     }
-    for(int i=3;i<LALALALAL3;i++){
+    for(int i=3;i<LALALALAL3+offset;i++){
         access(&test[i*256]);
     }
     probe(((void *)test)+222);
@@ -111,13 +112,13 @@ void test_test(){
         msrmts[i]=probe((void *)test);
     }
     
-    for(int i=3;i<LALALALAL4;i++){
+    for(int i=3;i<LALALALAL4+offset;i++){
         access(&test[i*256]);
     }
-    for(int i=3;i<LALALALAL4;i++){
+    for(int i=3;i<LALALALAL4+offset;i++){
         access(&test[i*256]);
     }
-    for(int i=3;i<LALALALAL4;i++){
+    for(int i=3;i<LALALALAL4+offset;i++){
         access(&test[i*256]);
     }
     probe(((void *)test)+222);
