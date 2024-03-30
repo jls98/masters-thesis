@@ -86,7 +86,7 @@ static Node *find_evset(/* TODO */);
 static Node *get_evset(Config *conf_ptr);
 static void close_evsets();
 static void generate_conflict_set();
-static void traverse_list(char **ptr, u64 size){;
+static void traverse_list(Node *ptr, u64 size){;
 static u64 test(Node *ptr, u64 size, void *target);
 
 
@@ -354,7 +354,7 @@ static void traverse_list(Node *ptr, u64 size){
     }
 }
 
-static u64 test_intern(char **ptr, u64 size, void *target){
+static u64 test_intern(Node *ptr, u64 size, void *target){
      // TODO rm later // toggle if working
     access(target);
     access(target);
@@ -375,7 +375,7 @@ static u64 test(Node *ptr, u64 size, void *target){
     if(size==0 || ptr ==NULL || target ==NULL){
         return 0;
     }
-    return test_intern((char **)ptr, size, target) > conf->threshold;
+    return test_intern(ptr, size, target) > conf->threshold;
 }
 
 // static Node *create_minimal_eviction_set(void **candidate_set, u64 candidate_set_size, Node* evict_set, void *target_adrs, Config *conf){
