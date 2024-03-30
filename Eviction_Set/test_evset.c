@@ -63,6 +63,7 @@ void test_test(){
     }
     for(int i=1;i<9;i++){
         access(&test[i*256]);
+        printf("%p\n", &test[i*256]);
     }
     for(int i=1;i<9;i++){
         access(&test[i*256]);
