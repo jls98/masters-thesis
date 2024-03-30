@@ -50,7 +50,10 @@ void test_node(){
     // later TODO init 
 }
 
-#define LALALALAL 1400
+#define LALALALAL1 8
+#define LALALALAL2 32
+#define LALALALAL3 1023
+#define LALALALAL4 1024
 void test_test(){
     // TODO
     Node *test = (Node *) mmap(NULL, 99999999*sizeof(Node), PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB, 0, 0);    
@@ -63,22 +66,68 @@ void test_test(){
         msrmts[i]=probe((void *)test);
     }
     
-    for(int i=3;i<LALALALAL;i++){
+    for(int i=3;i<LALALALAL1;i++){
         access(&test[i*128]);
     }
-    for(int i=3;i<LALALALAL;i++){
+    for(int i=3;i<LALALALAL1;i++){
         access(&test[i*128]);
     }
-    for(int i=3;i<LALALALAL;i++){
+    for(int i=3;i<LALALALAL1;i++){
         access(&test[i*128]);
     }
-
-
     probe(((void *)test)+222);
+    
     for(int i=5;i<10;i++){
         msrmts[i]=probe((void *)test);
     }
-    for(int i=0;i<10;i++){
+    
+    for(int i=3;i<LALALALAL2;i++){
+        access(&test[i*128]);
+    }
+    for(int i=3;i<LALALALAL2;i++){
+        access(&test[i*128]);
+    }
+    for(int i=3;i<LALALALAL2;i++){
+        access(&test[i*128]);
+    }
+    probe(((void *)test)+222);
+    
+     for(int i=10;i<15;i++){
+        msrmts[i]=probe((void *)test);
+    }
+    
+    for(int i=3;i<LALALALAL3;i++){
+        access(&test[i*128]);
+    }
+    for(int i=3;i<LALALALAL3;i++){
+        access(&test[i*128]);
+    }
+    for(int i=3;i<LALALALAL3;i++){
+        access(&test[i*128]);
+    }
+    probe(((void *)test)+222);
+    
+     for(int i=15;i<20;i++){
+        msrmts[i]=probe((void *)test);
+    }
+    
+    for(int i=3;i<LALALALAL4;i++){
+        access(&test[i*128]);
+    }
+    for(int i=3;i<LALALALAL4;i++){
+        access(&test[i*128]);
+    }
+    for(int i=3;i<LALALALAL4;i++){
+        access(&test[i*128]);
+    }
+    probe(((void *)test)+222);
+    
+     for(int i=20;i<25;i++){
+        msrmts[i]=probe((void *)test);
+    }
+       
+    
+    for(int i=0;i<25;i++){
         printf("%lu\n", msrmts[i]);
     }  
     for(int i=1;i<9;i++){
