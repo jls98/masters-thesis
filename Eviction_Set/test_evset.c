@@ -7,9 +7,9 @@ void test_node(){
     
     // test init 
     list_init(nodes, 100*sizeof(Node));
-    for(int i=0;i<100;i++){  
-        CU_ASSERT_PTR_NULL(nodes[i].prev);
-        CU_ASSERT_PTR_NULL(nodes[i].next);
+    for(int i=1;i<99;i++){  
+        CU_ASSERT_EQUAL(nodes[i].prev, &nodes[i-1]);
+        CU_ASSERT_EQUAL(nodes[i].next, &nodes[i+1]);
         CU_ASSERT_EQUAL(nodes[i].delta, 0);
     }
     
