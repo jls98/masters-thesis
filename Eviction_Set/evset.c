@@ -86,7 +86,7 @@ static Node *find_evset(/* TODO */);
 static Node *get_evset(Config *conf_ptr);
 static void close_evsets();
 static void generate_conflict_set();
-static void traverse_list(u64 *addr, u64 size);
+static void traverse_list(char **ptr, u64 size){;
 static u64 test(Node *ptr, u64 size, void *target);
 
 
