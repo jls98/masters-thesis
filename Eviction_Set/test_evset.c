@@ -50,6 +50,7 @@ void test_node(){
     // later TODO init 
 }
 
+#define LALALALAL 100
 void test_test(){
     // TODO
     Node *test = (Node *) mmap(NULL, 99999999*sizeof(Node), PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB, 0, 0);    
@@ -61,33 +62,30 @@ void test_test(){
     for(int i=0;i<5;i++){
         msrmts[i]=probe((void *)test);
     }
-    for(int i=1;i<9;i++){
-        access(&test[i*256]);
-        printf("%p\n", &test[i*256]);
+    
+    for(int i=1;i<LALALALAL;i++){
+        access(&test[i*128]);
     }
-    for(int i=1;i<9;i++){
-        access(&test[i*256]);
+    for(int i=1;i<LALALALAL;i++){
+        access(&test[i*128]);
     }
-    for(int i=1;i<9;i++){
-        access(&test[i*256]);
+    for(int i=1;i<LALALALAL;i++){
+        access(&test[i*128]);
     }
-    for(int i=1;i<9;i++){
-        access(&test[i*256]);
+    for(int i=1;i<LALALALAL;i++){
+        access(&test[i*128]);
     }
-    for(int i=1;i<9;i++){
-        access(&test[i*256]);
+    for(int i=1;i<LALALALAL;i++){
+        access(&test[i*128]);
     }
-    for(int i=1;i<9;i++){
-        access(&test[i*256]);
+    for(int i=1;i<LALALALAL;i++){
+        access(&test[i*128]);
     }
-    for(int i=1;i<9;i++){
-        access(&test[i*256]);
+    for(int i=1;i<LALALALAL;i++){
+        access(&test[i*128]);
     }
-    for(int i=1;i<9;i++){
-        access(&test[i*256]);
-    }
-    for(int i=1;i<9;i++){
-        access(&test[i*256]);
+    for(int i=1;i<LALALALAL;i++){
+        access(&test[i*128]);
     }
 
     probe(((void *)test)+222);
@@ -97,7 +95,9 @@ void test_test(){
     for(int i=0;i<10;i++){
         printf("%lu\n", msrmts[i]);
     }  
-
+    for(int i=1;i<9;i++){
+        printf("%p\n", &test[i*128]);
+    }
     munmap(test, 1025*sizeof(Node));    
 }
 
