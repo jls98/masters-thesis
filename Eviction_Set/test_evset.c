@@ -52,7 +52,7 @@ void test_node(){
 
 void test_test(){
     // TODO
-    Node *test = (Node *) mmap(NULL, 1152*sizeof(Node), PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB, 0, 0);    
+    Node *test = (Node *) mmap(NULL, 99999999*sizeof(Node), PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB, 0, 0);    
     
     // malloc(1025*sizeof(Node)); // TODO change to mmap
     list_init(test, 1025*sizeof(Node));
@@ -62,23 +62,33 @@ void test_test(){
         msrmts[i]=probe((void *)test);
     }
     for(int i=1;i<9;i++){
-        access(&test[i*128]);
+        access(&test[i*256]);
     }
     for(int i=1;i<9;i++){
-        access(&test[i*128]);
+        access(&test[i*256]);
     }
     for(int i=1;i<9;i++){
-        access(&test[i*128]);
+        access(&test[i*256]);
     }
     for(int i=1;i<9;i++){
-        access(&test[i*128]);
+        access(&test[i*256]);
     }
     for(int i=1;i<9;i++){
-        access(&test[i*128]);
+        access(&test[i*256]);
     }
     for(int i=1;i<9;i++){
-        access(&test[i*128]);
+        access(&test[i*256]);
     }
+    for(int i=1;i<9;i++){
+        access(&test[i*256]);
+    }
+    for(int i=1;i<9;i++){
+        access(&test[i*256]);
+    }
+    for(int i=1;i<9;i++){
+        access(&test[i*256]);
+    }
+
     
     for(int i=5;i<10;i++){
         msrmts[i]=probe((void *)test);
