@@ -63,30 +63,16 @@ void test_test(){
         msrmts[i]=probe((void *)test);
     }
     
-    for(int i=1;i<LALALALAL;i++){
+    for(int i=3;i<LALALALAL;i++){
         access(&test[i*128]);
     }
-    for(int i=1;i<LALALALAL;i++){
+    for(int i=3;i<LALALALAL;i++){
         access(&test[i*128]);
     }
-    for(int i=1;i<LALALALAL;i++){
+    for(int i=3;i<LALALALAL;i++){
         access(&test[i*128]);
     }
-    for(int i=1;i<LALALALAL;i++){
-        access(&test[i*128]);
-    }
-    for(int i=1;i<LALALALAL;i++){
-        access(&test[i*128]);
-    }
-    for(int i=1;i<LALALALAL;i++){
-        access(&test[i*128]);
-    }
-    for(int i=1;i<LALALALAL;i++){
-        access(&test[i*128]);
-    }
-    for(int i=1;i<LALALALAL;i++){
-        access(&test[i*128]);
-    }
+
 
     probe(((void *)test)+222);
     for(int i=5;i<10;i++){
