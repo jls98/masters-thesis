@@ -68,17 +68,17 @@ void test_test(){
     }
     
     for(int i=offset;i<LALALALAL1+offset;i++){
-        access(&test[i*256]);
+        access(&test[i*512]);
     }
     for(int i=offset;i<LALALALAL1+offset;i++){
-        access(&test[i*256]);
+        access(&test[i*512]);
     }
     for(int i=offset;i<LALALALAL1+offset;i++){
-        access(&test[i*256]);
+        access(&test[i*512]);
     }
     // probe(((void *)test)+222);
     
-    for(int i=5;i<10;i++){
+    for(int i=5;i<8;i++){
         msrmts[i]=probe((void *)test);
     }
     
