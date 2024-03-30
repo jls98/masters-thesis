@@ -87,7 +87,7 @@ static Node *get_evset(Config *conf_ptr);
 static void close_evsets();
 static void generate_conflict_set();
 static void traverse_list(u64 *addr, u64 size);
-static int64_t test(void *addr, u64 size, void *target_adrs);
+static u64 test(Node *ptr, u64 size, void *target);
 
 
 // --- utils ---
@@ -372,7 +372,7 @@ static u64 test_intern(void *ptr, u64 size, void *target){
 }
 
 static u64 test(Node *ptr, u64 size, void *target){
-    if(size==0 || ptr ==NULL || target_adrs ==NULL){
+    if(size==0 || ptr ==NULL || target ==NULL){
         return 0;
     }
     return test_intern((void *)ptr, size, target) > conf->threshold;
