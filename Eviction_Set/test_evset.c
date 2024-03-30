@@ -52,11 +52,18 @@ void test_node(){
 
 void test_test(){
     // TODO
-    Node *test = malloc(2*sizeof(Node));
-    list_init(test, 2*sizeof(Node));
+    Node *test = malloc(1025*sizeof(Node));
+    list_init(test, 1025*sizeof(Node));
     uint64_t msrmts[10];
     flush(test);
-    for(int i=0;i<10;i++){
+    for(int i=0;i<5;i++){
+        msrmts[i]=probe((void *)test);
+    }
+    for(int i=0;i<8;i++){
+        access(&test[1+i*128]);
+    }
+    
+    for(int i=5;i<10;i++){
         msrmts[i]=probe((void *)test);
     }
     for(int i=0;i<10;i++){
