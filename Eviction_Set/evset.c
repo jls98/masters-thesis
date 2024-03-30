@@ -344,12 +344,12 @@ static void generate_conflict_set(Config *conf_ptr, char *target){
 static void traverse_list(char **ptr, u64 size){
     u64 c=size;
     while(c-2){
-        access(ptr);
-        access(*ptr);
-        access(*(*ptr));
-        access(ptr);
-        access(*ptr);
-        access(*(*ptr));
+        access((void *) ptr);
+        access((void *) *ptr);
+        access((void *) *(*ptr));
+        access((void *) ptr);
+        access((void *) *ptr);
+        access((void *) *(*ptr));
         c--;
     }
 }
