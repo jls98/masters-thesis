@@ -82,53 +82,53 @@ void test_test(){
         msrmts[i]=probe((void *)test);
     }
     
-    for(int i=offset;i<LALALALAL2+offset;i++){
-        access(&test[i*256]);
-    }
-    for(int i=offset;i<LALALALAL2+offset;i++){
-        access(&test[i*256]);
-    }
-    for(int i=offset;i<LALALALAL2+offset;i++){
-        access(&test[i*256]);
-    }
-    probe(((void *)test)+222);
-    
-     for(int i=7;i<9;i++){
-        msrmts[i]=probe((void *)test);
-    }
-    
-    for(int i=offset;i<LALALALAL3+offset;i++){
-        access(&test[i*256]);
-    }
-    for(int i=offset;i<LALALALAL3+offset;i++){
-        access(&test[i*256]);
-    }
-    for(int i=offset;i<LALALALAL3+offset;i++){
-        access(&test[i*256]);
-    }
-    probe(((void *)test)+222);
-    
-     for(int i=9;i<11;i++){
-        msrmts[i]=probe((void *)test);
-    }
-    
-    for(int i=offset;i<LALALALAL4+offset;i++){
-        access(&test[i*256]);
-    }
-    for(int i=offset;i<LALALALAL4+offset;i++){
-        access(&test[i*256]);
-    }
-    for(int i=offset;i<LALALALAL4+offset;i++){
-        access(&test[i*256]);
-    }
+    // for(int i=offset;i<LALALALAL2+offset;i++){
+        // access(&test[i*256]);
+    // }
+    // for(int i=offset;i<LALALALAL2+offset;i++){
+        // access(&test[i*256]);
+    // }
+    // for(int i=offset;i<LALALALAL2+offset;i++){
+        // access(&test[i*256]);
+    // }
     // probe(((void *)test)+222);
     
-     for(int i=11;i<13;i++){
-        msrmts[i]=probe((void *)test);
-    }
+     // for(int i=7;i<9;i++){
+        // msrmts[i]=probe((void *)test);
+    // }
+    
+    // for(int i=offset;i<LALALALAL3+offset;i++){
+        // access(&test[i*256]);
+    // }
+    // for(int i=offset;i<LALALALAL3+offset;i++){
+        // access(&test[i*256]);
+    // }
+    // for(int i=offset;i<LALALALAL3+offset;i++){
+        // access(&test[i*256]);
+    // }
+    // probe(((void *)test)+222);
+    
+     // for(int i=9;i<11;i++){
+        // msrmts[i]=probe((void *)test);
+    // }
+    
+    // for(int i=offset;i<LALALALAL4+offset;i++){
+        // access(&test[i*256]);
+    // }
+    // for(int i=offset;i<LALALALAL4+offset;i++){
+        // access(&test[i*256]);
+    // }
+    // for(int i=offset;i<LALALALAL4+offset;i++){
+        // access(&test[i*256]);
+    // }
+    // // probe(((void *)test)+222);
+    
+     // for(int i=11;i<13;i++){
+        // msrmts[i]=probe((void *)test);
+    // }
        
     
-    for(int i=0;i<13;i++){
+    for(int i=0;i<7;i++){
         printf("a: %lu\n", msrmts[i]);
     }  
     for(int i=1;i<9;i++){
