@@ -83,7 +83,7 @@ void test_test(){
         for(int i=offset;i<LALALALAL1+offset;i++){
             access(&test[i*512]);
         }
-        probe(((void *)test)+222);
+        // probe(((void *)test)+222);
         __asm__ volatile("lfence;");
         msrmts2+=probe((void *)test);        
         __asm__ volatile("lfence;");
@@ -101,7 +101,7 @@ void test_test(){
         for(int i=offset;i<LALALALAL2+offset;i++){
             access(&test[i*512]);
         }
-        probe(((void *)test)+222);    
+        // probe(((void *)test)+222);    
         __asm__ volatile("lfence;");
         msrmts3+=probe((void *)test);
         __asm__ volatile("lfence;");
