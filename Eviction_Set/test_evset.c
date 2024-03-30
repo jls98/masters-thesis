@@ -94,7 +94,7 @@ int main(int ac, char **av) {
 	// if (ac==7){ // self, ways, cache line size, threshold, cache size, test reps, hugepages
 		// conf = initConfig(strtol(av[1], NULL, 10), strtol(av[2], NULL, 10), strtol(av[3], NULL, 10), strtol(av[4], NULL, 10), strtol(av[5], NULL, 10), strtol(av[6], NULL, 10));
 	// }
-	wait(19E);
+	wait(1E9);
     CU_initialize_registry();
 
     CU_pSuite suite = CU_add_suite("Test Suite evict_baseline", NULL, NULL);
