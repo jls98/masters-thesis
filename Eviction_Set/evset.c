@@ -338,7 +338,7 @@ static void generate_conflict_set(Config *conf_ptr, char *target){
     u64 lfsr = lfsr_create();
     
     // evsets <- {} // otherweise returned
-    while
+    
 }
 
 static void traverse_list(Node *ptr, u64 size){
