@@ -86,7 +86,7 @@ static Node *find_evset(/* TODO */);
 static Node *get_evset(Config *conf_ptr);
 static void close_evsets();
 static void generate_conflict_set();
-static void traverse_list(Node *ptr, u64 size){;
+static void traverse_list(Node *ptr, u64 size);
 static u64 test(Node *ptr, u64 size, void *target);
 
 
@@ -338,7 +338,7 @@ static void generate_conflict_set(Config *conf_ptr, char *target){
     u64 lfsr = lfsr_create();
     
     // evsets <- {} // otherweise returned
-    
+    // WIP
 }
 
 static void traverse_list(Node *ptr, u64 size){
