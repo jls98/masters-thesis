@@ -60,7 +60,7 @@ void test_test(){
     
     // malloc(1025*sizeof(Node)); // TODO change to mmap
     list_init(test, 99999999*sizeof(Node));
-    uint64_t msrmts[10];
+    uint64_t msrmts[2000];
     flush(test);
     for(int i=0;i<5;i++){
         msrmts[i]=probe((void *)test);
