@@ -83,7 +83,7 @@ void test_test(){
         for(int i=offset;i<LALALALAL1+offset;i++){
             access(&test[i*512]);
         }
-        // probe(((void *)test)+222);
+        probe(((void *)test)+222);
         __asm__ volatile("lfence;");
         msrmts2+=probe((void *)test);        
         __asm__ volatile("lfence;");
@@ -107,7 +107,7 @@ void test_test(){
         __asm__ volatile("lfence;");
     }
     
-    printf("a: %lu %lu %lu\n", msrmts1, msrmts2, msrmts3);
+    printf("b: %lu %lu %lu\n", msrmts1, msrmts2, msrmts3);
     
     munmap(test, size_factor*sizeof(Node));    
 }
