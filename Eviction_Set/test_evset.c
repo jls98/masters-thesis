@@ -51,15 +51,17 @@ void test_node(){
 }
 
 #define LALALALAL1 9
-#define LALALALAL2 31
+#define LALALALAL2 16
 #define LALALALAL3 1023
 #define LALALALAL4 1024
+
+#define size_factor 99999999
 void test_test(){
     // TODO
-    Node *test = (Node *) mmap(NULL, 99999999*sizeof(Node), PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB, 0, 0);    
+    Node *test = (Node *) mmap(NULL, size_factor*sizeof(Node), PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB, 0, 0);    
     
     // malloc(1025*sizeof(Node)); // TODO change to mmap
-    list_init(test, 99999999*sizeof(Node));
+    list_init(test, size_factor*sizeof(Node));
     uint64_t msrmts[2000];
     flush(test);
     uint64_t offset = 3;
@@ -82,59 +84,28 @@ void test_test(){
         msrmts[i]=probe((void *)test);
     }
     
-    // for(int i=offset;i<LALALALAL2+offset;i++){
-        // access(&test[i*256]);
-    // }
-    // for(int i=offset;i<LALALALAL2+offset;i++){
-        // access(&test[i*256]);
-    // }
-    // for(int i=offset;i<LALALALAL2+offset;i++){
-        // access(&test[i*256]);
-    // }
+    for(int i=offset;i<LALALALAL2+offset;i++){
+        access(&test[i*512]);
+    }
+    for(int i=offset;i<LALALALAL2+offset;i++){
+        access(&test[i*512]);
+    }
+    for(int i=offset;i<LALALALAL2+offset;i++){
+        access(&test[i*512]);
+    }
     // probe(((void *)test)+222);
     
-     // for(int i=7;i<9;i++){
-        // msrmts[i]=probe((void *)test);
-    // }
+    for(int i=8;i<11;i++){
+        msrmts[i]=probe((void *)test);
+    }
     
-    // for(int i=offset;i<LALALALAL3+offset;i++){
-        // access(&test[i*256]);
-    // }
-    // for(int i=offset;i<LALALALAL3+offset;i++){
-        // access(&test[i*256]);
-    // }
-    // for(int i=offset;i<LALALALAL3+offset;i++){
-        // access(&test[i*256]);
-    // }
-    // probe(((void *)test)+222);
-    
-     // for(int i=9;i<11;i++){
-        // msrmts[i]=probe((void *)test);
-    // }
-    
-    // for(int i=offset;i<LALALALAL4+offset;i++){
-        // access(&test[i*256]);
-    // }
-    // for(int i=offset;i<LALALALAL4+offset;i++){
-        // access(&test[i*256]);
-    // }
-    // for(int i=offset;i<LALALALAL4+offset;i++){
-        // access(&test[i*256]);
-    // }
-    // // probe(((void *)test)+222);
-    
-     // for(int i=11;i<13;i++){
-        // msrmts[i]=probe((void *)test);
-    // }
-       
-    
-    for(int i=0;i<8;i++){
+    for(int i=0;i<11;i++){
         printf("a: %lu\n", msrmts[i]);
     }  
     for(int i=1;i<9;i++){
         printf("%p\n", &test[i*512]);
     }
-    munmap(test, 1025*sizeof(Node));    
+    munmap(test, size_factor*sizeof(Node));    
 }
 
 int main(int ac, char **av) {
