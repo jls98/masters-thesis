@@ -55,6 +55,7 @@ void test_test(){
     Node *test = malloc(2*sizeof(Node));
     list_init(test, 2*sizeof(Node));
     uint64_t msrmts[10];
+    flush(test);
     for(int i=0;i<10;i++){
         msrmts[i]=probe((void *)test);
     }
