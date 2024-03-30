@@ -90,7 +90,7 @@ void test_test(){
         access(&test[i*256]);
     }
 
-    
+    probe(((void *)test)+222);
     for(int i=5;i<10;i++){
         msrmts[i]=probe((void *)test);
     }
