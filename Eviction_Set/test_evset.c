@@ -70,6 +70,15 @@ void test_test(){
     for(int i=1;i<9;i++){
         access(&test[i*128]);
     }
+    for(int i=1;i<9;i++){
+        access(&test[i*128]);
+    }
+    for(int i=1;i<9;i++){
+        access(&test[i*128]);
+    }
+    for(int i=1;i<9;i++){
+        access(&test[i*128]);
+    }
     
     for(int i=5;i<10;i++){
         msrmts[i]=probe((void *)test);
