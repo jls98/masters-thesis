@@ -50,10 +50,10 @@ void test_node(){
     // later TODO init 
 }
 
-#define LALALALAL1 8
-#define LALALALAL2 32
-#define LALALALAL3 1023
-#define LALALALAL4 1024
+#define LALALALAL1 11
+#define LALALALAL2 35
+#define LALALALAL3 1026
+#define LALALALAL4 1027
 void test_test(){
     // TODO
     Node *test = (Node *) mmap(NULL, 99999999*sizeof(Node), PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB, 0, 0);    
