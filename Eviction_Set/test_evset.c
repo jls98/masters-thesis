@@ -59,7 +59,7 @@ void test_test(){
     Node *test = (Node *) mmap(NULL, 99999999*sizeof(Node), PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB, 0, 0);    
     
     // malloc(1025*sizeof(Node)); // TODO change to mmap
-    list_init(test, 1025*sizeof(Node));
+    list_init(test, 99999999*sizeof(Node));
     uint64_t msrmts[10];
     flush(test);
     for(int i=0;i<5;i++){
