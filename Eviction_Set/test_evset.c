@@ -67,13 +67,13 @@ void test_test(){
     }
     
     for(int i=3;i<LALALALAL1;i++){
-        access(&test[i*128]);
+        access(&test[i*256]);
     }
     for(int i=3;i<LALALALAL1;i++){
-        access(&test[i*128]);
+        access(&test[i*256]);
     }
     for(int i=3;i<LALALALAL1;i++){
-        access(&test[i*128]);
+        access(&test[i*256]);
     }
     probe(((void *)test)+222);
     
@@ -82,13 +82,13 @@ void test_test(){
     }
     
     for(int i=3;i<LALALALAL2;i++){
-        access(&test[i*128]);
+        access(&test[i*256]);
     }
     for(int i=3;i<LALALALAL2;i++){
-        access(&test[i*128]);
+        access(&test[i*256]);
     }
     for(int i=3;i<LALALALAL2;i++){
-        access(&test[i*128]);
+        access(&test[i*256]);
     }
     probe(((void *)test)+222);
     
@@ -97,13 +97,13 @@ void test_test(){
     }
     
     for(int i=3;i<LALALALAL3;i++){
-        access(&test[i*128]);
+        access(&test[i*256]);
     }
     for(int i=3;i<LALALALAL3;i++){
-        access(&test[i*128]);
+        access(&test[i*256]);
     }
     for(int i=3;i<LALALALAL3;i++){
-        access(&test[i*128]);
+        access(&test[i*256]);
     }
     probe(((void *)test)+222);
     
@@ -112,13 +112,13 @@ void test_test(){
     }
     
     for(int i=3;i<LALALALAL4;i++){
-        access(&test[i*128]);
+        access(&test[i*256]);
     }
     for(int i=3;i<LALALALAL4;i++){
-        access(&test[i*128]);
+        access(&test[i*256]);
     }
     for(int i=3;i<LALALALAL4;i++){
-        access(&test[i*128]);
+        access(&test[i*256]);
     }
     probe(((void *)test)+222);
     
