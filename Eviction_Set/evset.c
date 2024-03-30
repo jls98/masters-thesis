@@ -267,8 +267,8 @@ int main(int ac, char **av){
 #define pool_factor 20
 #define buffer_factor 20
 static Node *init_evset(Config *conf_ptr){
-    memcpy(conf, conf_ptr, sizeof(Config));
-    // conf=conf_ptr;
+    // memcpy(conf, conf_ptr, sizeof(Config));
+    conf=conf_ptr;
     buffer_size = conf->ways*conf->sets*buffer_factor*sizeof(Node);
     pool_size = conf->ways*conf->sets*pool_factor*sizeof(Node);
     
