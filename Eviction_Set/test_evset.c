@@ -51,7 +51,7 @@ void test_node(){
 }
 
 #define LALALALAL1 8
-#define LALALALAL2 10 //10 to 11??
+#define LALALALAL2 8 //10 to 11??
 #define LALALALAL3 1023
 #define LALALALAL4 1024
 
@@ -117,15 +117,15 @@ void test_test(){
     }
     
     printf("b: %lu %lu %lu\n", msrmts1, msrmts2, msrmts3);
-    printf("i 1024 ptr\n");
-    for(int i=offset;i<LALALALAL1+offset;i++){
-        printf("%p\n", &test[i*1024]);
-    }
+    // printf("i 1024 ptr\n");
+    // for(int i=offset;i<LALALALAL1+offset;i++){
+        // printf("%p\n", &test[i*1024]);
+    // }
     
-    printf("i 4096 ptr\n");
-    for(int i=offset;i<LALALALAL2+offset;i++){
-        printf("%p\n", &test[i*4096]);
-    }
+    // printf("i 4096 ptr\n");
+    // for(int i=offset;i<LALALALAL2+offset;i++){
+        // printf("%p\n", &test[i*4096]);
+    // }
     munmap(test, size_factor*sizeof(Node));    
 }
 
