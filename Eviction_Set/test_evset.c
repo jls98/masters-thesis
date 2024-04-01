@@ -50,16 +50,14 @@ void test_node(){
     // later TODO init 
 }
 
+// 37 cached, 42 L2, 52 L3 
 #define LALALALAL1 8
-#define LALALALAL2 9 //10 to 11??
-#define LALALALAL3 1023
-#define LALALALAL4 1024
+#define LALALALAL2 9
 
 #define size_factor 99999999
 
 #define REPS 1000
-void test_test(){
-    // TODO
+void testbench_skylake_evsets(){
     Node *test = (Node *) mmap(NULL, size_factor*sizeof(Node), PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB, 0, 0);    
     
     list_init(test, size_factor*sizeof(Node));
@@ -101,15 +99,6 @@ void test_test(){
     }
     
     printf("b: %lu %lu %lu\n", msrmts1, msrmts2, msrmts3);
-    // printf("i 1024 ptr\n");
-    // for(int i=offset;i<LALALALAL1+offset;i++){
-        // printf("%p\n", &test[i*1024]);
-    // }
-    
-    // printf("i 4096 ptr\n");
-    // for(int i=offset;i<LALALALAL2+offset;i++){
-        // printf("%p\n", &test[i*4096]);
-    // }
     munmap(test, size_factor*sizeof(Node));    
 }
 
@@ -138,7 +127,7 @@ int main(int ac, char **av) {
     CU_pSuite suite = CU_add_suite("Test Suite evict_baseline", NULL, NULL);
 
     CU_add_test(suite, "Test test_node", test_node);
-    CU_add_test(suite, "Test test_test", test_test);
+    CU_add_test(suite, "Test testbench_skylake_evsets", testbench_skylake_evsets);
 
     CU_basic_run_tests();
     CU_cleanup_registry();
