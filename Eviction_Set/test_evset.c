@@ -77,12 +77,12 @@ void test_test(){
         for(int i=offset;i<LALALALAL1+offset;i++){
             access(&test[i*1024]);
         }
-        for(int i=offset;i<LALALALAL1+offset;i++){
-            access(&test[i*1024]);
-        }
-        for(int i=offset;i<LALALALAL1+offset;i++){
-            access(&test[i*1024]);
-        }
+        // for(int i=offset;i<LALALALAL1+offset;i++){
+            // access(&test[i*1024]);
+        // }
+        // for(int i=offset;i<LALALALAL1+offset;i++){
+            // access(&test[i*1024]);
+        // }
         probe(((void *)test)+222);
         __asm__ volatile("lfence;");
         msrmts2+=probe((void *)test);        
