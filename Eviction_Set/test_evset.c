@@ -101,7 +101,7 @@ void test_test(){
         for(int i=offset;i<LALALALAL2+offset;i++){
             access(&test[i*4096]); // sth is still odd :()
         }
-        // probe(((void *)test)+222);    
+        probe(((void *)test)+222);    
         __asm__ volatile("lfence;");
         msrmts3+=probe((void *)test);
         __asm__ volatile("lfence;");
