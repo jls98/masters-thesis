@@ -175,12 +175,15 @@ static void list_init(Node *src, u64 size) {
     src[0].prev=NULL;
     src[0].next=NULL;
     src[0].delta=0;
+    int index=0;
     for(u64 i=1;i<(size/sizeof(Node));i++){
         src[i].prev = &src[i-1];
         src[i].prev->next = &src[i];
         src[i].next=NULL;
         src[i].delta = 0;
+        index++;
     }
+    printf("index %lu\n", index);
 }
 
 // add to beginning
