@@ -77,6 +77,19 @@ void test_test(){
         for(int i=offset;i<LALALALAL1+offset;i++){
             access(&test[i*512]);
         }
+        
+                for(int i=offset;i<LALALALAL1+offset;i++){
+            access(&test[i*512]);
+        }
+                for(int i=offset;i<LALALALAL1+offset;i++){
+            access(&test[i*512]);
+        }
+                for(int i=offset;i<LALALALAL1+offset;i++){
+            access(&test[i*512]);
+        }
+                for(int i=offset;i<LALALALAL1+offset;i++){
+            access(&test[i*512]);
+        }
         // for(int i=offset;i<LALALALAL1+offset;i++){
             // access(&test[i*1024]);
         // }
