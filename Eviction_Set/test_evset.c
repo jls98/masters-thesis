@@ -51,7 +51,7 @@ void test_node(){
 }
 
 #define LALALALAL1 8
-#define LALALALAL2 9 //10 to 11??
+#define LALALALAL2 8 //10 to 11??
 #define LALALALAL3 1023
 #define LALALALAL4 1024
 
@@ -62,7 +62,6 @@ void test_test(){
     // TODO
     Node *test = (Node *) mmap(NULL, size_factor*sizeof(Node), PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB, 0, 0);    
     
-    // malloc(1025*sizeof(Node)); // TODO change to mmap
     list_init(test, size_factor*sizeof(Node));
     uint64_t msrmts1=0;
     uint64_t msrmts2=0;
@@ -77,12 +76,6 @@ void test_test(){
         for(int i=offset;i<LALALALAL1+offset;i++){
             access(&test[i*1024]);
         }
-        // for(int i=offset;i<LALALALAL1+offset;i++){
-            // access(&test[i*1024]);
-        // }
-        // for(int i=offset;i<LALALALAL1+offset;i++){
-            // access(&test[i*1024]);
-        // }
         probe(((void *)test)+222);
         __asm__ volatile("lfence;");
         msrmts2+=probe((void *)test);        
@@ -93,13 +86,13 @@ void test_test(){
     __asm__ volatile("lfence;");
     for(int i=0;i<REPS;i++){
         for(int i=offset;i<LALALALAL2+offset;i++){
-            access(&test[i*2*8192]);
+            access(&test[i*4*8192]);
         }
         for(int i=offset;i<LALALALAL2+offset;i++){
-            access(&test[i*2*8192]);
+            access(&test[i*4*8192]);
         }
         for(int i=offset;i<LALALALAL2+offset;i++){
-            access(&test[i*2*8192]);
+            access(&test[i*4*8192]);
         }
         probe(((void *)test)+222);    
         __asm__ volatile("lfence;");
