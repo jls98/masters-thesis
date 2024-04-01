@@ -107,22 +107,22 @@ void test_test(){
     Node *buffer = (Node *) mmap(NULL, size_factor*sizeof(Node), PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB, 0, 0);
     list_init(buffer, size_factor*sizeof(Node));
 
-    Node *tmp = list_get(&buffer, 1024+INDEX_OFFSET);
+    Node *tmp = list_get(&buffer, 1024+(u64)INDEX_OFFSET);
     Node **head1=&tmp;
     
-    tmp = list_get(&buffer, 262144 + INDEX_OFFSET);
+    tmp = list_get(&buffer, 262144 + (u64)INDEX_OFFSET);
     Node **head2=&tmp;
     
     for(int i=1;i<LALALALAL1;i++){
-        tmp=list_get(&buffer, i*1024+1024+INDEX_OFFSET);
+        tmp=list_get(&buffer, i*1024+1024+(u64) INDEX_OFFSET);
         list_append(head1, tmp);
     }    
     
     for(int i=1;i<LALALALAL2;i++){
-        tmp=list_get(&buffer, i*2048+262144+INDEX_OFFSET);
+        tmp=list_get(&buffer, i*2048+262144+(u64)INDEX_OFFSET);
         list_append(head2, tmp);        
     }
-    void *target = (void *) list_take(head, INDEX_OFFSET); 
+    void *target = (void *) list_take(buffer, (u64) INDEX_OFFSET); 
 
 
 
@@ -136,7 +136,7 @@ void test_test(){
     access(target);
     // cached 
     for(int i=0;i<REPS;i++){
-        CU_ASSERT_TRUE(test(head1, 7, target)== 0);
+        CU_ASSERT_TRUE(test(*head1, 7, target)== 0);
     }   
     for(int i=0;i<1000;i++) printf("%lu; ", msrmts_buf[i]);
     printf("\n");
@@ -151,7 +151,7 @@ void test_test(){
     access(target);
     // cached 
     for(int i=0;i<REPS;i++){
-        CU_ASSERT_TRUE(test(head1, LALALALAL1, target)== 1);
+        CU_ASSERT_TRUE(test(*head1, LALALALAL1, target)== 1);
     }   
     for(int i=0;i<1000;i++) printf("%lu; ", msrmts_buf[i]);
     printf("\n");    
