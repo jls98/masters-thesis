@@ -106,9 +106,9 @@ void testbench_skylake_evsets(){
 void test_test(){
     Node *buffer = (Node *) mmap(NULL, size_factor*sizeof(Node), PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB, 0, 0);
     list_init(buffer, size_factor*sizeof(Node));
-
+    Node **buffer_ptr=&buffer;
     printf("asd\n");
-    Node *tmp = list_get(&buffer, 1024+(u64)INDEX_OFFSET);
+    Node *tmp = list_get(buffer_ptr, 1024+(u64)INDEX_OFFSET);
     printf("asd\n");
     Node **head1=&tmp;
     printf("asd\n");
