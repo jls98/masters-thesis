@@ -50,7 +50,7 @@ void test_node(){
     // later TODO init 
 }
 
-#define LALALALAL1 9
+#define LALALALAL1 8
 #define LALALALAL2 9 //10 to 11??
 #define LALALALAL3 1023
 #define LALALALAL4 1024
@@ -75,7 +75,7 @@ void test_test(){
     }
     for(int i=0;i<REPS;i++){
         for(int i=offset;i<LALALALAL1+offset;i++){
-            access(&test[i*512]);
+            access(&test[i*1024]);
         }
         // for(int i=offset;i<LALALALAL1+offset;i++){
             // access(&test[i*1024]);
@@ -94,21 +94,6 @@ void test_test(){
     for(int i=0;i<REPS;i++){
         for(int i=offset;i<LALALALAL2+offset;i++){
             access(&test[i*2*8192]);
-        }
-        for(int i=offset;i<LALALALAL2+offset;i++){
-            access(&test[i*2*8192]);
-        }
-        for(int i=offset;i<LALALALAL2+offset;i++){
-            access(&test[i*2*8192]); // sth is still odd :()
-        }
-        for(int i=offset;i<LALALALAL2+offset;i++){
-            access(&test[i*2*8192]);
-        }
-        for(int i=offset;i<LALALALAL2+offset;i++){
-            access(&test[i*2*8192]);
-        }
-        for(int i=offset;i<LALALALAL2+offset;i++){
-            access(&test[i*2*8192]); // sth is still odd :()
         }
         probe(((void *)test)+222);    
         __asm__ volatile("lfence;");
