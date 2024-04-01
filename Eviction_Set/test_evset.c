@@ -104,12 +104,12 @@ void testbench_skylake_evsets(){
 
 #define INDEX_OFFSET 10
 void test_test(){
-    printf("asd\n");
     Node *buffer = (Node *) mmap(NULL, size_factor*sizeof(Node), PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB, 0, 0);
     list_init(buffer, size_factor*sizeof(Node));
-    printf("asd\n");
 
+    printf("asd\n");
     Node *tmp = list_get(&buffer, 1024+(u64)INDEX_OFFSET);
+    printf("asd\n");
     Node **head1=&tmp;
     printf("asd\n");
     
@@ -191,7 +191,6 @@ int main(int ac, char **av) {
 
     CU_add_test(suite, "Test test_node", test_node);
     CU_add_test(suite, "Test testbench_skylake_evsets", testbench_skylake_evsets);
-    printf("asd\n");
     CU_add_test(suite, "Test test_test", test_test);
 
     CU_basic_run_tests();
