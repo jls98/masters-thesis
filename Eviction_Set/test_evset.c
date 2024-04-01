@@ -86,13 +86,13 @@ void test_test(){
     __asm__ volatile("lfence;");
     for(int i=0;i<REPS;i++){
         for(int i=offset;i<LALALALAL2+offset;i++){
-            access(&test[i*8*8192]);
+            access(&test[i*16*8192]);
         }
         for(int i=offset;i<LALALALAL2+offset;i++){
-            access(&test[i*8*8192]);
+            access(&test[i*16*8192]);
         }
         for(int i=offset;i<LALALALAL2+offset;i++){
-            access(&test[i*8*8192]);
+            access(&test[i*16*8192]);
         }
         probe(((void *)test)+222);    
         __asm__ volatile("lfence;");
