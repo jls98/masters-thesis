@@ -51,7 +51,7 @@ void test_node(){
 }
 
 #define LALALALAL1 8
-#define LALALALAL2 8
+#define LALALALAL2 16
 #define LALALALAL3 1023
 #define LALALALAL4 1024
 
