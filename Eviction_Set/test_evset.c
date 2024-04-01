@@ -111,7 +111,7 @@ void test_test(){
     printf("asd\n");
     index = 1024+INDEX_OFFSET;
     Node *tmp = list_get(buffer_ptr, &index);
-    printf("asd %p %p\n" tmp, &tmp);
+    printf("asd %p %p\n", tmp, &tmp);
     Node **head1=&tmp;
     printf("asd\n");
     index =262144 + INDEX_OFFSET;
