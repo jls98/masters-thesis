@@ -51,7 +51,7 @@ void test_node(){
 }
 
 #define LALALALAL1 8
-#define LALALALAL2 16
+#define LALALALAL2 15
 #define LALALALAL3 1023
 #define LALALALAL4 1024
 
@@ -93,13 +93,13 @@ void test_test(){
     __asm__ volatile("lfence;");
     for(int i=0;i<REPS;i++){
         for(int i=offset;i<LALALALAL2+offset;i++){
-            access(&test[i*2*8192]);
+            access(&test[i*4096]);
         }
         for(int i=offset;i<LALALALAL2+offset;i++){
-            access(&test[i*2*8192]);
+            access(&test[i*4096]);
         }
         for(int i=offset;i<LALALALAL2+offset;i++){
-            access(&test[i*2*8192]); // sth is still odd :()
+            access(&test[i*4096]); // sth is still odd :()
         }
         probe(((void *)test)+222);    
         __asm__ volatile("lfence;");
@@ -115,7 +115,7 @@ void test_test(){
     
     printf("i 4096 ptr\n");
     for(int i=offset;i<LALALALAL2+offset;i++){
-        printf("%p\n", &test[i*8192]);
+        printf("%p\n", &test[i*4096]);
     }
     munmap(test, size_factor*sizeof(Node));    
 }
