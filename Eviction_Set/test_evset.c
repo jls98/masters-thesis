@@ -123,6 +123,7 @@ void test_test(){
         index=i*1024+1024+ INDEX_OFFSET;
         tmp=list_get(&buffer, &index);
         list_append(head1, tmp);
+        printf("appended %p\n", tmp);
     }    
      printf("asd\n");
    
@@ -130,9 +131,12 @@ void test_test(){
         index = i*2048+262144+(u64)INDEX_OFFSET;
         tmp=list_get(&buffer, &index);
         list_append(head2, tmp);        
+        printf("appended %p\n", tmp);
     }
     index =INDEX_OFFSET;
     void *target = (void *) list_get(buffer, &index); 
+    printf("target %p\n", target);
+
 
 
     printf("asd\n");
