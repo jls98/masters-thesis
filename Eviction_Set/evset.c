@@ -222,6 +222,7 @@ static Node *list_pop(Node **head) {
 
 static Node *list_get(Node **head, u64 *index) {
     Node *tmp = *head;
+    printf("get: %p %p\n", head, tmp);
     u64 i=0;
     if(!tmp) return NULL;
     while (tmp && i<*index) {
