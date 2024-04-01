@@ -125,7 +125,7 @@ void test_test(){
     void *target = (void *) list_take(buffer, (u64) INDEX_OFFSET); 
 
 
-
+    printf("asd\n");
 
     // L1
     init_evset(config_init(8, 4096, 64, 39, 32768, 1, 1));
