@@ -50,7 +50,7 @@ void test_node(){
     // later TODO init 
 }
 
-#define LALALALAL1 8
+#define LALALALAL1 9
 #define LALALALAL2 8 //10 to 11??
 #define LALALALAL3 1023
 #define LALALALAL4 1024
@@ -75,19 +75,6 @@ void test_test(){
     }
     for(int i=0;i<REPS;i++){
         for(int i=offset;i<LALALALAL1+offset;i++){
-            access(&test[i*512]);
-        }
-        
-                for(int i=offset;i<LALALALAL1+offset;i++){
-            access(&test[i*512]);
-        }
-                for(int i=offset;i<LALALALAL1+offset;i++){
-            access(&test[i*512]);
-        }
-                for(int i=offset;i<LALALALAL1+offset;i++){
-            access(&test[i*512]);
-        }
-                for(int i=offset;i<LALALALAL1+offset;i++){
             access(&test[i*512]);
         }
         // for(int i=offset;i<LALALALAL1+offset;i++){
