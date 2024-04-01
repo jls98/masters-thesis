@@ -222,14 +222,14 @@ static Node *list_pop(Node **head) {
 
 static Node *list_get(Node **head, u64 *index) {
     Node *tmp = *head;
-    printf("get: %p %p %p\n", head, tmp, *head);
     u64 i=0;
     if(!tmp) return NULL;
     while (tmp && i<*index) {
         tmp=tmp->next;
         i++;
     }
-    // *index=i; // DEBUG purposes, toggle, to count list elements, use large index and retrieve value from pointer
+    printf("get: %p %p %p\n", head, tmp, *head);
+    *index=i; // DEBUG purposes, toggle, to count list elements, use large index and retrieve value from pointer
     return tmp;
 }
 
