@@ -118,20 +118,23 @@ void test_test(){
     tmp = list_get(buffer_ptr, &index);
     Node **head2=&tmp;
      printf("asd\n");
-   
+   u64 *bufu64;
     for(int i=1;i<LALALALAL1;i++){
         index=i*1024+1024+ INDEX_OFFSET;
-        tmp=list_get(buffer_ptr, &index);
+        bufu64=&index;
+        tmp=list_get(buffer_ptr, bufu64);
         list_append(head1, tmp);
-        printf("appended %p index %lu\n", tmp, index);
+        printf("appended %p index %lu\n", tmp, *bufu64);
     }    
      printf("asd\n");
    
     for(int i=1;i<LALALALAL2;i++){
         index = i*2048+262144+(u64)INDEX_OFFSET;
-        tmp=list_get(buffer_ptr, &index);
+                bufu64=&index;
+
+        tmp=list_get(buffer_ptr, bufu64);
         list_append(head2, tmp);        
-        printf("appended %p index %lu\n", tmp, index);
+        printf("appended %p index %lu\n", tmp, *bufu64);
     }
     index =INDEX_OFFSET;
     void *target = (void *) list_get(buffer_ptr, &index); 
