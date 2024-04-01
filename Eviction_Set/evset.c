@@ -369,6 +369,7 @@ static u64 test_intern(Node *ptr, u64 size, void *target){
     access(target);
     delta=rdtscpfence() - time;
     msrmts_buf[msrmts_ind++]=delta;
+    printf("%lu\n", delta);
     return delta;
 }
 
