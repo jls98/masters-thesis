@@ -107,27 +107,32 @@ void test_test(){
     Node *buffer = (Node *) mmap(NULL, size_factor*sizeof(Node), PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB, 0, 0);
     list_init(buffer, size_factor*sizeof(Node));
     Node **buffer_ptr=&buffer;
+    u64 *index;
     printf("asd\n");
-    Node *tmp = list_get(buffer_ptr, 1024+(u64)INDEX_OFFSET);
+    *index = 1024+INDEX_OFFSET;
+    Node *tmp = list_get(buffer_ptr, index);
     printf("asd\n");
     Node **head1=&tmp;
     printf("asd\n");
-    
-    tmp = list_get(&buffer, 262144 + (u64)INDEX_OFFSET);
+    *index =262144 + INDEX_OFFSET;
+    tmp = list_get(&buffer, index);
     Node **head2=&tmp;
      printf("asd\n");
    
     for(int i=1;i<LALALALAL1;i++){
-        tmp=list_get(&buffer, i*1024+1024+(u64) INDEX_OFFSET);
+        *index=i*1024+1024+ INDEX_OFFSET;
+        tmp=list_get(&buffer, index);
         list_append(head1, tmp);
     }    
      printf("asd\n");
    
     for(int i=1;i<LALALALAL2;i++){
-        tmp=list_get(&buffer, i*2048+262144+(u64)INDEX_OFFSET);
+        *index = i*2048+262144+(u64)INDEX_OFFSET;
+        tmp=list_get(&buffer, index);
         list_append(head2, tmp);        
     }
-    void *target = (void *) list_take(buffer, (u64) INDEX_OFFSET); 
+    *index =INDEX_OFFSET;
+    void *target = (void *) list_get(buffer, index); 
 
 
     printf("asd\n");
