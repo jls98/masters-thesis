@@ -58,49 +58,107 @@ void test_node(){
 
 #define REPS 1000
 void testbench_skylake_evsets(){
-    Node *test = (Node *) mmap(NULL, size_factor*sizeof(Node), PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB, 0, 0);    
+    Node *buffer = (Node *) mmap(NULL, size_factor*sizeof(Node), PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB, 0, 0);    
     
-    list_init(test, size_factor*sizeof(Node));
+    list_init(buffer, size_factor*sizeof(Node));
     uint64_t msrmts1=0;
     uint64_t msrmts2=0;
     uint64_t msrmts3=0;
     uint64_t offset = 3;
-    probe((void *)test);
+    probe((void *)buffer);
     __asm__ volatile("lfence;");
     for(int i=0;i<REPS;i++){
-        msrmts1+=probe((void *)test);
+        msrmts1+=probe((void *)buffer);
     }
     for(int i=0;i<REPS;i++){
         for(int i=offset;i<LALALALAL1+offset;i++){
-            access(&test[i*1024]);
+            access(&buffer[i*1024]);
         }
-        probe(((void *)test)+222);
+        probe(((void *)buffer)+222);
         __asm__ volatile("lfence;");
-        msrmts2+=probe((void *)test);        
+        msrmts2+=probe((void *)buffer);        
         __asm__ volatile("lfence;");
     }
     
-    probe((void *)test);
+    probe((void *)buffer);
     __asm__ volatile("lfence;");
     for(int i=0;i<REPS;i++){
         for(int i=offset;i<LALALALAL2+offset;i++){
-            access(&test[i*2048]);
+            access(&buffer[i*2048]);
         }
         for(int i=offset;i<LALALALAL2+offset;i++){
-            access(&test[i*2048]);
+            access(&buffer[i*2048]);
         }
         for(int i=offset;i<LALALALAL2+offset;i++){
-            access(&test[i*2048]);
+            access(&buffer[i*2048]);
         }
-        probe(((void *)test)+222);    
+        probe(((void *)buffer)+222);    
         __asm__ volatile("lfence;");
-        msrmts3+=probe((void *)test);
+        msrmts3+=probe((void *)buffer);
         __asm__ volatile("lfence;");
     }
     
     printf("b: %lu %lu %lu\n", msrmts1, msrmts2, msrmts3);
-    munmap(test, size_factor*sizeof(Node));    
+    munmap(buffer, size_factor*sizeof(Node));    
 }
+
+#define INDEX_OFFSET 10
+void test_test(){
+    Node *buffer = (Node *) mmap(NULL, size_factor*sizeof(Node), PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB, 0, 0);
+    list_init(buffer, size_factor*sizeof(Node));
+
+    Node *tmp = list_get(&buffer, 1024+INDEX_OFFSET);
+    Node **head1=&tmp;
+    
+    tmp = list_get(&buffer, 262144 + INDEX_OFFSET);
+    Node **head2=&tmp;
+    
+    for(int i=1;i<LALALALAL1;i++){
+        tmp=list_get(&buffer, i*1024+1024+INDEX_OFFSET);
+        list_append(head1, tmp);
+    }    
+    
+    for(int i=1;i<LALALALAL2;i++){
+        tmp=list_get(&buffer, i*2048+262144+INDEX_OFFSET);
+        list_append(head2, tmp);        
+    }
+    void *target = (void *) list_take(head, INDEX_OFFSET); 
+
+
+
+
+    // L1
+    init_evset(config_init(8, 4096, 64, 39, 32768, 1, 1));
+    
+    access(target);
+    access(target);
+    access(target);
+    access(target);
+    // cached 
+    for(int i=0;i<REPS;i++){
+        CU_ASSERT_TRUE(test(head1, 7, target)== 0);
+    }   
+    for(int i=0;i<1000;i++) printf("%lu; ", msrmts_buf[i]);
+    printf("\n");
+    msrmts_ind=0;
+
+
+    
+    // not cached 
+    access(target);
+    access(target);
+    access(target);
+    access(target);
+    // cached 
+    for(int i=0;i<REPS;i++){
+        CU_ASSERT_TRUE(test(head1, LALALALAL1, target)== 1);
+    }   
+    for(int i=0;i<1000;i++) printf("%lu; ", msrmts_buf[i]);
+    printf("\n");    
+    munmap(buffer, size_factor*sizeof(Node));    
+    
+}
+
 
 int main(int ac, char **av) {
 	// if (ac==1) conf = initConfig(8, 64, 41, 32768, 1, 1); // default L1 lab machine, no inputs

@@ -351,6 +351,9 @@ static void traverse_list(Node *ptr, u64 size){
     }
 }
 
+static u64 msrmts_buf[1000];
+static u64 msrmts_ind=0;
+
 static u64 test_intern(Node *ptr, u64 size, void *target){
      // TODO rm later // toggle if working
     access(target);
@@ -359,12 +362,13 @@ static u64 test_intern(Node *ptr, u64 size, void *target){
     access(target);
     traverse_list(ptr, size);
     
-    // victim + 222 access for page walk, maybe figure out later
-    
+    // victim + 222 access for page walk
+    access(target+222);
     u64 delta, time;
     time=rdtscpfence(); // TODO write asm code
     access(target);
     delta=rdtscpfence() - time;
+    msrmts_buf[msrmts_ind++]=delta;
     return delta;
 }
 
