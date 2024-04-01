@@ -376,7 +376,6 @@ static u64 test_intern(Node *ptr, u64 size, void *target){
 
 static u64 test(Node *ptr, u64 size, void *target){
     if(size==0 || ptr ==NULL || target ==NULL){
-        printf("duh\n");
         return 0;
     }
     return test_intern(ptr, size, target) > conf->threshold;
