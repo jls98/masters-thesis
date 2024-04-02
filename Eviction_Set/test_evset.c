@@ -70,6 +70,7 @@ void testbench_skylake_evsets(){
     for(int i=0;i<REPS;i++){
         
         msrmts[msr_index]=probe((void *)buffer);
+        msrmts1+=msrmts[msr_index++];
     }
     for(int i=0;i<REPS;i++){
         printf("cached: %lu\n", msrmts[i]);
@@ -113,7 +114,7 @@ void testbench_skylake_evsets(){
         msrmts3+=msrmts[msr_index++];
     }
     for(int i=0;i<REPS;i++){
-        printf("L2: %lu\n", msrmts[i]);
+        printf("L3: %lu\n", msrmts[i]);
     }
     msr_index=0;
     
