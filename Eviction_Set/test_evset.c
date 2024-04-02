@@ -108,37 +108,28 @@ void test_test(){
     list_init(buffer, size_factor*sizeof(Node));
     Node **buffer_ptr=&buffer;
     u64 index;
-    printf("asd\n");
     index = 1024+INDEX_OFFSET;
     Node *tmp = list_get(buffer_ptr, &index);
-    printf("asd %p %p\n", tmp, &tmp);
     Node **head1=&tmp;
-    printf("asd\n");
     index =262144 + INDEX_OFFSET;
     tmp = list_get(buffer_ptr, &index);
     Node **head2=&tmp;
-     printf("asd\n");
-   u64 *bufu64;
+    u64 *bufu64;
     for(int i=1;i<LALALALAL1;i++){
         index=i*1024+1024+ INDEX_OFFSET;
         bufu64=&index;
-        tmp=list_get(buffer_ptr, bufu64);
+        tmp=list_get(buffer_ptr, &index);
         list_append(head1, tmp);
-        printf("appended %p index %lu\n", tmp, *bufu64);
     }    
-     printf("asd\n");
-   // zählt nur bis Index 2059 und dann ist NULL entry
     for(int i=1;i<LALALALAL2;i++){
         index = i*2048+262144+(u64)INDEX_OFFSET;
-                bufu64=&index;
-
-        tmp=list_get(buffer_ptr, bufu64);
+        bufu64=&index;
+        tmp=list_get(buffer_ptr, &index);
         list_append(head2, tmp);        
-        printf("appended %p index %lu\n", tmp, *bufu64);
     }
     index =INDEX_OFFSET;
     void *target = (void *) list_get(buffer_ptr, &index); 
-    printf("target %p\n", target);
+    // printf("target %p\n", target);
 
 
 
@@ -155,8 +146,8 @@ void test_test(){
     for(int i=0;i<REPS;i++){
         CU_ASSERT_TRUE(test(*head1, 7, target)== 0);
     }   
-    for(int i=0;i<1000;i++) printf("%lu; ", msrmts_buf[i]);
-    printf("\n");
+    // for(int i=0;i<1000;i++) printf("%lu; ", msrmts_buf[i]);
+    // printf("\n");
     msrmts_ind=0;
 
 
@@ -170,8 +161,8 @@ void test_test(){
     for(int i=0;i<REPS;i++){
         CU_ASSERT_TRUE(test(*head1, LALALALAL1, target)== 1);
     }   
-    for(int i=0;i<1000;i++) printf("%lu; ", msrmts_buf[i]);
-    printf("\n");    
+    // for(int i=0;i<1000;i++) printf("%lu; ", msrmts_buf[i]);
+    // printf("\n");    
     munmap(buffer, size_factor*sizeof(Node));    
     
 }
