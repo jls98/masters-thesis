@@ -52,7 +52,7 @@ void test_node(){
 
 // 37 cached, 42 L2, 52 L3 
 #define LALALALAL1 8 // TODO figure out why 9 is needed!
-#define LALALALAL2 9
+#define LALALALAL2 8
 
 #define size_factor 99999999
 
