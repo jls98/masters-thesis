@@ -156,8 +156,6 @@ void test_test(){
     access(target);
     // cached 
     for(int i=0;i<REPS1;i++){
-            printf("d\n");
-
         CU_ASSERT_TRUE(test(*head1, LALALALAL1, target)== 1);
     }   
     munmap(buffer, size_factor*sizeof(Node));    
