@@ -370,6 +370,7 @@ static u64 test_intern(Node *ptr, u64 size, void *target){
     access(target);
     access(target);
     traverse_list(ptr, size);
+    traverse_list(ptr, size);
     
     // victim + 222 access for page walk
     access(target+222);
