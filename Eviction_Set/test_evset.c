@@ -136,7 +136,7 @@ void test_test(){
     access(target);
     access(target);
     // cached 
-    for(Node *cur=*head;cur->next!=NULL;cur=cur->next){
+    for(Node *cur=*head1;cur->next!=NULL;cur=cur->next){
         printf("%p\n", cur);
     }
     for(int i=0;i<REPS1;i++){
