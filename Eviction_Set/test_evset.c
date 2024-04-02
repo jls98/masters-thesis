@@ -117,13 +117,13 @@ void test_test(){
     tmp = list_get(buffer_ptr, &index);
     Node **head2=&tmp;
     for(int i=1;i<LALALALAL1;i++){
-        index=i*1024+1024+ INDEX_OFFSET;
-        tmp=list_get(buffer_ptr, &index);
+        index=i*1024;//+1024+ INDEX_OFFSET;
+        tmp=list_get(head1, &index);
         list_append(head1, tmp);
     }    
     for(int i=1;i<LALALALAL2;i++){
-        index = i*2048+262144+(u64)INDEX_OFFSET;
-        tmp=list_get(buffer_ptr, &index);
+        index = i*2048;//+262144+(u64)INDEX_OFFSET;
+        tmp=list_get(head2, &index);
         list_append(head2, tmp);        
     }
     index =INDEX_OFFSET;
