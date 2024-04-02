@@ -172,15 +172,25 @@ static void config_update(Config *con, u64 ways, u64 sets, u64 cache_line_size, 
 
 // --- node ---
 static void list_init(Node *src, u64 size) {
+    
+    srand(time(NULL));
+    
     src[0].prev=NULL;
     src[0].next=NULL;
     src[0].delta=0;
+    for(int i=0;i<8;i++){
+        src[0].pad[i]=rand() % 256;
+    }
+    
     int index=0;
     for(u64 i=1;i<(size/sizeof(Node));i++){
         src[i].prev = &src[i-1];
         src[i].prev->next = &src[i];
         src[i].next=NULL;
-        src[i].delta = 0;
+        src[i].delta = 0; 
+        for(int i=0;i<8;i++){
+            src[i].pad[i]=rand() % 256;
+        }
         index++;
     }
     printf("index %lu\n", index);
@@ -372,8 +382,8 @@ static u64 test_intern(Node *ptr, u64 size, void *target){
     time=rdtscpfence(); // TODO write asm code
     access(target);
     delta=rdtscpfence() - time;
-    msrmts_buf[msrmts_ind++]=delta;
-    printf("%lu\n", delta);
+    // msrmts_buf[msrmts_ind++]=delta;
+    // printf("%lu\n", delta);
     return delta;
 }
 
