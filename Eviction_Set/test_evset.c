@@ -120,18 +120,13 @@ void test_test(){
         tmp=list_take(buffer_ptr, &index);
         list_append(head1, tmp);
     }    
-    printf("d\n");
     for(int i=1;i<LALALALAL2;i++){
-    printf("%i\n", i);
         index = i*2048+262144+INDEX_OFFSET-i-LALALALAL1-1;
         tmp=list_take(buffer_ptr, &index);
         list_append(head2, tmp);        
     }
-    printf("d\n");
     index =INDEX_OFFSET;
     void *target = (void *) list_take(buffer_ptr, &index); 
-
-    printf("d\n");
 
     // L1
     init_evset(config_init(8, 4096, 64, 39, 32768, 1, 1));
@@ -142,6 +137,8 @@ void test_test(){
     access(target);
     // cached 
     for(int i=0;i<REPS1;i++){
+            printf("d\n");
+
         CU_ASSERT_TRUE(test(*head1, 7, target)== 0);
     }   
     
@@ -152,6 +149,8 @@ void test_test(){
     access(target);
     // cached 
     for(int i=0;i<REPS1;i++){
+            printf("d\n");
+
         CU_ASSERT_TRUE(test(*head1, LALALALAL1, target)== 1);
     }   
     munmap(buffer, size_factor*sizeof(Node));    
