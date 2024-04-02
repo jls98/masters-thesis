@@ -173,7 +173,7 @@ static void config_update(Config *con, u64 ways, u64 sets, u64 cache_line_size, 
 // --- node ---
 static void list_init(Node *src, u64 size) {
     
-    srand(time(NULL));
+    srand(time(NULL)); // avoid pre fetchers by having different contents on the mem pages
     
     src[0].prev=NULL;
     src[0].next=NULL;
@@ -237,6 +237,7 @@ static Node *list_get(Node **head, u64 *index) {
         tmp=tmp->next;
         i++;
     }
+    printf("%p \n", tmp);
     // *index=i; // DEBUG purposes, toggle, to count list elements, use large index and retrieve value from pointer
     return tmp;
 }
