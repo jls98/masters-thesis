@@ -394,6 +394,7 @@ static u64 test_intern(Node *ptr, u64 size, void *target){
     // delta=rdtscpfence() - time;
     // delta=;
     msrmts[msr_index++]=probe(target);
+    msrmts[msr_index++]=probe(target);
     return msrmts[msr_index-1];
 }
 
