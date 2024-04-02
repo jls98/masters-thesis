@@ -138,7 +138,7 @@ void test_test(){
     // cached #
     printf("lalaa: %p\n", *head1);
     for(Node *cur=*head1;cur->next!=NULL;cur=cur->next){
-        printf("hi\n")
+        printf("hi\n");
         printf("%p\n", cur);
     }
     for(int i=0;i<REPS1;i++){
