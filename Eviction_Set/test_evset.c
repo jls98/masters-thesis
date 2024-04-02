@@ -111,7 +111,8 @@ void test_test(){
     u64 index;
     index = 1024+INDEX_OFFSET;
     Node *tmp = list_take(buffer_ptr, &index);
-    Node **head1=&tmp;
+    Node **head1=NULL;
+    list_append(head1, tmp);
     index =262144 + INDEX_OFFSET-1;
     tmp = list_take(buffer_ptr, &index);
     Node **head2=&tmp;
