@@ -3,7 +3,7 @@
 #include <CUnit/Basic.h>
 
 void test_node(){
-    Node *nodes= malloc(5000*sizeof(Node));
+    Node *nodes= (Node *) mmap(NULL, 5000*sizeof(Node), PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB, -1, 0); 
     
     // test init 
     list_init(nodes, 5000*sizeof(Node));
