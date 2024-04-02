@@ -110,20 +110,22 @@ void test_test(){
     Node **buffer_ptr=&buffer;
     u64 index;
     index = 1024+INDEX_OFFSET;
+    
+    // init evset1
     Node *tmp = list_take(buffer_ptr, &index);
     Node **head1=malloc(sizeof(Node *));
     list_append(head1, tmp);
     index =262144 + INDEX_OFFSET-1;
-    tmp = list_take(buffer_ptr, &index);
-    Node **head2=&tmp;
-    printf("head1 %p\n", *head1);
+
+    // init evset2
+    tmp = list_take(buffer_ptr, &index);    
+    Node **head2=malloc(sizeof(Node *));
+    list_append(head2, tmp);
     for(int i=1;i<LALALALAL1;i++){
         index=i*1024+1024+ INDEX_OFFSET-i-1;
         tmp=list_take(buffer_ptr, &index);
         list_append(head1, tmp);
-        printf("tmp %p elems prev %p, elems next %p\n", tmp, tmp->prev, tmp->next);
     }    
-    printf("head1 next %p\n", (*head1)->next);
 
     for(int i=1;i<LALALALAL2;i++){
         index = i*2048+262144+INDEX_OFFSET-i-LALALALAL1-1;
@@ -141,15 +143,9 @@ void test_test(){
     access(target);
     access(target);
     // cached #
-    printf("lalaa: %p\n", *head1);
-    printf("%p %p\n", (*head1)->prev, (*head1)->next);
     for(Node *cur=*head1;cur->next!=NULL;cur=cur->next){
-        printf("hi\n");
-        printf("%p\n", cur);
     }
     for(int i=0;i<REPS1;i++){
-            printf("d\n");
-
         CU_ASSERT_TRUE(test(*head1, 7, target)== 0);
     }   
     
