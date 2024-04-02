@@ -58,7 +58,7 @@ void test_node(){
 
 #define REPS 1000
 void testbench_skylake_evsets(){
-    Node *buffer = (Node *) mmap(NULL, size_factor*sizeof(Node), PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB, 0, 0);    
+    Node *buffer = (Node *) mmap(NULL, size_factor*sizeof(Node), PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB, -1, 0);    
     
     list_init(buffer, size_factor*sizeof(Node));
     uint64_t msrmts1=0;
@@ -104,7 +104,7 @@ void testbench_skylake_evsets(){
 
 #define INDEX_OFFSET 10
 void test_test(){
-    Node *buffer = (Node *) mmap(NULL, size_factor*sizeof(Node), PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB, 0, 0);
+    Node *buffer = (Node *) mmap(NULL, size_factor*sizeof(Node), PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB, -1, 0);
     list_init(buffer, size_factor*sizeof(Node));
     Node **buffer_ptr=&buffer;
     u64 index;
