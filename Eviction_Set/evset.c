@@ -180,9 +180,7 @@ static void list_init(Node *src, u64 size) {
     src[0].delta=0;
     for(int i=0;i<8;i++){
         src[0].pad[i]=rand() % 256;
-    }
-    
-    int index=0;
+    }    
     for(u64 i=1;i<(size/sizeof(Node));i++){
         src[i].prev = &src[i-1];
         src[i].prev->next = &src[i];
@@ -191,7 +189,6 @@ static void list_init(Node *src, u64 size) {
         for(int i=0;i<8;i++){
             src[i].pad[i]=rand() % 256;
         }
-        index++;
     }
 }
 

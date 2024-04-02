@@ -52,7 +52,7 @@ void test_node(){
 
 // 37 cached, 42 L2, 52 L3 
 #define LALALALAL1 8 // TODO figure out why 9 is needed! why do brackets solve it??????
-#define LALALALAL2 8
+#define LALALALAL2 9
 
 #define size_factor 99999999
 
@@ -102,6 +102,7 @@ void testbench_skylake_evsets(){
     munmap(buffer, size_factor*sizeof(Node));    
 }
 
+#define REPS1 5
 #define INDEX_OFFSET 10
 void test_test(){
     Node *buffer = (Node *) mmap(NULL, size_factor*sizeof(Node), PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB, -1, 0);
@@ -114,16 +115,13 @@ void test_test(){
     index =262144 + INDEX_OFFSET;
     tmp = list_get(buffer_ptr, &index);
     Node **head2=&tmp;
-    u64 *bufu64;
     for(int i=1;i<LALALALAL1;i++){
         index=i*1024+1024+ INDEX_OFFSET;
-        bufu64=&index;
         tmp=list_get(buffer_ptr, &index);
         list_append(head1, tmp);
     }    
     for(int i=1;i<LALALALAL2;i++){
         index = i*2048+262144+(u64)INDEX_OFFSET;
-        bufu64=&index;
         tmp=list_get(buffer_ptr, &index);
         list_append(head2, tmp);        
     }
@@ -139,7 +137,7 @@ void test_test(){
     access(target);
     access(target);
     // cached 
-    for(int i=0;i<REPS;i++){
+    for(int i=0;i<REPS1;i++){
         CU_ASSERT_TRUE(test(*head1, 7, target)== 0);
     }   
     
@@ -149,7 +147,7 @@ void test_test(){
     access(target);
     access(target);
     // cached 
-    for(int i=0;i<REPS;i++){
+    for(int i=0;i<REPS1;i++){
         CU_ASSERT_TRUE(test(*head1, LALALALAL1, target)== 1);
     }   
     munmap(buffer, size_factor*sizeof(Node));    
@@ -183,7 +181,7 @@ int main(int ac, char **av) {
 
     CU_add_test(suite, "Test test_node", test_node);
     CU_add_test(suite, "Test testbench_skylake_evsets", testbench_skylake_evsets);
-    // CU_add_test(suite, "Test test_test", test_test);
+    CU_add_test(suite, "Test test_test", test_test);
 
     CU_basic_run_tests();
     CU_cleanup_registry();
