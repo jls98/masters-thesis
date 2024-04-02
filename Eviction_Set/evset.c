@@ -241,7 +241,7 @@ static Node *list_get(Node **head, u64 *index) {
         tmp=tmp->next;
         i++;
     }
-    printf("get: %p %p %p\n", head, tmp, *head);
+    // printf("get: %p %p %p\n", head, tmp, *head);
     *index=i; // DEBUG purposes, toggle, to count list elements, use large index and retrieve value from pointer
     return tmp;
 }
