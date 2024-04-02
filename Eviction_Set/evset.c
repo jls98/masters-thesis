@@ -377,7 +377,7 @@ static u64 test_intern(Node *ptr, u64 size, void *target){
     time=rdtscpfence(); // TODO write asm code
     access(target);
     delta=rdtscpfence() - time;
-    msrmts[m_index++]=delta;
+    msrmts[msr_index++]=delta;
     return delta;
 }
 
