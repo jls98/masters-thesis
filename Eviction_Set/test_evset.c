@@ -10,7 +10,6 @@ void test_node(){
     for(int i=1;i<4999;i++){  
         CU_ASSERT_EQUAL(nodes[i].prev, &nodes[i-1]);
         CU_ASSERT_EQUAL(nodes[i].next, &nodes[i+1]);
-        printf("next %p node i+1 %p\n", nodes[i].next, &nodes[i+1]);
         CU_ASSERT_EQUAL(nodes[i].delta, 0);
     }
     
@@ -111,19 +110,19 @@ void test_test(){
     Node **buffer_ptr=&buffer;
     u64 index;
     index = 1024+INDEX_OFFSET;
-    Node *tmp = list_get(buffer_ptr, &index);
+    Node *tmp = list_take(buffer_ptr, &index);
     Node **head1=&tmp;
-    index =262144 + INDEX_OFFSET;
-    tmp = list_get(buffer_ptr, &index);
+    index =262144 + INDEX_OFFSET-1;
+    tmp = list_take(buffer_ptr, &index);
     Node **head2=&tmp;
     for(int i=1;i<LALALALAL1;i++){
-        index=i*1024;//+1024+ INDEX_OFFSET;
-        tmp=list_get(head1, &index);
+        index=i*1024+1024+ INDEX_OFFSET-i-1;
+        tmp=list_take(buffer_ptr, &index);
         list_append(head1, tmp);
     }    
     for(int i=1;i<LALALALAL2;i++){
-        index = i*2048;//+262144+(u64)INDEX_OFFSET;
-        tmp=list_get(head2, &index);
+        index = i*2048+262144+INDEX_OFFSET-i-LALALALAL1-1;
+        tmp=list_get(buffer_ptr, &index);
         list_append(head2, tmp);        
     }
     index =INDEX_OFFSET;
