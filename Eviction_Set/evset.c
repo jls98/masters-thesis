@@ -192,7 +192,7 @@ static void list_init(Node *src, u64 size) {
     }
     printf("list_init: %lu\n", size/sizeof(Node));
     for(u64 i=1;i<(size/sizeof(Node));i++){
-        printf("%p, %p; ", src[i], src[i]->next);
+        printf("%p, %p; ", src[i], src[i].next);
         
     }
     printf("\n");
