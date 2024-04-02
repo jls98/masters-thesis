@@ -241,8 +241,7 @@ static Node *list_get(Node **head, u64 *index) {
         tmp=tmp->next;
         i++;
     }
-    // printf("get: %p %p %p\n", head, tmp, *head);
-    *index=i; // DEBUG purposes, toggle, to count list elements, use large index and retrieve value from pointer
+    // *index=i; // DEBUG purposes, toggle, to count list elements, use large index and retrieve value from pointer
     return tmp;
 }
 
@@ -365,9 +364,6 @@ static void traverse_list(Node *ptr, u64 size){
     }
 }
 
-static u64 msrmts_buf[1000];
-static u64 msrmts_ind=0;
-
 static u64 test_intern(Node *ptr, u64 size, void *target){
      // TODO rm later // toggle if working
     access(target);
@@ -382,8 +378,6 @@ static u64 test_intern(Node *ptr, u64 size, void *target){
     time=rdtscpfence(); // TODO write asm code
     access(target);
     delta=rdtscpfence() - time;
-    // msrmts_buf[msrmts_ind++]=delta;
-    // printf("%lu\n", delta);
     return delta;
 }
 

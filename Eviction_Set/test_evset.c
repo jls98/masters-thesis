@@ -129,11 +129,7 @@ void test_test(){
     }
     index =INDEX_OFFSET;
     void *target = (void *) list_get(buffer_ptr, &index); 
-    // printf("target %p\n", target);
 
-
-
-    printf("asd\n");
 
     // L1
     init_evset(config_init(8, 4096, 64, 39, 32768, 1, 1));
@@ -146,11 +142,6 @@ void test_test(){
     for(int i=0;i<REPS;i++){
         CU_ASSERT_TRUE(test(*head1, 7, target)== 0);
     }   
-    // for(int i=0;i<1000;i++) printf("%lu; ", msrmts_buf[i]);
-    // printf("\n");
-    msrmts_ind=0;
-
-
     
     // not cached 
     access(target);
@@ -161,8 +152,6 @@ void test_test(){
     for(int i=0;i<REPS;i++){
         CU_ASSERT_TRUE(test(*head1, LALALALAL1, target)== 1);
     }   
-    // for(int i=0;i<1000;i++) printf("%lu; ", msrmts_buf[i]);
-    // printf("\n");    
     munmap(buffer, size_factor*sizeof(Node));    
     
 }
@@ -194,7 +183,7 @@ int main(int ac, char **av) {
 
     CU_add_test(suite, "Test test_node", test_node);
     CU_add_test(suite, "Test testbench_skylake_evsets", testbench_skylake_evsets);
-    // CU_add_test(suite, "Test test_test", test_test);
+    CU_add_test(suite, "Test test_test", test_test);
 
     CU_basic_run_tests();
     CU_cleanup_registry();
