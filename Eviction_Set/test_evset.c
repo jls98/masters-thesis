@@ -120,6 +120,7 @@ void test_test(){
         tmp=list_take(buffer_ptr, &index);
         list_append(head1, tmp);
     }    
+    printf("d\n");
     for(int i=1;i<LALALALAL2;i++){
         index = i*2048+262144+INDEX_OFFSET-i-LALALALAL1-1;
         tmp=list_take(buffer_ptr, &index);
