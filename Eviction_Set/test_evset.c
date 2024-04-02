@@ -115,11 +115,15 @@ void test_test(){
     index =262144 + INDEX_OFFSET-1;
     tmp = list_take(buffer_ptr, &index);
     Node **head2=&tmp;
+    printf("head1 %p\n", *head1);
     for(int i=1;i<LALALALAL1;i++){
         index=i*1024+1024+ INDEX_OFFSET-i-1;
         tmp=list_take(buffer_ptr, &index);
         list_append(head1, tmp);
+        printf("elems %p\n", tmp->prev);
     }    
+    printf("head1 next %p\n", (*head1)->next);
+
     for(int i=1;i<LALALALAL2;i++){
         index = i*2048+262144+INDEX_OFFSET-i-LALALALAL1-1;
         tmp=list_take(buffer_ptr, &index);
