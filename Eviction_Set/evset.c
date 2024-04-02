@@ -190,11 +190,6 @@ static void list_init(Node *src, u64 size) {
             src[i].pad[i]=rand() % 256;
         }
     }
-    printf("list_init: %lu\n", size/sizeof(Node));
-    // for(u64 i=1;i<(size/sizeof(Node));i++){
-        // printf("%p, %p; ", src[i], src[i].next);  
-    // }
-    printf("\n");
 }
 
 // add to beginning
@@ -242,7 +237,6 @@ static Node *list_get(Node **head, u64 *index) {
         tmp=tmp->next;
         i++;
     }
-    printf("get: %p \n", tmp);
     // *index=i; // DEBUG purposes, toggle, to count list elements, use large index and retrieve value from pointer
     return tmp;
 }
