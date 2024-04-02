@@ -51,7 +51,7 @@ void test_node(){
 }
 
 // 37 cached, 42 L2, 52 L3 
-#define LALALALAL1 9
+#define LALALALAL1 8 // TODO figure out why 9 is needed!
 #define LALALALAL2 9
 
 #define size_factor 99999999
@@ -71,7 +71,7 @@ void testbench_skylake_evsets(){
         msrmts1+=probe((void *)buffer);
     }
     for(int i=0;i<REPS;i++){
-        for(int i=offset;i<LALALALAL1+offset;i++){
+        for(int i=offset;i<(LALALALAL1+offset);i++){
             access(&buffer[i*1024]);
         }
         probe(((void *)buffer)+222);
@@ -83,13 +83,13 @@ void testbench_skylake_evsets(){
     probe((void *)buffer);
     __asm__ volatile("lfence;");
     for(int i=0;i<REPS;i++){
-        for(int i=offset;i<LALALALAL2+offset;i++){
+        for(int i=offset;i<(LALALALAL2+offset);i++){
             access(&buffer[i*2048]);
         }
-        for(int i=offset;i<LALALALAL2+offset;i++){
+        for(int i=offset;i<(LALALALAL2+offset);i++){
             access(&buffer[i*2048]);
         }
-        for(int i=offset;i<LALALALAL2+offset;i++){
+        for(int i=offset;i<(LALALALAL2+offset);i++){
             access(&buffer[i*2048]);
         }
         probe(((void *)buffer)+222);    
