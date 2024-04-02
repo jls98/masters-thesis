@@ -122,14 +122,16 @@ void test_test(){
     }    
     printf("d\n");
     for(int i=1;i<LALALALAL2;i++){
-    printf("d\n");
+    printf("%i\n", i);
         index = i*2048+262144+INDEX_OFFSET-i-LALALALAL1-1;
         tmp=list_take(buffer_ptr, &index);
         list_append(head2, tmp);        
     }
+    printf("d\n");
     index =INDEX_OFFSET;
-    void *target = (void *) list_get(buffer_ptr, &index); 
+    void *target = (void *) list_take(buffer_ptr, &index); 
 
+    printf("d\n");
 
     // L1
     init_evset(config_init(8, 4096, 64, 39, 32768, 1, 1));
