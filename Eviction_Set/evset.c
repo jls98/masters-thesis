@@ -381,9 +381,10 @@ static u64 test_intern(Node *ptr, u64 size, void *target){
     // victim + 222 access for page walk
     access(target+222);
     u64 delta, time;
-    time=rdtscpfence(); // TODO write asm code
-    access(target);
-    delta=rdtscpfence() - time;
+    // time=rdtscpfence(); // TODO write asm code
+    // access(target);
+    // delta=rdtscpfence() - time;
+    delta=probe(target);
     msrmts[msr_index++]=delta;
     return delta;
 }
