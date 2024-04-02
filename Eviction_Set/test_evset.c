@@ -135,7 +135,8 @@ void test_test(){
     access(target);
     access(target);
     access(target);
-    // cached 
+    // cached #
+    printf("lalaa:\n");
     for(Node *cur=*head1;cur->next!=NULL;cur=cur->next){
         printf("%p\n", cur);
     }
