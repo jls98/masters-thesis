@@ -160,7 +160,7 @@ void test_test(){
     }   
     
     for(int i=0;i<2*REPS1;i++){
-        printf("m: %lu\n", msrmts[i]);
+        printf("n: %lu\n", msrmts[i]);
     }
     munmap(buffer, size_factor*sizeof(Node));    
     
