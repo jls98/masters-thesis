@@ -120,7 +120,7 @@ void test_test(){
         index=i*1024+1024+ INDEX_OFFSET-i-1;
         tmp=list_take(buffer_ptr, &index);
         list_append(head1, tmp);
-        printf("elems %p\n", tmp->prev);
+        printf("tmp %p elems prev %p, elems next\n", tmp, tmp->prev, tmp->next);
     }    
     printf("head1 next %p\n", (*head1)->next);
 
