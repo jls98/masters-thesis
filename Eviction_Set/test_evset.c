@@ -68,17 +68,31 @@ void testbench_skylake_evsets(){
     probe((void *)buffer);
     __asm__ volatile("lfence;");
     for(int i=0;i<REPS;i++){
-        msrmts1+=probe((void *)buffer);
+        
+        msrmts[msr_index]=probe((void *)buffer);
     }
+    for(int i=0;i<REPS;i++){
+        printf("cached: %lu\n", msrmts[i]);
+    }
+    msr_index=0;
+    
     for(int i=0;i<REPS;i++){
         for(int i=offset;i<(LALALALAL1+offset);i++){
             access(&buffer[i*1024]);
         }
         probe(((void *)buffer)+222);
         __asm__ volatile("lfence;");
-        msrmts2+=probe((void *)buffer);        
+        msrmts[msr_index]=probe((void *)buffer);    
+        
+        
         __asm__ volatile("lfence;");
+        msrmts2+=msrmts[msr_index++];
     }
+    for(int i=0;i<REPS;i++){
+        printf("L1: %lu\n", msrmts[i]);
+    }
+    msr_index=0;
+
     
     probe((void *)buffer);
     __asm__ volatile("lfence;");
@@ -94,9 +108,14 @@ void testbench_skylake_evsets(){
         }
         probe(((void *)buffer)+222);    
         __asm__ volatile("lfence;");
-        msrmts3+=probe((void *)buffer);
+        msrmts[msr_index]=probe((void *)buffer);
         __asm__ volatile("lfence;");
+        msrmts3+=msrmts[msr_index++];
     }
+    for(int i=0;i<REPS;i++){
+        printf("L2: %lu\n", msrmts[i]);
+    }
+    msr_index=0;
     
     printf("b: %lu %lu %lu\n", msrmts1, msrmts2, msrmts3);
     munmap(buffer, size_factor*sizeof(Node));    
