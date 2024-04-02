@@ -148,7 +148,7 @@ void test_test(){
     for(int i=0;i<REPS1;i++){
         CU_ASSERT_TRUE(test(*head1, 7, target)== 0);
     }   
-    
+
     // not cached 
     access(target);
     access(target);
@@ -158,6 +158,10 @@ void test_test(){
     for(int i=0;i<REPS1;i++){
         CU_ASSERT_TRUE(test(*head1, LALALALAL1, target)== 1);
     }   
+    
+    for(int i=0;i<2*REPS1;i++){
+        printf("m: %lu\n", msrmts[i]);
+    }
     munmap(buffer, size_factor*sizeof(Node));    
     
 }

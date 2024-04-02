@@ -360,6 +360,9 @@ static void traverse_list(Node *ptr, u64 size){
     }
 }
 
+static u64 msrmts[1000];
+static u64 msr_index=0;
+
 static u64 test_intern(Node *ptr, u64 size, void *target){
      // TODO rm later // toggle if working
     access(target);
@@ -374,6 +377,7 @@ static u64 test_intern(Node *ptr, u64 size, void *target){
     time=rdtscpfence(); // TODO write asm code
     access(target);
     delta=rdtscpfence() - time;
+    msrmts[m_index++]=delta;
     return delta;
 }
 
