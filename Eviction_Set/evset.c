@@ -379,7 +379,7 @@ static u64 test_intern(Node *ptr, u64 size, void *target){
     traverse_list0(ptr, size);
     
     // victim + 222 access for page walk
-    access(target+222);
+    // access(target+222);
     u64 delta, time;
     time=rdtscpfence(); // TODO write asm code
     access(target);
