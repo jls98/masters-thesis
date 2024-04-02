@@ -178,9 +178,9 @@ static void list_init(Node *src, u64 size) {
     src[0].prev=NULL;
     src[0].next=NULL;
     src[0].delta=0;
-    for(int i=0;i<8;i++){
-        src[0].pad[i]=rand() % 256;
-    }
+    // for(int i=0;i<8;i++){
+        // src[0].pad[i]=rand() % 256;
+    // }
     
     int index=0;
     for(u64 i=1;i<(size/sizeof(Node));i++){
@@ -188,12 +188,11 @@ static void list_init(Node *src, u64 size) {
         src[i].prev->next = &src[i];
         src[i].next=NULL;
         src[i].delta = 0; 
-        for(int i=0;i<8;i++){
-            src[i].pad[i]=rand() % 256;
-        }
+        // for(int i=0;i<8;i++){
+            // src[i].pad[i]=rand() % 256;
+        // }
         index++;
     }
-    printf("index %lu\n", index);
 }
 
 // add to beginning
