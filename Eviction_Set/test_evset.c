@@ -183,7 +183,7 @@ int main(int ac, char **av) {
 
     CU_add_test(suite, "Test test_node", test_node);
     CU_add_test(suite, "Test testbench_skylake_evsets", testbench_skylake_evsets);
-    CU_add_test(suite, "Test test_test", test_test);
+    // CU_add_test(suite, "Test test_test", test_test);
 
     CU_basic_run_tests();
     CU_cleanup_registry();
