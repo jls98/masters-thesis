@@ -10,6 +10,7 @@ void test_node(){
     for(int i=1;i<4999;i++){  
         CU_ASSERT_EQUAL(nodes[i].prev, &nodes[i-1]);
         CU_ASSERT_EQUAL(nodes[i].next, &nodes[i+1]);
+        printf("next %p node i+1 %p\n", nodes[i].next, &nodes[i+1]);
         CU_ASSERT_EQUAL(nodes[i].delta, 0);
     }
     
