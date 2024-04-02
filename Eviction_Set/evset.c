@@ -360,6 +360,13 @@ static void traverse_list(Node *ptr, u64 size){
     }
 }
 
+static void traverse_list0(Node *ptr, u64 size){
+    for(Node *tmp=ptr;tmp->next;tmp=tmp->next){
+        access(tmp);
+    }
+}
+
+
 static u64 msrmts[1000];
 static u64 msr_index=0;
 
@@ -369,8 +376,7 @@ static u64 test_intern(Node *ptr, u64 size, void *target){
     access(target);
     access(target);
     access(target);
-    traverse_list(ptr, size);
-    traverse_list(ptr, size);
+    traverse_list0(ptr, size);
     
     // victim + 222 access for page walk
     access(target+222);
@@ -381,6 +387,8 @@ static u64 test_intern(Node *ptr, u64 size, void *target){
     msrmts[msr_index++]=delta;
     return delta;
 }
+
+
 
 static u64 test(Node *ptr, u64 size, void *target){
     if(size==0 || ptr ==NULL || target ==NULL){
