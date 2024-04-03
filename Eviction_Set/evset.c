@@ -212,14 +212,12 @@ static void list_append(Node **head, Node *e){
     
     Node *tmp=*head;
     while(tmp->next){ // iterate to end
-        printf("append %p\n", tmp);
         tmp=tmp->next;    
     }
   
     tmp->next=e;
     e->prev=tmp;
     e->next=NULL;
-    printf("tmp %p tmp->next %p\n", tmp, tmp->next);
 }
 
 // remove e and return first element of list
