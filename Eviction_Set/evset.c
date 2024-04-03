@@ -218,6 +218,7 @@ static void list_append(Node **head, Node *e){
     tmp->next=e;
     e->prev=tmp;
     e->next=NULL;
+    printf("tmp %p tmp->next %p", tmp, tmp->next);
 }
 
 // remove e and return first element of list
