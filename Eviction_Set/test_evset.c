@@ -160,7 +160,8 @@ void test_test(){
     
     index =INDEX_OFFSET;
     void *target = (void *) list_take(buffer_ptr, &index); 
-
+    
+    printf("b4 shuffle\n");
     list_shuffle(head1);
     
     printf("test_test: shuffle complete\n");
