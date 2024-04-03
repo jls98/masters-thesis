@@ -196,9 +196,10 @@ static void list_init(Node *src, u64 size) {
 // add to beginning
 static void list_push(Node **head, Node *e) {
     if (!e)  return;
+    Node *tmp=*head;
     e->prev = NULL;
-    e->next = *head;
-    if(*head) (*head)->prev = e;
+    e->next = tmp;
+    if(tmp) tmp->prev = e;
     *head=e;
 }
 
