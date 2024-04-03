@@ -57,7 +57,7 @@ static void list_append(Node **head, Node *e);
 static Node *list_pop(Node **head);
 static Node *list_get(Node **head, u64 *index);
 static Node *list_take(Node **head, u64 *index);
-
+static void list_shuffle(Node **head);
 
 //Config functions #######################################
 /* init Config */
@@ -238,7 +238,7 @@ static Node *list_get(Node **head, u64 *index) {
         tmp=tmp->next;
         i++;
     }
-    // *index=i; // DEBUG purposes, toggle, to count list elements, use large index and retrieve value from pointer
+    *index=i; // DEBUG purposes, toggle, to count list elements, use large index and retrieve value from pointer
     return tmp;
 }
 
@@ -259,6 +259,23 @@ static Node *list_take(Node **head, u64 *index) {
     return tmp;
 }
 
+static void list_shuffle(Node **head){
+    Node **new_head = malloc(sizeof(Node*));
+    u64 size=UINT64_MAX;
+    list_get(head, &size);
+    // size has now the size of linked list 
+    while(tmp){
+        list_push(new_head, list_take(head, lfsr_rand(&lfsr)%size--));
+    }
+    *head = *new_head;
+}
+
+static void list_print(Node **head){
+    printf("[+] printing adrs of list:\n");
+    for(Node *tmp=*head;tmp->next;tmp=tmp->next){
+        printf("%p\n", tmp);
+    }
+}
 
 // --- algorithms ---
 #ifndef NOMAIN

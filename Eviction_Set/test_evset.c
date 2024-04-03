@@ -54,7 +54,7 @@ void test_node(){
 #define LALALALAL1 8 // TODO figure out why 9 is needed! why do brackets solve it??????
 #define LALALALAL2 9
 
-#define size_factor 99999999
+#define size_factor 999999
 
 #define REPS 100
 void testbench_skylake_evsets(){
@@ -155,6 +155,13 @@ void test_test(){
     index =INDEX_OFFSET;
     void *target = (void *) list_take(buffer_ptr, &index); 
 
+
+
+    list_print(head1);
+    list_shuffle(head1);
+    list_print(head1);
+    
+    
     // L1
     init_evset(config_init(8, 4096, 64, 39, 32768, 1, 1));
     
