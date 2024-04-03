@@ -56,7 +56,7 @@ void test_node(){
 
 #define size_factor 99999999
 
-#define REPS 1000
+#define REPS 100
 void testbench_skylake_evsets(){
     Node *buffer = (Node *) mmap(NULL, size_factor*sizeof(Node), PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB, -1, 0);    
     
