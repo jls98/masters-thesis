@@ -206,13 +206,11 @@ static void list_push(Node **head, Node *e) {
 
 // add to end
 static void list_append(Node **head, Node *e){
-    list_print(head);
     if(!e) return;
     if(!*head){
         e->next=NULL;
         e->prev=NULL;
-        *head=e;
-        
+        *head=e;        
         return;
     }
     
@@ -282,6 +280,7 @@ static void list_shuffle(Node **head){
         cand = list_take(head, &index);
         printf("size %lu, cand %p\n", size, cand);
         list_append(new_head, cand);
+        list_print(new_head);
     }
     *head = *new_head;
 }
