@@ -215,6 +215,7 @@ static void list_append(Node **head, Node *e){
         printf("append %p\n", tmp);
         tmp=tmp->next;    
     }
+  
     tmp->next=e;
     e->prev=tmp;
     e->next=NULL;
@@ -281,9 +282,8 @@ static void list_print(Node **head){
     printf("[+] printing adrs of list:\n");
     Node *tmp;
     for(tmp=*head;tmp->next;tmp=tmp->next){
-        printf("[.] %p\n", tmp);
+        printf("[.] %p %p\n", tmp, tmp->next);
     }
-    printf("extra %p\n", tmp->next);
 }
 
 // --- algorithms ---
