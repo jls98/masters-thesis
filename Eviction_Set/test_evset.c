@@ -158,8 +158,10 @@ void test_test(){
 
 
 
+    printf("%p %p\n", head1, *head1);
     list_print(head1);
     list_shuffle(head1);
+    printf("%p %p\n", head1, *head1);
     list_print(head1);
     
     
