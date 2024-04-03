@@ -148,6 +148,7 @@ void test_test(){
         list_print(head1);
     }    
     printf("oh\n");
+    printf("7th elem %p\n", list_get(head1, 0));
     printf("7th elem %p\n", list_get(head1, 6));
     printf("8th elem %p\n", list_get(head1, 7));
 
