@@ -268,17 +268,16 @@ static void list_shuffle(Node **head){
     if(!lfsr) lfsr=lfsr_create();
     while(size){
         index = lfsr_rand(&lfsr)%size--;
-        printf("%lu\n", index);
+        printf("index %lu\n", index);
         list_push(new_head, list_take(head, &index));
     }
-    printf("D\n");
     *head = *new_head;
 }
 
 static void list_print(Node **head){
     printf("[+] printing adrs of list:\n");
     for(Node *tmp=*head;tmp->next;tmp=tmp->next){
-        printf("%p\n", tmp);
+        printf("[.] %p\n", tmp);
     }
 }
 
