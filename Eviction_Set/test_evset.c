@@ -129,18 +129,18 @@ void test_test(){
     list_init(buffer, size_factor*sizeof(Node));
     Node **buffer_ptr=&buffer;
     u64 index;
-    index = 1024+INDEX_OFFSET;
     
     // init evset1
+    index = 1024+INDEX_OFFSET;
     Node *tmp = list_take(buffer_ptr, &index);
     Node **head1=malloc(sizeof(Node *));
     list_append(head1, tmp);
-    index =262144 + INDEX_OFFSET-1;
 
-    // init evset2
-    tmp = list_take(buffer_ptr, &index);    
-    Node **head2=malloc(sizeof(Node *));
-    list_append(head2, tmp);
+    // // init evset2
+    // index =262144 + INDEX_OFFSET-1;
+    // tmp = list_take(buffer_ptr, &index);    
+    // Node **head2=malloc(sizeof(Node *));
+    // list_append(head2, tmp);
     
     printf("test test: finished init\n");
     
@@ -150,11 +150,11 @@ void test_test(){
         list_append(head1, tmp);
     }    
 
-    for(int i=1;i<LALALALAL2;i++){
-        index = i*2048+262144+INDEX_OFFSET-i-LALALALAL1-1;
-        tmp=list_take(buffer_ptr, &index);
-        list_append(head2, tmp);        
-    }
+    // for(int i=1;i<LALALALAL2;i++){
+        // index = i*2048+262144+INDEX_OFFSET-i-LALALALAL1-1;
+        // tmp=list_take(buffer_ptr, &index);
+        // list_append(head2, tmp);        
+    // }
     
     printf("test_test: finished evset init\n");
     
