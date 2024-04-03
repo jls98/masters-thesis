@@ -164,7 +164,8 @@ void test_test(){
     printf("b4 shuffle\n");
     list_shuffle(head1);
     
-    printf("test_test: shuffle complete\n");
+    printf("test_test: shuffle complete:\n");
+    list_print(head1);
     // L1
     init_evset(config_init(8, 4096, 64, 39, 32768, 1, 1));
     
