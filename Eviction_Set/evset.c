@@ -391,7 +391,7 @@ static void traverse_list(Node *ptr, u64 size){
 static void traverse_list0(Node *ptr, u64 size){
     printf("tav run\n");
     for(Node *tmp=ptr;tmp->next;tmp=tmp->next){
-        access(tmp);
+        access((void *) tmp);
         printf("taverse: %p\n", tmp);
     }    
 }
