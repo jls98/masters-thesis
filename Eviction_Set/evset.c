@@ -262,11 +262,16 @@ static Node *list_take(Node **head, u64 *index) {
 static void list_shuffle(Node **head){
     Node **new_head = malloc(sizeof(Node*));
     u64 size=UINT64_MAX;
+    printf("D\n");
     list_get(head, &size);
     // size has now the size of linked list 
+    printf("D\n");
     while(*head){
+    printf("D\n");
         list_push(new_head, list_take(head, lfsr_rand(&lfsr)%size--));
+    printf("D\n");
     }
+    printf("D\n");
     *head = *new_head;
 }
 
