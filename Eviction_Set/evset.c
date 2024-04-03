@@ -265,6 +265,7 @@ static void list_shuffle(Node **head){
     list_get(head, &size);
     // size has now the size of linked list 
     u64 index;
+    if(!lfsr) lfsr=lfsr_create();
     while(*head){
         index = lfsr_rand(&lfsr)%size--;
         printf("%lu\n", index);
