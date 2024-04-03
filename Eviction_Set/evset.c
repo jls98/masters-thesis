@@ -58,6 +58,7 @@ static Node *list_pop(Node **head);
 static Node *list_get(Node **head, u64 *index);
 static Node *list_take(Node **head, u64 *index);
 static void list_shuffle(Node **head);
+static void list_print(Node **head);
 
 //Config functions #######################################
 /* init Config */
