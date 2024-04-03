@@ -270,7 +270,7 @@ static void list_shuffle(Node **head){
     printf("D\n");
         index = lfsr_rand(&lfsr)%size--;
     printf("D\n");
-        e=list_take(head, index);
+        e=list_take(head, &index);
     printf("D\n");
         list_push(new_head, e);
     printf("D\n");
