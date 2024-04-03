@@ -145,7 +145,7 @@ void test_test(){
     printf("test test: finished init\n");
     
     for(int i=1;i<LALALALAL1;i++){
-        index=i*1024+1024+ INDEX_OFFSET-i-1;
+        index=i*1024+1024+ INDEX_OFFSET-i-1+2;
         tmp=list_take(buffer_ptr, &index);
         list_append(head1, tmp);
     }    
