@@ -261,6 +261,7 @@ static Node *list_take(Node **head, u64 *index) {
 
 static void list_shuffle(Node **head){
     Node **new_head = malloc(sizeof(Node*));
+    *new_head = NULL;
     u64 size=UINT64_MAX;
     list_get(head, &size);
     // size has now the size of linked list 
