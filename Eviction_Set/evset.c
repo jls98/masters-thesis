@@ -284,7 +284,7 @@ static void list_print(Node **head){
     u64 counter = 10;
     for(tmp=*head;tmp;tmp=tmp->next){
         printf("[.] %p %p\n", tmp, tmp->next);
-        if(!c--) break;
+        if(!counter--) break;
     }
 }
 
