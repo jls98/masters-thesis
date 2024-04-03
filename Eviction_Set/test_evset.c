@@ -161,9 +161,6 @@ void test_test(){
     init_evset(config_init(8, 4096, 64, 39, 32768, 1, 1));
     
     access(target);
-    access(target);
-    access(target);
-    access(target);
     // cached #
     for(Node *cur=*head1;cur->next!=NULL;cur=cur->next){
     }
@@ -172,9 +169,6 @@ void test_test(){
     }   
 
     // not cached 
-    access(target);
-    access(target);
-    access(target);
     access(target);
     // cached 
     for(int i=0;i<REPS1;i++){
