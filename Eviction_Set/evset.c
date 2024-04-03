@@ -267,9 +267,9 @@ static void list_shuffle(Node **head){
     u64 index;
     while(*head){
     printf("D\n");
-        index = lfsr_rand(&lfsr)%size--);
+        index = lfsr_rand(&lfsr)%size--;
     printf("D\n");
-        list_push(new_head, list_take(head, index);
+        list_push(new_head, list_take(head, index));
     printf("D\n");
     }
     printf("D\n");
