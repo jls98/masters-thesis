@@ -205,6 +205,7 @@ static void list_push(Node **head, Node *e) {
 
 // add to end
 static void list_append(Node **head, Node *e){
+    list_print(head);
     if(!e) return;
     if(!*head){
         *head=e;
