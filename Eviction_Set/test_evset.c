@@ -118,7 +118,7 @@ void testbench_skylake_evsets(){
     }
     msr_index=0;
     
-    printf("b: %lu %lu %lu\n", msrmts1, msrmts2, msrmts3);
+    printf("a: %lu %lu %lu\n", msrmts1, msrmts2, msrmts3);
     munmap(buffer, size_factor*sizeof(Node));    
 }
 
