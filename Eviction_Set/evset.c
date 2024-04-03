@@ -264,7 +264,7 @@ static void list_shuffle(Node **head){
     u64 size=UINT64_MAX;
     list_get(head, &size);
     // size has now the size of linked list 
-    while(tmp){
+    while(*head){
         list_push(new_head, list_take(head, lfsr_rand(&lfsr)%size--));
     }
     *head = *new_head;
