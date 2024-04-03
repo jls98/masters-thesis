@@ -118,7 +118,7 @@ void testbench_skylake_evsets(){
     }
     msr_index=0;
     
-    printf("a: %lu %lu %lu\n", msrmts1, msrmts2, msrmts3);
+    printf("c: %lu %lu %lu\n", msrmts1, msrmts2, msrmts3);
     munmap(buffer, size_factor*sizeof(Node));    
 }
 
@@ -162,6 +162,7 @@ void test_test(){
     void *target = (void *) list_take(buffer_ptr, &index); 
     
     printf("b4 shuffle\n");
+    list_print(head1);
     list_shuffle(head1);
     
     printf("test_test: shuffle complete:\n");
