@@ -141,6 +141,9 @@ void test_test(){
     tmp = list_take(buffer_ptr, &index);    
     Node **head2=malloc(sizeof(Node *));
     list_append(head2, tmp);
+    
+    printf("test test: finished init\n");
+    
     for(int i=1;i<LALALALAL1;i++){
         index=i*1024+1024+ INDEX_OFFSET-i-1;
         tmp=list_take(buffer_ptr, &index);
@@ -152,6 +155,9 @@ void test_test(){
         tmp=list_take(buffer_ptr, &index);
         list_append(head2, tmp);        
     }
+    
+    printf("test_test: finished evset init\n");
+    
     index =INDEX_OFFSET;
     void *target = (void *) list_take(buffer_ptr, &index); 
 
@@ -160,6 +166,7 @@ void test_test(){
     // L1
     init_evset(config_init(8, 4096, 64, 39, 32768, 1, 1));
     
+    printf("test_test: preparation complete\n");
     // cached #
     for(Node *cur=*head1;cur->next!=NULL;cur=cur->next){
     }
