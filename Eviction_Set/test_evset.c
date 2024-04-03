@@ -147,6 +147,7 @@ void test_test(){
         list_append(head1, tmp);
         list_print(head1);
     }    
+    printf("8th elem %p\n", list_get(head1, 7));
 
     for(int i=1;i<LALALALAL2;i++){
         index = i*2048+262144+INDEX_OFFSET-i-LALALALAL1-1;
