@@ -89,6 +89,7 @@ static void generate_conflict_set();
 static void traverse_list(Node *ptr, u64 size);
 static u64 test(Node *ptr, u64 size, void *target);
 
+static u64 random;
 
 // --- utils ---
 static void access(void *adrs){
@@ -172,23 +173,21 @@ static void config_update(Config *con, u64 ways, u64 sets, u64 cache_line_size, 
 
 // --- node ---
 static void list_init(Node *src, u64 size) {
-    
-    srand(time(NULL)); // avoid pre fetchers by having different contents on the mem pages
-    
+        
     src[0].prev=NULL;
     src[0].next=NULL;
     src[0].delta=0;
-    // for(int i=0;i<8;i++){
-        // src[0].pad[i]=rand() % 256;
-    // }    
+    for(int i=0;i<8;i++){
+        src[0].pad[i]=lfsr_rand(lfsr) % 256;
+    }    
     for(u64 i=1;i<(size/sizeof(Node));i++){
         src[i].prev = &src[i-1];
         src[i].prev->next = &src[i];
         src[i].next=NULL;
         src[i].delta = 0; 
-        // for(int i=0;i<8;i++){
-            // src[i].pad[i]=rand() % 256;
-        // }
+        for(int i=0;i<8;i++){
+            src[i].pad[i]=lfsr_rand(lfsr) % 256;
+        }
     }
 }
 
@@ -279,6 +278,7 @@ static Node *init_evset(Config *conf_ptr){
     conf=conf_ptr;
     buffer_size = conf->ways*conf->sets*buffer_factor*sizeof(Node);
     pool_size = conf->ways*conf->sets*pool_factor*sizeof(Node);
+    lfsr=lfsr_create();
     
     if(conf->hugepages){
         buffer = (Node *) mmap(NULL, buffer_size, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB, 0, 0);
