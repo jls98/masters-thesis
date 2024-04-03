@@ -151,7 +151,7 @@ void test_test(){
     }    
 
     // for(int i=1;i<LALALALAL2;i++){
-        // index = i*2048+262144+INDEX_OFFSET-i-LALALALAL1-1;
+        // index = i*2048+262144+INDEX_OFFSET-i-LALALALAL1;
         // tmp=list_take(buffer_ptr, &index);
         // list_append(head2, tmp);        
     // }
