@@ -209,7 +209,10 @@ static void list_append(Node **head, Node *e){
     list_print(head);
     if(!e) return;
     if(!*head){
+        e->next=NULL;
+        e->prev=NULL;
         *head=e;
+        
         return;
     }
     
