@@ -181,7 +181,7 @@ void test_test(){
         CU_ASSERT_TRUE(test(*head1, LALALALAL1, target)== 1);
     }   
     
-    for(int i=0;i<4*REPS1;i++){
+    for(int i=0;i<2*REPS1;i++){
         printf("n: %lu\n", msrmts[i]);
     }
     munmap(buffer, size_factor*sizeof(Node));    

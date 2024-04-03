@@ -400,20 +400,10 @@ static u64 msr_index=0;
 
 static u64 test_intern(Node *ptr, u64 size, void *target){
      // TODO rm later // toggle if working
-    // access(target);
-    // access(target);
-    // access(target);
-    // access(target);
-    // access(target);
-    // access(target);
-    // access(target);
-    // access(target);
-    // access(target);
-    // access(target);
-    // access(target);
-    // access(target);
-    //flush(target);
-    // traverse_list(ptr, size);
+
+    access(target);
+    access(target);
+    traverse_list(ptr, size);
     
     // victim + 222 access for page walk
     access(target+222);
@@ -422,7 +412,6 @@ static u64 test_intern(Node *ptr, u64 size, void *target){
     // access(target);
     // delta=rdtscpfence() - time;
     // delta=;
-    msrmts[msr_index++]=probe(target);
     msrmts[msr_index++]=probe(target);
     return msrmts[msr_index-1];
 }
