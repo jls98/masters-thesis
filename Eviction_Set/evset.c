@@ -89,7 +89,7 @@ static void generate_conflict_set();
 static void traverse_list(Node *ptr, u64 size);
 static u64 test(Node *ptr, u64 size, void *target);
 
-static u64 lfsr;
+static u64 random;
 
 // --- utils ---
 static void access(void *adrs){
@@ -173,12 +173,14 @@ static void config_update(Config *con, u64 ways, u64 sets, u64 cache_line_size, 
 
 // --- node ---
 static void list_init(Node *src, u64 size) {
-        
+    
+    srand(time(NULL)); // avoid pre fetchers by having different contents on the mem pages
+    
     src[0].prev=NULL;
     src[0].next=NULL;
     src[0].delta=0;
     for(int i=0;i<8;i++){
-        src[0].pad[i]=lfsr_rand(&lfsr) % 256;
+        src[0].pad[i]=rand() % 256;
     }    
     for(u64 i=1;i<(size/sizeof(Node));i++){
         src[i].prev = &src[i-1];
@@ -186,7 +188,7 @@ static void list_init(Node *src, u64 size) {
         src[i].next=NULL;
         src[i].delta = 0; 
         for(int i=0;i<8;i++){
-            src[i].pad[i]=lfsr_rand(&lfsr) % 256;
+            src[i].pad[i]=rand() % 256;
         }
     }
 }
