@@ -196,10 +196,9 @@ static void list_init(Node *src, u64 size) {
 // add to beginning
 static void list_push(Node **head, Node *e) {
     if (!e)  return;
-    Node *tmp=*head;
     e->prev = NULL;
-    e->next = tmp;
-    if(tmp) tmp->prev = e;
+    e->next = *head;
+    if(*head) (*head)->prev = e;
     *head=e;
 }
 
@@ -274,7 +273,7 @@ static void list_shuffle(Node **head){
     while(size>0){
         index = lfsr_rand(&lfsr)%size--;
         printf("index %lu\n", index);
-        list_push(new_head, list_take(head, &index));
+        list_append(new_head, list_take(head, &index));
     }
     *head = *new_head;
 }
