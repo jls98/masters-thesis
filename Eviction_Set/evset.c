@@ -89,7 +89,7 @@ static void generate_conflict_set();
 static void traverse_list(Node *ptr, u64 size);
 static u64 test(Node *ptr, u64 size, void *target);
 
-static u64 random;
+static u64 lfsr;
 
 // --- utils ---
 static void access(void *adrs){
