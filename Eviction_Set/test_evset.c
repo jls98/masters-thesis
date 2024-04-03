@@ -156,14 +156,7 @@ void test_test(){
     index =INDEX_OFFSET;
     void *target = (void *) list_take(buffer_ptr, &index); 
 
-
-
-    printf("%p %p\n", head1, *head1);
-    list_print(head1);
     list_shuffle(head1);
-    printf("%p %p\n", head1, *head1);
-    list_print(head1);
-    
     
     // L1
     init_evset(config_init(8, 4096, 64, 39, 32768, 1, 1));

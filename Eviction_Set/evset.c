@@ -193,6 +193,7 @@ static void list_init(Node *src, u64 size) {
     }
 }
 
+// appears to be bugged!!!!
 // add to beginning
 static void list_push(Node **head, Node *e) {
     if (!e)  return;
@@ -270,7 +271,6 @@ static void list_shuffle(Node **head){
     if(!lfsr) lfsr=lfsr_create();
     while(size>0){
         index = lfsr_rand(&lfsr)%size--;
-        printf("index %lu\n", index);
         list_append(new_head, list_take(head, &index));
     }
     *head = *new_head;
@@ -412,7 +412,7 @@ static u64 test_intern(Node *ptr, u64 size, void *target){
     // access(target);
     // access(target);
     // access(target);
-    flush(target);
+    //flush(target);
     // traverse_list(ptr, size);
     
     // victim + 222 access for page walk
