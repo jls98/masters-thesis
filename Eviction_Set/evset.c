@@ -178,7 +178,7 @@ static void list_init(Node *src, u64 size) {
     src[0].next=NULL;
     src[0].delta=0;
     for(int i=0;i<8;i++){
-        src[0].pad[i]=lfsr_rand(lfsr) % 256;
+        src[0].pad[i]=lfsr_rand(&lfsr) % 256;
     }    
     for(u64 i=1;i<(size/sizeof(Node));i++){
         src[i].prev = &src[i-1];
@@ -186,7 +186,7 @@ static void list_init(Node *src, u64 size) {
         src[i].next=NULL;
         src[i].delta = 0; 
         for(int i=0;i<8;i++){
-            src[i].pad[i]=lfsr_rand(lfsr) % 256;
+            src[i].pad[i]=lfsr_rand(&lfsr) % 256;
         }
     }
 }
