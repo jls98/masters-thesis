@@ -163,6 +163,7 @@ void test_test(){
 
     list_shuffle(head1);
     
+    printf("test_test: shuffle complete\n");
     // L1
     init_evset(config_init(8, 4096, 64, 39, 32768, 1, 1));
     
