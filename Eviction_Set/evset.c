@@ -277,9 +277,11 @@ static void list_shuffle(Node **head){
 
 static void list_print(Node **head){
     printf("[+] printing adrs of list:\n");
-    for(Node *tmp=*head;tmp->next;tmp=tmp->next){
+    Node *tmp;
+    for(tmp=*head;tmp->next;tmp=tmp->next){
         printf("[.] %p\n", tmp);
     }
+    printf("extra %p\n", tmp->next);
 }
 
 // --- algorithms ---
