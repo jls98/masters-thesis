@@ -160,7 +160,6 @@ void test_test(){
     // L1
     init_evset(config_init(8, 4096, 64, 39, 32768, 1, 1));
     
-    access(target);
     // cached #
     for(Node *cur=*head1;cur->next!=NULL;cur=cur->next){
     }
@@ -169,7 +168,6 @@ void test_test(){
     }   
 
     // not cached 
-    access(target);
     // cached 
     for(int i=0;i<REPS1;i++){
         CU_ASSERT_TRUE(test(*head1, LALALALAL1, target)== 1);
