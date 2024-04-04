@@ -53,7 +53,7 @@ void test_node(){
 #define LALALALAL1 8 // TODO figure out why 9 is needed! why do brackets solve it??????
 #define LALALALAL2 9
 
-#define size_factor 9999999
+#define size_factor 999999999
 
 #define REPS 100
 void testbench_skylake_evsets(){
@@ -182,7 +182,7 @@ void test_test(){
 }
 
 void test_get_histogram_data(){
-    for(int size=5;size<26;size++){
+    for(int size=5;size<80;size++){
         Node *buffer = (Node *) mmap(NULL, size_factor*sizeof(Node), PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB, -1, 0);
         list_init(buffer, size_factor*sizeof(Node));
         Node **buffer_ptr=&buffer;
