@@ -53,7 +53,7 @@ void test_node(){
 #define LALALALAL1 8 // TODO figure out why 9 is needed! why do brackets solve it??????
 #define LALALALAL2 9
 
-#define size_factor 999999
+#define size_factor 9999999
 
 #define REPS 100
 void testbench_skylake_evsets(){
@@ -181,6 +181,38 @@ void test_test(){
     
 }
 
+void test_get_histogram_data(){
+    for(int size=5;size<50;size++){
+        Node *buffer = (Node *) mmap(NULL, size_factor*sizeof(Node), PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB, -1, 0);
+        list_init(buffer, size_factor*sizeof(Node));
+        Node **buffer_ptr=&buffer;
+        u64 index;
+        
+        // init evset1
+        index = 2048+INDEX_OFFSET;
+        Node *tmp = list_take(buffer_ptr, &index);
+        Node **head1=malloc(sizeof(Node *));
+        list_append(head1, tmp);
+
+        for(int i=1;i<size;i++){
+            index=i*2048+2048+ INDEX_OFFSET-i;
+            tmp=list_take(buffer_ptr, &index);
+            list_append(head1, tmp);
+        } 
+        void *target = (void *) list_take(buffer_ptr, &index);  
+        list_shuffle(head1);  
+        init_evset(config_init(8, 4096, 64, 39, 32768, 1, 1));  
+        for(int i=0;i<10;i++){
+            test(*head1, target);
+        }        
+        for(int i=0;i<10;i++){
+            printf("%i %lu\n", size, msrmts[i]);
+        }      
+        msr_index=0;
+        munmap(buffer, size_factor*sizeof(Node)); 
+    }
+}
+
 
 int main(int ac, char **av) {
 	// if (ac==1) conf = initConfig(8, 64, 41, 32768, 1, 1); // default L1 lab machine, no inputs
@@ -206,9 +238,10 @@ int main(int ac, char **av) {
 
     CU_pSuite suite = CU_add_suite("Test Suite evict_baseline", NULL, NULL);
 
-    CU_add_test(suite, "Test test_node", test_node);
-    CU_add_test(suite, "Test testbench_skylake_evsets", testbench_skylake_evsets);
-    CU_add_test(suite, "Test test_test", test_test);
+    // CU_add_test(suite, "Test test_node", test_node);
+    // CU_add_test(suite, "Test testbench_skylake_evsets", testbench_skylake_evsets);
+    // CU_add_test(suite, "Test test_test", test_test);
+    CU_add_test(suite, "Test test_get_histogram_data", test_get_histogram_data);
 
     CU_basic_run_tests();
     CU_cleanup_registry();
