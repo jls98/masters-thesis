@@ -141,7 +141,7 @@ void test_test(){
     // Node **head2=malloc(sizeof(Node *));
     // list_append(head2, tmp);
     
-    printf("test test: finished init\n");
+    // printf("test test: finished init\n");
     
     for(int i=1;i<LALALALAL1;i++){
         index=i*2048+2048+ INDEX_OFFSET-i;
@@ -155,21 +155,21 @@ void test_test(){
         // list_append(head2, tmp);        
     // }
     
-    printf("test_test: finished evset init\n");
+    // printf("test_test: finished evset init\n");
     
     index =INDEX_OFFSET;
     void *target = (void *) list_take(buffer_ptr, &index); 
     
-    printf("b4 shuffle\n");
+    // printf("b4 shuffle\n");
     list_print(head1);
     list_shuffle(head1);
     
-    printf("test_test: shuffle complete:\n");
+    // printf("test_test: shuffle complete:\n");
     list_print(head1);
     // L1
     init_evset(config_init(8, 4096, 64, 39, 32768, 1, 1));
     
-    printf("test_test: preparation complete\n");
+    // printf("test_test: preparation complete\n");
     // cached #
     for(Node *cur=*head1;cur->next!=NULL;cur=cur->next){
     }
