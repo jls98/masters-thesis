@@ -162,7 +162,7 @@ void test_test(){
     
     printf("b4 shuffle\n");
     list_print(head1);
-    // list_shuffle(head1);
+    list_shuffle(head1);
     
     printf("test_test: shuffle complete:\n");
     list_print(head1);
@@ -186,7 +186,6 @@ void test_test(){
     for(int i=0;i<2*REPS1;i++){
         printf("n: %lu\n", msrmts[i]);
     }
-    printf("victim %p\n", target);
     munmap(buffer, size_factor*sizeof(Node));    
     
 }

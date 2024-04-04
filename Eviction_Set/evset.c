@@ -400,7 +400,6 @@ static void traverse_list(Node *ptr, u64 size){
         access((void *) ptr);
         access((void *) ptr->next);
         access((void *) ptr->next->next);
-        // printf("trav: ac %p %p %p\n", ptr, ptr->next, ptr->next->next);
         ptr=ptr->next;
     }
 }
@@ -422,7 +421,6 @@ static u64 test_intern(Node *ptr, u64 size, void *target){
 
     access(target);
     __asm__ volatile ("lfence;");
-    traverse_list(ptr, size);
     traverse_list(ptr, size);
     
     // victim + 222 access for page walk
