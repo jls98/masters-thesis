@@ -401,6 +401,7 @@ static void traverse_list(Node *ptr, u64 size){
         access((void *) ptr);
         access((void *) ptr->next);
         access((void *) ptr->next->next);
+        printf("trav: ac %p %p %p\n", ptr, ptr->next, ptr->next->next);
         c--;
     }
 }
