@@ -87,8 +87,8 @@ static Node *find_evset(/* TODO */);
 static Node *get_evset(Config *conf_ptr);
 static void close_evsets();
 static void generate_conflict_set();
-static void traverse_list(Node *ptr, u64 size);
-static u64 test(Node *ptr, u64 size, void *target);
+static void traverse_list(Node *ptr);
+static u64 test(Node *ptr, void *target);
 
 static u64 lfsr;
 
@@ -383,7 +383,7 @@ static void generate_conflict_set(Config *conf_ptr, char *target){
     // WIP
 }
 
-static void traverse_list(Node *ptr, u64 size){
+static void traverse_list(Node *ptr){
     access((void *) ptr);
     access((void *) ptr);
     access((void *) ptr->next);
@@ -401,11 +401,9 @@ static void traverse_list(Node *ptr, u64 size){
     access((void *) ptr);
 }
 
-static void traverse_list0(Node *ptr, u64 size){
-    u64 s = size;
+static void traverse_list0(Node *ptr){
     for(Node *tmp=ptr;tmp;tmp=tmp->next){
         access((void *) tmp);
-        if(s--<0) break;
     }    
 }
 
@@ -413,10 +411,10 @@ static void traverse_list0(Node *ptr, u64 size){
 static u64 msrmts[1000];
 static u64 msr_index=0;
 
-static u64 test_intern(Node *ptr, u64 size, void *target){
+static u64 test_intern(Node *ptr, void *target){
     access(target);
     __asm__ volatile ("lfence;");
-    traverse_list0(ptr, size);
+    traverse_list0(ptr);
     
     // page walk
     access(target+222);
@@ -428,11 +426,11 @@ static u64 test_intern(Node *ptr, u64 size, void *target){
 
 
 
-static u64 test(Node *ptr, u64 size, void *target){
-    if(size==0 || ptr ==NULL || target ==NULL){
+static u64 test(Node *ptr, void *target){
+    if(ptr ==NULL || target ==NULL){
         return 0;
     }
-    return test_intern(ptr, size, target) > conf->threshold;
+    return test_intern(ptr, target) > conf->threshold;
 }
 
 // static Node *create_minimal_eviction_set(void **candidate_set, u64 candidate_set_size, Node* evict_set, void *target_adrs, Config *conf){
