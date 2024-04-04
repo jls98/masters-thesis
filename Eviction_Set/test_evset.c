@@ -180,11 +180,11 @@ void test_test(){
     munmap(buffer, size_factor*sizeof(Node));    
     
 }
-
+#define AMOUNT_HISTO 999999999
 void test_get_histogram_data(){
     for(int size=5;size<25;size++){
-        Node *buffer = (Node *) mmap(NULL, 9999999*sizeof(Node), PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB, -1, 0);
-        list_init(buffer, size_factor*sizeof(Node));
+        Node *buffer = (Node *) mmap(NULL, AMOUNT_HISTO*sizeof(Node), PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB, -1, 0);
+        list_init(buffer, AMOUNT_HISTO*sizeof(Node));
         Node **buffer_ptr=&buffer;
         u64 index;
         
@@ -211,7 +211,7 @@ void test_get_histogram_data(){
             printf("%i %lu\n", size, msrmts[i]);
         }      
         msr_index=0;
-        munmap(buffer, 9999999*sizeof(Node)); 
+        munmap(buffer, AMOUNT_HISTO*sizeof(Node)); 
     }
 }
 
