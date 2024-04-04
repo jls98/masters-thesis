@@ -257,15 +257,13 @@ static Node *list_take(Node **head, u64 *index) {
         i++;
     }
     if(!tmp) return NULL;
-    
+    if(tmp->next) tmp->next->prev=tmp->prev;
     if(tmp->prev) { // tmp->prev is not head
-        tmp->prev->next=tmp->next; 
-        tmp->next->prev=tmp->prev;
+        tmp->prev->next=tmp->next;         
     }
     else{ // tmp is head -> tmp-> next is new head
         *head=tmp->next;
         // printf("*head %p tmp->next %p\n", *head, tmp->next);
-        tmp->next->prev=NULL;
     }
     tmp->prev=NULL;
     tmp->next=NULL;
