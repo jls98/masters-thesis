@@ -182,7 +182,7 @@ void test_test(){
 }
 #define AMOUNT_HISTO 9999999
 void test_get_histogram_data(){
-    for(int size=5;size<25;size++){
+    for(int size=5;size<30;size++){
         Node *buffer = (Node *) mmap(NULL, AMOUNT_HISTO*sizeof(Node), PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB, -1, 0);
         if(buffer==MAP_FAILED){
             printf("mmap failed\n");
@@ -208,10 +208,10 @@ void test_get_histogram_data(){
         access(target);
         list_shuffle(head1);  
         init_evset(config_init(8, 4096, 64, 39, 32768, 1, 1));  
-        for(int i=0;i<100;i++){
+        for(int i=0;i<1000;i++){
             test(*head1, target);
         }        
-        for(int i=0;i<100;i++){
+        for(int i=0;i<1000;i++){
             printf("%i %lu\n", size, msrmts[i]);
         }      
         msr_index=0;
