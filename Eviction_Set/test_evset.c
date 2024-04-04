@@ -78,7 +78,7 @@ void testbench_skylake_evsets(){
     
     for(int j=0;j<REPS;j++){
         for(u64 i=offset;i<(LALALALAL1+offset);i++){
-            access(&buffer[i*2048]);
+            access(&buffer[i*1024]);
         }
         probe(((void *)buffer)+222);
         __asm__ volatile("lfence;");
@@ -117,7 +117,7 @@ void testbench_skylake_evsets(){
     }
     msr_index=0;
     
-    printf("c: %lu %lu %lu\n", msrmts1, msrmts2, msrmts3);
+    printf("d: %lu %lu %lu\n", msrmts1, msrmts2, msrmts3);
     munmap(buffer, size_factor*sizeof(Node));    
 }
 
@@ -155,22 +155,16 @@ void test_test(){
         // list_append(head2, tmp);        
     // }
     
-    // printf("test_test: finished evset init\n");
     
     index =INDEX_OFFSET;
     void *target = (void *) list_take(buffer_ptr, &index); 
     
-    // printf("b4 shuffle\n");
-    list_print(head1);
     list_shuffle(head1);
     
-    // printf("test_test: shuffle complete:\n");
-    list_print(head1);
     // L1
     init_evset(config_init(8, 4096, 64, 39, 32768, 1, 1));
     
-    // printf("test_test: preparation complete\n");
-    // cached #
+    // cached 
     for(Node *cur=*head1;cur->next!=NULL;cur=cur->next){
     }
     for(int i=0;i<REPS1;i++){

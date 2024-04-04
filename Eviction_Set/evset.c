@@ -278,17 +278,10 @@ static void list_shuffle(Node **head){
     list_get(head, &size);
     // size has now the size of linked list 
     u64 index;
-    Node *cand;
-    if(!lfsr) lfsr=lfsr_create();
-    
-    printf("shuffle: b4 while %lu \n", size);
+    if(!lfsr) lfsr=lfsr_create();    
     while(size>0){
         index = lfsr_rand(&lfsr)%size--;
-        cand = list_take(head, &index);
-        printf("size %lu, cand %p\n", size, cand);
-        list_append(new_head, cand);
-        printf("printf new head\n");
-        list_print(new_head);
+        list_append(new_head, list_take(head, &index));
     }
     *head = *new_head;
 }
