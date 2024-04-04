@@ -394,7 +394,7 @@ static void generate_conflict_set(Config *conf_ptr, char *target){
 
 static void traverse_list(Node *ptr, u64 size){
     u64 c=size;
-    while(c-2){
+    while(ptr && ptr->next && ptr->next->next){
         access((void *) ptr);
         access((void *) ptr->next);
         access((void *) ptr->next->next);
