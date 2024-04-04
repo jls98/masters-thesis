@@ -123,6 +123,7 @@ void testbench_skylake_evsets(){
 
 #define REPS1 5
 #define INDEX_OFFSET 10
+#define EVSET1_SIZE 8
 void test_test(){
     Node *buffer = (Node *) mmap(NULL, size_factor*sizeof(Node), PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB, -1, 0);
     list_init(buffer, size_factor*sizeof(Node));
@@ -143,14 +144,14 @@ void test_test(){
     
     // printf("test test: finished init\n");
     
-    for(int i=1;i<LALALALAL1;i++){
+    for(int i=1;i<EVSET1_SIZE;i++){
         index=i*2048+2048+ INDEX_OFFSET-i;
         tmp=list_take(buffer_ptr, &index);
         list_append(head1, tmp);
     }    
 
     // for(int i=1;i<LALALALAL2;i++){
-        // index = i*2048+262144+INDEX_OFFSET-i-LALALALAL1;
+        // index = i*2048+262144+INDEX_OFFSET-i-EVSET1_SIZE;
         // tmp=list_take(buffer_ptr, &index);
         // list_append(head2, tmp);        
     // }
@@ -174,7 +175,7 @@ void test_test(){
     // not cached 
     // cached 
     for(int i=0;i<REPS1;i++){
-        CU_ASSERT_TRUE(test(*head1, LALALALAL1, target)== 1);
+        CU_ASSERT_TRUE(test(*head1, EVSET1_SIZE, target)== 1);
     }   
     
     for(int i=0;i<2*REPS1;i++){
