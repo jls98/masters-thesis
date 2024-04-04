@@ -53,7 +53,7 @@ void test_node(){
 #define LALALALAL1 8 // TODO figure out why 9 is needed! why do brackets solve it??????
 #define LALALALAL2 9
 
-#define size_factor 999999999
+#define size_factor 99999999
 
 #define REPS 100
 void testbench_skylake_evsets(){
