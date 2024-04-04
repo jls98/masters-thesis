@@ -180,7 +180,7 @@ void test_test(){
     munmap(buffer, size_factor*sizeof(Node));    
     
 }
-#define AMOUNT_HISTO 19999999
+#define AMOUNT_HISTO 15999999
 void test_get_histogram_data(){
     init_evset(config_init(8, 4096, 64, 39, 32768, 1, 1));  
 
