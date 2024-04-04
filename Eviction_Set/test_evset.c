@@ -182,7 +182,7 @@ void test_test(){
 }
 
 void test_get_histogram_data(){
-    for(int size=5;size<40;size++){
+    for(int size=5;size<25;size++){
         Node *buffer = (Node *) mmap(NULL, 99999999*sizeof(Node), PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB, -1, 0);
         list_init(buffer, size_factor*sizeof(Node));
         Node **buffer_ptr=&buffer;
@@ -201,6 +201,7 @@ void test_get_histogram_data(){
         } 
         index =INDEX_OFFSET;
         void *target = (void *) list_take(buffer_ptr, &index);  
+        access(target);
         list_shuffle(head1);  
         init_evset(config_init(8, 4096, 64, 39, 32768, 1, 1));  
         for(int i=0;i<10;i++){
