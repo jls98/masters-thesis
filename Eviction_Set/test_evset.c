@@ -4,7 +4,7 @@
 
 void test_node(){
     Node *nodes= (Node *) mmap(NULL, 5000*sizeof(Node), PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB, -1, 0); 
-    printf("a");
+
     // test init 
     list_init(nodes, 5000*sizeof(Node));
     for(int i=1;i<4999;i++){  
@@ -12,9 +12,7 @@ void test_node(){
         CU_ASSERT_EQUAL(nodes[i].next, &nodes[i+1]);
         CU_ASSERT_EQUAL(nodes[i].delta, 0);
     }
-    
-     printf("a");
-   
+       
     // test get, take
     uint64_t zero=0;
     for(int i=0;i<5000;i++){
@@ -23,7 +21,6 @@ void test_node(){
         CU_ASSERT_EQUAL(&nodes[i], list_get(ptr_ptr_node, &zero));
         CU_ASSERT_EQUAL(&nodes[i], list_take(ptr_ptr_node, &zero));
     }
-     printf("a");
    
     // test append
     uint64_t index;
