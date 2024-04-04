@@ -184,6 +184,10 @@ void test_test(){
 void test_get_histogram_data(){
     for(int size=5;size<25;size++){
         Node *buffer = (Node *) mmap(NULL, AMOUNT_HISTO*sizeof(Node), PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB, -1, 0);
+        if(buffer==MAP_FAILED){
+            printf("mmap failed\n");
+            return;
+        }
         list_init(buffer, AMOUNT_HISTO*sizeof(Node));
         Node **buffer_ptr=&buffer;
         u64 index;
