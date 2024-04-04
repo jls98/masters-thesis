@@ -199,6 +199,7 @@ void test_get_histogram_data(){
             tmp=list_take(buffer_ptr, &index);
             list_append(head1, tmp);
         } 
+        index =INDEX_OFFSET;
         void *target = (void *) list_take(buffer_ptr, &index);  
         list_shuffle(head1);  
         init_evset(config_init(8, 4096, 64, 39, 32768, 1, 1));  
