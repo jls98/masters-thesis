@@ -393,7 +393,6 @@ static void generate_conflict_set(Config *conf_ptr, char *target){
 }
 
 static void traverse_list(Node *ptr, u64 size){
-    u64 c=size;
     while(ptr && ptr->next && ptr->next->next){
         access((void *) ptr);
         access((void *) ptr->next);
@@ -402,7 +401,7 @@ static void traverse_list(Node *ptr, u64 size){
         access((void *) ptr->next);
         access((void *) ptr->next->next);
         printf("trav: ac %p %p %p\n", ptr, ptr->next, ptr->next->next);
-        c--;
+        ptr=ptr->next;
     }
 }
 
