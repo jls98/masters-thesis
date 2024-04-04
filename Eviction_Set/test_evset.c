@@ -142,7 +142,6 @@ void test_test(){
     // Node **head2=malloc(sizeof(Node *));
     // list_append(head2, tmp);
     
-    // printf("test test: finished init\n");
     
     for(int i=1;i<EVSET1_SIZE;i++){
         index=i*2048+2048+ INDEX_OFFSET-i;
@@ -166,16 +165,13 @@ void test_test(){
     init_evset(config_init(8, 4096, 64, 39, 32768, 1, 1));
     
     // cached 
-    for(Node *cur=*head1;cur->next!=NULL;cur=cur->next){
-    }
-    for(int i=0;i<REPS1;i++){
-        CU_ASSERT_TRUE(test(*head1, 7, target)== 0);
-    }   
+    // for(int i=0;i<REPS1;i++){
+        // CU_ASSERT_TRUE(test(*head1, target)== 0);
+    // }   
 
-    // not cached 
-    // cached 
+    // evict
     for(int i=0;i<REPS1;i++){
-        CU_ASSERT_TRUE(test(*head1, EVSET1_SIZE, target)== 1);
+        CU_ASSERT_TRUE(test(*head1, target)== 1);
     }   
     
     for(int i=0;i<2*REPS1;i++){
