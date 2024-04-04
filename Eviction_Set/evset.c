@@ -406,11 +406,11 @@ static void traverse_list(Node *ptr, u64 size){
 }
 
 static void traverse_list0(Node *ptr, u64 size){
-    printf("tav run\n");
+    // printf("tav run\n");
     u64 s = size;
     for(Node *tmp=ptr;tmp;tmp=tmp->next){
         access((void *) tmp);
-        printf("taverse: %p\n", tmp);
+        // printf("taverse: %p\n", tmp);
         if(s--<0) break;
     }    
 }
