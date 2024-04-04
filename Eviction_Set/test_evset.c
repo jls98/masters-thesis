@@ -4,7 +4,7 @@
 
 void test_node(){
     Node *nodes= (Node *) mmap(NULL, 5000*sizeof(Node), PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB, -1, 0); 
-    
+    printf("a");
     // test init 
     list_init(nodes, 5000*sizeof(Node));
     for(int i=1;i<4999;i++){  
@@ -13,7 +13,8 @@ void test_node(){
         CU_ASSERT_EQUAL(nodes[i].delta, 0);
     }
     
-    
+     printf("a");
+   
     // test get, take
     uint64_t zero=0;
     for(int i=0;i<5000;i++){
@@ -22,7 +23,8 @@ void test_node(){
         CU_ASSERT_EQUAL(&nodes[i], list_get(ptr_ptr_node, &zero));
         CU_ASSERT_EQUAL(&nodes[i], list_take(ptr_ptr_node, &zero));
     }
-    
+     printf("a");
+   
     // test append
     uint64_t index;
     for(int i=0;i<10;i++){
@@ -216,8 +218,8 @@ int main(int ac, char **av) {
 
     CU_pSuite suite = CU_add_suite("Test Suite evict_baseline", NULL, NULL);
 
-    // CU_add_test(suite, "Test test_node", test_node);
-    // CU_add_test(suite, "Test testbench_skylake_evsets", testbench_skylake_evsets);
+    CU_add_test(suite, "Test test_node", test_node);
+    CU_add_test(suite, "Test testbench_skylake_evsets", testbench_skylake_evsets);
     CU_add_test(suite, "Test test_test", test_test);
 
     CU_basic_run_tests();
