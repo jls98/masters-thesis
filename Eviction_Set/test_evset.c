@@ -162,7 +162,7 @@ void test_test(){
     
     printf("b4 shuffle\n");
     list_print(head1);
-    list_shuffle(head1);
+    // list_shuffle(head1);
     
     printf("test_test: shuffle complete:\n");
     list_print(head1);
