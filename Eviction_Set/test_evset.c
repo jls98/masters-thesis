@@ -78,7 +78,7 @@ void testbench_skylake_evsets(){
     
     for(int j=0;j<REPS;j++){
         for(u64 i=offset;i<(LALALALAL1+offset);i++){
-            access(&buffer[i*1024]);
+            access(&buffer[i*2048]);
         }
         probe(((void *)buffer)+222);
         __asm__ volatile("lfence;");
