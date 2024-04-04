@@ -264,12 +264,12 @@ static Node *list_take(Node **head, u64 *index) {
     }
     else{ // tmp is head -> tmp-> next is new head
         *head=tmp->next;
-        printf("*head %p tmp->next %p\n", *head, tmp->next);
+        // printf("*head %p tmp->next %p\n", *head, tmp->next);
         tmp->next->prev=NULL;
     }
     tmp->prev=NULL;
     tmp->next=NULL;
-    printf("*head %p tmp->next %p\n", *head, tmp->next);
+    // printf("*head %p tmp->next %p\n", *head, tmp->next);
     return tmp;
 }
 
