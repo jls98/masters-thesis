@@ -263,11 +263,9 @@ static Node *list_take(Node **head, u64 *index) {
     }
     else{ // tmp is head -> tmp-> next is new head
         *head=tmp->next;
-        // printf("*head %p tmp->next %p\n", *head, tmp->next);
     }
     tmp->prev=NULL;
     tmp->next=NULL;
-    // printf("*head %p tmp->next %p\n", *head, tmp->next);
     return tmp;
 }
 
@@ -386,6 +384,9 @@ static void generate_conflict_set(Config *conf_ptr, char *target){
 }
 
 static void traverse_list(Node *ptr, u64 size){
+    access((void *) ptr);
+    access((void *) ptr);
+    access((void *) ptr->next);
     while(ptr && ptr->next && ptr->next->next){
         access((void *) ptr);
         access((void *) ptr->next);
@@ -395,6 +396,9 @@ static void traverse_list(Node *ptr, u64 size){
         access((void *) ptr->next->next);
         ptr=ptr->next;
     }
+    access((void *) ptr);
+    access((void *) ptr->next);   
+    access((void *) ptr);
 }
 
 static void traverse_list0(Node *ptr, u64 size){
@@ -410,19 +414,14 @@ static u64 msrmts[1000];
 static u64 msr_index=0;
 
 static u64 test_intern(Node *ptr, u64 size, void *target){
-     // TODO rm later // toggle if working
-
     access(target);
     __asm__ volatile ("lfence;");
     traverse_list(ptr, size);
     
-    // victim + 222 access for page walk
+    // page walk
     access(target+222);
-    // u64 delta, time;
-    // time=rdtscpfence(); // TODO write asm code
-    // access(target);
-    // delta=rdtscpfence() - time;
-    // delta=;
+    
+    // measure
     msrmts[msr_index++]=probe(target);
     return msrmts[msr_index-1];
 }
