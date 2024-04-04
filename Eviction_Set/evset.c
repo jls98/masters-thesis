@@ -411,7 +411,7 @@ static void traverse_list0(Node *ptr, u64 size){
     for(Node *tmp=ptr;tmp;tmp=tmp->next){
         access((void *) tmp);
         printf("taverse: %p\n", tmp);
-        if(s--) break;
+        if(s--<0) break;
     }    
 }
 
