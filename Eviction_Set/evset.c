@@ -418,6 +418,7 @@ static u64 test_intern(Node *ptr, void *target){
     
     // page walk
     access(target+222);
+    access(target-222);
     
     // measure
     msrmts[msr_index++]=probe(target);
