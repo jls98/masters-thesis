@@ -406,11 +406,9 @@ static void traverse_list(Node *ptr, u64 size){
 }
 
 static void traverse_list0(Node *ptr, u64 size){
-    // printf("tav run\n");
     u64 s = size;
     for(Node *tmp=ptr;tmp;tmp=tmp->next){
         access((void *) tmp);
-        // printf("taverse: %p\n", tmp);
         if(s--<0) break;
     }    
 }
@@ -425,7 +423,6 @@ static u64 test_intern(Node *ptr, u64 size, void *target){
     access(target);
     access(target);
     __asm__ volatile ("lfence;");
-    traverse_list0(ptr, size);
     traverse_list0(ptr, size);
     
     // victim + 222 access for page walk
