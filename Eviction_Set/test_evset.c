@@ -130,7 +130,7 @@ void test_test(){
     u64 index;
     
     // init evset1
-    index = 1024+INDEX_OFFSET;
+    index = 2048+INDEX_OFFSET;
     Node *tmp = list_take(buffer_ptr, &index);
     Node **head1=malloc(sizeof(Node *));
     list_append(head1, tmp);
@@ -144,7 +144,7 @@ void test_test(){
     printf("test test: finished init\n");
     
     for(int i=1;i<LALALALAL1;i++){
-        index=i*1024+1024+ INDEX_OFFSET-i;
+        index=i*2048+2048+ INDEX_OFFSET-i;
         tmp=list_take(buffer_ptr, &index);
         list_append(head1, tmp);
     }    
