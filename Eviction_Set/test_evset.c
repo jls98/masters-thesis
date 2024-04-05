@@ -244,7 +244,6 @@ void test_strides(){
             list_append(head, tmp);
         }
         list_shuffle(head);
-        printf("stride %i\n", stride);
         // list_print(head);
         // if(!*head) break;
         for(int i=0;i<STRIDE_REPS;i++){
@@ -252,7 +251,7 @@ void test_strides(){
         }
         
         for(int i=0;i<STRIDE_REPS;i++){
-            printf("%lu\n", msrmts[i]);
+            printf("%i %lu\n", stride, msrmts[i]);
         }
         msr_index=0;
         
