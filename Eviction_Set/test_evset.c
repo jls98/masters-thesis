@@ -220,7 +220,10 @@ void test_get_histogram_data(){
     }
 }
 #define STRIDE_REPS 5
-#define SIZE_VALUE 262144
+#define ALDER_L2 2097152
+#define SKYLAKE_L2 262144
+#define CACHE_L1 32768
+#define SIZE_VALUE ALDER_L2
 
 void test_strides(){
     // stride * 2^5 since sizeof(Node) = 32
