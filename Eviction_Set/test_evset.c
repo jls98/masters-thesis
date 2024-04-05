@@ -144,7 +144,7 @@ void test_test(){
     
     
     for(int i=1;i<EVSET1_SIZE;i++){
-        index=i*2048+2048+ INDEX_OFFSET-i;
+        index=i*128+2048+ INDEX_OFFSET-i;
         tmp=list_take(buffer_ptr, &index);
         list_append(head1, tmp);
     }    
@@ -174,7 +174,7 @@ void test_test(){
         CU_ASSERT_TRUE(test(*head1, target)== 1);
     }   
     
-    for(int i=0;i<2*REPS1;i++){
+    for(int i=0;i<REPS1;i++){
         printf("n: %lu\n", msrmts[i]);
     }
     munmap(buffer, size_factor*sizeof(Node));    
