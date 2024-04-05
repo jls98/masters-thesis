@@ -244,7 +244,7 @@ void test_strides(){
             list_append(head, tmp);
         }
         list_shuffle(head);
-        
+        if(!*head) break;
         for(int i=0;i<STRIDE_REPS;i++){
             test(head, &head[0]);
         }
