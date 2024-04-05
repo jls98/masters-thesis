@@ -245,7 +245,7 @@ void test_strides(){
         printf("append now\n");
         for(int i=0;i<size/(stride*sizeof(Node));i++){
             index=i*stride-i;
-            // printf("index %lu stride %i\n", index, stride);
+            printf("index %lu stride %i\n", index, stride);
             tmp=list_take(buffer_ptr, &index);
             list_append(head, tmp);
         }
