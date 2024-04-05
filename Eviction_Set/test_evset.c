@@ -311,6 +311,6 @@ int main(int ac, char **av) {
 	// // free(conf);
     // test_test();
 	// test_get_histogram_data();
-    // test_strides();
+    test_strides();
     return 0;
 }
