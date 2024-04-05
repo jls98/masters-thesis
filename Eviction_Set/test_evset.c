@@ -240,6 +240,7 @@ void test_strides(){
         u64 index;
         for(int i=0;i<SIZE_VALUE*2;i+=(SIZE_VALUE*2)/stride){
             index=i-(i/stride);
+            printf("index %lu stride %i\n", index, stride);
             tmp=list_take(buffer_ptr, &index);
             list_append(head, tmp);
         }
