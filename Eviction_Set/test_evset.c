@@ -144,7 +144,7 @@ void test_test(){
     
     
     for(int i=1;i<EVSET1_SIZE;i++){
-        index=i*256+2048+ INDEX_OFFSET-i;
+        index=i*512+2048+ INDEX_OFFSET-i;
         tmp=list_take(buffer_ptr, &index);
         list_append(head1, tmp);
     }    
