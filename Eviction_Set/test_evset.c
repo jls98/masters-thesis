@@ -230,7 +230,7 @@ void test_strides(){
     head=malloc(sizeof(Node *));
     free(head);
     for(int stride = 2; stride< 1<<12;stride=stride<<1){
-        head=realloc(head, sizeof(Node *));
+        head=malloc(head, sizeof(Node *));
         if(stride==SIZE_VALUE) break;
         Node *buffer = (Node *) mmap(NULL, size*sizeof(Node), PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB, -1, 0);
         if(buffer==MAP_FAILED){
