@@ -1,6 +1,8 @@
 build/*
 !build/
 
+Eviction_Set/hist/*
+!Eviction_Set/hist/
 # Prerequisites
 *.d
 
