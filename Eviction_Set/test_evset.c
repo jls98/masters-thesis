@@ -265,7 +265,7 @@ void test_strides(){
         // }
         // msr_index=0;
         free(*head);
-        free(head);
+        // free(head);
         munmap(buffer, size*sizeof(Node));
     }
     free(head); // 
