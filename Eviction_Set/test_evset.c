@@ -220,7 +220,7 @@ void test_get_histogram_data(){
     }
 }
 #define STRIDE_REPS 5
-#define SIZE_VALUE 32768
+#define SIZE_VALUE 262144
 
 void test_strides(){
     // stride * 2^5 since sizeof(Node) = 32
@@ -228,7 +228,7 @@ void test_strides(){
     Node **head;
     head=malloc(sizeof(Node *));
     *head=NULL;
-    for(int stride = 4; stride< 1<<12;stride=stride<<1){
+    for(int stride = 4; stride< 1<<17;stride=stride<<1){
         
         if(stride==SIZE_VALUE) break;
         Node *buffer = (Node *) mmap(NULL, size*sizeof(Node), PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB, -1, 0);
