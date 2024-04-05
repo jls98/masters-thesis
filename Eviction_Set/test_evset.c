@@ -251,7 +251,7 @@ void test_strides(){
         }
         
         for(int i=0;i<STRIDE_REPS;i++){
-            printf("%i %lu\n", stride, msrmts[i]);
+            printf("%i %lu\n", stride*32, msrmts[i]);
         }
         msr_index=0;
         
