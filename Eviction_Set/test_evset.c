@@ -245,7 +245,7 @@ void test_strides(){
         }
         list_shuffle(head);
         printf("stride %i\n", stride);
-        print_list(head);
+        list_print(head);
         if(!*head) break;
         for(int i=0;i<STRIDE_REPS;i++){
             test(head, &head[0]);
