@@ -297,19 +297,19 @@ int main(int ac, char **av) {
 		// conf = initConfig(strtol(av[1], NULL, 10), strtol(av[2], NULL, 10), strtol(av[3], NULL, 10), strtol(av[4], NULL, 10), strtol(av[5], NULL, 10), strtol(av[6], NULL, 10));
 	// }
 	wait(1E9);
-    // CU_initialize_registry();
+    CU_initialize_registry();
 
-    // CU_pSuite suite = CU_add_suite("Test Suite evict_baseline", NULL, NULL);
+    CU_pSuite suite = CU_add_suite("Test Suite evict_baseline", NULL, NULL);
 
-    // // CU_add_test(suite, "Test test_node", test_node);
-    // // CU_add_test(suite, "Test testbench_skylake_evsets", testbench_skylake_evsets);
-    // // CU_add_test(suite, "Test test_test", test_test);
+    // CU_add_test(suite, "Test test_node", test_node);
+    // CU_add_test(suite, "Test testbench_skylake_evsets", testbench_skylake_evsets);
+    CU_add_test(suite, "Test test_test", test_test);
     // CU_add_test(suite, "Test test_get_histogram_data", test_get_histogram_data);
 
-    // CU_basic_run_tests();
-    // CU_cleanup_registry();
+    CU_basic_run_tests();
+    CU_cleanup_registry();
 	// // free(conf);
-    test_test();
+    // test_test();
 	// test_get_histogram_data();
     // test_strides();
     return 0;
