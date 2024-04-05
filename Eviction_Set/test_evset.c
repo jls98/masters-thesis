@@ -241,13 +241,13 @@ void test_strides(){
         for(int i=0;i<SIZE_VALUE*2;i+=stride){
             index=i-(i/stride);
             tmp=list_take(buffer_ptr, &index);
-            printf("stride %i, index %i, node %p\n", stride, index, tmp);
+            printf("stride %i, index %i, node %p\n", stride, index, head);
             list_append(head, tmp);
         }
         // list_shuffle(head);
         
         
-        // free(head);
+        free(head); // 
         munmap(buffer, (SIZE_VALUE*2)*sizeof(Node));
     }
     
