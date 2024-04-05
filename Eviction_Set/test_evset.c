@@ -244,11 +244,11 @@ void test_strides(){
             list_append(head, tmp);
         }
         list_shuffle(head);
-        printf("stride %i\n", stride);
-        list_print(head);
-        if(!*head) break;
+        // printf("stride %i\n", stride);
+        // list_print(head);
+        // if(!*head) break;
         for(int i=0;i<STRIDE_REPS;i++){
-            test(*head, *head);
+            test_intern(*head, *head);
         }
         
         munmap(buffer, (SIZE_VALUE*2)*sizeof(Node));
