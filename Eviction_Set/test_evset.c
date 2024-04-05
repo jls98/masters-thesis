@@ -247,6 +247,7 @@ void test_strides(){
             tmp=list_take(buffer_ptr, &index);
             list_append(head, tmp);
         }
+        printf("shuffle now\n");
         list_shuffle(head);
         // list_print(head);
         // if(!*head) break;
@@ -311,6 +312,8 @@ int main(int ac, char **av) {
 	// // free(conf);
     // test_test();
 	// test_get_histogram_data();
+    printf("strides\n");
+    
     test_strides();
     return 0;
 }
