@@ -237,16 +237,13 @@ void test_strides(){
             return;
         }
         Node **buffer_ptr=&buffer;
-        printf("list init now\n");
         list_init(buffer, size*sizeof(Node));
         
         Node *tmp;
         u64 index;
-        printf("append now\n");
         for(int i=0;i<size/(stride*sizeof(Node));i++){
             index=i*stride-i;
             tmp=list_take(buffer_ptr, &index);
-            printf("index %lu stride %i tmp %p head %p %p\n", index, stride, tmp, head, *head);
             
             list_append(head, tmp);
         }

@@ -212,15 +212,11 @@ static void list_append(Node **head, Node *e){
         e->prev=NULL;
         *head=e;        
         return;
-    }
-    printf("a");
-    
+    }    
     Node *tmp=*head;
     while(tmp->next){ // iterate to end
-        printf("b");
         tmp=tmp->next;    
     }
-    printf("a");
     tmp->next=e;
     e->prev=tmp;
     e->next=NULL;
