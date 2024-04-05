@@ -227,8 +227,7 @@ void test_strides(){
     int size = 2*SIZE_VALUE;
     Node **head;
     head=malloc(sizeof(Node *));
-    printf("%p %p malloc head\n", head, *head);
-    printf("%p\n", (*head)->next);
+    *head=NULL;
     for(int stride = 4; stride< 1<<12;stride=stride<<1){
         
         if(stride==SIZE_VALUE) break;
