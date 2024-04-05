@@ -264,7 +264,7 @@ void test_strides(){
             // printf("%i %lu\n", stride<<5, msrmts[i]);
         // }
         // msr_index=0;
-        
+        free(head);
         munmap(buffer, size*sizeof(Node));
     }
     free(head); // 
