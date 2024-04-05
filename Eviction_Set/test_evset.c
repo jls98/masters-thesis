@@ -261,7 +261,7 @@ void test_strides(){
             j++;
             // test_intern(*head, *head);
         }
-        printf("%5i %4i %5lu %3li %4i\n", stride<<5, size/(stride*sizeof(Node)), msrmts[0], msrmts[0]/j, j);
+        printf("%5i %4i %5lu %3li\n", stride<<5, size/(stride*sizeof(Node)), msrmts[0], msrmts[0]/j);
         // for(int i=0;i<STRIDE_REPS;i++){
             // printf("%i %lu\n", stride<<5, msrmts[i]);
         // }
@@ -309,7 +309,8 @@ int main(int ac, char **av) {
     // CU_basic_run_tests();
     // CU_cleanup_registry();
 	// // free(conf);
+    test_test();
 	// test_get_histogram_data();
-    test_strides();
+    // test_strides();
     return 0;
 }
