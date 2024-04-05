@@ -239,8 +239,8 @@ void test_strides(){
         
         Node *tmp;
         u64 index;
-        for(int i=0;i<SIZE_VALUE*2;i+=stride){
-            index=i-(i/stride);
+        for(int i=0;i<size/stride;i++){
+            index=i*stride-i;
             // printf("index %lu stride %i\n", index, stride);
             tmp=list_take(buffer_ptr, &index);
             list_append(head, tmp);
@@ -253,7 +253,7 @@ void test_strides(){
         }
         
         for(int i=0;i<STRIDE_REPS;i++){
-            printf("%i %lu\n", stride*32, msrmts[i]);
+            printf("%i %lu\n", stride<<5, msrmts[i]);
         }
         msr_index=0;
         
