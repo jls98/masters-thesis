@@ -248,14 +248,18 @@ void test_strides(){
         list_shuffle(head);
         // list_print(head);
         // if(!*head) break;
-        for(int i=0;i<STRIDE_REPS;i++){
-            test_intern(*head, *head);
+        msrmts[0]=0;
+        int j=0;
+        for(tmp=*head;tmp;tmp=tmp->next){
+            msrmts[0]+=probe(tmp);
+            j++;
+            // test_intern(*head, *head);
         }
-        
-        for(int i=0;i<STRIDE_REPS;i++){
-            printf("%i %lu\n", stride<<5, msrmts[i]);
-        }
-        msr_index=0;
+        printf("%i %lu %i\n", stride, msrmts[0], msrmts[0]/j);
+        // for(int i=0;i<STRIDE_REPS;i++){
+            // printf("%i %lu\n", stride<<5, msrmts[i]);
+        // }
+        // msr_index=0;
         
         munmap(buffer, size*sizeof(Node));
     }
