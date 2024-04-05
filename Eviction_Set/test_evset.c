@@ -219,6 +219,35 @@ void test_get_histogram_data(){
         munmap(buffer, AMOUNT_HISTO*sizeof(Node)); 
     }
 }
+#define STRIDE_REPS 1000
+#define SIZE_VALUE 32768
+
+void test_strides(){
+    // stride * 2^5 since sizeof(Node) = 32
+    for(int stride = 1<<5; stride< 1<<18;stride<<1){
+        Node *buffer = (Node *) mmap(NULL, SIZE_VALUE*2*sizeof(Node), PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB, -1, 0);
+        if(buffer==MAP_FAILED){
+            printf("mmap failed\n");
+            return;
+        }
+        Node **buffer_ptr=&buffer;
+        list_init(buffer, AMOUNT_HISTO*sizeof(Node));
+        Node **head=malloc(sizeof(Node *));
+        Node *tmp;
+        u64 index;
+        for(int i=0;i<SIZE_VALUE*2;i+=stride){
+            index=i-(i/stride);
+            tmp=list_take(buffer_ptr, &index);
+            list_append(head, tmp);
+        }
+        printf("print list of stride %i\n", stride);
+        list_print(head);
+        // list_shuffle(head);
+        
+    }
+    
+    
+}
 
 
 int main(int ac, char **av) {
@@ -253,6 +282,7 @@ int main(int ac, char **av) {
     // CU_basic_run_tests();
     // CU_cleanup_registry();
 	// // free(conf);
-	test_get_histogram_data();
+	// test_get_histogram_data();
+    test_strides();
     return 0;
 }
