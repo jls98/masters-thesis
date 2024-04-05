@@ -248,7 +248,7 @@ void test_strides(){
         list_print(head);
         if(!*head) break;
         for(int i=0;i<STRIDE_REPS;i++){
-            test(head, &head[0]);
+            test(head, head[0]);
         }
         
         munmap(buffer, (SIZE_VALUE*2)*sizeof(Node));
