@@ -261,7 +261,7 @@ void test_strides(){
             j++;
             // test_intern(*head, *head);
         }
-        printf("j %i\n", j);
+        if(j==0) break;
         printf("%6i %4li %6lu %3li\n", stride<<5, size/(stride*sizeof(Node)), msrmts[0], msrmts[0]/j);
         // for(int i=0;i<STRIDE_REPS;i++){
             // printf("%i %lu\n", stride<<5, msrmts[i]);
