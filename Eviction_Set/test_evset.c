@@ -246,8 +246,8 @@ void test_strides(){
         // list_shuffle(head);
         
         
-        // free(head);
-        // munmap(buffer, (SIZE_VALUE*2)*sizeof(Node));
+        free(head);
+        munmap(buffer, (SIZE_VALUE*2)*sizeof(Node));
     }
     
     
