@@ -245,7 +245,7 @@ void test_strides(){
         for(int i=0;i<size/(stride*sizeof(Node));i++){
             index=i*stride-i;
             tmp=list_take(buffer_ptr, &index);
-            printf("index %lu stride %i tmp %p\n", index, stride, tmp);
+            printf("index %lu stride %i tmp %p head %p %p\n", index, stride, tmp, head, *head);
             list_append(head, tmp);
         }
         printf("shuffle now\n");
