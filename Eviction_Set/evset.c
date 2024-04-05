@@ -213,12 +213,13 @@ static void list_append(Node **head, Node *e){
         *head=e;        
         return;
     }
+    printf("a");
     
     Node *tmp=*head;
     while(tmp->next){ // iterate to end
         tmp=tmp->next;    
     }
-  
+    printf("a");
     tmp->next=e;
     e->prev=tmp;
     e->next=NULL;
