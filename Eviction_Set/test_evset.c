@@ -231,7 +231,7 @@ void test_strides(){
             return;
         }
         Node **buffer_ptr=&buffer;
-        list_init(buffer, AMOUNT_HISTO*sizeof(Node));
+        list_init(buffer, SIZE_VALUE*2*sizeof(Node));
         Node **head=malloc(sizeof(Node *));
         Node *tmp;
         u64 index;
