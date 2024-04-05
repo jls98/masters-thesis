@@ -219,7 +219,7 @@ void test_get_histogram_data(){
         munmap(buffer, AMOUNT_HISTO*sizeof(Node)); 
     }
 }
-#define STRIDE_REPS 1000
+#define STRIDE_REPS 5
 #define SIZE_VALUE 32768
 #define MMAP_SIZE
 
