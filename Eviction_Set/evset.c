@@ -217,6 +217,7 @@ static void list_append(Node **head, Node *e){
     
     Node *tmp=*head;
     while(tmp->next){ // iterate to end
+        printf("b");
         tmp=tmp->next;    
     }
     printf("a");
