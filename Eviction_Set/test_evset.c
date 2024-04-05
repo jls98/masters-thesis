@@ -230,7 +230,7 @@ void test_strides(){
     head=malloc(sizeof(Node *));
     free(head);
     for(int stride = 2; stride< 1<<12;stride=stride<<1){
-        head=malloc(head, sizeof(Node *));
+        head=malloc(sizeof(Node *));
         if(stride==SIZE_VALUE) break;
         Node *buffer = (Node *) mmap(NULL, size*sizeof(Node), PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB, -1, 0);
         if(buffer==MAP_FAILED){
@@ -262,7 +262,7 @@ void test_strides(){
             j++;
             // test_intern(*head, *head);
         }
-        printf("%i %i %lu %i %i\n", stride<<5, size/(stride*sizeof(Node)), msrmts[0], msrmts[0]/j, j);
+        printf("%i %i %lu %li %i\n", stride<<5, size/(stride*sizeof(Node)), msrmts[0], msrmts[0]/j, j);
         // for(int i=0;i<STRIDE_REPS;i++){
             // printf("%i %lu\n", stride<<5, msrmts[i]);
         // }
