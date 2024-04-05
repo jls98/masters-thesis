@@ -242,7 +242,7 @@ void test_strides(){
             tmp=list_take(buffer_ptr, &index);
             list_append(head, tmp);
         }
-        printf("a");
+        printf("stride %i\n", stride);
         // list_shuffle(head);
         
         
