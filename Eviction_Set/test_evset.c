@@ -238,8 +238,8 @@ void test_strides(){
         Node *tmp;
         u64 index;
         for(int i=0;i<SIZE_VALUE*2;i+=stride){
-        printf("stride %i\n", stride);
             index=i-(i/stride);
+            printf("stride %i, index %i\n", stride, index);
             tmp=list_take(buffer_ptr, &index);
             list_append(head, tmp);
         }
