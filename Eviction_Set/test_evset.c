@@ -239,8 +239,8 @@ void test_strides(){
         u64 index;
         for(int i=0;i<SIZE_VALUE*2;i+=stride){
             index=i-(i/stride);
-            printf("stride %i, index %i\n", stride, index);
             tmp=list_take(buffer_ptr, &index);
+            printf("stride %i, index %i, node %p\n", stride, index, tmp);
             list_append(head, tmp);
         }
         // list_shuffle(head);
