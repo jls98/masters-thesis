@@ -231,7 +231,7 @@ void test_strides(){
     Node **head;
     head=malloc(sizeof(Node *));
     *head=NULL;
-    printf("stride (Bytes)| evset size | msrmts sum | msrmts per msr | j\n");
+    printf("stride (Bytes)| evset size | msrmts sum | msrmts per msr\n");
 
     for(int stride = 4; stride< 1<<17;stride=stride<<1){
         
@@ -267,7 +267,7 @@ void test_strides(){
             // test_intern(*head, *head);
         }
         if(j==0) break;
-        printf("%7i %4li %7lu %3li %i\n", stride<<5, size/(stride*sizeof(Node)), msrmts[0], msrmts[0]/j, j);
+        printf("%7i %5li %7lu %4li\n", stride<<5, size/(stride*sizeof(Node)), msrmts[0], msrmts[0]/j);
         // for(int i=0;i<STRIDE_REPS;i++){
             // printf("%i %lu\n", stride<<5, msrmts[i]);
         // }
