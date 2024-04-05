@@ -227,7 +227,7 @@ void test_strides(){
     // stride * 2^5 since sizeof(Node) = 32
     int size = 2*SIZE_VALUE;
     Node **head=malloc(sizeof(Node *));
-    for(int stride = 1<<5; stride< 1<<17;stride=stride<<1){
+    for(int stride = 1; stride< 1<<12;stride=stride<<1){
         if(stride==SIZE_VALUE) break;
         Node *buffer = (Node *) mmap(NULL, size*sizeof(Node), PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB, -1, 0);
         if(buffer==MAP_FAILED){
