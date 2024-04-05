@@ -223,7 +223,7 @@ void test_get_histogram_data(){
 #define ALDER_L2 2097152
 #define SKYLAKE_L2 262144
 #define CACHE_L1 32768
-#define SIZE_VALUE SKYLAKE_L2
+#define SIZE_VALUE ALDER_L2
 
 void test_strides(){
     // stride * 2^5 since sizeof(Node) = 32
@@ -231,6 +231,8 @@ void test_strides(){
     Node **head;
     head=malloc(sizeof(Node *));
     *head=NULL;
+    printf("stride (Bytes)| evset size | msrmts sum | msrmts per msr | j\n");
+
     for(int stride = 4; stride< 1<<17;stride=stride<<1){
         
         if(stride==SIZE_VALUE) break;
@@ -265,7 +267,7 @@ void test_strides(){
             // test_intern(*head, *head);
         }
         if(j==0) break;
-        printf("%6i %4li %6lu %3li\n", stride<<5, size/(stride*sizeof(Node)), msrmts[0], msrmts[0]/j);
+        printf("%7i %4li %7lu %3li %i\n", stride<<5, size/(stride*sizeof(Node)), msrmts[0], msrmts[0]/j, j);
         // for(int i=0;i<STRIDE_REPS;i++){
             // printf("%i %lu\n", stride<<5, msrmts[i]);
         // }
@@ -315,7 +317,6 @@ int main(int ac, char **av) {
 	// // free(conf);
     // test_test();
 	// test_get_histogram_data();
-    
     test_strides();
     return 0;
 }
