@@ -238,7 +238,7 @@ void test_strides(){
         
         Node *tmp;
         u64 index;
-        for(int i=0;i<SIZE_VALUE*2;i+=stride){
+        for(int i=0;i<SIZE_VALUE*2;i+=(SIZE_VALUE*2)/stride){
             index=i-(i/stride);
             tmp=list_take(buffer_ptr, &index);
             list_append(head, tmp);
