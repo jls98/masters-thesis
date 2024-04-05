@@ -225,6 +225,7 @@ void test_get_histogram_data(){
 
 void test_strides(){
     // stride * 2^5 since sizeof(Node) = 32
+    
     for(int stride = 1<<5; stride< 1<<17;stride=stride<<1){
         if(stride==SIZE_VALUE) break;
         Node *buffer = (Node *) mmap(NULL, SIZE_VALUE*2*sizeof(Node), PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB, -1, 0);
@@ -246,7 +247,7 @@ void test_strides(){
         // list_shuffle(head);
         
         
-        free(head);
+        // free(head);
         munmap(buffer, (SIZE_VALUE*2)*sizeof(Node));
     }
     
