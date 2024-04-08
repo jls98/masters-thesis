@@ -155,6 +155,13 @@ static u64 lfsr_step(u64 lfsr) {
   return (lfsr & 1) ? (lfsr >> 1) ^ FEEDBACK : (lfsr >> 1);
 }
 
+// I/O
+// read file
+
+// write file
+
+
+
 // --- config ---
 static Config *config_init(u64 ways, u64 sets, u64 cache_line_size, u64 threshold, u64 cache_size, u64 test_reps, u64 hugepages){
 	Config *con = malloc(sizeof(Config));
