@@ -128,7 +128,7 @@ void testbench_skylake_evsets(){
 #define EVSET1_SIZE_ALDERLAKE2 16
 
 #define STRIDE_SKYLAKE 2048
-#define STRIDE_ALDERLAKE2 2048
+#define STRIDE_ALDERLAKE2 4096
 
 #define STRIDE_SIZE STRIDE_ALDERLAKE2
 #define EVSET1_SIZE EVSET1_SIZE_ALDERLAKE2
@@ -183,7 +183,7 @@ void test_test(){
     }   
     
     for(int i=0;i<REPS1;i++){
-        printf("a: %lu\n", msrmts[i]);
+        printf("b: %lu\n", msrmts[i]);
     }
     munmap(buffer, size_factor*sizeof(Node));    
     
