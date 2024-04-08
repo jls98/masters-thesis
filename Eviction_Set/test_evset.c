@@ -123,7 +123,7 @@ void testbench_skylake_evsets(){
 
 #define REPS1 5
 #define INDEX_OFFSET 10
-#define EVSET1_SIZE 8
+#define EVSET1_SIZE 16
 void test_test(){
     Node *buffer = (Node *) mmap(NULL, size_factor*sizeof(Node), PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB, -1, 0);
     list_init(buffer, size_factor*sizeof(Node));
