@@ -15,7 +15,7 @@ void generateZeroFile(const char *file_name, size_t file_size) {
     int randint;
     for (size_t i = 0; i < file_size; i++) {
         randint = rand() % 256;
-        sprintf(buf, "%d", randint);
+        sprintf(buf, "%c", randint);
         fputc(*buf, file);
     }
     free(buf);
