@@ -1,7 +1,7 @@
 #include "evset.c"
 #include <CUnit/CUnit.h>
 #include <CUnit/Basic.h>
-#include <fcntl.h>
+
 void test_node(){
     Node *nodes= (Node *) mmap(NULL, 5000*sizeof(Node), PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB, -1, 0); 
 
@@ -236,7 +236,7 @@ void test_strides(){
     for(int stride = 4; stride< 1<<17;stride=stride<<1){
         
         if(stride==SIZE_VALUE) break;
-        Node *buffer = (Node *) mmap(NULL, size, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB, MAP_HUGE_2MB, -1, 0);
+        Node *buffer = (Node *) mmap(NULL, size, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB, -1, 0);
         if(buffer==MAP_FAILED){
             printf("mmap failed\n");
             return;
@@ -307,16 +307,14 @@ int main(int ac, char **av) {
 
     CU_pSuite suite = CU_add_suite("Test Suite evict_baseline", NULL, NULL);
 
-    // CU_add_test(suite, "Test test_node", test_node);
+    CU_add_test(suite, "Test test_node", test_node);
     // CU_add_test(suite, "Test testbench_skylake_evsets", testbench_skylake_evsets);
     CU_add_test(suite, "Test test_test", test_test);
     // CU_add_test(suite, "Test test_get_histogram_data", test_get_histogram_data);
 
     CU_basic_run_tests();
     CU_cleanup_registry();
-	// // free(conf);
-    // test_test();
 	// test_get_histogram_data();
-    test_strides();
+    // test_strides();
     return 0;
 }
