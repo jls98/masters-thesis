@@ -1,8 +1,11 @@
 CC = gcc
 CFLAGS = -Wall -Wextra -masm=intel -O0 -fPIC
-TARGETS = test_evset evset
+TARGETS = test_evset evset file_generator
 
 all: $(TARGETS)
+
+file_generator: utils/file_generator.c
+	$(CC) $(CFLAGS) -o build/file_generator utils/file_generator.c
 
 evict_baseline: Eviction_Set/evict_baseline.c
 	$(CC) $(CFLAGS) -o build/evict_baseline -DEVICT_BASELINE Eviction_Set/evict_baseline.c
