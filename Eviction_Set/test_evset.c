@@ -1,7 +1,7 @@
 #include "evset.c"
 #include <CUnit/CUnit.h>
 #include <CUnit/Basic.h>
-
+#include <fcntl.h>
 void test_node(){
     Node *nodes= (Node *) mmap(NULL, 5000*sizeof(Node), PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB, -1, 0); 
 
