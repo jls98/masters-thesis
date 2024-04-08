@@ -236,7 +236,7 @@ void test_strides(){
     for(int stride = 4; stride< 1<<17;stride=stride<<1){
         
         if(stride==SIZE_VALUE) break;
-        Node *buffer = (Node *) mmap(NULL, size, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB, -1, 0);
+        Node *buffer = (Node *) mmap(NULL, size, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB | MAP_HUGE_2MB, -1, 0);
         if(buffer==MAP_FAILED){
             printf("mmap failed\n");
             return;
