@@ -11,7 +11,7 @@ void generateZeroFile(const char *file_name, size_t file_size) {
     }
     srand(time(NULL));
     // Fill the file with '0' bytes
-    char *buf=malloc(sizeof(char));
+    char *buf=malloc(2*sizeof(char));
     int randint;
     for (size_t i = 0; i < file_size; i++) {
         randint = rand() % 256;
