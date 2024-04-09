@@ -130,7 +130,7 @@ void testbench_skylake_evsets(){
 #define EVSET1_SIZE_ALDERLAKE2 16
 
 #define STRIDE_SKYLAKE 2048 //(2048 weil 8 statt 4 Elemente?)
-#define STRIDE_ALDERLAKE2 8192
+#define STRIDE_ALDERLAKE2 4096
 
 #define STRIDE_SIZE STRIDE_ALDERLAKE2
 #define EVSET1_SIZE EVSET1_SIZE_ALDERLAKE2
