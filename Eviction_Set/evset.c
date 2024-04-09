@@ -435,6 +435,7 @@ static u64 test_intern(Node *ptr, void *target){
     
     // measure
     msrmts[msr_index++]=probe(target);
+    printf("M: %lu\n", msrmts[msr_index-1]);
     return msrmts[msr_index-1];
 }
 
