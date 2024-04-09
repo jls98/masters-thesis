@@ -82,7 +82,7 @@ static u64 lfsr_step(u64 lfsr);
 // algorithms ############################################
 
 
-static Node *init_evset(Config *conf_ptr);
+static void init_evset(Config *conf_ptr);
 static Node *find_evset(/* TODO */);
 static Node **get_evset(Config *conf_ptr);
 static void close_evsets();
@@ -321,7 +321,7 @@ int main(int ac, char **av){
 static void init_evset(Config *conf_ptr){
     conf=conf_ptr;
     buffer = (Node *) mmap(NULL, PAGESIZE, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB, -1, 0);
-    if (madvise(buffer, bufsize, MADV_HUGEPAGE) == -1){
+    if (madvise(buffer, PAGESIZE, MADV_HUGEPAGE) == -1){
         printf("madvise failed!\n");
         return;
     }
