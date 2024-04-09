@@ -292,6 +292,8 @@ static void list_shuffle(Node **head){
 }
 
 static void list_print(Node **head){
+    if(!head) return;
+    if(!*head) return;
     printf("[+] printing adrs of list:\n");
     Node *tmp;
     for(tmp=*head;tmp;tmp=tmp->next){
@@ -314,7 +316,7 @@ int main(int ac, char **av){
     if(*head) printf(" %p", *head);
     printf("\n");
     printf("taget %p \n", target);
-    if(head && *head) list_print(head);
+    list_print(head);
     return 0;
 }
 #endif
