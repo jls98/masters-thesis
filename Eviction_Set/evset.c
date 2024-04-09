@@ -371,7 +371,7 @@ static Node **find_evset(Config *conf_ptr, void *target_adrs){
         // remove elems from evsets and prepare next iteration
         while(*evsets) list_pop(evsets);       
     }    
-    // printf("nothing\n");
+    printf("nothing\n");
     return NULL;
 }
 
