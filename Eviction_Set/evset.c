@@ -347,11 +347,13 @@ static Node **find_evset(Config *conf_ptr, void *target_adrs){
     u64 index;
     for(int offset=0;offset<(conf->cache_size/conf->cache_line_size);offset++){
         // create evset with offset as index of Node-array
+        printf("offset %i:\n", offset);
         for(int i=0;i<conf->ways;i++){
             index=offset*(conf->cache_line_size/NODESIZE) + i*(conf->sets/NODESIZE); //(compute size in NODE index)
+            printf("%lu ", index);
             list_append(evsets, list_take(buffer_ptr, &index));
         }
-        
+        printf("\n");
         list_shuffle(evsets);
         
         // test if it is applicable, if yes yehaaw if not, proceed and reset evset pointer 
