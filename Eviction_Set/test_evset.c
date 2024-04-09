@@ -137,10 +137,10 @@ void testbench_skylake_evsets(){
 void test_test(){
     int bufsize = 2*PAGESIZE;
     Node *buffer = (Node *) mmap(NULL, bufsize, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB, -1, 0);
-    // if (madvise(buffer, PAGESIZE, MADV_HUGEPAGE) == -1){
-        // printf("madvise failed!\n");
-        // return;
-    // }
+    if (madvise(buffer, bufsize, MADV_HUGEPAGE) == -1){
+        printf("madvise failed!\n");
+        return;
+    }
     list_init(buffer, bufsize);
     Node **buffer_ptr=&buffer;
     u64 index;
