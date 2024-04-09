@@ -303,11 +303,12 @@ static void list_print(Node **head){
 int main(int ac, char **av){
     wait(1E9);
     printf("starting...\n");
-    Config *con=config_init(8, 4096, 64, 47, 32768, 1, 1);
-    // Config *con=config_init(16, 131072, 64, 70, 2097152, 1, 1);
+    // Config *con=config_init(8, 4096, 64, 47, 32768, 1, 1);
+    Config *con=config_init(16, 131072, 64, 70, 2097152, 1, 1);
+    u64 *test=malloc(sizeof(u64));
     init_evset(con);
     printf("init done\n");
-    find_evset();
+    find_evset(con, test);
     printf("find done\n");
     if(*get_evset(con)) list_print(get_evset(con));
     return 0;
@@ -362,8 +363,7 @@ static Node *find_evset(Config *conf_ptr, void *target_adrs){
 
 static Node **get_evset(Config *conf_ptr){
     if(!evsets){
-        init_evset(conf_ptr);
-        find_evset(/*TODO*/);
+        return NULL;
     }
     return evsets;
 }
