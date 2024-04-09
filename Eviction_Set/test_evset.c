@@ -163,7 +163,7 @@ void test_test(){
     list_shuffle(head1);
     
     // L1
-    init_evset(config_init(8, 4096, 64, 39, 32768, 1, 1));
+    init_evset(config_init(16, 131072, 64, 70, 2097152, 1, 1));
     
 
     // evict
