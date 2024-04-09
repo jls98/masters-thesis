@@ -36,7 +36,7 @@ static Node *pool = NULL;
 static u64 pool_size = 0;
 static Node *buffer = NULL;
 static u64 buffer_size = 0;
-static Node **buffer_ptr;
+
 
 // Utils #################################################
 /* wait for cycles cycles and activate cache            */
@@ -84,7 +84,7 @@ static u64 lfsr_step(u64 lfsr);
 
 static Node *init_evset(Config *conf_ptr);
 static Node *find_evset(/* TODO */);
-static Node **get_evset(Config *conf_ptr);
+static Node *get_evset(Config *conf_ptr);
 static void close_evsets();
 static void generate_conflict_set();
 static void traverse_list(Node *ptr);
@@ -302,75 +302,71 @@ static void list_print(Node **head){
 #ifndef NOMAIN
 int main(int ac, char **av){
     wait(1E9);
-    printf("starting...\n");
+    printf("size of Node %zu\n", sizeof(Node));
     Config *con=config_init(8, 4096, 64, 47, 32768, 1, 1);
-    // Config *con=config_init(16, 131072, 64, 70, 2097152, 1, 1);
     init_evset(con);
-    printf("init done\n");
+    printf("init\n");
     find_evset();
-    printf("find done\n");
-    if(*get_evset(con)) list_print(get_evset(con));
+    printf("find\n");
     return 0;
 }
 #endif
 
-#define PAGESIZE 2097152
-#define NODESIZE 32
-
-static void init_evset(Config *conf_ptr){
+#define pool_factor 20
+#define buffer_factor 20
+static Node *init_evset(Config *conf_ptr){
     conf=conf_ptr;
-    buffer = (Node *) mmap(NULL, PAGESIZE, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB, -1, 0);
-    if (madvise(buffer, bufsize, MADV_HUGEPAGE) == -1){
-        printf("madvise failed!\n");
-        return;
-    }
-    buffer_ptr=&buffer;
-    list_init(buffer, PAGESIZE);    
-    // init buffer for evset elements
+    buffer_size = conf->ways*conf->sets*buffer_factor*sizeof(Node);
+    pool_size = conf->ways*conf->sets*pool_factor*sizeof(Node);
+    lfsr=lfsr_create();
     
-    evsets = malloc(sizeof(Node *));
+    if(conf->hugepages){
+        buffer = (Node *) mmap(NULL, buffer_size, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB, 0, 0);
+        pool = (Node *) mmap(NULL, pool_size, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB, 0, 0);
+    }else{
+        buffer = (Node *) mmap(NULL, buffer_size, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS, 0, 0);        
+        pool = (Node *) mmap(NULL, pool_size, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS, 0, 0);        
+    }
+    
+    if(buffer==MAP_FAILED || pool==MAP_FAILED){
+        printf("[!] init_evsets: mmap failed!\n");
+        return NULL;
+    }
+    list_init(buffer, buffer_size);
+    list_init(pool, buffer_size);
+    return pool;
 }   
 
-static Node *find_evset(Config *conf_ptr, void *target_adrs){
-    if (!buffer || !evsets){
-        close_evsets();
-        init_evset(conf_ptr);
-    }
-    // find out which adrs offset works
-    wait(1E9);
+static Node *find_evset(){
+    // printf("find_evset: buffer %p\n", buffer);
+    // printf("find_evset: conf %p\n", conf);
+    // printf("find_evset: buffer_size %lu\n", buffer_size);
+    char *target= (char *) &buffer[10]; // TODO modify later
+    *target=0;
     
-    // loop over each cache line
-    // iterate over every cacheline
-    u64 index;
-    for(int offset=0;offset<(conf->cache_size/conf->cache_line_size);offset++){
-        // create evset with offset as index of Node-array
-        for(int i=0;i<conf->ways;i++){
-            index=offset*(conf->cache_line_size/NODESIZE) + i*(conf->sets/NODESIZE); //(compute size in NODE index)
-            list_append(evsets, list_take(buffer_ptr, &index));
-        }
-        
-        list_shuffle(evsets);
-        
-        // test if it is applicable, if yes yehaaw if not, proceed and reset evset pointer 
-        if(test(*evsets, target_adrs)) return *evsets;
-        
-        // remove elems from evsets and prepare next iteration
-        while(*evsets) list_pop(evsets);       
-    }    
+    
+    generate_conflict_set(conf, target);
+    
+    // WIP
+    
+    
+    
+    
+    
     return NULL;
 }
 
-static Node **get_evset(Config *conf_ptr){
+static Node *get_evset(Config *conf_ptr){
     if(!evsets){
         init_evset(conf_ptr);
         find_evset(/*TODO*/);
     }
-    return evsets;
+    return *evsets;
 }
 
 static void close_evsets(){
-    if (evsets) free(evsets);
-    if (buffer) munmap(buffer, buffer_size);
+    free(evsets);
+    munmap(buffer, buffer_size);
 }
 
 static void generate_conflict_set(Config *conf_ptr, char *target){
