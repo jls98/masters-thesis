@@ -130,17 +130,18 @@ void testbench_skylake_evsets(){
 #define EVSET1_SIZE_ALDERLAKE2 16
 
 #define STRIDE_SKYLAKE 2048 //(2048 weil 8 statt 4 Elemente?)
-#define STRIDE_ALDERLAKE2 8192
+#define STRIDE_ALDERLAKE2 4096
 
 #define STRIDE_SIZE STRIDE_ALDERLAKE2
 #define EVSET1_SIZE EVSET1_SIZE_ALDERLAKE2
 void test_test(){
-    Node *buffer = (Node *) mmap(NULL, PAGESIZE, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB, -1, 0);
+    int bufsize = 2*PAGESIZE;
+    Node *buffer = (Node *) mmap(NULL, bufsize, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB, -1, 0);
     // if (madvise(buffer, PAGESIZE, MADV_HUGEPAGE) == -1){
         // printf("madvise failed!\n");
         // return;
     // }
-    list_init(buffer, PAGESIZE);
+    list_init(buffer, bufsize);
     Node **buffer_ptr=&buffer;
     u64 index;
     
@@ -173,7 +174,7 @@ void test_test(){
     for(int i=0;i<REPS1;i++){
         printf("b: %lu\n", msrmts[i]);
     }
-    munmap(buffer, PAGESIZE);    
+    munmap(buffer, bufsize);    
     
 }
 #define AMOUNT_HISTO 9999999
