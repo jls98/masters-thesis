@@ -83,7 +83,7 @@ static u64 lfsr_step(u64 lfsr);
 
 
 static void init_evset(Config *conf_ptr);
-static Node *find_evset(/* TODO */);
+static Node **find_evset(Config *conf_ptr, void *target_adrs);
 static Node **get_evset(Config *conf_ptr);
 static void close_evsets();
 static void generate_conflict_set();
@@ -308,9 +308,11 @@ int main(int ac, char **av){
     u64 *test=malloc(sizeof(u64));
     init_evset(con);
     printf("init done\n");
-    find_evset(con, test);
-    printf("find done\n");
-    if(*get_evset(con)) list_print(get_evset(con));
+    Node **head=find_evset(con, test);
+    printf("find done %p", head);
+    if(*head) printf(" %p", *head);
+    printf("\n");
+    if(head && *head) list_print(head);
     return 0;
 }
 #endif
@@ -332,7 +334,7 @@ static void init_evset(Config *conf_ptr){
     evsets = malloc(sizeof(Node *));
 }   
 
-static Node *find_evset(Config *conf_ptr, void *target_adrs){
+static Node **find_evset(Config *conf_ptr, void *target_adrs){
     if (!buffer || !evsets){
         close_evsets();
         init_evset(conf_ptr);
@@ -353,7 +355,7 @@ static Node *find_evset(Config *conf_ptr, void *target_adrs){
         list_shuffle(evsets);
         
         // test if it is applicable, if yes yehaaw if not, proceed and reset evset pointer 
-        if(test(*evsets, target_adrs)) return *evsets;
+        if(test(*evsets, target_adrs)) return evsets;
         
         // remove elems from evsets and prepare next iteration
         while(*evsets) list_pop(evsets);       
