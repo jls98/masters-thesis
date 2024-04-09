@@ -123,6 +123,7 @@ void testbench_skylake_evsets(){
 
 #define REPS1 5
 #define INDEX_OFFSET 10
+#define PAGESIZE 2097152
 
 #define EVSET1_SIZE_SKYLAKE 8
 #define EVSET1_SIZE_SKYLAKE2 4
@@ -134,12 +135,12 @@ void testbench_skylake_evsets(){
 #define STRIDE_SIZE STRIDE_ALDERLAKE2
 #define EVSET1_SIZE EVSET1_SIZE_ALDERLAKE2
 void test_test(){
-    Node *buffer = (Node *) mmap(NULL, size_factor*sizeof(Node), PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB, -1, 0);
-    if (madvise(buffer, size_factor*sizeof(Node), MADV_HUGEPAGE) == -1){
+    Node *buffer = (Node *) mmap(NULL, PAGESIZE, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB, -1, 0);
+    if (madvise(buffer, PAGESIZE, MADV_HUGEPAGE) == -1){
         printf("madvise failed!\n");
         return;
     }
-    list_init(buffer, size_factor*sizeof(Node));
+    list_init(buffer, PAGESIZE);
     Node **buffer_ptr=&buffer;
     u64 index;
     
@@ -148,26 +149,12 @@ void test_test(){
     Node *tmp = list_take(buffer_ptr, &index);
     Node **head1=malloc(sizeof(Node *));
     list_append(head1, tmp);
-
-    // // init evset2
-    // index =262144 + INDEX_OFFSET-1;
-    // tmp = list_take(buffer_ptr, &index);    
-    // Node **head2=malloc(sizeof(Node *));
-    // list_append(head2, tmp);
-    
     
     for(int i=1;i<EVSET1_SIZE;i++){
         index=i*STRIDE_SIZE+STRIDE_SIZE+ INDEX_OFFSET-i;
         tmp=list_take(buffer_ptr, &index);
         list_append(head1, tmp);
     }    
-
-    // for(int i=1;i<LALALALAL2;i++){
-        // index = i*2048+262144+INDEX_OFFSET-i-EVSET1_SIZE;
-        // tmp=list_take(buffer_ptr, &index);
-        // list_append(head2, tmp);        
-    // }
-    
     
     index =INDEX_OFFSET;
     void *target = (void *) list_take(buffer_ptr, &index); 
@@ -177,10 +164,6 @@ void test_test(){
     // L1
     init_evset(config_init(8, 4096, 64, 39, 32768, 1, 1));
     
-    // cached 
-    // for(int i=0;i<REPS1;i++){
-        // CU_ASSERT_TRUE(test(*head1, target)== 0);
-    // }   
 
     // evict
     for(int i=0;i<REPS1;i++){
