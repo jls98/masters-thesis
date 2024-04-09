@@ -310,7 +310,7 @@ int main(int ac, char **av){
     init_evset(con);
     printf("init done\n");
     Node **head=find_evset(con, target);
-    printf("find done %p", head);
+    if(head) printf("find done %p", head);
     if(*head) printf(" %p", *head);
     printf("\n");
     printf("taget %p \n", target);
