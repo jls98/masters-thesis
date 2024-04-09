@@ -135,7 +135,7 @@ void testbench_skylake_evsets(){
 #define STRIDE_SIZE STRIDE_ALDERLAKE2
 #define EVSET1_SIZE EVSET1_SIZE_ALDERLAKE2
 void test_test(){
-    int bufsize = 2*PAGESIZE;
+    int bufsize = PAGESIZE;
     Node *buffer = (Node *) mmap(NULL, bufsize, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB, -1, 0);
     if (madvise(buffer, bufsize, MADV_HUGEPAGE) == -1){
         printf("madvise failed!\n");
