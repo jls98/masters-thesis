@@ -125,15 +125,20 @@ void testbench_skylake_evsets(){
 #define INDEX_OFFSET 10
 
 #define EVSET1_SIZE_SKYLAKE 8
+#define EVSET1_SIZE_SKYLAKE2 4
 #define EVSET1_SIZE_ALDERLAKE2 16
 
-#define STRIDE_SKYLAKE 2048
+#define STRIDE_SKYLAKE 2048 //(2048 weil 8 statt 4 Elemente?)
 #define STRIDE_ALDERLAKE2 4096
 
 #define STRIDE_SIZE STRIDE_ALDERLAKE2
 #define EVSET1_SIZE EVSET1_SIZE_ALDERLAKE2
 void test_test(){
     Node *buffer = (Node *) mmap(NULL, size_factor*sizeof(Node), PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB, -1, 0);
+    if (madvise(buffer, size_factor*sizeof(Node), MADV_HUGEPAGE) == -1){
+        printf("madvise failed!\n");
+        return;
+    }
     list_init(buffer, size_factor*sizeof(Node));
     Node **buffer_ptr=&buffer;
     u64 index;
