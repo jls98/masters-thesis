@@ -91,7 +91,8 @@ static void traverse_list(Node *ptr);
 static u64 test(Node *ptr, void *target);
 
 static u64 lfsr;
-
+static u64 msrmts[1000];
+static u64 msr_index=0;
 // --- utils ---
 static void access(void *adrs){
 	__asm__ volatile("mov rax, [%0];"::"r" (adrs): "rax", "memory");
@@ -421,8 +422,7 @@ static void traverse_list0(Node *ptr){
 }
 
 
-static u64 msrmts[1000];
-static u64 msr_index=0;
+
 
 static u64 test_intern(Node *ptr, void *target){
     access(target);
