@@ -306,13 +306,14 @@ int main(int ac, char **av){
     printf("starting...\n");
     // Config *con=config_init(8, 4096, 64, 47, 32768, 1, 1);
     Config *con=config_init(16, 131072, 64, 70, 2097152, 1, 1);
-    u64 *test=malloc(sizeof(u64));
+    u64 *target=malloc(sizeof(u64));
     init_evset(con);
     printf("init done\n");
-    Node **head=find_evset(con, test);
+    Node **head=find_evset(con, target);
     printf("find done %p", head);
     if(*head) printf(" %p", *head);
     printf("\n");
+    printf("taget %p \n", target);
     if(head && *head) list_print(head);
     return 0;
 }
@@ -358,6 +359,9 @@ static Node **find_evset(Config *conf_ptr, void *target_adrs){
         list_shuffle(evsets);
         if(msr_index==1000) msr_index=0;
         // test if it is applicable, if yes yehaaw if not, proceed and reset evset pointer 
+        
+        if(test(*evsets, target_adrs)) return evsets;
+        if(test(*evsets, target_adrs)) return evsets;
         if(test(*evsets, target_adrs)) return evsets;
         
         // remove elems from evsets and prepare next iteration
@@ -435,7 +439,7 @@ static u64 test_intern(Node *ptr, void *target){
     
     // measure
     msrmts[msr_index++]=probe(target);
-    printf("M: %lu\n", msrmts[msr_index-1]);
+    printf("%lu ", msrmts[msr_index-1]);
     return msrmts[msr_index-1];
 }
 
