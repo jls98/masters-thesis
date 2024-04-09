@@ -351,13 +351,13 @@ static Node **find_evset(Config *conf_ptr, void *target_adrs){
     u64 index;
     for(u64 offset=0;offset<(conf->cache_size/conf->cache_line_size);offset++){
         // create evset with offset as index of Node-array
-        printf("offset %i:\n", offset);
+        // printf("offset %i:\n", offset);
         for(u64 i=0;i<conf->ways;i++){
             index=offset*(conf->cache_line_size/NODESIZE) + i*(conf->sets/NODESIZE); //(compute size in NODE index)
-            printf("%lu ", index);
+            // printf("%lu ", index);
             list_append(evsets, list_take(buffer_ptr, &index));
         }
-        printf("\n");
+        // printf("\n");
         list_shuffle(evsets);
         if(msr_index==1000) msr_index=0;
         // test if it is applicable, if yes yehaaw if not, proceed and reset evset pointer 
@@ -369,7 +369,7 @@ static Node **find_evset(Config *conf_ptr, void *target_adrs){
         // remove elems from evsets and prepare next iteration
         while(*evsets) list_pop(evsets);       
     }    
-    printf("nothing\n");
+    // printf("nothing\n");
     return NULL;
 }
 
@@ -441,7 +441,7 @@ static u64 test_intern(Node *ptr, void *target){
     
     // measure
     msrmts[msr_index++]=probe(target);
-    printf("%lu ", msrmts[msr_index-1]);
+    // printf("%lu ", msrmts[msr_index-1]);
     return msrmts[msr_index-1];
 }
 
