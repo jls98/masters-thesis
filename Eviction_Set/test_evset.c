@@ -305,15 +305,16 @@ static void cache_line(){
     access(ptr+4096);
     access(ptr+4096);
     __asm__ volatile ("lfence;");
-    time_buf[0]=probe(ptr+4066);
-    flush(ptr+4066);
-    __asm__ volatile ("lfence;");
-    access(ptr+4096);
-    access(ptr+4096);
-    access(ptr+4096);
-    __asm__ volatile ("lfence;");
+    
     time_buf[1]=probe(ptr+4096);
     flush(ptr+4096);
+    __asm__ volatile ("lfence;");
+    access(ptr+4096);
+    access(ptr+4096);
+    access(ptr+4096);
+    __asm__ volatile ("lfence;");
+    time_buf[0]=probe(ptr+4066);
+    flush(ptr+4066);
     __asm__ volatile ("lfence;");
     access(ptr+4096);
     access(ptr+4096);
@@ -322,6 +323,7 @@ static void cache_line(){
     time_buf[2]=probe(ptr+4120);
 
     __asm__ volatile ("lfence;");
+    
     printf("%lu %lu %lu\n", time_buf[0], time_buf[1], time_buf[2]);
     munmap(ptr, 2097152);
 
