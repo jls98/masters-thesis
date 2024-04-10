@@ -360,12 +360,12 @@ static Node **find_evset(Config *conf_ptr, void *target_adrs){
         for(u64 i=0;i<conf->ways;i++){
             index=offset/*(conf->cache_line_size/NODESIZE)*/ + i*(conf->sets/NODESIZE) -i-offset*i; //(compute size in NODE index)
             tmp = list_take(buffer_ptr, &index);
-            printf("offset %lu index %lu i*(conf->sets/NODESIZE) %lu:\n", offset, index, i*(conf->sets/NODESIZE));
+            // printf("offset %lu index %lu i*(conf->sets/NODESIZE) %lu:\n", offset, index, i*(conf->sets/NODESIZE));
 
-            printf("%p ", tmp);
+            // printf("%p ", tmp);
             list_append(evsets, tmp);
         }
-        printf("\n");
+        // printf("\n");
         list_shuffle(evsets);
         if(msr_index==990) msr_index=0;
         // test if it is applicable, if yes yehaaw if not, proceed and reset evset pointer 
@@ -452,7 +452,7 @@ static u64 test_intern(Node *ptr, void *target){
     
     // measure
     msrmts[msr_index++]=probe(target);
-    printf("%lu ", msrmts[msr_index-1]);
+    // printf("%lu ", msrmts[msr_index-1]);
     return msrmts[msr_index-1];
 }
 
