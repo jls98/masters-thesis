@@ -298,7 +298,9 @@ static void cache_line(){
         return;
     }   
     u64 time_buf[1000];
-    
+    flush(ptr+4066);
+    flush(ptr+4096);
+    flush(ptr+4120);
     access(ptr+4096);
     access(ptr+4096);
     access(ptr+4096);
