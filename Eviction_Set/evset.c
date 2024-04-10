@@ -357,10 +357,11 @@ static Node **find_evset(Config *conf_ptr, void *target_adrs){
     Node *tmp;
     for(u64 offset=0;offset<(conf->cache_size/conf->cache_line_size);offset++){
         // create evset with offset as index of Node-array
-        printf("offset %lu:\n", offset);
         for(u64 i=0;i<conf->ways;i++){
             index=offset/*(conf->cache_line_size/NODESIZE)*/ + i*(conf->sets/NODESIZE) -i; //(compute size in NODE index)
             tmp = list_take(buffer_ptr, &index);
+            printf("offset %lu index %lu i*(conf->sets/NODESIZE) %lu:\n", offset, index, i*(conf->sets/NODESIZE));
+
             printf("%p ", tmp);
             list_append(evsets, tmp);
         }
