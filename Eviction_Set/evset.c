@@ -444,6 +444,7 @@ static u64 test_intern(Node *ptr, void *target){
     access(target);
     __asm__ volatile ("lfence;");
     traverse_list0(ptr);
+    traverse_list0(ptr);
     
     // page walk
     access(target+222);
