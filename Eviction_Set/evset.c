@@ -319,7 +319,7 @@ int main(int ac, char **av){
     printf("\n");
     printf("taget %p \n", target);
     list_print(head);
-    printf("m: %lu\n", test_intern(*head, target));
+    printf("m: %lu\n", test_intern(*head, (void *)target));
     
     
     return 0;
