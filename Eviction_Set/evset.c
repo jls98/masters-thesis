@@ -314,11 +314,14 @@ int main(int ac, char **av){
     Node **head=find_evset(con, target);
     if(head){
         printf("find done %p", head);
-        if(*head) printf(" %p", *head);
+        if(*head) printf(" %p %p %p", *head, (*head)->prev, (*head)->next);
     }
     printf("\n");
     printf("taget %p \n", target);
     list_print(head);
+    printf("m: %lu\n", test_intern(*head, target));
+    
+    
     return 0;
 }
 #endif
@@ -351,13 +354,15 @@ static Node **find_evset(Config *conf_ptr, void *target_adrs){
     // loop over each cache line
     // iterate over every cacheline
     u64 index;
+    Node *tmp;
     for(u64 offset=0;offset<(conf->cache_size/conf->cache_line_size);offset++){
         // create evset with offset as index of Node-array
-        printf("offset %i:\n", offset);
+        printf("offset %lu:\n", offset);
         for(u64 i=0;i<conf->ways;i++){
             index=offset/*(conf->cache_line_size/NODESIZE)*/ + i*(conf->sets/NODESIZE) -i; //(compute size in NODE index)
-            printf("%lu ", index);
-            list_append(evsets, list_take(buffer_ptr, &index));
+            tmp = list_take(buffer_ptr, &index);
+            printf("%p ", tmp);
+            list_append(evsets, tmp);
         }
         printf("\n");
         list_shuffle(evsets);
