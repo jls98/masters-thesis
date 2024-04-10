@@ -174,6 +174,9 @@ void test_test(){
     for(int i=0;i<REPS1;i++){
         printf("b: %lu\n", msrmts[i]);
     }
+    printf("target %p \n", target);
+    printf("print list\n");
+    list_print(head1);
     munmap(buffer, bufsize);    
     
 }
