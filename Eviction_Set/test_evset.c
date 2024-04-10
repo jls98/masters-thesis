@@ -293,7 +293,7 @@ static void cache_line(){
         printf("mmap failed\n");
         return;
     }
-    if (madvise(buffer, size, MADV_HUGEPAGE) == -1){
+    if (madvise(buffer, 2097152, MADV_HUGEPAGE) == -1){
         printf("madvise failed!\n");
         return;
     }   
