@@ -286,6 +286,43 @@ void test_strides(){
     
 }
 
+static void cache_line(){
+    wait(1E9);
+    void *ptr=  mmap(NULL, size, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB, -1, 0);
+    if(buffer==MAP_FAILED){
+        printf("mmap failed\n");
+        return;
+    }
+    if (madvise(buffer, size, MADV_HUGEPAGE) == -1){
+        printf("madvise failed!\n");
+        return;
+    }   
+    u64 time_buf[1000];
+    
+    access(ptr+4096);
+    access(ptr+4096);
+    access(ptr+4096);
+    __asm__ volatile ("lfence;");
+    time_buf[0]=probe(ptr+4066);
+    flush(ptr+4066);
+    __asm__ volatile ("lfence;");
+    access(ptr+4096);
+    access(ptr+4096);
+    access(ptr+4096);
+    __asm__ volatile ("lfence;");
+    time_buf[1]=probe(ptr+4096);
+    flush(ptr+4096);
+    __asm__ volatile ("lfence;");
+    access(ptr+4096);
+    access(ptr+4096);
+    access(ptr+4096);
+    __asm__ volatile ("lfence;");
+    time_buf[2]=probe(ptr+4120)
+
+    __asm__ volatile ("lfence;");
+    printf("%lu %lu %lu\n", time_buf[0], time_buf[1], time_buf[2]);
+
+}
 
 int main(int ac, char **av) {
 	// if (ac==1) conf = initConfig(8, 64, 41, 32768, 1, 1); // default L1 lab machine, no inputs
