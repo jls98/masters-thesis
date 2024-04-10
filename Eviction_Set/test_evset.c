@@ -307,6 +307,7 @@ static void cache_line(){
     __asm__ volatile ("lfence;");
     
     time_buf[1]=probe(ptr+4096);
+    __asm__ volatile ("lfence;");
     flush(ptr+4096);
     __asm__ volatile ("lfence;");
     access(ptr+4096);
@@ -314,6 +315,7 @@ static void cache_line(){
     access(ptr+4096);
     __asm__ volatile ("lfence;");
     time_buf[0]=probe(ptr+4066);
+    __asm__ volatile ("lfence;");
     flush(ptr+4066);
     __asm__ volatile ("lfence;");
     access(ptr+4096);
