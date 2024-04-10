@@ -89,7 +89,7 @@ static void close_evsets();
 static void generate_conflict_set();
 static void traverse_list(Node *ptr);
 static u64 test(Node *ptr, void *target);
-
+static u64 test_intern(Node *ptr, void *target);
 static u64 lfsr;
 static u64 msrmts[1000];
 static u64 msr_index=0;
