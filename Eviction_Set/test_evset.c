@@ -288,7 +288,7 @@ void test_strides(){
 
 static void cache_line(){
     wait(1E9);
-    void *ptr=  mmap(NULL, size, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB, -1, 0);
+    void *ptr=  mmap(NULL, 2097152, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB, -1, 0);
     if(buffer==MAP_FAILED){
         printf("mmap failed\n");
         return;
@@ -321,6 +321,7 @@ static void cache_line(){
 
     __asm__ volatile ("lfence;");
     printf("%lu %lu %lu\n", time_buf[0], time_buf[1], time_buf[2]);
+    munmap(ptr, 2097152);
 
 }
 
