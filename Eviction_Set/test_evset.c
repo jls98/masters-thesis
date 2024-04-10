@@ -238,6 +238,10 @@ void test_strides(){
             printf("mmap failed\n");
             return;
         }
+        if (madvise(buffer, size, MADV_HUGEPAGE) == -1){
+            printf("madvise failed!\n");
+            return;
+        }   
         Node **buffer_ptr=&buffer;
         list_init(buffer, size);
         
@@ -312,6 +316,6 @@ int main(int ac, char **av) {
     CU_basic_run_tests();
     CU_cleanup_registry();
 	// test_get_histogram_data();
-    // test_strides();
+    test_strides();
     return 0;
 }
