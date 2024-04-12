@@ -344,7 +344,7 @@ static void test_find_evset(){
         
         CU_ASSERT_TRUE(test_result > con->threshold);
         printf("print evset for target %p\n", target);
-        list_print(**evset_ptr);
+        list_print(evset_ptr);
         free(target);
         while(*evset_ptr) list_pop(evset_ptr); 
     }
