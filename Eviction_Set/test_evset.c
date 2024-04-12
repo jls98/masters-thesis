@@ -351,14 +351,12 @@ static void test_find_evset(){
 
 static void test_probe_evset(){
     Config *con = config_init(16, 131072, 64, 70, 2097152, 1, 1); // test L2
-    u64 *target = malloc(sizeof(u64));
-    printf("test evset: b4 init\n");
     init_evset(con);
-    printf("test evset: b4 find\n");
-    Node **evset_ptr=find_evset(con, target);
+    u64 *target= malloc(sizeof(u64));
+    Node **evset_ptr= find_evset(con, target);
     
     printf("test evset: b4 testing\n");
-   for(int i=0;i<10;i++){
+    for(int i=0;i<10;i++){
         if(!test(*evset_ptr, target)) {
             printf("evset unreliable, i is %i\n");
             return;
