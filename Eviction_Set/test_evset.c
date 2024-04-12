@@ -334,30 +334,63 @@ static void cache_line(){
 static void test_find_evset(){
     Config *con = config_init(16, 131072, 64, 70, 2097152, 1, 1); // test L2
     init_evset(con);
+    u64 *target;
+    Node **evset_ptr;
+    u64 test_result;
     for(int i=0;i<100;i++){
-        u64 *target = malloc(sizeof(u64));
+        target = malloc(sizeof(u64));        
+        evset_ptr = find_evset(con, target);
+        test_result = test_intern(*evset_ptr, target);
         
-        Node **evset_ptr = find_evset(con, target);
-        u64 test_result = test_intern(*evset_ptr, target);
-        // printf("test result %lu\n", test_result);
         CU_ASSERT_TRUE(test_result > con->threshold);
-        // if (test_result <= con->threshold){
-            // test_result = test_intern(*evset_ptr, target);
-            // printf("2nd test result %lu\n", test_result);
-        // }
         free(target);
     }
+    free(con);
     close_evsets();
 }
 
 static void test_probe_evset(){
+    Config *con = config_init(16, 131072, 64, 70, 2097152, 1, 1); // test L2
+    u64 *target = malloc(sizeof(u64));
+    init_evset(con);
+    Node **evset_ptr=find_evset(con, target);
     
+    for(int i=0;i<10;i++){
+        if(!test(*evset_ptr, target)) {
+            printf("evset unreliable, i is %i\n");
+            return;
+        }
+    }
+    // load evset 
+    traverse_list0(*evset_ptr);
+    traverse_list0(*evset_ptr);
     
     // test just evset
+    u64 result[10];
+    result[0]= probe_evset(*evset_ptr);
+    result[1]= probe_evset(*evset_ptr);
+    result[2]= probe_evset(*evset_ptr);
+    result[3]= probe_evset(*evset_ptr);
+    result[4]= probe_evset(*evset_ptr);
     
+    // test target access    
+    access(target);
+    result[5]= probe_evset(*evset_ptr);
+    access(target);
+    result[6]= probe_evset(*evset_ptr);
+    access(target);
+    result[7]= probe_evset(*evset_ptr);
+    access(target);
+    result[8]= probe_evset(*evset_ptr);
+    access(target);
+    result[9]= probe_evset(*evset_ptr);   
+
+    printf("result\n");
+    for(int i=0;i<10;i++){
+        printf("%lu\n", result[i]);
+    }
     
-    // test target access
-    
+    close_evsets();
     
 }
 
