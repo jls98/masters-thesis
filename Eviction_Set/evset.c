@@ -389,6 +389,11 @@ static Node **find_evset(Config *conf_ptr, void *target_adrs){
     return evsets;
 }
 
+static void del_evset(){
+    if(!evsets) return;
+    while(*evsets) list_pop(evsets);  
+}
+
 static Node **get_evset(Config *conf_ptr){
     if(!evsets){
         return NULL;
