@@ -360,6 +360,7 @@ static void init_evset(Config *conf_ptr){
 
 static Node **find_evset(Config *conf_ptr, void *target_adrs){
     if (!buffer || !evsets){
+        printf("find_evset: reset\n");
         close_evsets();
         init_evset(conf_ptr);
     }
@@ -370,6 +371,7 @@ static Node **find_evset(Config *conf_ptr, void *target_adrs){
     // iterate over every cacheline
     u64 index;
     Node *tmp;
+    list_print(evsets);
     for(u64 offset=0;offset<(conf->cache_size/conf->cache_line_size);offset++){
         // create evset with offset as index of Node-array
         // printf("offset %lu\n", offset);
