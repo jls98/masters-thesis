@@ -353,7 +353,7 @@ static void init_evset(Config *conf_ptr){
     list_init(buffer, PAGESIZE);    
     // init buffer for evset elements
     
-    evsets = realloc(evsets, sizeof(Node *));
+    evsets = realloc(evsets, conf->ways*sizeof(Node *));
     
     printf("init_evset finished, evsets %p, buffer %p\n", evsets, buffer);
 }    
