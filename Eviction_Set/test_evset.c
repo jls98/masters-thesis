@@ -344,7 +344,7 @@ static void test_find_evset(){
     del_evset();
     close_evsets();
     
-    // free(con);
+    free(con);
     
 }
 
@@ -432,6 +432,7 @@ int main(int ac, char **av) {
 	// test_get_histogram_data();
     // test_strides();
     // cache_line(); // madvise tend to fail??
+    printf("probe\n");
     test_probe_evset();
     return 0;
 }
