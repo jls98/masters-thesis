@@ -295,8 +295,8 @@ static void list_shuffle(Node **head){
 }
 
 static void list_print(Node **head){
-    if(!head) return;
-    if(!*head) return;
+    if(head==NULL) return;
+    if(*head==NULL) return;
     printf("[+] printing adrs of list:\n");
     Node *tmp;
     for(tmp=*head;tmp;tmp=tmp->next){
