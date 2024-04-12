@@ -225,6 +225,7 @@ static void list_append(Node **head, Node *e){
         return;
     }    
     Node *tmp=*head;
+    printf("list_append %p %p\n", tmp, tmp->next);
     while(tmp->next){ // iterate to end
         tmp=tmp->next;    
     }
