@@ -217,12 +217,12 @@ static void list_push(Node **head, Node *e) {
 
 // add to end
 static void list_append(Node **head, Node *e){
-    printf("append\n");
+    // printf("append\n");
     if(!e) return;
     if(!head) {
         e->next=NULL;
         e->prev=NULL;
-        printf("oh\n");
+        // printf("oh\n");
         *head=e;        
         return;
     }
@@ -233,7 +233,7 @@ static void list_append(Node **head, Node *e){
         return;
     }    
     Node *tmp=*head;
-    printf("list_append %p %p\n", tmp, tmp->next);
+    // printf("list_append %p %p\n", tmp, tmp->next);
     while(tmp->next){ // iterate to end
         tmp=tmp->next;    
     }
@@ -308,9 +308,6 @@ static void list_print(Node **head){
     if(*head==NULL) return;
     printf("[+] printing adrs of list:\n");
     Node *tmp;
-    printf("print head %p\n", head);
-    printf("print *head %p\n", *head);
-    printf("print *head->n %p\n", (*head)->next);
     for(tmp=*head;tmp;tmp=tmp->next){
         printf("[.] %p %p\n", tmp, tmp->next);
     }
@@ -383,10 +380,10 @@ static Node **find_evset(Config *conf_ptr, void *target_adrs){
             tmp = list_take(buffer_ptr, &index);
             // printf("offset %lu index %lu i*(conf->sets/NODESIZE) %lu:\n", offset, index, i*(conf->sets/NODESIZE));
 
-            printf("%p ", tmp);
+            // printf("%p ", tmp);
             list_append(evsets, tmp);
         }
-        printf("\n");
+        // printf("\n");
         list_shuffle(evsets);
         if(msr_index>990) msr_index=0;
         // test if it is applicable, if yes yehaaw if not, proceed and reset evset pointer 

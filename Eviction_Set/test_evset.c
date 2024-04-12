@@ -433,6 +433,6 @@ int main(int ac, char **av) {
     // test_strides();
     // cache_line(); // madvise tend to fail??
     printf("probe\n");
-    test_probe_evset();
+    test_probe_evset(); // realloc/malloc remmap is freaking me out
     return 0;
 }
