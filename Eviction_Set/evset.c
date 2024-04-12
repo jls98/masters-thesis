@@ -222,6 +222,7 @@ static void list_append(Node **head, Node *e){
     if(!head) {
         e->next=NULL;
         e->prev=NULL;
+        printf("oh\n");
         *head=e;        
         return;
     }
