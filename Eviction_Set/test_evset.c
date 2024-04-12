@@ -346,6 +346,7 @@ static void test_find_evset(){
         printf("print evset\n");
         list_print(*evset_ptr);
         free(target);
+        while(*evset_ptr) list_pop(evset_ptr); 
     }
     free(con);
     close_evsets();
