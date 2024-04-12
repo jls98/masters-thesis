@@ -340,7 +340,7 @@ static void test_find_evset(){
     Node **evset_ptr = find_evset(con, target);
     
     CU_ASSERT_TRUE(test(*evset_ptr, target));
-    close_evset();
+    close_evsets();
 }
 
 static void test_probe_evset(){
