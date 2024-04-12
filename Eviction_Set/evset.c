@@ -438,8 +438,6 @@ static void traverse_list0(Node *ptr){
 }
 
 
-
-
 static u64 test_intern(Node *ptr, void *target){
     access(target);
     __asm__ volatile ("lfence;");
@@ -463,6 +461,17 @@ static u64 test(Node *ptr, void *target){
         return 0;
     }
     return test_intern(ptr, target) > conf->threshold;
+}
+
+static u64 test_evset(Node *ptr){
+    if(!ptr) return 0;
+    u64 start, delta;
+    
+    start = rdtscpfence();
+    traverse_list0(ptr);
+    delta = rdtscpfence() - start;
+    return delta;
+    
 }
 
 // static Node *create_minimal_eviction_set(void **candidate_set, u64 candidate_set_size, Node* evict_set, void *target_adrs, Config *conf){
