@@ -37,6 +37,9 @@ static u64 pool_size = 0;
 static Node *buffer = NULL;
 static u64 buffer_size = 0;
 static Node **buffer_ptr;
+static u64 lfsr;
+
+
 
 // Utils #################################################
 /* wait for cycles cycles and activate cache            */
@@ -90,9 +93,8 @@ static void generate_conflict_set();
 static void traverse_list(Node *ptr);
 static u64 test(Node *ptr, void *target);
 static u64 test_intern(Node *ptr, void *target);
-static u64 lfsr;
-static u64 msrmts[1000];
-static u64 msr_index=0;
+static u64 probe_evset(Node *ptr)
+
 // --- utils ---
 static void access(void *adrs){
 	__asm__ volatile("mov rax, [%0];"::"r" (adrs): "rax", "memory");
@@ -330,6 +332,7 @@ int main(int ac, char **av){
 #define NODESIZE 32
 
 static void init_evset(Config *conf_ptr){
+    wait(1E9);
     conf=conf_ptr;
     buffer = (Node *) mmap(NULL, PAGESIZE, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB, -1, 0);
     if (madvise(buffer, PAGESIZE, MADV_HUGEPAGE) == -1){
@@ -463,7 +466,7 @@ static u64 test(Node *ptr, void *target){
     return test_intern(ptr, target) > conf->threshold;
 }
 
-static u64 test_evset(Node *ptr){
+static u64 probe_evset(Node *ptr){
     if(!ptr) return 0;
     u64 start, delta;
     

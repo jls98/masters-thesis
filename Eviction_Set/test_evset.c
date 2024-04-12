@@ -331,6 +331,29 @@ static void cache_line(){
 
 }
 
+static void test_find_evset(){
+    Config *con = config_init(16, 131072, 64, 70, 2097152, 1, 1); // test L2
+    init_evset(con);
+    
+    u64 *target = malloc(sizeof(u64));
+    
+    Node **evset_ptr = find_evset(con, target);
+    
+    CU_ASSERT_TRUE(test(*evset_ptr, target));
+    close_evset();
+}
+
+static void test_probe_evset(){
+    
+    
+    // test just evset
+    
+    
+    // test target access
+    
+    
+}
+
 int main(int ac, char **av) {
 	// if (ac==1) conf = initConfig(8, 64, 41, 32768, 1, 1); // default L1 lab machine, no inputs
 	// if (ac==2){
@@ -358,6 +381,7 @@ int main(int ac, char **av) {
     // CU_add_test(suite, "Test test_node", test_node);
     // CU_add_test(suite, "Test testbench_skylake_evsets", testbench_skylake_evsets);
     CU_add_test(suite, "Test test_test", test_test);
+    CU_add_test(suite, "Test test_find_evset", test_find_evset);
     // CU_add_test(suite, "Test test_get_histogram_data", test_get_histogram_data);
 
     CU_basic_run_tests();
