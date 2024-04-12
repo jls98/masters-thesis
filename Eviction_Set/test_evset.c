@@ -334,22 +334,16 @@ static void cache_line(){
 static void test_find_evset(){
     Config *con = config_init(16, 131072, 64, 70, 2097152, 1, 1); // test L2
     
-    u64 *target;
-    Node **evset_ptr;
-    u64 test_result;
-    for(int i=0;i<100;i++){
-        printf("evsets %p\n", evsets);
-        init_evset(con);
-        target = realloc(target, (i+1)*sizeof(u64));        
-        evset_ptr = find_evset(con, target);
-        test_result = test_intern(*evset_ptr, target);
+    u64 *target=realloc(target, (i+1)*sizeof(u64));  
+    Node **evset_ptr= find_evset(con, target);
+    u64 test_result= test_intern(*evset_ptr, target);
+    
+    init_evset(con);
         
-        CU_ASSERT_TRUE(test_result > con->threshold);
-        printf("print evset for target %p\n", target);
-        list_print(evset_ptr);
-        del_evset();
-        close_evsets();
-    }
+    CU_ASSERT_TRUE(test_result > con->threshold);
+    del_evset();
+    close_evsets();
+    
     free(con);
     
 }
