@@ -93,7 +93,7 @@ static void generate_conflict_set();
 static void traverse_list(Node *ptr);
 static u64 test(Node *ptr, void *target);
 static u64 test_intern(Node *ptr, void *target);
-static u64 probe_evset(Node *ptr)
+static u64 probe_evset(Node *ptr);
 
 // --- utils ---
 static void access(void *adrs){
