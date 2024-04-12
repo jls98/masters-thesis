@@ -38,7 +38,8 @@ static Node *buffer = NULL;
 static u64 buffer_size = 0;
 static Node **buffer_ptr;
 static u64 lfsr;
-
+static u64 msr_index=0;
+static u64 msrmts[1000];
 
 
 // Utils #################################################
