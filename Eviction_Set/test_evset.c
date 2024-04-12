@@ -334,7 +334,7 @@ static void cache_line(){
 static void test_find_evset(){
     Config *con = config_init(16, 131072, 64, 70, 2097152, 1, 1); // test L2
     
-    u64 *target=realloc(target, sizeof(u64));  
+    u64 *target=malloc(sizeof(u64));  
     Node **evset_ptr= find_evset(con, target);
     u64 test_result= test_intern(*evset_ptr, target);
     
