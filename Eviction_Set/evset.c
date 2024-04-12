@@ -460,6 +460,13 @@ static void traverse_list0(Node *ptr){
     }    
 }
 
+static void traverse_list_fenced(Node *ptr){
+    for(Node *tmp=ptr;tmp;tmp=tmp->next){
+        __asm__ volatile ("lfence;");
+        access((void *) tmp);
+    }    
+}
+
 
 static u64 test_intern(Node *ptr, void *target){
     access(target);
@@ -491,7 +498,7 @@ static u64 probe_evset(Node *ptr){
     u64 start, delta;
     
     start = rdtscpfence();
-    traverse_list0(ptr);
+    traverse_list_fenced(ptr);
     delta = rdtscpfence() - start;
     return delta;
     
