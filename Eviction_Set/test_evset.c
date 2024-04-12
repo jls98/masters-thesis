@@ -354,14 +354,12 @@ static void test_probe_evset(){
     u64 *target= malloc(sizeof(u64));
     Node **evset_ptr= find_evset(con, target);
     
-    printf("test evset: b4 testing\n");
     for(int i=0;i<10;i++){
         if(!test(*evset_ptr, target)) {
             printf("evset unreliable, i is %i\n");
             return;
         }
     }
-    printf("test evset: b4 trav\n");
     // load evset 
     traverse_list0(*evset_ptr);
     traverse_list0(*evset_ptr);
