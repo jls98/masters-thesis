@@ -339,6 +339,7 @@ static void test_find_evset(){
     u64 test_result;
     for(int i=0;i<100;i++){
         printf("evsets %p\n", evsets);
+        del_evset();
         target = realloc(target, (i+1)*sizeof(u64));        
         evset_ptr = find_evset(con, target);
         test_result = test_intern(*evset_ptr, target);
