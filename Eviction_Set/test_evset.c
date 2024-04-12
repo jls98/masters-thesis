@@ -333,8 +333,8 @@ static void cache_line(){
 
 static void test_find_evset(){
     Config *con = config_init(16, 131072, 64, 70, 2097152, 1, 1); // test L2
+    init_evset(con);
     for(int i=0;i<100;i++){
-        init_evset(con);
         u64 *target = malloc(sizeof(u64));
         
         Node **evset_ptr = find_evset(con, target);
@@ -345,8 +345,9 @@ static void test_find_evset(){
             // test_result = test_intern(*evset_ptr, target);
             // printf("2nd test result %lu\n", test_result);
         // }
-        close_evsets();
+        free(target);
     }
+    close_evsets();
 }
 
 static void test_probe_evset(){
