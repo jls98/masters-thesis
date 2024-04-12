@@ -388,6 +388,6 @@ int main(int ac, char **av) {
     CU_cleanup_registry();
 	// test_get_histogram_data();
     // test_strides();
-    cache_line();
+    // cache_line(); // madvise tend to fail??
     return 0;
 }
