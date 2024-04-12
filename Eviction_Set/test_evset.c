@@ -361,9 +361,8 @@ static void test_probe_evset(){
         }
     }
     // load evset 
-    traverse_list0(*evset_ptr);
-    traverse_list0(*evset_ptr);
-    traverse_list0(*evset_ptr);
+    traverse_list_fenced(*evset_ptr);
+    traverse_list_fenced(*evset_ptr);
     
     // test just evset
     u64 *result = malloc(10*sizeof(u64));
