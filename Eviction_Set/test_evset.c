@@ -435,6 +435,6 @@ int main(int ac, char **av) {
 	// test_get_histogram_data();
     // test_strides();
     // cache_line(); // madvise tend to fail??
-    test_probe_evset();
+    // test_probe_evset();
     return 0;
 }
