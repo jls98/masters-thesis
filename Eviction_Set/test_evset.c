@@ -338,7 +338,7 @@ static void test_find_evset(){
     Node **evset_ptr;
     u64 test_result;
     for(int i=0;i<100;i++){
-        target = malloc(sizeof(u64));        
+        target = realloc(target, (i+1)*sizeof(u64));        
         evset_ptr = find_evset(con, target);
         test_result = test_intern(*evset_ptr, target);
         
