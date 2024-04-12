@@ -339,7 +339,9 @@ static void test_find_evset(){
     
     Node **evset_ptr = find_evset(con, target);
     printf("find done\n");
-    CU_ASSERT_TRUE(test(*evset_ptr, target));
+    u64 test_result = test_intern(*evset_ptr, target);
+    printf("test result %lu\n", test_result);
+    CU_ASSERT_TRUE(test_result > con->threshold));
     close_evsets();
 }
 
