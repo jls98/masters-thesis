@@ -49,7 +49,7 @@ static void wait(u64 cycles);
 static void flush(void *adrs);
 
 static void access(void *adrs);
-
+static void fenced_access(void *adrs);
 static u64 rdtscpfence();
 
 
@@ -99,6 +99,11 @@ static u64 probe_evset(Node *ptr);
 // --- utils ---
 static void access(void *adrs){
 	__asm__ volatile("mov rax, [%0];"::"r" (adrs): "rax", "memory");
+}
+static void fenced_access(void *adrs){
+	__asm__ volatile(
+    "lfence; "
+    "mov rax, [%0];"::"r" (adrs): "rax", "memory");
 }
 
 static void flush(void *adrs){
@@ -462,8 +467,7 @@ static void traverse_list0(Node *ptr){
 
 static void traverse_list_fenced(Node *ptr){
     for(Node *tmp=ptr;tmp;tmp=tmp->next){
-        __asm__ volatile ("lfence;");
-        access((void *) tmp);
+        fenced_access((void *) tmp);
     }    
 }
 
