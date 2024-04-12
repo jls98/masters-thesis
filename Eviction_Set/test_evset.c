@@ -338,6 +338,7 @@ static void test_find_evset(){
     Node **evset_ptr;
     u64 test_result;
     for(int i=0;i<100;i++){
+        printf("evsets %p\n", evsets);
         target = realloc(target, (i+1)*sizeof(u64));        
         evset_ptr = find_evset(con, target);
         test_result = test_intern(*evset_ptr, target);
@@ -346,7 +347,6 @@ static void test_find_evset(){
         printf("print evset for target %p\n", target);
         list_print(evset_ptr);
         del_evset();
-        printf("duude\n");
     }
     free(con);
     close_evsets();
