@@ -344,8 +344,10 @@ static void init_evset(Config *conf_ptr){
     list_init(buffer, PAGESIZE);    
     // init buffer for evset elements
     
-    evsets = malloc(sizeof(Node *));
-}   
+    evsets = realloc(evsets, sizeof(Node *));
+    
+    printf("init_evset finished, evsets %p, buffer %p\n", evsets, buffer);
+}    
 
 static Node **find_evset(Config *conf_ptr, void *target_adrs){
     if (!buffer || !evsets){
