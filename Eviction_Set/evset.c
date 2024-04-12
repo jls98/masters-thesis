@@ -367,7 +367,7 @@ static Node **find_evset(Config *conf_ptr, void *target_adrs){
             tmp = list_take(buffer_ptr, &index);
             // printf("offset %lu index %lu i*(conf->sets/NODESIZE) %lu:\n", offset, index, i*(conf->sets/NODESIZE));
 
-            // printf("%p ", tmp);
+            printf("%p ", tmp);
             list_append(evsets, tmp);
         }
         // printf("\n");
@@ -385,7 +385,6 @@ static Node **find_evset(Config *conf_ptr, void *target_adrs){
         // remove elems from evsets and prepare next iteration
         while(*evsets) list_pop(evsets);       
     }    
-    printf("nothing\n");
     return evsets;
 }
 
