@@ -334,11 +334,11 @@ static void cache_line(){
 static void test_find_evset(){
     Config *con = config_init(16, 131072, 64, 70, 2097152, 1, 1); // test L2
     init_evset(con);
-    
+    printf("init done\n");
     u64 *target = malloc(sizeof(u64));
     
     Node **evset_ptr = find_evset(con, target);
-    
+    printf("find done\n");
     CU_ASSERT_TRUE(test(*evset_ptr, target));
     close_evsets();
 }
