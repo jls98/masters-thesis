@@ -352,21 +352,25 @@ static void test_find_evset(){
 static void test_probe_evset(){
     Config *con = config_init(16, 131072, 64, 70, 2097152, 1, 1); // test L2
     u64 *target = malloc(sizeof(u64));
+    printf("test evset: b4 init\n");
     init_evset(con);
+    printf("test evset: b4 find\n");
     Node **evset_ptr=find_evset(con, target);
     
-    for(int i=0;i<10;i++){
+    printf("test evset: b4 testing\n");
+   for(int i=0;i<10;i++){
         if(!test(*evset_ptr, target)) {
             printf("evset unreliable, i is %i\n");
             return;
         }
     }
+    printf("test evset: b4 trav\n");
     // load evset 
     traverse_list0(*evset_ptr);
     traverse_list0(*evset_ptr);
     
     // test just evset
-    u64 result[10];
+    u64 *result = malloc(10*sizeof(u64));
     result[0]= probe_evset(*evset_ptr);
     result[1]= probe_evset(*evset_ptr);
     result[2]= probe_evset(*evset_ptr);
@@ -390,6 +394,8 @@ static void test_probe_evset(){
         printf("%lu\n", result[i]);
     }
     
+    free(con);
+    free(result);
     close_evsets();
     
 }
