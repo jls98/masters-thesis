@@ -370,7 +370,7 @@ static Node **find_evset(Config *conf_ptr, void *target_adrs){
             printf("%p ", tmp);
             list_append(evsets, tmp);
         }
-        // printf("\n");
+        printf("\n");
         list_shuffle(evsets);
         if(msr_index>990) msr_index=0;
         // test if it is applicable, if yes yehaaw if not, proceed and reset evset pointer 
