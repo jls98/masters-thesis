@@ -223,7 +223,7 @@ void test_get_histogram_data(){
 #define ALDER_L2 2097152
 #define SKYLAKE_L2 262144
 #define CACHE_L1 32768
-#define SIZE_VALUE CACHE_L1
+#define SIZE_VALUE ALDER_L2
 
 void test_strides(){
     // stride * 2^5 since sizeof(Node) = 32
@@ -250,6 +250,7 @@ void test_strides(){
         
         Node *tmp;
         u64 index;
+        size = 2 * CACHE_L1;
         for(u64 i=0;i<size/(stride*sizeof(Node));i++){
             index=i*stride-i;
             tmp=list_take(buffer_ptr, &index);
@@ -280,6 +281,7 @@ void test_strides(){
             list_pop(head);
         }
         // free(head);
+        size = 2*SIZE_VALUE;
         munmap(buffer, size);
     }
     free(head);
