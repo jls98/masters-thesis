@@ -373,7 +373,7 @@ static void test_probe_evset(){
     result[4]= probe_evset(*evset_ptr);
     
     // test target access    
-    access(target);
+    fenced_access(target);
     result[5]= probe_evset(*evset_ptr);
     access(target);
     result[6]= probe_evset(*evset_ptr);
@@ -398,11 +398,8 @@ static void test_probe_evset(){
         result[i]=probe(tmp);
         tmp=tmp->next;
     }
-    static void fenced_access(void *adrs);
-    __asm__ volatile(
-        "lfence; "
-        "mov rax, [%0];"::"r" (adrs): "rax", "memory");
-    }    
+    static void fenced_access(target);
+    
     for(int i=0;i<16;i++){
         result[i+16]=probe(tmp);
         tmp=tmp->next;
