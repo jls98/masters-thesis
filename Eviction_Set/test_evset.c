@@ -227,7 +227,7 @@ void test_get_histogram_data(){
 
 void test_strides(){
     // stride * 2^5 since sizeof(Node) = 32
-    int size = 2*SIZE_VALUE;
+    int size = SIZE_VALUE;
     Node **head;
     head=malloc(sizeof(Node *));
     *head=NULL;
