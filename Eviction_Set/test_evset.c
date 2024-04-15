@@ -223,7 +223,7 @@ void test_get_histogram_data(){
 #define ALDER_L2 2097152
 #define SKYLAKE_L2 262144
 #define CACHE_L1 32768
-#define SIZE_VALUE ALDER_L2
+#define SIZE_VALUE CACHE_L1
 
 void test_strides(){
     // stride * 2^5 since sizeof(Node) = 32
@@ -386,9 +386,10 @@ static void test_probe_evset(){
 
     printf("result\n");
     for(int i=0;i<10;i++){
-        printf("%lu\n", result[i]);
+        printf("%lu; ", result[i]);
     }
-    
+     printf("\n");
+   
     
     printf("test with probing all elements\n");
     traverse_list_fenced(*evset_ptr);
@@ -411,8 +412,9 @@ static void test_probe_evset(){
     
     printf("result\n");
     for(int i=0;i<32;i++){
-        printf("%lu\n", result[i]);
+        printf("%lu, ", result[i]);
     }    
+    printf("\n");
     free(con);
     free(result);
     close_evsets();
