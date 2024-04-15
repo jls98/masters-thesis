@@ -398,6 +398,10 @@ static void test_probe_evset(){
         result[i]=probe(tmp);
         tmp=tmp->next;
     }
+    
+    tmp = *evset_ptr;
+    traverse_list_fenced(*evset_ptr);
+    traverse_list_fenced(*evset_ptr);
     fenced_access(target);
     
     for(int i=0;i<16;i++){
