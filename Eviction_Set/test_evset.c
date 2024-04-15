@@ -398,8 +398,8 @@ static void test_probe_evset(){
         result[i]=probe(tmp);
         tmp=tmp->next;
     }
-    static void fenced_access(void *adrs){
-        __asm__ volatile(
+    static void fenced_access(void *adrs);
+    __asm__ volatile(
         "lfence; "
         "mov rax, [%0];"::"r" (adrs): "rax", "memory");
     }    
