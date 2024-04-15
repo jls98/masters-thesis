@@ -365,7 +365,7 @@ static void test_probe_evset(){
     traverse_list_fenced(*evset_ptr);
     
     // test just evset
-    u64 *result = malloc(10*sizeof(u64));
+    u64 *result = malloc(32*sizeof(u64));
     result[0]= probe_evset(*evset_ptr);
     result[1]= probe_evset(*evset_ptr);
     result[2]= probe_evset(*evset_ptr);
@@ -389,6 +389,29 @@ static void test_probe_evset(){
         printf("%lu\n", result[i]);
     }
     
+    
+    printf("test with probing all elements\n");
+    traverse_list_fenced(*evset_ptr);
+    traverse_list_fenced(*evset_ptr);
+    Node *tmp = *evset_ptr;
+    for(int i=0;i<16;i++){
+        result[i]=probe(tmp);
+        tmp=tmp->next;
+    }
+    static void fenced_access(void *adrs){
+        __asm__ volatile(
+        "lfence; "
+        "mov rax, [%0];"::"r" (adrs): "rax", "memory");
+    }    
+    for(int i=0;i<16;i++){
+        result[i+16]=probe(tmp);
+        tmp=tmp->next;
+    }
+    
+    printf("result\n");
+    for(int i=0;i<32;i++){
+        printf("%lu\n", result[i]);
+    }    
     free(con);
     free(result);
     close_evsets();
