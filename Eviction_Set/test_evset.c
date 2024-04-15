@@ -285,7 +285,7 @@ void test_strides(){
             list_pop(head);
         }
         // free(head);
-        size = 2*SIZE_VALUE;
+        size = SIZE_VALUE;
         munmap(buffer, size);
     }
     free(head);
