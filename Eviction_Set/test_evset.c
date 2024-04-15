@@ -398,7 +398,7 @@ static void test_probe_evset(){
         result[i]=probe(tmp);
         tmp=tmp->next;
     }
-    static void fenced_access(target);
+    fenced_access(target);
     
     for(int i=0;i<16;i++){
         result[i+16]=probe(tmp);
