@@ -263,7 +263,11 @@ void test_strides(){
         msrmts[0]=0;
         int j=0;
         for(tmp=*head;tmp;tmp=tmp->next){
-            probe(tmp);
+            access(tmp);
+            // test_intern(*head, *head);
+        }       
+        for(tmp=*head;tmp;tmp=tmp->next){
+            access(tmp);
             // test_intern(*head, *head);
         }
         for(tmp=*head;tmp;tmp=tmp->next){
