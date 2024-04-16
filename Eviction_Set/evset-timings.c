@@ -529,6 +529,7 @@ static void timings(){
     Node *tmp;
     u64 total_time=0;
     u64 total_size = 2097152;
+    printf("total size %lu\n", total_size);
     // static access amount 
     tmp=buffer;
     u64 j=0;
@@ -547,6 +548,7 @@ static void timings(){
             tmp=tmp->next; 
         }
     }
+    
     printf("total time %lu, avg %lu\n", total_time, total_time/TOTALACCESSES);
     // dynamic access amount 
     total_time=0;
@@ -562,7 +564,43 @@ static void timings(){
     }
     printf("total time %lu, avg %lu\n", total_time, total_time/j);   
     
-   
+    // --------------------------------
+    total_size = 2097152/2;
+    printf("total size %lu\n", total_size);
+    j=0;
+    tmp=buffer;
+    total_time=0;
+    
+    for(int i=0;i*64<total_size;i++){
+        access(tmp);
+        tmp=tmp->next;
+    }
+    tmp=buffer;
+    for(int i=0;i<TOTALACCESSES;i++){
+        total_time+=probe(tmp);
+        if(i*64-j*total_size >=total_size){
+            tmp=buffer;
+            j++;
+        }else{
+            tmp=tmp->next; 
+        }
+    }
+    
+    printf("total time %lu, avg %lu\n", total_time, total_time/TOTALACCESSES);
+    // dynamic access amount 
+    total_time=0;
+    tmp=buffer;
+    for(int i=0;i*64<total_size;i++){
+        access(tmp);
+        tmp=tmp->next;
+    }
+    tmp=buffer;
+    for(j=0;j*64<total_size;j++){
+        total_time+=probe(tmp);
+        tmp=tmp->next;
+    }
+    printf("total time %lu, avg %lu\n", total_time, total_time/j);   
+    
 }
 
 // static Node *create_minimal_eviction_set(void **candidate_set, u64 candidate_set_size, Node* evict_set, void *target_adrs, Config *conf){
