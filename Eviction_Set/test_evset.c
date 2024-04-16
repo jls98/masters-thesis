@@ -348,7 +348,7 @@ static void l1_evset(){
     traverse_list0(*head);
     traverse_list0(*head);
     msrmts[4]=probe(target);    
-    
+    __asm__ inline("lfence;");    
     for(tmp=*head; tmp && tmp->next && tmp->next->next; tmp=tmp->next){
         access((void *) tmp);
         access((void *) tmp->next);
@@ -359,6 +359,7 @@ static void l1_evset(){
     }
     msrmts[5]=probe(target);    
     
+    __asm__ inline("lfence;");
     printf("res:\n");
     for(int i=0;i<6;i++){
         printf("%lu\n", msrmts[i]);
