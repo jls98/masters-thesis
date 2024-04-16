@@ -227,7 +227,7 @@ void test_get_histogram_data(){
 
 void test_strides(){
     // stride * 2^5 since sizeof(Node) = 32
-    int size = SIZE_VALUE;
+    int size = 2*SIZE_VALUE;
     Node **head;
     head=malloc(sizeof(Node *));
     *head=NULL;
@@ -250,7 +250,6 @@ void test_strides(){
         
         Node *tmp;
         u64 index;
-        size = 2 * CACHE_L1;
         for(u64 i=0;i<size/(stride*sizeof(Node));i++){
             index=i*stride-i;
             tmp=list_take(buffer_ptr, &index);
@@ -285,7 +284,6 @@ void test_strides(){
             list_pop(head);
         }
         // free(head);
-        size = SIZE_VALUE;
         munmap(buffer, size);
     }
     free(head);
