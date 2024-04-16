@@ -510,7 +510,7 @@ static u64 probe_evset(Node *ptr){
     
 }
 
-#define TOTALACCESSES 100000
+#define TOTALACCESSES 10000
 
 static void timings(){
     wait(1E9);
