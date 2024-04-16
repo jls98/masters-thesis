@@ -532,6 +532,12 @@ static void timings(){
     // static access amount 
     tmp=buffer;
     u64 j=0;
+    
+    for(int i=0;i*64<total_size;i++){
+        access(tmp);
+        tmp=tmp->next;
+    }
+    tmp=buffer;
     for(int i=0;i<TOTALACCESSES;i++){
         total_time+=probe(tmp);
         if(i*64-j*total_size >=total_size){
