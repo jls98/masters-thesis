@@ -314,7 +314,8 @@ static void l1_evset(){
         return;
     }   
      printf("a");
-   Node **head;
+    Node **head=malloc(sizeof(Node *));
+    *head=NULL;
     Node **buf=&ptr;
     list_init(buf, size);
     
