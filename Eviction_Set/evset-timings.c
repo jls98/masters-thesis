@@ -668,8 +668,11 @@ static void timings(){
     }
     tmp=buffer;
     for(j=0;j*64<total_size;j++){
+        __asm__ volatile("lfence;");
         total_time+=probe(tmp);
+        __asm__ volatile("lfence;");
         tmp=tmp->next;
+        __asm__ volatile("lfence;");
     }
     printf("total time %lu, avg %lu, j %lu\n", total_time, total_time/j, j);   
 
