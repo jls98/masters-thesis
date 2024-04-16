@@ -343,16 +343,12 @@ static void l1_evset(){
     msrmts[2]=probe(target);
     traverse_list0(*head);
     msrmts[3]=probe(target);
-    msrmts[4]=probe(target);
-    msrmts[5]=probe(target); 
     traverse_list0(*head);
     traverse_list0(*head);
-    msrmts[6]=probe(target);
-    msrmts[7]=probe(target);
-    msrmts[8]=probe(target);     
+    msrmts[4]=probe(target);    
     
     printf("res:\n");
-    for(int i=0;i<9;i++){
+    for(int i=0;i<5;i++){
         printf("%lu\n", msrmts[i]);
     }
     
