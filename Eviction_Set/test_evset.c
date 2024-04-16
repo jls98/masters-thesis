@@ -302,11 +302,11 @@ void test_strides(){
     
 }
 
-static void l1_evset(){
-    wait(1E9);
-    size=2;
-    Node *ptr=mmap(NULL, size, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB, -1, 0);
-}
+// static void l1_evset(){
+    // wait(1E9);
+    // size=2;
+    // Node *ptr=mmap(NULL, size, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB, -1, 0);
+// }
 
 static void cache_line(){
     wait(1E9);
