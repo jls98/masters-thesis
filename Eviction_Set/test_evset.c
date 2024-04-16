@@ -301,7 +301,6 @@ void test_strides(){
 }
 
 static void l1_evset(){
-    printf("a");
     wait(1E9);
     u64 size=2097152;
     Node *ptr=(Node *) mmap(NULL, size, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB, -1, 0);
@@ -313,7 +312,6 @@ static void l1_evset(){
         printf("madvise failed!\n");
         return;
     }   
-     printf("a");
     Node **head=malloc(sizeof(Node *));
     *head=NULL;
     Node **buf=&ptr;
@@ -328,13 +326,35 @@ static void l1_evset(){
         tmp=list_take(buf, &index);
         list_append(head, tmp);
     }
-    printf("a");
     list_shuffle(head);
-    printf("a");
     index = 16*128-8;
     Node *target = list_get(buf, &index);
     printf("adrs target %p\n", target);
     list_print(head);
+    
+    u64 msrmts[100];
+    
+    access(target);
+    access(target);
+    access(target);
+    access(target);
+    msrmts[0]=probe(target);
+    msrmts[1]=probe(target);
+    msrmts[2]=probe(target);
+    traverse_list0(*head);
+    msrmts[3]=probe(target);
+    msrmts[4]=probe(target);
+    msrmts[5]=probe(target); 
+    traverse_list0(*head);
+    traverse_list0(*head);
+    msrmts[6]=probe(target);
+    msrmts[7]=probe(target);
+    msrmts[8]=probe(target);     
+    
+    printf("res:\n");
+    for(int i=0;i<9;i++){
+        printf("%lu\n", msrmts[i]);
+    }
     
     munmap(ptr, size);
         
