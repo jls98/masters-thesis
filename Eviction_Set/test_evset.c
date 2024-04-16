@@ -290,7 +290,7 @@ void test_strides(){
             // printf("%i %lu\n", stride<<5, msrmts[i]);
         // }
         // msr_index=0;
-        // list_print(head);
+        list_print(head);
         while(*head){
             list_pop(head);
         }

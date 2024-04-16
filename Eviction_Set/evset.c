@@ -313,8 +313,9 @@ static void list_print(Node **head){
     if(*head==NULL) return;
     printf("[+] printing adrs of list:\n");
     Node *tmp;
+    int ctr=0;
     for(tmp=*head;tmp;tmp=tmp->next){
-        printf("[.] %p %p\n", tmp, tmp->next);
+        printf("[%i] %p %p\n", ++ctr, tmp, tmp->next);
     }
 }
 
