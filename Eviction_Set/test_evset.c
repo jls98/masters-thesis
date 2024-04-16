@@ -516,7 +516,7 @@ static void l1_evset(){
     __asm__ inline("lfence;");
     printf("res:\n");
     for(int i=0;i<4;i++){
-        printf("%lu\n", msrmts[i]);
+        printf("%lu %lu\n", msrmts[i], msrmts[i]/20);
     }
     
     munmap(ptr, size);
