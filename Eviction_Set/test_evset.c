@@ -346,14 +346,7 @@ static void l1_evset(){
     msrmts[0]+=probe(target);
     msrmts[0]+=probe(target);
     msrmts[0]+=probe(target);
-    msrmts[0]+=probe(target);
-    msrmts[0]+=probe(target);
-    msrmts[0]+=probe(target);    
-    msrmts[0]+=probe(target);
-    msrmts[0]+=probe(target);
-    msrmts[0]+=probe(target);
-    msrmts[0]+=probe(target);
-    msrmts[0]+=probe(target);
+
     msrmts[0]+=probe(target);
     msrmts[0]+=probe(target);
     msrmts[0]+=probe(target);
@@ -389,6 +382,16 @@ static void l1_evset(){
     __asm__ volatile("lfence;");
     traverse_list0(*head);
     msrmts[1]+=probe(target);
+  
+      msrmts[0]+=probe(target);
+    msrmts[0]+=probe(target);
+    msrmts[0]+=probe(target);    
+    msrmts[0]+=probe(target);
+    msrmts[0]+=probe(target);
+    msrmts[0]+=probe(target);
+    msrmts[0]+=probe(target);
+    msrmts[0]+=probe(target);
+    
     __asm__ volatile("lfence;");
     traverse_list0(*head);
     msrmts[1]+=probe(target);
