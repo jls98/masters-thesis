@@ -250,7 +250,7 @@ void test_strides(){
         
         Node *tmp;
         u64 index;
-        for(u64 i=0;i<size/(2*stride*sizeof(Node));i++){
+        for(u64 i=0;i<size/(stride*sizeof(Node));i++){
             index=i*stride-i;
             tmp=list_take(buffer_ptr, &index);
             
@@ -275,7 +275,7 @@ void test_strides(){
             // test_intern(*head, *head);
         }
         if(j==0) break;
-        printf("%7i %5li %7lu %4li\n", stride<<5, size/(stride*sizeof(Node)), msrmts[0], msrmts[0]/j);
+        printf("%7i %5li %7lu %4li %i\n", stride<<5, size/(stride*sizeof(Node)), msrmts[0], msrmts[0]/j, j);
         // for(int i=0;i<STRIDE_REPS;i++){
             // printf("%i %lu\n", stride<<5, msrmts[i]);
         // }
