@@ -341,8 +341,10 @@ static void l1_evset(){
     msrmts[0]=probe(target);
     msrmts[1]=probe(target);
     msrmts[2]=probe(target);
+    __asm__ volatile("lfence;");
     traverse_list0(*head);
     msrmts[3]=probe(target);
+    __asm__ inline("lfence;");
     traverse_list0(*head);
     traverse_list0(*head);
     msrmts[4]=probe(target);    
