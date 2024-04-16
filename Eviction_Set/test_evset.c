@@ -385,7 +385,7 @@ static void l1_evset(){
     __asm__ volatile("lfence;");
    
    
-    printf("%lu %lu\n", msrmts[0], msrmts[2]);
+    printf("e: %lu %lu\n", msrmts[0], msrmts[2]);
     // fill evset in stride of 4096 bytes   
   
     for (int i=0;i<8;i++){
