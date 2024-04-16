@@ -317,7 +317,7 @@ static void l1_evset(){
     Node **head=malloc(sizeof(Node *));
     *head=NULL;
     Node **buf=&ptr;
-    list_init(buf, size);
+    list_init(ptr, size);
     
     u64 index;
     Node *tmp;
