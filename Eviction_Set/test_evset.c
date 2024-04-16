@@ -316,23 +316,89 @@ static void l1_evset(){
     *head=NULL;
     Node **buf=&ptr;
     list_init(ptr, size);
-    
+    u64 msrmts[100];    
     u64 index;
     Node *tmp;
-    // fill evset in stride of 4096 bytes
-    printf("a");
+    index = 16*2048;
+    Node *target = list_get(buf, &index);   
+    // last desperate attempt
+
+    Node **adrs=malloc(8*sizeof(Node *));
+    for(int i=0;i<8;i++){
+        index=i*128;
+        adrs[i]=list_get(buf, &index); 
+    }
+
+    access(target);
+    access(target);
+    access(target);
+    msrmts[0]=probe(target);
+    __asm__ volatile("lfence;");
+    access(adrs[0]);
+    access(adrs[1]);
+    access(adrs[2]);
+    access(adrs[3]);
+    access(adrs[4]);
+    access(adrs[5]);
+    access(adrs[6]);
+    access(adrs[7]);
+    msrmts[1]=probe(target);
+    __asm__ volatile("lfence;");
+    access(target);
+    msrmts[0]+=probe(target);
+    __asm__ volatile("lfence;");
+    access(adrs[0]);
+    access(adrs[1]);
+    access(adrs[2]);
+    access(adrs[3]);
+    access(adrs[4]);
+    access(adrs[5]);
+    access(adrs[6]);
+    access(adrs[7]);
+    msrmts[1]+=probe(target);
+    __asm__ volatile("lfence;");
+    access(target);
+    msrmts[0]+=probe(target);
+    __asm__ volatile("lfence;");
+    access(adrs[0]);
+    access(adrs[1]);
+    access(adrs[2]);
+    access(adrs[3]);
+    access(adrs[4]);
+    access(adrs[5]);
+    access(adrs[6]);
+    access(adrs[7]);
+    msrmts[1]+=probe(target);
+    __asm__ volatile("lfence;");
+    access(target);
+    msrmts[0]+=probe(target);
+    __asm__ volatile("lfence;");
+    access(adrs[0]);
+    access(adrs[1]);
+    access(adrs[2]);
+    access(adrs[3]);
+    access(adrs[4]);
+    access(adrs[5]);
+    access(adrs[6]);
+    access(adrs[7]);
+    msrmts[1]+=probe(target);
+    __asm__ volatile("lfence;");
+   
+   
+    printf("%lu %lu\n", msrmts[0], msrmts[2]);
+    // fill evset in stride of 4096 bytes   
+  
     for (int i=0;i<8;i++){
         index=i*2048-i;
         tmp=list_take(buf, &index);
         list_append(head, tmp);
     }
     list_shuffle(head);
-    index = 16*2048-8;
-    Node *target = list_get(buf, &index);
+
     printf("adrs target %p\n", target);
     list_print(head);
     
-    u64 msrmts[100];
+
     
     access(target);
     access(target);
