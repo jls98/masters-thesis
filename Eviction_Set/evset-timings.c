@@ -544,12 +544,25 @@ static void timings(){
             tmp=buffer;
             j++;
         }else{
-            tmp=tmp->next;     
-            
+            tmp=tmp->next; 
         }
     }
     printf("total time %lu, avg %lu\n", total_time, total_time/TOTALACCESSES);
     // dynamic access amount 
+    total_time=0;
+    tmp=buffer;
+    for(int i=0;i*64<total_size;i++){
+        access(tmp);
+        tmp=tmp->next;
+    }
+    tmp=buffer;
+    for(j=0;j*64<total_size;j++){
+        total_time+=probe(tmp);
+        tmp=tmp->next;
+    }
+    printf("total time %lu, avg %lu\n", total_time, total_time/j);   
+    
+   
 }
 
 // static Node *create_minimal_eviction_set(void **candidate_set, u64 candidate_set_size, Node* evict_set, void *target_adrs, Config *conf){
