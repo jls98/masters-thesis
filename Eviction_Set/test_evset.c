@@ -265,19 +265,19 @@ void test_strides(){
             // access(tmp);
             // // test_intern(*head, *head);
         // }       
-        // for(tmp=*head;tmp;tmp=tmp->next){
-            // access(tmp);
-            // // test_intern(*head, *head);
-        // }
-        /**/
-        for(tmp=*head; tmp && tmp->next && tmp->next->next; tmp=tmp->next){
-            access((void *) tmp);
-            access((void *) tmp->next);
-            access((void *) tmp->next->next);
-            access((void *) tmp);
-            access((void *) tmp->next);
-            access((void *) tmp->next->next);
+        for(tmp=*head;tmp;tmp=tmp->next){
+            access(tmp);
+            // test_intern(*head, *head);
         }
+        /**/
+        // for(tmp=*head; tmp && tmp->next && tmp->next->next; tmp=tmp->next){
+            // access((void *) tmp);
+            // access((void *) tmp->next);
+            // access((void *) tmp->next->next);
+            // access((void *) tmp);
+            // access((void *) tmp->next);
+            // access((void *) tmp->next->next);
+        // }
         
         for(tmp=*head;tmp;tmp=tmp->next){
             msrmts[0]+=probe(tmp);
