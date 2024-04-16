@@ -531,8 +531,10 @@ static void timings(){
     u64 total_size = 2097152;
     // static access amount 
     for(int i=0;i<TOTALACCESSES;i++){
-        for(tmp=buffer, u64 j=0;j*64<total_size;j++, tmp=tmp->next){
+        u64 j=0;
+        for(tmp=buffer;j*64<total_size; tmp=tmp->next){
             total_time+=probe(tmp);
+            j++;
         }
     }
     printf("total time %lu, avg %lu\n", total_time, total_time/TOTALACCESSES);
