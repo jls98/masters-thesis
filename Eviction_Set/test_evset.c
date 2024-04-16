@@ -247,7 +247,6 @@ void test_strides(){
         }   
         Node **buffer_ptr=&buffer;
         list_init(buffer, size);
-        size = 2*CACHE_L1;
         Node *tmp;
         u64 index;
         for(u64 i=0;i<(size/(stride*sizeof(Node)));i++){
@@ -294,7 +293,6 @@ void test_strides(){
         while(*head){
             list_pop(head);
         }
-        size = 2*SIZE_VALUE;
         // free(head);
         munmap(buffer, size);
     }
@@ -302,11 +300,39 @@ void test_strides(){
     
 }
 
-// static void l1_evset(){
-    // wait(1E9);
-    // size=2;
-    // Node *ptr=mmap(NULL, size, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB, -1, 0);
-// }
+static void l1_evset(){
+    wait(1E9);
+    u64 size=2097152;
+    Node *ptr=(Node *) mmap(NULL, size, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB, -1, 0);
+    if(ptr==MAP_FAILED){
+        printf("mmap failed\n");
+        return;
+    }
+    if (madvise(ptr, size, MADV_HUGEPAGE) == -1){
+        printf("madvise failed!\n");
+        return;
+    }   
+    Node **head;
+    Node **buf=&ptr;
+    list_init(buf, size);
+    
+    u64 index;
+    Node *tmp;
+    // fill evset in stride of 4096 bytes
+    for (int i=0;i<8;i++){
+        index=i*128-i;
+        tmp=list_take(buf, &index);
+        list_append(head, tmp);
+    }
+    list_shuffle(head);
+    index = 16*128-8;
+    u64 *target = &list_get(buf, &index);
+    printf("adrs target %p\n", target);
+    list_print(head);
+    
+    munmap(ptr, size);
+        
+}
 
 static void cache_line(){
     wait(1E9);
@@ -481,5 +507,6 @@ int main(int ac, char **av) {
     // cache_line(); // madvise tend to fail??
     printf("probe\n");
     test_probe_evset(); // realloc/malloc remmap is freaking me out
+    l1_evset();
     return 0;
 }
