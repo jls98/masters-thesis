@@ -1,6 +1,6 @@
 CC = gcc
 CFLAGS = -Wall -Wextra -masm=intel -O0 -fPIC
-TARGETS = test_evset evset
+TARGETS = evset-timings
 
 all: $(TARGETS)
 
@@ -15,6 +15,9 @@ all: $(TARGETS)
 
 evset: Eviction_Set/evset.c
 	$(CC) $(CFLAGS) -o build/evset Eviction_Set/evset.c
+    
+evset-timings: Eviction_Set/evset-timings.c
+	$(CC) $(CFLAGS) -o build/evset-timings Eviction_Set/evset-timings.c
 
 test_evset: Eviction_Set/test_evset.c
 	$(CC) $(CFLAGS) -o build/test_evset -DNOMAIN Eviction_Set/test_evset.c Eviction_Set/evset.c -lcunit
