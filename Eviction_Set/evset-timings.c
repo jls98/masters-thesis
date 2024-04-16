@@ -671,7 +671,7 @@ static void timings(){
         total_time+=probe(tmp);
         tmp=tmp->next;
     }
-    printf("total time %lu, avg %lu\n", total_time, total_time/j);   
+    printf("total time %lu, avg %lu, j %lu\n", total_time, total_time/j, j);   
 
     
 }
