@@ -27,7 +27,7 @@ typedef struct node {
     struct node *next;
     struct node *prev;
     size_t delta;
-    char pad[40];// offset to multiple of 2
+    char pad[40];// offset to cache line size
 } Node;
 
 static Config *conf;
@@ -510,9 +510,33 @@ static u64 probe_evset(Node *ptr){
     
 }
 
+#define TOTALACCESSES 1000
+
 static void timings(){
     wait(1E9);
-    printf("%i\n", sizeof(Node));
+    // allocate 
+    Node *buffer= (Node *) mmap(NULL, PAGESIZE, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB, -1, 0);
+    if(buffer==MAP_FAILED){
+        printf("mmap failed\n");
+        return;
+    }
+    
+    if (madvise(buffer, PAGESIZE, MADV_HUGEPAGE) ==-1){
+        printf("advise failed!\n");
+        return;
+    }
+    list_init(buffer, PAGESIZE);
+    Node *tmp;
+    u64 total_time=0;
+    u64 total_size = 2097152;
+    // static access amount 
+    for(int i=0;i<TOTALACCESSES;i++){
+        for(tmp=buffer, u64 j=0;j*64<total_size;j++, tmp=tmp->next){
+            total_time+=probe(tmp);
+        }
+    }
+    printf("total time %lu, avg %lu\n", total_time, total_time/TOTALACCESSES);
+    // dynamic access amount 
 }
 
 // static Node *create_minimal_eviction_set(void **candidate_set, u64 candidate_set_size, Node* evict_set, void *target_adrs, Config *conf){
