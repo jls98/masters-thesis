@@ -247,10 +247,10 @@ void test_strides(){
         }   
         Node **buffer_ptr=&buffer;
         list_init(buffer, size);
-        
+        size = 2*CACHE_L1;
         Node *tmp;
         u64 index;
-        for(u64 i=0;i<(size/(2*stride*sizeof(Node)))+1;i++){
+        for(u64 i=0;i<(size/(stride*sizeof(Node)))+1;i++){
             index=i*stride-i;
             tmp=list_take(buffer_ptr, &index);
             
@@ -294,6 +294,7 @@ void test_strides(){
         while(*head){
             list_pop(head);
         }
+        size = 2*SIZE_VALUE;
         // free(head);
         munmap(buffer, size);
     }
