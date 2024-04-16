@@ -290,7 +290,7 @@ void test_strides(){
             // printf("%i %lu\n", stride<<5, msrmts[i]);
         // }
         // msr_index=0;
-        // list_print(head);
+        list_print(head);
         while(*head){
             list_pop(head);
         }
@@ -300,6 +300,12 @@ void test_strides(){
     }
     free(head);
     
+}
+
+static void l1_evset(){
+    wait(1E9);
+    size=2;
+    Node *ptr=mmap(NULL, size, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB, -1, 0);
 }
 
 static void cache_line(){
