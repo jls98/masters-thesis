@@ -528,7 +528,7 @@ static void timings(){
     list_init(buffer, PAGESIZE);
     Node *tmp;
     u64 total_time=0;
-    u64 total_size = 32768;
+    u64 total_size = 2097152;
     // static access amount 
     tmp=buffer;
     u64 j=0;
