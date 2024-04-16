@@ -289,7 +289,7 @@ void test_strides(){
             // printf("%i %lu\n", stride<<5, msrmts[i]);
         // }
         // msr_index=0;
-        list_print(head);
+        // list_print(head);
         while(*head){
             list_pop(head);
         }
@@ -319,12 +319,15 @@ static void l1_evset(){
     u64 index;
     Node *tmp;
     // fill evset in stride of 4096 bytes
+    printf("a");
     for (int i=0;i<8;i++){
         index=i*128-i;
         tmp=list_take(buf, &index);
         list_append(head, tmp);
     }
+    printf("a");
     list_shuffle(head);
+    printf("a");
     index = 16*128-8;
     Node *target = list_get(buf, &index);
     printf("adrs target %p\n", target);
@@ -503,10 +506,10 @@ int main(int ac, char **av) {
     CU_basic_run_tests();
     CU_cleanup_registry();
 	// test_get_histogram_data();
-    test_strides();
+    // test_strides();
     // cache_line(); // madvise tend to fail??
-    printf("probe\n");
-    test_probe_evset(); // realloc/malloc remmap is freaking me out
+    // printf("probe\n");
+    // test_probe_evset(); // realloc/malloc remmap is freaking me out
     l1_evset();
     return 0;
 }
