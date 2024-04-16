@@ -327,7 +327,7 @@ static void l1_evset(){
         list_append(head, tmp);
     }
     list_shuffle(head);
-    index = 8*2048-4;
+    index = 16*2048-8;
     Node *target = list_get(buf, &index);
     printf("adrs target %p\n", target);
     list_print(head);
