@@ -322,12 +322,12 @@ static void l1_evset(){
     // fill evset in stride of 4096 bytes
     printf("a");
     for (int i=0;i<8;i++){
-        index=i*128-i;
+        index=i*256-i;
         tmp=list_take(buf, &index);
         list_append(head, tmp);
     }
     list_shuffle(head);
-    index = 16*128-8;
+    index = 16*256-8;
     Node *target = list_get(buf, &index);
     printf("adrs target %p\n", target);
     list_print(head);
