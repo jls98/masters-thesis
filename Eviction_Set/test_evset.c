@@ -322,7 +322,7 @@ static void l1_evset(){
     // fill evset in stride of 4096 bytes
     printf("a");
     for (int i=0;i<8;i++){
-        index=i*512-i;
+        index=i*1024-i;
         tmp=list_take(buf, &index);
         list_append(head, tmp);
     }
