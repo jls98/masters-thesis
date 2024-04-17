@@ -559,17 +559,19 @@ static u64 static_accesses_random(Node **buffer, u64 total_size, u64 reps){
     Node *next;
     u64 total_time=0;
     u64 *msrmts = malloc(reps*sizeof(u64));
+    printf("a\n");
     for(int i=1;i*64<total_size;i++){
         access(tmp);
         tmp=tmp->next;
     }
+    printf("a\n");
     next=tmp->next;
-    tmp->next=NULL;
-    
+    tmp->next=NULL;    
     
     list_shuffle(head);
     tmp=*head;
     
+    printf("a\n");
     for(int i=1;i*64<total_size;i++){
         access(tmp);
         tmp=tmp->next;
@@ -577,18 +579,21 @@ static u64 static_accesses_random(Node **buffer, u64 total_size, u64 reps){
     access(tmp);
     tmp->next=*head;
     tmp=*head;
+    printf("a\n");
     for(int i=0;i<reps;i++){
         msrmts[i]=probe(tmp);
         tmp=tmp->next;         
     }
     
     tmp=*head;
+    printf("a\n");
     for(int i=1;i*64<total_size;i++){
         tmp=tmp->next;
     }    
     tmp->next=next;
     *buffer=*head;
     // printf("msrmts\n");
+    printf("a\n");
     for(int i=0;i<reps;i++){
         total_time+=msrmts[i];
         // printf("%lu; ", msrmts[i]);
