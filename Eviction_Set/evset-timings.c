@@ -516,12 +516,14 @@ static u64 probe_evset(Node *ptr){
 
 static u64 static_accesses(Node *buffer, u64 total_size){
     Node *tmp=buffer;
+    Node *next;
     u64 total_time=0;
     
     for(int i=0;i*64<total_size;i++){
         access(tmp);
         tmp=tmp->next;
     }
+    next=tmp->next;
     tmp->next=buffer;
     tmp=buffer;
     for(int i=0;i<TOTALACCESSES;i++){
@@ -529,7 +531,12 @@ static u64 static_accesses(Node *buffer, u64 total_size){
         tmp=tmp->next;         
     }
     
-    buffer[total_size/64-1].next=&buffer[total_size/64];
+    tmp=buffer;
+    for(int i=0;i*64<total_size;i++){
+        tmp=tmp->next;
+    }    
+    tmp->next=next;
+    
     return total_time;
 }
 
