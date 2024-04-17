@@ -515,8 +515,8 @@ static u64 probe_evset(Node *ptr){
 
 #define TOTALACCESSES 100
 
-static u64 static_accesses(Node *buffer, u64 total_size, u64 reps){
-    Node *tmp=buffer;
+static u64 static_accesses(Node **buffer, u64 total_size, u64 reps){
+    Node *tmp=*buffer;
     Node *next;
     u64 total_time=0;
     u64 *msrmts = malloc(reps*sizeof(u64));
@@ -525,21 +525,21 @@ static u64 static_accesses(Node *buffer, u64 total_size, u64 reps){
         tmp=tmp->next;
     }
     next=tmp->next;
-    tmp->next=buffer;
-    tmp=buffer;
+    tmp->next=*buffer;
+    tmp=*buffer;
     
     for(int i=0;i*64<total_size;i++){
         access(tmp);
         tmp=tmp->next;
     }
-    tmp=buffer;
+    tmp=*buffer;
     
     for(int i=0;i<reps;i++){
         msrmts[i]=probe(tmp);
         tmp=tmp->next;         
     }
     
-    tmp=buffer;
+    tmp=*buffer;
     for(int i=1;i*64<total_size;i++){
         tmp=tmp->next;
     }    
