@@ -197,16 +197,18 @@ static void list_init(Node *src, u64 size) {
     src[0].prev=NULL;
     src[0].next=NULL;
     src[0].delta=0;
-    for(int i=0;i<8;i++){
-        src[0].pad[i]=rand() % 256;
+    int *intArray = (int *)src[0].pad;
+    for(int i=0;i<10;i++){
+        intArray[i]=rand();
     }    
     for(u64 i=1;i<(size/sizeof(Node));i++){
         src[i].prev = &src[i-1];
         src[i].prev->next = &src[i];
         src[i].next=NULL;
         src[i].delta = 0; 
-        for(int i=0;i<8;i++){
-            src[i].pad[i]=rand() % 256;
+        intArray = (int *)src[i].pad;
+        for(int i=0;i<i;i++){
+            intArray[i]=rand();
         }
     }
 }
