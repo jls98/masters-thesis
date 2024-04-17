@@ -519,6 +519,7 @@ static u64 static_accesses(Node *buffer, u64 total_size){
     Node *next;
     u64 total_time=0;
     
+    printf("a");
     for(int i=0;i*64<total_size;i++){
         access(tmp);
         tmp=tmp->next;
@@ -526,17 +527,20 @@ static u64 static_accesses(Node *buffer, u64 total_size){
     next=tmp->next;
     tmp->next=buffer;
     tmp=buffer;
+    printf("a");
     for(int i=0;i<TOTALACCESSES;i++){
         total_time+=probe(tmp);
         tmp=tmp->next;         
     }
     
+    printf("a");
     tmp=buffer;
     for(int i=0;i*64<total_size;i++){
         tmp=tmp->next;
     }    
     tmp->next=next;
-    
+     printf("a");
+   
     return total_time;
 }
 
