@@ -514,6 +514,27 @@ static u64 probe_evset(Node *ptr){
 
 #define TOTALACCESSES 10000
 
+static void static_accesses(u64 total_size, Node *buffer){
+    Node *tmp=buffer;
+    u64 j=0;
+    u64 total_time=0;
+    
+    for(int i=0;i*64<total_size;i++){
+        access(tmp);
+        tmp=tmp->next;
+    }
+    tmp=buffer;
+    for(int i=0;i<TOTALACCESSES;i++){
+        total_time+=probe(tmp);
+        if(i*64-j*total_size >=total_size){
+            tmp=buffer;
+            j++;
+        }else{
+            tmp=tmp->next; 
+        }
+    }
+}
+
 static void timings(){
     wait(1E9);
     // allocate 
@@ -677,9 +698,6 @@ static void timings(){
         __asm__ volatile("lfence;");
     }
     printf("total time %lu, avg %lu, j %lu\n", total_time, total_time/j, j);   
-    for(int i=0;i<40;i++){
-        printf("%d\n", buffer->pad[i]);
-    }
     
 }
 
