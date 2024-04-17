@@ -587,7 +587,7 @@ static u64 static_accesses_random(Node **buffer, u64 total_size, u64 reps){
         tmp=tmp->next;
     }    
     tmp->next=next;
-    next->prev=tmp;
+    if (next) next->prev=tmp;
     *buffer=*head;
     // printf("msrmts\n");
     printf("new head %p new tail %p\n", *head, tmp);
