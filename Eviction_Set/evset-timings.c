@@ -587,7 +587,7 @@ static u64 static_accesses_random(Node **buffer, u64 total_size, u64 reps){
         tmp=tmp->next;
     }    
     tmp->next=next;
-    
+    *buffer=*head;
     // printf("msrmts\n");
     for(int i=0;i<reps;i++){
         total_time+=msrmts[i];
