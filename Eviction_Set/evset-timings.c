@@ -515,35 +515,28 @@ static u64 probe_evset(Node *ptr){
 #define TOTALACCESSES 10000
 
 static u64 static_accesses(Node *buffer, u64 total_size){
-    printf("buf %p\n", buffer);
     Node *tmp=buffer;
     Node *next;
     u64 total_time=0;
     
-    printf("a\n");
     for(int i=1;i*64<total_size;i++){
         access(tmp);
         tmp=tmp->next;
     }
-    printf("a %p \n", tmp);
     access(tmp);
     next=tmp->next;
     tmp->next=buffer;
     tmp=buffer;
-    printf("a\n");
     for(int i=0;i<TOTALACCESSES;i++){
         total_time+=probe(tmp);
         tmp=tmp->next;         
     }
     
-    printf("a\n");
     tmp=buffer;
     for(int i=1;i*64<total_size;i++){
         tmp=tmp->next;
     }    
-    tmp->next=next;
-    printf("a\n");
-   
+    tmp->next=next;   
     return total_time;
 }
 
@@ -563,12 +556,55 @@ static void timings(){
     list_init(buffer, PAGESIZE);
     Node *tmp;
     u64 total_time=0;
-    u64 total_size = 2097152/8;
+    u64 total_size = 2097152;
     printf("total size %lu\n", total_size);
-    printf("buffer1 %p\n", buffer);
     total_time=static_accesses(buffer, total_size);
 
     printf("total time %lu, avg %lu\n", total_time, total_time/TOTALACCESSES);
+    
+    total_size = 2097152/2;
+    printf("total size %lu\n", total_size);
+    total_time=static_accesses(buffer, total_size);
+
+    printf("total time %lu, avg %lu\n", total_time, total_time/TOTALACCESSES);    
+
+
+    total_size = 2097152/4;
+    printf("total size %lu\n", total_size);
+    total_time=static_accesses(buffer, total_size);
+
+    printf("total time %lu, avg %lu\n", total_time, total_time/TOTALACCESSES);    
+
+
+    total_size = 2097152/8;
+    printf("total size %lu\n", total_size);
+    total_time=static_accesses(buffer, total_size);
+
+    printf("total time %lu, avg %lu\n", total_time, total_time/TOTALACCESSES);    
+
+
+    total_size = 2097152/16;
+    printf("total size %lu\n", total_size);
+    total_time=static_accesses(buffer, total_size);
+
+    printf("total time %lu, avg %lu\n", total_time, total_time/TOTALACCESSES);    
+
+    total_size = 2097152/32;
+    printf("total size %lu\n", total_size);
+    total_time=static_accesses(buffer, total_size);
+
+    printf("total time %lu, avg %lu\n", total_time, total_time/TOTALACCESSES);    
+    total_size = 2097152/64;
+    printf("total size %lu\n", total_size);
+    total_time=static_accesses(buffer, total_size);
+
+    printf("total time %lu, avg %lu\n", total_time, total_time/TOTALACCESSES);    
+    total_size = 2097152/128;
+    printf("total size %lu\n", total_size);
+    total_time=static_accesses(buffer, total_size);
+
+    printf("total time %lu, avg %lu\n", total_time, total_time/TOTALACCESSES);    
+
     // // static access amount 
     // tmp=buffer;
     // u64 j=0;
