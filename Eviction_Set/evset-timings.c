@@ -602,17 +602,17 @@ static u64 static_accesses_random(Node **buffer, u64 total_size, u64 reps){
 static void timings(){
     wait(1E9);
     // allocate 
-    Node *buf= (Node *) mmap(NULL, 2*PAGESIZE, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB, -1, 0);
+    Node *buf= (Node *) mmap(NULL, 8*PAGESIZE, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB, -1, 0);
     if(buf==MAP_FAILED){
         printf("mmap failed\n");
         return;
     }
     
-    if (madvise(buf, 2*PAGESIZE, MADV_HUGEPAGE) ==-1){
+    if (madvise(buf, 8*PAGESIZE, MADV_HUGEPAGE) ==-1){
         printf("advise failed!\n");
         return;
     }
-    list_init(buf, 2*PAGESIZE);
+    list_init(buf, 8*PAGESIZE);
     Node *tmp;
     u64 total_time=0;
     u64 total_size;
@@ -746,6 +746,19 @@ static void timings(){
 
     printf("total time %lu, avg %lu\n", total_time, total_time/TOTALACCESSES);    
     total_size = 4194304;
+    printf("\ntotal size %lu\n", total_size);
+    total_time=static_accesses_random(buffer, total_size, TOTALACCESSES);
+
+    printf("total time %lu, avg %lu\n", total_time, total_time/TOTALACCESSES);    
+    
+    total_size = 8388608;
+    printf("\ntotal size %lu\n", total_size);
+    total_time=static_accesses_random(buffer, total_size, TOTALACCESSES);
+
+    printf("total time %lu, avg %lu\n", total_time, total_time/TOTALACCESSES);    
+    
+    
+    total_size = 16777216;
     printf("\ntotal size %lu\n", total_size);
     total_time=static_accesses_random(buffer, total_size, TOTALACCESSES);
 
