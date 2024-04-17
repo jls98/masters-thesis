@@ -677,7 +677,9 @@ static void timings(){
         __asm__ volatile("lfence;");
     }
     printf("total time %lu, avg %lu, j %lu\n", total_time, total_time/j, j);   
-
+    for(int i=0;i<40;i++){
+        printf("%d\n", buffer->pad[i]);
+    }
     
 }
 
