@@ -514,25 +514,23 @@ static u64 probe_evset(Node *ptr){
 
 #define TOTALACCESSES 10000
 
-static void static_accesses(u64 total_size, Node *buffer){
+static u64 static_accesses(Node *buffer, u64 total_size){
     Node *tmp=buffer;
-    u64 j=0;
     u64 total_time=0;
     
     for(int i=0;i*64<total_size;i++){
         access(tmp);
         tmp=tmp->next;
     }
+    tmp->next=buffer;
     tmp=buffer;
     for(int i=0;i<TOTALACCESSES;i++){
         total_time+=probe(tmp);
-        if(i*64-j*total_size >=total_size){
-            tmp=buffer;
-            j++;
-        }else{
-            tmp=tmp->next; 
-        }
+        tmp=tmp->next;         
     }
+    
+    buffer[total_size/64-1].next=&buffer[total_size/64];
+    return total_time;
 }
 
 static void timings(){
@@ -553,151 +551,153 @@ static void timings(){
     u64 total_time=0;
     u64 total_size = 2097152;
     printf("total size %lu\n", total_size);
-    // static access amount 
-    tmp=buffer;
-    u64 j=0;
-    
-    for(int i=0;i*64<total_size;i++){
-        access(tmp);
-        tmp=tmp->next;
-    }
-    tmp=buffer;
-    for(int i=0;i<TOTALACCESSES;i++){
-        total_time+=probe(tmp);
-        if(i*64-j*total_size >=total_size){
-            tmp=buffer;
-            j++;
-        }else{
-            tmp=tmp->next; 
-        }
-    }
-    
+    total_time=static_accesses(buffer, total_size);
     printf("total time %lu, avg %lu\n", total_time, total_time/TOTALACCESSES);
-    // dynamic access amount 
-    total_time=0;
-    tmp=buffer;
-    for(int i=0;i*64<total_size;i++){
-        access(tmp);
-        tmp=tmp->next;
-    }
-    tmp=buffer;
-    for(j=0;j*64<total_size;j++){
-        total_time+=probe(tmp);
-        tmp=tmp->next;
-    }
-    printf("total time %lu, avg %lu\n", total_time, total_time/j);   
+    // // static access amount 
+    // tmp=buffer;
+    // u64 j=0;
     
-    // --------------------------------
-    total_size = 2097152/2;
-    printf("total size %lu\n", total_size);
-    j=0;
-    tmp=buffer;
-    total_time=0;
+    // for(int i=0;i*64<total_size;i++){
+        // access(tmp);
+        // tmp=tmp->next;
+    // }
+    // tmp=buffer;
+    // for(int i=0;i<TOTALACCESSES;i++){
+        // total_time+=probe(tmp);
+        // if(i*64-j*total_size >=total_size){
+            // tmp=buffer;
+            // j++;
+        // }else{
+            // tmp=tmp->next; 
+        // }
+    // }
     
-    for(int i=0;i*64<total_size;i++){
-        access(tmp);
-        tmp=tmp->next;
-    }
-    tmp=buffer;
-    for(int i=0;i<TOTALACCESSES;i++){
-        total_time+=probe(tmp);
-        if(i*64-j*total_size >=total_size){
-            tmp=buffer;
-            j++;
-        }else{
-            tmp=tmp->next; 
-        }
-    }
+    // printf("total time %lu, avg %lu\n", total_time, total_time/TOTALACCESSES);
+    // // dynamic access amount 
+    // total_time=0;
+    // tmp=buffer;
+    // for(int i=0;i*64<total_size;i++){
+        // access(tmp);
+        // tmp=tmp->next;
+    // }
+    // tmp=buffer;
+    // for(j=0;j*64<total_size;j++){
+        // total_time+=probe(tmp);
+        // tmp=tmp->next;
+    // }
+    // printf("total time %lu, avg %lu\n", total_time, total_time/j);   
     
-    printf("total time %lu, avg %lu\n", total_time, total_time/TOTALACCESSES);
-    // dynamic access amount 
-    total_time=0;
-    tmp=buffer;
-    for(int i=0;i*64<total_size;i++){
-        access(tmp);
-        tmp=tmp->next;
-    }
-    tmp=buffer;
-    for(j=0;j*64<total_size;j++){
-        total_time+=probe(tmp);
-        tmp=tmp->next;
-    }
-    printf("total time %lu, avg %lu\n", total_time, total_time/j);   
-    // --------------------------------
-    total_size = 2097152/4;
-    printf("total size %lu\n", total_size);
-    j=0;
-    tmp=buffer;
-    total_time=0;
+    // // --------------------------------
+    // total_size = 2097152/2;
+    // printf("total size %lu\n", total_size);
+    // j=0;
+    // tmp=buffer;
+    // total_time=0;
     
-    for(int i=0;i*64<total_size;i++){
-        access(tmp);
-        tmp=tmp->next;
-    }
-    tmp=buffer;
-    for(int i=0;i<TOTALACCESSES;i++){
-        total_time+=probe(tmp);
-        if(i*64-j*total_size >=total_size){
-            tmp=buffer;
-            j++;
-        }else{
-            tmp=tmp->next; 
-        }
-    }
+    // for(int i=0;i*64<total_size;i++){
+        // access(tmp);
+        // tmp=tmp->next;
+    // }
+    // tmp=buffer;
+    // for(int i=0;i<TOTALACCESSES;i++){
+        // total_time+=probe(tmp);
+        // if(i*64-j*total_size >=total_size){
+            // tmp=buffer;
+            // j++;
+        // }else{
+            // tmp=tmp->next; 
+        // }
+    // }
     
-    printf("total time %lu, avg %lu\n", total_time, total_time/TOTALACCESSES);
-    // dynamic access amount 
-    total_time=0;
-    tmp=buffer;
-    for(int i=0;i*64<total_size;i++){
-        access(tmp);
-        tmp=tmp->next;
-    }
-    tmp=buffer;
-    for(j=0;j*64<total_size;j++){
-        total_time+=probe(tmp);
-        tmp=tmp->next;
-    }
-    printf("total time %lu, avg %lu\n", total_time, total_time/j);   
-    // --------------------------------
-    total_size = 2097152/8;
-    printf("total size %lu\n", total_size);
-    j=0;
-    tmp=buffer;
-    total_time=0;
+    // printf("total time %lu, avg %lu\n", total_time, total_time/TOTALACCESSES);
+    // // dynamic access amount 
+    // total_time=0;
+    // tmp=buffer;
+    // for(int i=0;i*64<total_size;i++){
+        // access(tmp);
+        // tmp=tmp->next;
+    // }
+    // tmp=buffer;
+    // for(j=0;j*64<total_size;j++){
+        // total_time+=probe(tmp);
+        // tmp=tmp->next;
+    // }
+    // printf("total time %lu, avg %lu\n", total_time, total_time/j);   
+    // // --------------------------------
+    // total_size = 2097152/4;
+    // printf("total size %lu\n", total_size);
+    // j=0;
+    // tmp=buffer;
+    // total_time=0;
     
-    for(int i=0;i*64<total_size;i++){
-        access(tmp);
-        tmp=tmp->next;
-    }
-    tmp=buffer;
-    for(int i=0;i<TOTALACCESSES;i++){
-        total_time+=probe(tmp);
-        if(i*64-j*total_size >=total_size){
-            tmp=buffer;
-            j++;
-        }else{
-            tmp=tmp->next; 
-        }
-    }
+    // for(int i=0;i*64<total_size;i++){
+        // access(tmp);
+        // tmp=tmp->next;
+    // }
+    // tmp=buffer;
+    // for(int i=0;i<TOTALACCESSES;i++){
+        // total_time+=probe(tmp);
+        // if(i*64-j*total_size >=total_size){
+            // tmp=buffer;
+            // j++;
+        // }else{
+            // tmp=tmp->next; 
+        // }
+    // }
     
-    printf("total time %lu, avg %lu\n", total_time, total_time/TOTALACCESSES);
-    // dynamic access amount 
-    total_time=0;
-    tmp=buffer;
-    for(int i=0;i*64<total_size;i++){
-        access(tmp);
-        tmp=tmp->next;
-    }
-    tmp=buffer;
-    for(j=0;j*64<total_size;j++){
-        __asm__ volatile("lfence;");
-        total_time+=probe(tmp);
-        __asm__ volatile("lfence;");
-        tmp=tmp->next;
-        __asm__ volatile("lfence;");
-    }
-    printf("total time %lu, avg %lu, j %lu\n", total_time, total_time/j, j);   
+    // printf("total time %lu, avg %lu\n", total_time, total_time/TOTALACCESSES);
+    // // dynamic access amount 
+    // total_time=0;
+    // tmp=buffer;
+    // for(int i=0;i*64<total_size;i++){
+        // access(tmp);
+        // tmp=tmp->next;
+    // }
+    // tmp=buffer;
+    // for(j=0;j*64<total_size;j++){
+        // total_time+=probe(tmp);
+        // tmp=tmp->next;
+    // }
+    // printf("total time %lu, avg %lu\n", total_time, total_time/j);   
+    // // --------------------------------
+    // total_size = 2097152/8;
+    // printf("total size %lu\n", total_size);
+    // j=0;
+    // tmp=buffer;
+    // total_time=0;
+    
+    // for(int i=0;i*64<total_size;i++){
+        // access(tmp);
+        // tmp=tmp->next;
+    // }
+    // tmp=buffer;
+    // for(int i=0;i<TOTALACCESSES;i++){
+        // total_time+=probe(tmp);
+        // if(i*64-j*total_size >=total_size){
+            // tmp=buffer;
+            // j++;
+        // }else{
+            // tmp=tmp->next; 
+        // }
+    // }
+    
+    // printf("total time %lu, avg %lu\n", total_time, total_time/TOTALACCESSES);
+    // // dynamic access amount 
+    // total_time=0;
+    // tmp=buffer;
+    // for(int i=0;i*64<total_size;i++){
+        // access(tmp);
+        // tmp=tmp->next;
+    // }
+    // tmp=buffer;
+    // for(j=0;j*64<total_size;j++){
+        // __asm__ volatile("lfence;");
+        // total_time+=probe(tmp);
+        // __asm__ volatile("lfence;");
+        // tmp=tmp->next;
+        // __asm__ volatile("lfence;");
+    // }
+    // printf("total time %lu, avg %lu, j %lu\n", total_time, total_time/j, j);   
     
 }
 
