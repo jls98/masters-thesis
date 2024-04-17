@@ -563,7 +563,7 @@ static void timings(){
     list_init(buffer, PAGESIZE);
     Node *tmp;
     u64 total_time=0;
-    u64 total_size = 2097152;
+    u64 total_size = 2097152/8;
     printf("total size %lu\n", total_size);
     printf("buffer1 %p\n", buffer);
     total_time=static_accesses(buffer, total_size);
