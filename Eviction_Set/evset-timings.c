@@ -515,6 +515,7 @@ static u64 probe_evset(Node *ptr){
 #define TOTALACCESSES 10000
 
 static u64 static_accesses(Node *buffer, u64 total_size){
+    printf("buf %p\n", buffer);
     Node *tmp=buffer;
     Node *next;
     u64 total_time=0;
@@ -524,6 +525,8 @@ static u64 static_accesses(Node *buffer, u64 total_size){
         access(tmp);
         tmp=tmp->next;
     }
+    printf("a\n");
+
     next=tmp->next;
     tmp->next=buffer;
     tmp=buffer;
@@ -562,7 +565,9 @@ static void timings(){
     u64 total_time=0;
     u64 total_size = 2097152;
     printf("total size %lu\n", total_size);
+    printf("buffer1 %p\n", buffer);
     total_time=static_accesses(buffer, total_size);
+
     printf("total time %lu, avg %lu\n", total_time, total_time/TOTALACCESSES);
     // // static access amount 
     // tmp=buffer;
