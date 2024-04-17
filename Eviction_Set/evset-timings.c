@@ -512,7 +512,7 @@ static u64 probe_evset(Node *ptr){
     
 }
 
-#define TOTALACCESSES 1000
+#define TOTALACCESSES 100
 
 static u64 static_accesses(Node *buffer, u64 total_size, u64 reps){
     Node *tmp=buffer;
