@@ -525,7 +525,7 @@ static u64 static_accesses(Node *buffer, u64 total_size){
         access(tmp);
         tmp=tmp->next;
     }
-    printf("a\n");
+    printf("a %p \n", tmp);
 
     next=tmp->next;
     tmp->next=buffer;
