@@ -512,7 +512,7 @@ static u64 probe_evset(Node *ptr){
     
 }
 
-#define TOTALACCESSES 100
+#define TOTALACCESSES 10000
 
 static u64 static_accesses(Node *buffer, u64 total_size, u64 reps){
     Node *tmp=buffer;
@@ -555,17 +555,17 @@ static u64 static_accesses(Node *buffer, u64 total_size, u64 reps){
 static void timings(){
     wait(1E9);
     // allocate 
-    Node *buffer= (Node *) mmap(NULL, 10*PAGESIZE, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB, -1, 0);
+    Node *buffer= (Node *) mmap(NULL, 8*PAGESIZE, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB, -1, 0);
     if(buffer==MAP_FAILED){
         printf("mmap failed\n");
         return;
     }
     
-    if (madvise(buffer, 10*PAGESIZE, MADV_HUGEPAGE) ==-1){
+    if (madvise(buffer, 8*PAGESIZE, MADV_HUGEPAGE) ==-1){
         printf("advise failed!\n");
         return;
     }
-    list_init(buffer, 10*PAGESIZE);
+    list_init(buffer, 8*PAGESIZE);
     Node *tmp;
     u64 total_time=0;
     u64 total_size;
