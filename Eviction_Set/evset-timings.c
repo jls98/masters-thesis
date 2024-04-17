@@ -513,7 +513,7 @@ static u64 probe_evset(Node *ptr){
     
 }
 
-#define TOTALACCESSES 10000
+#define TOTALACCESSES 100
 
 static u64 static_accesses(Node *buffer, u64 total_size, u64 reps){
     Node *tmp=buffer;
@@ -589,11 +589,11 @@ static u64 static_accesses_random(Node **buffer, u64 total_size, u64 reps){
     tmp->next=next;
     if (next) next->prev=tmp;
     *buffer=*head;
-    // printf("msrmts\n");
+    printf("msrmts\n");
     printf("new head %p new tail %p\n", *head, tmp);
     for(int i=0;i<reps;i++){
         total_time+=msrmts[i];
-        // printf("%lu; ", msrmts[i]);
+        printf("%lu; ", msrmts[i]);
     }    
     free(msrmts);
     return total_time;
