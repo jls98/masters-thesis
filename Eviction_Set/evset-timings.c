@@ -599,7 +599,7 @@ static u64 static_accesses_random(Node **buffer, u64 total_size, u64 reps){
         total_time+=msrmts[i];
         // printf("%lu; ", msrmts[i]);
     }    
-    free(msrmts);
+    // free(msrmts);
     return total_time;
 }
 
