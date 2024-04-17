@@ -544,10 +544,10 @@ static u64 static_accesses(Node *buffer, u64 total_size, u64 reps){
     }    
     tmp->next=next;
     
-    printf("msrmts\n");
+    // printf("msrmts\n");
     for(int i=0;i<reps;i++){
         total_time+=msrmts[i];
-        printf("%lu; ", msrmts[i]);
+        // printf("%lu; ", msrmts[i]);
     }    
     return total_time;
 }
@@ -574,44 +574,44 @@ static void timings(){
 
     printf("total time %lu, avg %lu\n", total_time, total_time/TOTALACCESSES);
     
-    total_size = 2097152/2;
+    total_size = 1048576;
     printf("\ntotal size %lu\n", total_size);
     total_time=static_accesses(buffer, total_size, TOTALACCESSES);
 
     printf("total time %lu, avg %lu\n", total_time, total_time/TOTALACCESSES);    
 
 
-    total_size = 2097152/4;
+    total_size = 524288;
     printf("\ntotal size %lu\n", total_size);
     total_time=static_accesses(buffer, total_size, TOTALACCESSES);
 
     printf("total time %lu, avg %lu\n", total_time, total_time/TOTALACCESSES);    
 
 
-    total_size = 2097152/8;
+    total_size = 262144;
     printf("\ntotal size %lu\n", total_size);
     total_time=static_accesses(buffer, total_size, TOTALACCESSES);
 
     printf("total time %lu, avg %lu\n", total_time, total_time/TOTALACCESSES);    
 
 
-    total_size = 2097152/16;
+    total_size = 131072;
     printf("\ntotal size %lu\n", total_size);
     total_time=static_accesses(buffer, total_size, TOTALACCESSES);
 
     printf("total time %lu, avg %lu\n", total_time, total_time/TOTALACCESSES);    
 
-    total_size = 2097152/32;
+    total_size = 65536;
     printf("\ntotal size %lu\n", total_size);
     total_time=static_accesses(buffer, total_size, TOTALACCESSES);
 
     printf("total time %lu, avg %lu\n", total_time, total_time/TOTALACCESSES);    
-    total_size = 2097152/64;
+    total_size = 32768;
     printf("\ntotal size %lu\n", total_size);
     total_time=static_accesses(buffer, total_size, TOTALACCESSES);
 
     printf("total time %lu, avg %lu\n", total_time, total_time/TOTALACCESSES);    
-    total_size = 2097152/128;
+    total_size = 16384;
     printf("\ntotal size %lu\n", total_size);
     total_time=static_accesses(buffer, total_size, TOTALACCESSES);
 
