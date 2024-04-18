@@ -85,7 +85,6 @@ static u64 lfsr_step(u64 lfsr);
 
 // algorithms ############################################
 
-
 static void init_evset(Config *conf_ptr);
 static Node **find_evset(Config *conf_ptr, void *target_adrs);
 static Node **get_evset(Config *conf_ptr);
@@ -110,7 +109,7 @@ static void fenced_access(void *adrs){
 static void flush(void *adrs){
 	__asm__ volatile("clflush [%0]" ::"r" (adrs));
 }
-
+ 
 static u64 probe(void *adrs){
 	volatile u64 time;  
 	__asm__ volatile (
@@ -563,24 +562,36 @@ static u64 static_accesses_random(Node **buffer, u64 total_size, u64 reps){
         access(tmp);
         tmp=tmp->next;
     }
-    printf("head %p tail %p\n", *buffer, tmp);
     next=tmp->next;
     tmp->next=NULL;    
-    
+    printf("pre shuffle\n");
     list_shuffle(head);
+    printf("post shuffle\n");
     tmp=*head;
     
     for(int i=1;i*64<total_size;i++){
         access(tmp);
         tmp=tmp->next;
     }
-    access(tmp);
     tmp->next=*head;
     tmp=*head;
+    for(int i=1;i*64<total_size;i++){
+        access(tmp);
+        tmp=tmp->next;
+    }
+    tmp=*head;
+    for(int i=1;i*64<total_size;i++){
+        access(tmp);
+        tmp=tmp->next;
+    }
+    tmp=*head;
+    
+    
     for(int i=0;i<reps;i++){
         msrmts[i]=probe(tmp);
         tmp=tmp->next;         
     }
+    
     
     tmp=*head;
     for(int i=1;i*64<total_size;i++){
@@ -590,7 +601,6 @@ static u64 static_accesses_random(Node **buffer, u64 total_size, u64 reps){
     if (next) next->prev=tmp;
     *buffer=*head;
     printf("msrmts\n");
-    printf("new head %p new tail %p\n", *head, tmp);
     for(int i=0;i<reps;i++){
         total_time+=msrmts[i];
         printf("%lu; ", msrmts[i]);
@@ -688,11 +698,7 @@ static void timings(){
     total_time=static_accesses(buffer, total_size, TOTALACCESSES);
 
     printf("total time %lu, avg %lu\n", total_time, total_time/TOTALACCESSES);    
-    
-    
-    
-    
-    
+
     
     total_size = 16384;
     printf("\ntotal size %lu\n", total_size);
