@@ -25,6 +25,9 @@ test_evset: Eviction_Set/test_evset.c
 workshop3: Cache_Reversing/workshop3.c
 	$(CC) $(CFLAGS) -o build/workshop3 Cache_Reversing/workshop3.c
 
+file_generator: utils/file_generator.c
+	$(CC) $(CFLAGS) -o build/file_generator utils/file_generator.c
+
 # pp: PP/pp.c
 	# $(CC) $(CFLAGS) -g -o build/pp -DPP PP/pp.c
 
