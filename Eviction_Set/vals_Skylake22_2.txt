@@ -9,3 +9,8 @@
 4194304 52
 8388608 59
 16777216 258
+
+
+finer granulaty
+median
+old test
