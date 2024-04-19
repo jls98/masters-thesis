@@ -1,6 +1,6 @@
 CC = gcc
 CFLAGS = -Wall -Wextra -masm=intel -O0 -fPIC
-TARGETS = evset-timings workshop3
+TARGETS = evset-timings workshop3 file_generator
 
 all: $(TARGETS)
 
