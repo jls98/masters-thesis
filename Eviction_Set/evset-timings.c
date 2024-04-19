@@ -618,12 +618,12 @@ static u64 static_accesses_random(Node **buffer, u64 total_size, u64 reps){
     tmp->next=next;
     if (next) next->prev=tmp;
     *buffer=*head;
-    printf("msrmts\n");
+    printf("[!] msrmts\n");
     for(int i=0;i<reps;i++){
         total_time+=msrmts[i];
         printf("%lu; ", msrmts[i]);
     }    
-    printf("[+] Results for buffer size %lu: total time %lu, avg %lu, median %lu\n", total_size, total_time, total_time/reps, median_uint64(msrmts, reps));    
+    printf("\n[+] Results for buffer size %lu: total time %lu, avg %lu, median %lu\n", total_size, total_time, total_time/reps, median_uint64(msrmts, reps));    
     free(msrmts);
     return total_time;
 }
@@ -711,98 +711,71 @@ static void timings(){
 
     
     total_size = 16384;
-    printf("\ntotal size %lu\n", total_size);
     total_time=static_accesses_random(buffer, total_size, TOTALACCESSES);
     
     total_size = 24384;
-    printf("\ntotal size %lu\n", total_size);
     total_time=static_accesses_random(buffer, total_size, TOTALACCESSES);
 
     total_size = 26384;
-    printf("\ntotal size %lu\n", total_size);
     total_time=static_accesses_random(buffer, total_size, TOTALACCESSES);
     
     total_size = 28384;
-    printf("\ntotal size %lu\n", total_size);
     total_time=static_accesses_random(buffer, total_size, TOTALACCESSES);
 
     total_size = 30384;
-    printf("\ntotal size %lu\n", total_size);
     total_time=static_accesses_random(buffer, total_size, TOTALACCESSES); 
     
     total_size = 32768;
-    printf("\ntotal size %lu\n", total_size);
     total_time=static_accesses_random(buffer, total_size, TOTALACCESSES);
-    
     
     total_size = 34768;
-    printf("\ntotal size %lu\n", total_size);
     total_time=static_accesses_random(buffer, total_size, TOTALACCESSES);
     
-    
     total_size = 36768;
-    printf("\ntotal size %lu\n", total_size);
     total_time=static_accesses_random(buffer, total_size, TOTALACCESSES);
     
     total_size = 38768;
-    printf("\ntotal size %lu\n", total_size);
     total_time=static_accesses_random(buffer, total_size, TOTALACCESSES);
     
     total_size = 65536;
-    printf("\ntotal size %lu\n", total_size);
     total_time=static_accesses_random(buffer, total_size, TOTALACCESSES);
 
     total_size = 131072;
-    printf("\ntotal size %lu\n", total_size);
     total_time=static_accesses_random(buffer, total_size, TOTALACCESSES);
     total_size = 161072;
-    printf("\ntotal size %lu\n", total_size);
     total_time=static_accesses_random(buffer, total_size, TOTALACCESSES);
     total_size = 191072;
-    printf("\ntotal size %lu\n", total_size);
     total_time=static_accesses_random(buffer, total_size, TOTALACCESSES);
     total_size = 221072;
-    printf("\ntotal size %lu\n", total_size);
     total_time=static_accesses_random(buffer, total_size, TOTALACCESSES);
     total_size = 241072;
-    printf("\ntotal size %lu\n", total_size);
     total_time=static_accesses_random(buffer, total_size, TOTALACCESSES);
 
     total_size = 262144;
-    printf("\ntotal size %lu\n", total_size);
     total_time=static_accesses_random(buffer, total_size, TOTALACCESSES);
     total_size = 281072;
-    printf("\ntotal size %lu\n", total_size);
     total_time=static_accesses_random(buffer, total_size, TOTALACCESSES);
     total_size = 301072;
-    printf("\ntotal size %lu\n", total_size);
     total_time=static_accesses_random(buffer, total_size, TOTALACCESSES);
     total_size = 321072;
-    printf("\ntotal size %lu\n", total_size);
     total_time=static_accesses_random(buffer, total_size, TOTALACCESSES);
 
     total_size = 524288;
-    printf("\ntotal size %lu\n", total_size);
     total_time=static_accesses_random(buffer, total_size, TOTALACCESSES);
 
     total_size = 1048576;
-    printf("\ntotal size %lu\n", total_size);
     total_time=static_accesses_random(buffer, total_size, TOTALACCESSES);
 
     total_size = 2097152;
-    printf("\ntotal size %lu\n", total_size);
     total_time=static_accesses_random(buffer, total_size, TOTALACCESSES);
 
     total_size = 4194304;
-    printf("\ntotal size %lu\n", total_size);
     total_time=static_accesses_random(buffer, total_size, TOTALACCESSES);
     
     total_size = 8388608;
-    printf("\ntotal size %lu\n", total_size);
     total_time=static_accesses_random(buffer, total_size, TOTALACCESSES);
     
     total_size = 16777216;
-    printf("\ntotal size %lu\n", total_size);
     total_time=static_accesses_random(buffer, total_size, TOTALACCESSES);
 
 

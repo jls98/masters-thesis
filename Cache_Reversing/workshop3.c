@@ -476,7 +476,7 @@ void L1_line_detection(){
 
 
 int main(){
-	/*printf("check L1d and L2 sizes on the e core\n\n");
+	printf("check L1d and L2 sizes on the e core\n\n");
 	// check for time dimensions
 	for (int i=4;i<20;i++) L1_detection(1<<i); 
 	
@@ -487,19 +487,19 @@ int main(){
 	printf("\nnow more fine tuned for L2:\n\n");
 	// theres a jump from 500kb to 1MB to 2MB for L2 on the e core
 	for (int i=1;i<20;i++) L1_detection(ADRS_AMOUNT14*i);
-	*/
+	
 	//L1_detection(ADRS_AMOUNT8);
 	//L1_detection(ADRS_AMOUNT9);
 	//L1_detection(ADRS_AMOUNT10);
 	//L1_detection(ADRS_AMOUNT11*i);
-	/*L1_detection(ADRS_AMOUNT12);	
+	L1_detection(ADRS_AMOUNT12);	
 	L1_detection(ADRS_AMOUNT13);
 	L1_detection(ADRS_AMOUNT14); // 
 	L1_detection(ADRS_AMOUNT15); // 
 	L1_detection(ADRS_AMOUNT16); // 
 	L1_detection(ADRS_AMOUNT17); // 
 	L1_detection(ADRS_AMOUNT18); // 
-	*/
+	
 	
 	printf("detect ways on L1\n\n");
 	//set_n_ways_detection(0);
@@ -524,7 +524,7 @@ int main(){
 	
 	
 	
-	L1_line_detection();
+	// L1_line_detection();
 	return 0;
 }
 
