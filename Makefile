@@ -23,7 +23,7 @@ test_evset: Eviction_Set/test_evset.c
 	$(CC) $(CFLAGS) -o build/test_evset -DNOMAIN Eviction_Set/test_evset.c Eviction_Set/evset.c -lcunit
 
 workshop3: Cache_Reversing/workshop3.c
-    $(CC) $(CFLAGS) -g -o build/workshop3 Cache_Reversing/workshop3.c
+    $(CC) $(CFLAGS) -o build/workshop3 Cache_Reversing/workshop3.c
 # pp: PP/pp.c
 	# $(CC) $(CFLAGS) -g -o build/pp -DPP PP/pp.c
 
