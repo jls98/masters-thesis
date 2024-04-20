@@ -35,7 +35,7 @@ uint64_t log_2(uint64_t val) {
 
 int get_ways_sqr(int cache_size) {
     wait(1E9);
-    uint64_t double_cache_size = 2*cache_size;
+    uint64_t double_cache_size = 4*cache_size;
     // check stride in power of two
 	printf("probing with set of size %lu for cache size %i\n", double_cache_size, cache_size);
     for (uint64_t s = 1; s < log_2(double_cache_size)-1; s++) {
