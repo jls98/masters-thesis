@@ -1,6 +1,6 @@
 CC = gcc
 CFLAGS = -Wall -Wextra -masm=intel -O0 -fPIC
-TARGETS = evset-timings workshop3 file_generator
+TARGETS = evset-timings workshop3 task2
 
 all: $(TARGETS)
 
@@ -24,6 +24,9 @@ test_evset: Eviction_Set/test_evset.c
 
 workshop3: Cache_Reversing/workshop3.c
 	$(CC) $(CFLAGS) -o build/workshop3 Cache_Reversing/workshop3.c
+    
+task2: Cache_Reversing/task2.c
+	$(CC) $(CFLAGS) -o build/task2 Cache_Reversing/task2.c
 
 file_generator: utils/file_generator.c
 	$(CC) $(CFLAGS) -o build/file_generator utils/file_generator.c
