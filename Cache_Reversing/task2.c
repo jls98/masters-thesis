@@ -122,8 +122,8 @@ static double probe_stride_loop(void *addr, uint64_t reps) {
 	return (double)time / (double)reps;
 }
 
-static u64 probe(void *adrs){
-	volatile u64 time;  
+static uint64_t probe(void *adrs){
+	volatile uint64_t time;  
 	__asm__ volatile (
         " mfence            \n"
         " rdtscp             \n"
@@ -141,11 +141,11 @@ static u64 probe(void *adrs){
 
 static double probe_stride_loop_c(void *addr, uint64_t reps) {
 	if(reps==0) return 0.0f;
-    void *tmp=addr;
+    uint64_t *tmp=addr;
 	volatile uint64_t time=0;
     for(int i=0; i<reps;i++){
         time+=probe(tmp);
-        tmp=(void *) *tmp;
+        tmp=(uint64_t *) *tmp;
     }
 	return (double)time / (double)reps;
 }
