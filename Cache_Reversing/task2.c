@@ -17,10 +17,10 @@ static uint64_t lfsr_create(void);
 static uint64_t lfsr_rand(uint64_t* lfsr);
 static uint64_t lfsr_step(uint64_t lfsr);
 static double probe_stride_loop(void *addr, uint64_t reps);
+static double probe_stride_loop_c(void *addr, uint64_t reps);
 static void create_pointer_stride_chase(void** addr, const uint64_t size, const uint32_t stride);
 int get_ways_sqr(int cache_size);
 int get_ways_lin(int cache_size);
-
 int main(int ac, char **av){
     ac==2 ? get_ways_sqr(atoi(av[1])) : get_ways_sqr(CACHE_SIZE_DEFAULT_L2);
 }
@@ -35,7 +35,7 @@ uint64_t log_2(uint64_t val) {
 
 int get_ways_sqr(int cache_size) {
     wait(1E9);
-    uint64_t double_cache_size = 4*cache_size;
+    uint64_t double_cache_size = 2*cache_size;
     // check stride in power of two
 	printf("probing with set of size %lu for cache size %i\n", double_cache_size, cache_size);
     for (uint64_t s = 1; s < log_2(double_cache_size)-1; s++) {
@@ -45,7 +45,7 @@ int get_ways_sqr(int cache_size) {
         create_pointer_stride_chase(buffer, buffer_size, stride);  
         //uint64_t reps = double_cache_size % stride == 0? buffer_size/stride : buffer_size/stride +1;
 		//printf("s %lu, stride %lu, reps %lu, size of pointer chase %lu\n", s, stride, buffer_size, buffer_size/stride);
-        double millicycles = probe_stride_loop(buffer, buffer_size);
+        double millicycles = probe_stride_loop_c(buffer, buffer_size);
         //printf("stride: %5d; time: %7.3f cycles\n", (1<<stride), millicycles);
         printf("%7ld %7.3f\n", 8*stride, millicycles);
 		
@@ -121,6 +121,36 @@ static double probe_stride_loop(void *addr, uint64_t reps) {
 	);
 	return (double)time / (double)reps;
 }
+
+static u64 probe(void *adrs){
+	volatile u64 time;  
+	__asm__ volatile (
+        " mfence            \n"
+        " rdtscp             \n"
+        " mov r8, rax 		\n"
+        " mov rax, [%1]		\n"
+        " lfence            \n"
+        " rdtscp             \n"
+        " sub rax, r8 		\n"
+        : "=&a" (time)
+        : "r" (adrs)
+        : "ecx", "rdx", "r8", "memory"
+	);
+	return time;
+}
+
+static double probe_stride_loop_c(void *addr, uint64_t reps) {
+	if(reps==0) return 0.0f;
+    void *tmp=addr;
+	volatile uint64_t time=0;
+    for(int i=0; i<reps;i++){
+        time+=probe(tmp);
+        tmp=(void *) *tmp;
+    }
+	return (double)time / (double)reps;
+}
+
+
 
 static void create_pointer_stride_chase(void** addr, const uint64_t size, const uint32_t stride) {
     for (uint64_t i = 0; i < size; i++) {
