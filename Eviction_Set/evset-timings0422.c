@@ -22,14 +22,12 @@ typedef struct config {
 } Config;
 
 /* linked list containing an index and a pointer to     
- * prev and next element                    
- * if treated as (uint64_t *) or similar, it can be used as pointer chase when de-refed
- */
+ * prev and next element                                */
 typedef struct node {
     struct node *next;
     struct node *prev;
     size_t delta;
-    char pad[8];// offset to multiple of 2
+    char pad[40];// offset to cache line size
 } Node;
 
 static Config *conf;
@@ -87,7 +85,6 @@ static u64 lfsr_step(u64 lfsr);
 
 // algorithms ############################################
 
-
 static void init_evset(Config *conf_ptr);
 static Node **find_evset(Config *conf_ptr, void *target_adrs);
 static Node **get_evset(Config *conf_ptr);
@@ -97,8 +94,31 @@ static void traverse_list(Node *ptr);
 static u64 test(Node *ptr, void *target);
 static u64 test_intern(Node *ptr, void *target);
 static u64 probe_evset(Node *ptr);
+static void timings();
 
 // --- utils ---
+// Comparison function for qsort
+int compare_uint64(const void *a, const void *b) {
+    uint64_t ua = *(const uint64_t *)a;
+    uint64_t ub = *(const uint64_t *)b;
+    return (ua > ub) - (ua < ub);
+}
+
+// Function to compute the median of an array of uint64_t values
+uint64_t median_uint64(uint64_t *array, size_t size) {
+    // Sort the array
+    qsort(array, size, sizeof(uint64_t), compare_uint64);
+
+    // Calculate the median
+    if (size % 2 == 0) {
+        // If the size is even, return the average of the middle two elements
+        return (array[size / 2 - 1] + array[size / 2]) / 2;
+    } else {
+        // If the size is odd, return the middle element
+        return array[size / 2];
+    }
+}
+
 static void access(void *adrs){
 	__asm__ volatile("mov rax, [%0];"::"r" (adrs): "rax", "memory");
 }
@@ -111,7 +131,7 @@ static void fenced_access(void *adrs){
 static void flush(void *adrs){
 	__asm__ volatile("clflush [%0]" ::"r" (adrs));
 }
-
+ 
 static u64 probe(void *adrs){
 	volatile u64 time;  
 	__asm__ volatile (
@@ -125,41 +145,6 @@ static u64 probe(void *adrs){
         : "=&a" (time)
         : "r" (adrs)
         : "ecx", "rdx", "r8", "memory"
-	);
-	return time;
-}
-
-static u64 probe_chase_loop(const void *addr, const u64 reps) {
-	volatile u64 time;
-	
-	asm __volatile__ (
-        // measure
-		"mfence;"
-		"lfence;"
-		"rdtsc;"
-		"lfence;"
-		"mov rsi, rax;"
-        // high precision
-        "shl rdx, 32;"
-		"or rsi, rdx;"
-		// BEGIN - probe address
-        "mov rax, %1;"
-        "mov rdx, %2;"
-        "loop:"
-		"mov rax, [rax];"
-        "dec rdx;"
-        "jnz loop;"
-		// END - probe address
-		"lfence;"
-		"rdtsc;"
-        // start - high precision
-        "shl rdx, 32;"
-        "or rax, rdx;"
-        // end - high precision
-		"sub rax, rsi;"
-		: "=a" (time)
-		: "c" (addr), "r" (reps)
-		: "esi", "edx"
 	);
 	return time;
 }
@@ -233,16 +218,18 @@ static void list_init(Node *src, u64 size) {
     src[0].prev=NULL;
     src[0].next=NULL;
     src[0].delta=0;
-    for(int i=0;i<8;i++){
-        src[0].pad[i]=rand() % 256;
+    int *intArray = (int *)src[0].pad;
+    for(int i=0;i<10;i++){
+        intArray[i]=rand();
     }    
     for(u64 i=1;i<(size/sizeof(Node));i++){
         src[i].prev = &src[i-1];
         src[i].prev->next = &src[i];
         src[i].next=NULL;
         src[i].delta = 0; 
-        for(int i=0;i<8;i++){
-            src[i].pad[i]=rand() % 256;
+        intArray = (int *)src[i].pad;
+        for(int i=0;i<i;i++){
+            intArray[i]=rand();
         }
     }
 }
@@ -342,7 +329,7 @@ static void list_shuffle(Node **head){
         index = lfsr_rand(&lfsr)%size--;
         list_append(new_head, list_take(head, &index));
     }
-    *head = *new_head;
+    *head = *new_head;  
 }
 
 static void list_print(Node **head){
@@ -356,52 +343,27 @@ static void list_print(Node **head){
     }
 }
 
-static void reverse_node(){
-    Node *test_node1 = malloc(sizeof(Node));    
-    Node *test_node2 = malloc(sizeof(Node));
-    Node *test_node3 = malloc(sizeof(Node));
-
-    test_node1->next=test_node2;
-    test_node1->prev=test_node3;
-
-    srand(time(NULL));
-    for(int i=0;i<8;i++){
-        test_node1->pad[i]=rand() % 256;
-    }     
-    
-    printf("node1 p %p\n", test_node1);
-    printf("node2 p %p\n", test_node2);
-    printf("node3 p %p\n", test_node3);
-
-    printf("node1 next %p prev %p\n", test_node1->next, test_node1->prev);
-
-    uint64_t *uint_node1 = (uint64_t *) test_node1;
-    
-    printf("(void *) node1 %p, de ref u64 pointer %p\n", (void *) test_node1, *uint_node1);
-
-}
-
 // --- algorithms ---
 #ifndef NOMAIN
 int main(int ac, char **av){
-    wait(1E9);
-    printf("starting...\n");
-    // Config *con=config_init(8, 4096, 64, 47, 32768, 1, 1);
-    Config *con=config_init(16, 131072, 64, 70, 2097152, 1, 1);
-    u64 *target=malloc(sizeof(u64));
-    init_evset(con);
-    printf("init done\n");
-    Node **head=find_evset(con, target);
-    if(head){
-        printf("find done %p", head);
-        if(*head) printf(" %p %p %p", *head, (*head)->prev, (*head)->next);
-    }
-    printf("\n");
-    printf("taget %p \n", target);
-    list_print(head);
-    printf("m: %lu\n", test_intern(*head, (void *)target));
+    // wait(1E9);
+    // printf("starting...\n");
+    // // Config *con=config_init(8, 4096, 64, 47, 32768, 1, 1);
+    // Config *con=config_init(16, 131072, 64, 70, 2097152, 1, 1);
+    // u64 *target=malloc(sizeof(u64));
+    // init_evset(con);
+    // printf("init done\n");
+    // Node **head=find_evset(con, target);
+    // if(head){
+        // printf("find done %p", head);
+        // if(*head) printf(" %p %p %p", *head, (*head)->prev, (*head)->next);
+    // }
+    // printf("\n");
+    // printf("taget %p \n", target);
+    // list_print(head);
+    // printf("m: %lu\n", test_intern(*head, (void *)target));
     
-    reverse_node();
+    timings();
     return 0;
 }
 #endif
@@ -568,6 +530,256 @@ static u64 probe_evset(Node *ptr){
     traverse_list_fenced(ptr);
     delta = rdtscpfence() - start;
     return delta;
+    
+}
+
+#define TOTALACCESSES 100
+
+static u64 static_accesses(Node **buffer, u64 total_size, u64 reps){
+    Node *tmp=*buffer;
+    Node *next;
+    u64 total_time=0;
+    u64 *msrmts = malloc(reps*sizeof(u64));
+    for(int i=1;i*64<total_size;i++){
+        access(tmp);
+        tmp=tmp->next;
+    }
+    next=tmp->next;
+    tmp->next=*buffer;
+    tmp=*buffer;
+    
+    for(int i=0;i*64<total_size;i++){
+        access(tmp);
+        tmp=tmp->next;
+    }
+    tmp=*buffer;
+    
+    for(int i=0;i<reps;i++){
+        msrmts[i]=probe(tmp);
+        tmp=tmp->next;         
+    }
+    
+    tmp=*buffer;
+    for(int i=1;i*64<total_size;i++){
+        tmp=tmp->next;
+    }    
+    tmp->next=next;
+    
+    // printf("msrmts\n");
+    for(int i=0;i<reps;i++){
+        total_time+=msrmts[i];
+        // printf("%lu; ", msrmts[i]);
+    }    
+    return total_time;
+}
+
+static u64 static_accesses_random(Node **buffer, u64 total_size, u64 reps){
+    Node *tmp=*buffer;
+    Node **head=buffer;
+    Node *next;
+    u64 total_time=0;
+    u64 *msrmts = malloc(reps*sizeof(u64));
+    for(int i=1;i*64<total_size;i++){
+        access(tmp);
+        tmp=tmp->next;
+    }
+    next=tmp->next;
+    tmp->next=NULL;    
+    printf("pre shuffle\n");
+    list_shuffle(head);
+    printf("post shuffle\n");
+    tmp=*head;
+    
+    for(int i=1;i*64<total_size;i++){
+        access(tmp);
+        tmp=tmp->next;
+    }
+    tmp->next=*head;
+    tmp=*head;
+    for(int i=1;i*64<total_size;i++){
+        access(tmp);
+        access(tmp->next);
+        access(tmp);
+        access(tmp->next);
+        tmp=tmp->next;
+    }
+    tmp=*head;
+    
+    for(int i=0;i<reps;i++){
+        msrmts[i]=probe(tmp);
+        tmp=tmp->next;         
+    }
+    
+    
+    tmp=*head;
+    for(int i=1;i*64<total_size;i++){
+        tmp=tmp->next;
+    }    
+    tmp->next=next;
+    if (next) next->prev=tmp;
+    *buffer=*head;
+    printf("[!] msrmts\n");
+    for(int i=0;i<reps;i++){
+        total_time+=msrmts[i];
+        printf("%lu; ", msrmts[i]);
+    }    
+    printf("\n[+] Results for buffer size %lu: total time %lu, avg %lu, median %lu\n", total_size, total_time, total_time/reps, median_uint64(msrmts, reps));    
+    free(msrmts);
+    return total_time;
+}
+
+static void timings(){
+    wait(1E9);
+    // allocate 
+    Node *buf= (Node *) mmap(NULL, 8*PAGESIZE, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB, -1, 0);
+    if(buf==MAP_FAILED){
+        printf("mmap failed\n");
+        return;
+    }
+    
+    if (madvise(buf, 8*PAGESIZE, MADV_HUGEPAGE) ==-1){
+        printf("advise failed!\n");
+        return;
+    }
+    list_init(buf, 8*PAGESIZE);
+    Node *tmp;
+    u64 total_time=0;
+    u64 total_size;
+    Node **buffer=&buf;
+
+    // total_size = 16777216;
+    // printf("\ntotal size %lu\n", total_size);
+    // total_time=static_accesses(buffer, total_size, TOTALACCESSES);
+
+    // printf("total time %lu, avg %lu\n", total_time, total_time/TOTALACCESSES);
+    
+    // total_size = 8388608;
+    // printf("\ntotal size %lu\n", total_size);
+    // total_time=static_accesses(buffer, total_size, TOTALACCESSES);
+
+    // printf("total time %lu, avg %lu\n", total_time, total_time/TOTALACCESSES);
+    
+    
+    
+    // total_size = 4194304;
+    // printf("\ntotal size %lu\n", total_size);
+    // total_time=static_accesses(buffer, total_size, TOTALACCESSES);
+
+    
+    
+    
+    // total_size = 2097152;
+    // printf("\ntotal size %lu\n", total_size);
+    // total_time=static_accesses(buffer, total_size, TOTALACCESSES);
+
+    
+    // total_size = 1048576;
+    // printf("\ntotal size %lu\n", total_size);
+    // total_time=static_accesses(buffer, total_size, TOTALACCESSES);
+
+
+
+    // total_size = 524288;
+    // printf("\ntotal size %lu\n", total_size);
+    // total_time=static_accesses(buffer, total_size, TOTALACCESSES);
+
+
+
+    // total_size = 262144;
+    // printf("\ntotal size %lu\n", total_size);
+    // total_time=static_accesses(buffer, total_size, TOTALACCESSES);
+
+
+
+    // total_size = 131072;
+    // printf("\ntotal size %lu\n", total_size);
+    // total_time=static_accesses(buffer, total_size, TOTALACCESSES);
+
+
+    // total_size = 65536;
+    // printf("\ntotal size %lu\n", total_size);
+    // total_time=static_accesses(buffer, total_size, TOTALACCESSES);
+
+    // total_size = 32768;
+    // printf("\ntotal size %lu\n", total_size);
+    // total_time=static_accesses(buffer, total_size, TOTALACCESSES);
+
+    // total_size = 16384;
+    // printf("\ntotal size %lu\n", total_size);
+    // total_time=static_accesses(buffer, total_size, TOTALACCESSES);
+
+
+    
+    total_size = 16384;
+    total_time=static_accesses_random(buffer, total_size, TOTALACCESSES);
+    
+    total_size = 24384;
+    total_time=static_accesses_random(buffer, total_size, TOTALACCESSES);
+
+    total_size = 26384;
+    total_time=static_accesses_random(buffer, total_size, TOTALACCESSES);
+    
+    total_size = 28384;
+    total_time=static_accesses_random(buffer, total_size, TOTALACCESSES);
+
+    total_size = 30384;
+    total_time=static_accesses_random(buffer, total_size, TOTALACCESSES); 
+    
+    total_size = 32768;
+    total_time=static_accesses_random(buffer, total_size, TOTALACCESSES);
+    
+    total_size = 34768;
+    total_time=static_accesses_random(buffer, total_size, TOTALACCESSES);
+    
+    total_size = 36768;
+    total_time=static_accesses_random(buffer, total_size, TOTALACCESSES);
+    
+    total_size = 38768;
+    total_time=static_accesses_random(buffer, total_size, TOTALACCESSES);
+    
+    total_size = 65536;
+    total_time=static_accesses_random(buffer, total_size, TOTALACCESSES);
+
+    total_size = 131072;
+    total_time=static_accesses_random(buffer, total_size, TOTALACCESSES);
+    total_size = 161072;
+    total_time=static_accesses_random(buffer, total_size, TOTALACCESSES);
+    total_size = 191072;
+    total_time=static_accesses_random(buffer, total_size, TOTALACCESSES);
+    total_size = 221072;
+    total_time=static_accesses_random(buffer, total_size, TOTALACCESSES);
+    total_size = 241072;
+    total_time=static_accesses_random(buffer, total_size, TOTALACCESSES);
+
+    total_size = 262144;
+    total_time=static_accesses_random(buffer, total_size, TOTALACCESSES);
+    total_size = 281072;
+    total_time=static_accesses_random(buffer, total_size, TOTALACCESSES);
+    total_size = 301072;
+    total_time=static_accesses_random(buffer, total_size, TOTALACCESSES);
+    total_size = 321072;
+    total_time=static_accesses_random(buffer, total_size, TOTALACCESSES);
+
+    total_size = 524288;
+    total_time=static_accesses_random(buffer, total_size, TOTALACCESSES);
+
+    total_size = 1048576;
+    total_time=static_accesses_random(buffer, total_size, TOTALACCESSES);
+
+    total_size = 2097152;
+    total_time=static_accesses_random(buffer, total_size, TOTALACCESSES);
+
+    total_size = 4194304;
+    total_time=static_accesses_random(buffer, total_size, TOTALACCESSES);
+    
+    total_size = 8388608;
+    total_time=static_accesses_random(buffer, total_size, TOTALACCESSES);
+    
+    total_size = 16777216;
+    total_time=static_accesses_random(buffer, total_size, TOTALACCESSES);
+
+
+    
     
 }
 

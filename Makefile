@@ -22,17 +22,17 @@ evset-timings: Eviction_Set/evset-timings.c
 test_evset: Eviction_Set/test_evset.c
 	$(CC) $(CFLAGS) -o build/test_evset -DNOMAIN Eviction_Set/test_evset.c Eviction_Set/evset.c -lcunit
 
-workshop3: Cache_Reversing/workshop3.c
-	$(CC) $(CFLAGS) -o build/workshop3 Cache_Reversing/workshop3.c
+# workshop3: Cache_Reversing/workshop3.c
+# 	$(CC) $(CFLAGS) -o build/workshop3 Cache_Reversing/workshop3.c
     
-task2: Cache_Reversing/task2.c
-	$(CC) $(CFLAGS) -o build/task2 Cache_Reversing/task2.c
+# task2: Cache_Reversing/task2.c
+# 	$(CC) $(CFLAGS) -o build/task2 Cache_Reversing/task2.c
 
-task1: Cache_Reversing/task1.c
-	$(CC) $(CFLAGS) -o build/task1 Cache_Reversing/task1.c
+# task1: Cache_Reversing/task1.c
+# 	$(CC) $(CFLAGS) -o build/task1 Cache_Reversing/task1.c
 
-file_generator: utils/file_generator.c
-	$(CC) $(CFLAGS) -o build/file_generator utils/file_generator.c
+# file_generator: utils/file_generator.c
+# 	$(CC) $(CFLAGS) -o build/file_generator utils/file_generator.c
 
 # pp: PP/pp.c
 	# $(CC) $(CFLAGS) -g -o build/pp -DPP PP/pp.c

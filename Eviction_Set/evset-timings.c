@@ -22,7 +22,9 @@ typedef struct config {
 } Config;
 
 /* linked list containing an index and a pointer to     
- * prev and next element                                */
+ * prev and next element                    
+ * if treated as (uint64_t *) or similar, it can be used as pointer chase when de-refed
+ */
 typedef struct node {
     struct node *next;
     struct node *prev;
@@ -145,6 +147,41 @@ static u64 probe(void *adrs){
         : "=&a" (time)
         : "r" (adrs)
         : "ecx", "rdx", "r8", "memory"
+	);
+	return time;
+}
+
+static u64 probe_chase_loop(const void *addr, const u64 reps) {
+	volatile u64 time;
+	
+	asm __volatile__ (
+        // measure
+		"mfence;"
+		"lfence;"
+		"rdtsc;"
+		"lfence;"
+		"mov rsi, rax;"
+        // high precision
+        "shl rdx, 32;"
+		"or rsi, rdx;"
+		// BEGIN - probe address
+        "mov rax, %1;"
+        "mov rdx, %2;"
+        "loop:"
+		"mov rax, [rax];"
+        "dec rdx;"
+        "jnz loop;"
+		// END - probe address
+		"lfence;"
+		"rdtsc;"
+        // start - high precision
+        "shl rdx, 32;"
+        "or rax, rdx;"
+        // end - high precision
+		"sub rax, rsi;"
+		: "=a" (time)
+		: "c" (addr), "r" (reps)
+		: "esi", "edx"
 	);
 	return time;
 }

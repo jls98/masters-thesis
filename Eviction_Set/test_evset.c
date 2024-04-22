@@ -121,6 +121,73 @@ void testbench_skylake_evsets(){
     munmap(buffer, size_factor*sizeof(Node));    
 }
 
+#define BUFFERSIZE 16777216
+#define REPS_PROBE 10
+void test_loop_pobe(){
+    Node *buffer = (Node *) mmap(NULL, BUFFERSIZE, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB, -1, 0);    
+    
+    list_init(buffer, size_factor*sizeof(Node));
+    uint64_t msrmts1=0;
+    uint64_t msrmts2=0;
+    uint64_t msrmts3=0;
+    uint64_t offset = 3;
+    probe((void *)buffer);
+    __asm__ volatile("lfence;");
+    for(int i=0;i<REPS;i++){
+        
+        msrmts[msr_index]=probe((void *)buffer);
+        msrmts1+=msrmts[msr_index++];
+    }
+    for(int i=0;i<REPS;i++){
+        printf("cached: %lu\n", msrmts[i]);
+    }
+    msr_index=0;
+    
+    for(int j=0;j<REPS;j++){
+        for(u64 i=offset;i<(LALALALAL1+offset);i++){
+            access(&buffer[i*1024]);
+        }
+        probe(((void *)buffer)+222);
+        __asm__ volatile("lfence;");
+        msrmts[msr_index]=probe((void *)buffer);    
+        
+        
+        __asm__ volatile("lfence;");
+        msrmts2+=msrmts[msr_index++];
+    }
+    for(int i=0;i<REPS;i++){
+        printf("L1: %lu\n", msrmts[i]);
+    }
+    msr_index=0;
+
+    
+    probe((void *)buffer);
+    __asm__ volatile("lfence;");
+    for(int j=0;j<REPS;j++){
+        for(u64 i=offset;i<(LALALALAL2+offset);i++){
+            access(&buffer[i*2048]);
+        }
+        for(u64 i=offset;i<(LALALALAL2+offset);i++){
+            access(&buffer[i*2048]);
+        }
+        for(u64 i=offset;i<(LALALALAL2+offset);i++){
+            access(&buffer[i*2048]);
+        }
+        probe(((void *)buffer)+222);    
+        __asm__ volatile("lfence;");
+        msrmts[msr_index]=probe((void *)buffer);
+        __asm__ volatile("lfence;");
+        msrmts3+=msrmts[msr_index++];
+    }
+    for(int i=0;i<REPS;i++){
+        printf("L3: %lu\n", msrmts[i]);
+    }
+    msr_index=0;
+    
+    printf("d: %lu %lu %lu\n", msrmts1, msrmts2, msrmts3);
+    munmap(buffer, size_factor*sizeof(Node));    
+}
+
 #define REPS1 5
 #define INDEX_OFFSET 10
 #define PAGESIZE 2097152
