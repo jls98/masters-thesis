@@ -5,6 +5,7 @@
 #include <x86intrin.h>
 #include <math.h>
 
+#define u64 uint64_t
 
 
 static u64 probe(void *adrs){
