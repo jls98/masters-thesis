@@ -627,39 +627,39 @@ static u64 static_accesses_random(Node **buffer, u64 total_size, u64 reps){
     printf("post shuffle\n");
     tmp=*head;
     
-    for(int i=1;i*64<total_size;i++){
-        access(tmp);
-        tmp=tmp->next;
-    }
-    tmp->next=*head;
-    tmp=*head;
-    for(int i=1;i*64<total_size;i++){
-        access(tmp);
-        access(tmp->next);
-        access(tmp);
-        access(tmp->next);
-        tmp=tmp->next;
-    }
-    tmp=*head;
+    // for(int i=1;i*64<total_size;i++){
+    //     access(tmp);
+    //     tmp=tmp->next;
+    // }
+    // tmp->next=*head;
+    // tmp=*head;
+    // for(int i=1;i*64<total_size;i++){
+    //     access(tmp);
+    //     access(tmp->next);
+    //     access(tmp);
+    //     access(tmp->next);
+    //     tmp=tmp->next;
+    // }
+    // tmp=*head;
     
-    for(int i=0;i<reps;i++){
-        msrmts[i]=probe(tmp);
-        tmp=tmp->next;         
-    }
+    // for(int i=0;i<reps;i++){
+    //     msrmts[i]=probe(tmp);
+    //     tmp=tmp->next;         
+    // }
     
     
-    tmp=*head;
+    // tmp=*head;
     for(int i=1;i*64<total_size;i++){
         tmp=tmp->next;
     }    
     tmp->next=next;
     if (next) next->prev=tmp;
     *buffer=*head;
-    printf("[!] msrmts\n");
-    for(int i=0;i<reps;i++){
-        total_time+=msrmts[i];
-        printf("%lu; ", msrmts[i]);
-    }    
+    // printf("[!] msrmts\n");
+    // for(int i=0;i<reps;i++){
+    //     total_time+=msrmts[i];
+    //     printf("%lu; ", msrmts[i]);
+    // }    
     printf("\n[+] Results for buffer size %lu: total time %lu, avg %lu, median %lu\n", total_size, total_time, total_time/reps, median_uint64(msrmts, reps));    
     free(msrmts);
     return total_time;
