@@ -15,8 +15,68 @@ static uint64_t probe_chase_loop(const void *addr, const uint64_t reps);
 static void create_pointer_chase(void** addr, const uint64_t size);
 int get_cache_size();
 
+
+static uint64_t probe(void *adrs){
+	volatile uint64_t time;  
+	__asm__ volatile (
+        " mfence            \n"
+        " rdtscp             \n"
+        " mov r8, rax 		\n"
+        " mov rax, [%1]		\n"
+        " lfence            \n"
+        " rdtscp             \n"
+        " sub rax, r8 		\n"
+        : "=&a" (time)
+        : "r" (adrs)
+        : "ecx", "rdx", "r8", "memory"
+	);
+	return time;
+}
+
+static uint64_t probe_stride_loop_c(void *addr, uint64_t reps) {
+	if(reps==0) return 0.0f;
+    uint64_t *tmp=addr;
+	volatile uint64_t time=0;
+    for(int i=0; i<reps;i++){
+        time+=probe(tmp);
+        tmp=(uint64_t *) *tmp;
+    }
+    // printf("psl: time %lu\n", time);
+	return (uint64_t)time / (uint64_t)reps;
+}
+
+int get_cache_size2() {
+    wait(1E9);
+    void* buffer = mmap(NULL, 1 << MEMSIZE_EXP_MAX, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB, -1, 0);
+    // check cache size in power of two
+    for (int k = MEMSIZE_EXP_MIN; k < MEMSIZE_EXP_MAX; k++) {
+        int size = 1 << k;
+        
+        create_pointer_chase(buffer, size / sizeof(void*));
+        uint64_t millicycles = probe_stride_loop_c(buffer, PROBE_REPS);
+        //printf("memsize: %10d bits; time: %7.3f cycles; k: %2d\n", size, (double)millicycles/(1<<10), k);
+        // printf("%10d %7.3f\n", size, (double)millicycles/(1<<10));
+        printf("%10d %lu\n", size, millicycles);
+
+        munmap(buffer, size);
+        
+        for (int s = 1; s < 4; s++){
+            int temp_size = size + s*(size>>2); // add quarter step
+            buffer = mmap(NULL, temp_size, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB, -1, 0);
+            create_pointer_chase(buffer, temp_size / sizeof(void*));
+            millicycles = probe_stride_loop_c(buffer, PROBE_REPS);
+            //printf("memsize: %10d bits; time: %7.3f cycles\n", temp_size, (double)millicycles/(1<<10));
+			// printf("%10d %7.3f %lu\n", temp_size, (double)millicycles/(1<<10), millicycles);
+            printf("%10d %lu\n", temp_size, millicycles);
+            
+        }
+    }
+    munmap(buffer, 1 << MEMSIZE_EXP_MAX);
+    return 0;
+}
+
 int main(){
-    return get_cache_size();
+    return get_cache_size2();
 }
 
 int get_cache_size() {
@@ -39,13 +99,15 @@ int get_cache_size() {
             create_pointer_chase(buffer, temp_size / sizeof(void*));
             millicycles = probe_chase_loop(buffer, PROBE_REPS);
             //printf("memsize: %10d bits; time: %7.3f cycles\n", temp_size, (double)millicycles/(1<<10));
-			printf("%10d %7.3f\n", temp_size, (double)millicycles/(1<<10));
+			printf("%10d %7.3f %lu\n", temp_size, (double)millicycles/(1<<10), millicycles);
 
             munmap(buffer, temp_size);
         }
     }
     return 0;
 }
+
+
 
 static void wait(const uint64_t cycles) {
 	unsigned int ignore;
