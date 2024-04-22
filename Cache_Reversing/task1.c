@@ -4,7 +4,7 @@
 #include <sys/mman.h>
 #include <x86intrin.h>
 
-#define PROBE_REPS (1<<25)
+#define PROBE_REPS (1<<10)
 #define MEMSIZE_EXP_MIN 14
 #define MEMSIZE_EXP_MAX 25
 static void wait(const uint64_t cycles);
@@ -23,20 +23,21 @@ static uint64_t probe(void *adrs){
         " rdtscp             \n"
         " mov r8, rax 		\n"
         " mov rax, [%1]		\n"
-        " lfence            \n"
+        // " lfence            \n"
         " rdtscp             \n"
         " sub rax, r8 		\n"
         : "=&a" (time)
         : "r" (adrs)
         : "ecx", "rdx", "r8", "memory"
 	);
+    // printf("time: %lu\n", time);
 	return time;
 }
 
 static uint64_t probe_stride_loop_c(void *addr, uint64_t reps) {
 	if(reps==0) return 0.0f;
     uint64_t *tmp=addr;
-	volatile uint64_t time=0;
+	uint64_t time=0;
     for(int i=0; i<reps;i++){
         time+=probe(tmp);
         tmp=(uint64_t *) *tmp;
@@ -75,8 +76,29 @@ int get_cache_size2() {
     return 0;
 }
 
+static void calibrate(){
+    wait(1E9);
+    int size = 2097152;
+    void *buf = mmap(NULL, size, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB, -1, 0);
+    uint64_t time[1000];
+    
+    void *tar = &buf[5];
+    time[0]=probe(tar);     
+    time[1]=probe(tar);     
+    time[2]=probe(tar);     
+    time[3]=probe(tar);
+    probe(tar); probe(tar); probe(tar); probe(tar); probe(tar); probe(tar);      
+    time[4]=probe(tar);     
+    
+    for(int i=0;i<5;i++) printf("%lu; ", time[i]);
+    printf("\n");
+    munmap(buf, size);
+}
+
+
 int main(){
-    return get_cache_size2();
+    calibrate();
+    get_cache_size2();
 }
 
 int get_cache_size() {
