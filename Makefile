@@ -1,6 +1,6 @@
 CC = gcc
 CFLAGS = -Wall -Wextra -masm=intel -O0 -fPIC
-TARGETS = evset-timings workshop3 task2 task1
+TARGETS = evset test_evset
 
 all: $(TARGETS)
 

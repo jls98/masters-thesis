@@ -321,31 +321,6 @@ static void list_print(Node **head){
     }
 }
 
-static void reverse_node(){
-    Node *test_node1 = malloc(sizeof(Node));    
-    Node *test_node2 = malloc(sizeof(Node));
-    Node *test_node3 = malloc(sizeof(Node));
-
-    test_node1->next=test_node2;
-    test_node1->prev=test_node3;
-
-    srand(time(NULL));
-    for(int i=0;i<8;i++){
-        test_node1->pad[i]=rand() % 256;
-    }     
-    
-    printf("node1 p %p\n", test_node1);
-    printf("node2 p %p\n", test_node2);
-    printf("node3 p %p\n", test_node3);
-
-    printf("node1 next %p prev %p\n", test_node1->next, test_node1->prev);
-
-    uint64_t *uint_node1 = (uint64_t *) test_node1;
-    
-    printf("(void *) node1 %p, de ref u64 pointer %p\n", (void *) test_node1, *uint_node1);
-
-}
-
 // --- algorithms ---
 #ifndef NOMAIN
 int main(int ac, char **av){
@@ -366,7 +341,7 @@ int main(int ac, char **av){
     list_print(head);
     printf("m: %lu\n", test_intern(*head, (void *)target));
     
-    reverse_node();
+    
     return 0;
 }
 #endif
