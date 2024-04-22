@@ -42,7 +42,7 @@ static uint64_t probe_stride_loop_c(void *addr, uint64_t reps) {
         tmp=(uint64_t *) *tmp;
     }
     // printf("psl: time %lu\n", time);
-	return (uint64_t)time / (uint64_t)reps;
+	return time;
 }
 
 int get_cache_size2() {
@@ -56,7 +56,7 @@ int get_cache_size2() {
         uint64_t millicycles = probe_stride_loop_c(buffer, PROBE_REPS);
         //printf("memsize: %10d bits; time: %7.3f cycles; k: %2d\n", size, (double)millicycles/(1<<10), k);
         // printf("%10d %7.3f\n", size, (double)millicycles/(1<<10));
-        printf("%10d %lu\n", size, millicycles);
+        printf("%10d %lu\n", size, millicycles/PROBE_REPS);
 
         munmap(buffer, size);
         
@@ -67,7 +67,7 @@ int get_cache_size2() {
             millicycles = probe_stride_loop_c(buffer, PROBE_REPS);
             //printf("memsize: %10d bits; time: %7.3f cycles\n", temp_size, (double)millicycles/(1<<10));
 			// printf("%10d %7.3f %lu\n", temp_size, (double)millicycles/(1<<10), millicycles);
-            printf("%10d %lu\n", temp_size, millicycles);
+            printf("%10d %lu\n", temp_size, millicycles/PROBE_REPS);
             
         }
     }
