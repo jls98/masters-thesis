@@ -159,9 +159,6 @@ static u64 probe_chase_loop(void *addr, u64 reps) {
 		"mfence;"
 		"rdtscp;"
 		"mov rsi, rax;"
-        // high precision
-        // "shl rdx, 32;"
-		// "or rsi, rdx;"
 		// BEGIN - probe address
         "mov rax, %1;"
         "mov rdx, %2;"
@@ -174,10 +171,6 @@ static u64 probe_chase_loop(void *addr, u64 reps) {
 		// END - probe address
 		"lfence;"
 		"rdtscp;"
-        // start - high precision
-        // "shl rdx, 32;"
-        // "or rax, rdx;"
-        // end - high precision
 		"sub rax, rsi;"
 		: "=a" (time)
 		: "b" (addr), "r" (reps)
@@ -194,9 +187,6 @@ static u64 probe_evset_chase(const void *addr) {
 		"mfence;"
 		"rdtscp;"
 		"mov rsi, rax;"
-        // high precision
-        // "shl rdx, 32;"
-		// "or rsi, rdx;"
 		// BEGIN - probe address
         "mov rax, %1;"
         "mov rdx, %2;"
@@ -209,9 +199,6 @@ static u64 probe_evset_chase(const void *addr) {
 		// END - probe address
 		"lfence;"
 		"rdtscp;"
-        // start - high precision
-        // "shl rdx, 32;"
-        // "or rax, rdx;"
         // end - high precision
 		"sub rax, rsi;"
 		: "=a" (time)
