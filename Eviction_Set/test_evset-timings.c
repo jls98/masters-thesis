@@ -53,12 +53,11 @@ void test_node(){
 }
 
 static u64 test_buffer(Node **buffer, u64 total_size, u64 reps){
-    conf = config_init(16, 131072, 64, 70, 2097152, 1, 1);
     Node *tmp=*buffer;
     Node **head=buffer;
     Node *next;
     u64 total_time=0;
-    u64 *msrmts = malloc(reps*sizeof(u64));
+    u64 *msrmt = malloc(reps*sizeof(u64));
     for(int i=1;i*64<total_size;i++){
         access(tmp);
         tmp=tmp->next;
@@ -78,11 +77,11 @@ static u64 test_buffer(Node **buffer, u64 total_size, u64 reps){
     //     tmp=tmp->next;
     // }
 
-    traverse_list0_limited(tmp);
-    traverse_list0_limited(tmp);
+    traverse_list0(tmp);
+    traverse_list0(tmp);
     tmp=*head;
     for(int i=0;i<reps;i++){ // unstable TODO
-        msrmts[i]=probe_chase_loop(tmp, total_size);        
+        msrmt[i]=probe_chase_loop(tmp, total_size);        
     }   
     
     // return to old state, last element points to next, first is new head and reset prev
@@ -90,81 +89,163 @@ static u64 test_buffer(Node **buffer, u64 total_size, u64 reps){
     *buffer=*head;
     (*head)->prev=NULL;
 
-    // printf("[!] msrmts\n");
+    // printf("[!] msrmt\n");
     for(int i=0;i<reps;i++){
-            total_time+=msrmts[i];
-    //     printf("%lu; ", msrmts[i]);
+            total_time+=msrmt[i];
+    //     printf("%lu; ", msrmt[i]);
     }    
     printf("\n[+] Results for buffer size %lu: total time %lu, avg %lu, median %lu, median avg %lu\n", total_size, total_time, total_time/total_size, median_uint64(msrmts, reps), median_uint64(msrmts, reps)/total_size);    
-    free(msrmts);
+    free(msrmt);
+    close_evsets();
     
     return total_time;
 }
 
 void test_cache_size(){
     wait(1E9);
-    // allocate 
-    Node *buf= (Node *) mmap(NULL, 8*PAGESIZE, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB, -1, 0);
+    // allocate
+    conf = config_init(16, 131072, 64, 70, 2097152, 1, 1);
+    u64 buf_size = 8*PAGESIZE; 
+    Node *buf= (Node *) mmap(NULL, buf_size, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB, -1, 0);
     if(buf==MAP_FAILED){
         printf("mmap failed\n");
         return;
     }
     
-    if (madvise(buf, 8*PAGESIZE, MADV_HUGEPAGE) ==-1){
+    if (madvise(buf, buf_size, MADV_HUGEPAGE) ==-1){
         printf("advise failed!\n");
         return;
     }
-    list_init(buf, 8*PAGESIZE);
+    list_init(buf, buf_size);
     Node *tmp;
     u64 total_time=0;
-    u64 buffer_size;
+    u64 tmp_buffer_size;
     Node **buffer=&buf;
     
-    buffer_size = 16384;
-    total_time=test_buffer(buffer, buffer_size, TOTALACCESSES);  
+    tmp_buffer_size = 16384;
+    total_time=test_buffer(buffer, tmp_buffer_size, TOTALACCESSES);  
 
-    buffer_size = 24384;
-    total_time=test_buffer(buffer, buffer_size, TOTALACCESSES);
-    buffer_size = 26384;
-    total_time=test_buffer(buffer, buffer_size, TOTALACCESSES);    
-    buffer_size = 28384;
-    total_time=test_buffer(buffer, buffer_size, TOTALACCESSES);
-    buffer_size = 30384;
-    total_time=test_buffer(buffer, buffer_size, TOTALACCESSES);
-    buffer_size = 32768;
-    total_time=test_buffer(buffer, buffer_size, TOTALACCESSES);    
-    buffer_size = 34768;
-    total_time=test_buffer(buffer, buffer_size, TOTALACCESSES);    
-    buffer_size = 36768;
-    total_time=test_buffer(buffer, buffer_size, TOTALACCESSES);    
-    buffer_size = 38768;
-    total_time=test_buffer(buffer, buffer_size, TOTALACCESSES);
+    tmp_buffer_size = 24384;
+    total_time=test_buffer(buffer, tmp_buffer_size, TOTALACCESSES);
+    tmp_buffer_size = 26384;
+    total_time=test_buffer(buffer, tmp_buffer_size, TOTALACCESSES);    
+    tmp_buffer_size = 28384;
+    total_time=test_buffer(buffer, tmp_buffer_size, TOTALACCESSES);
+    tmp_buffer_size = 30384;
+    total_time=test_buffer(buffer, tmp_buffer_size, TOTALACCESSES);
+    tmp_buffer_size = 32768;
+    total_time=test_buffer(buffer, tmp_buffer_size, TOTALACCESSES);    
+    tmp_buffer_size = 34768;
+    total_time=test_buffer(buffer, tmp_buffer_size, TOTALACCESSES);    
+    tmp_buffer_size = 36768;
+    total_time=test_buffer(buffer, tmp_buffer_size, TOTALACCESSES);    
+    tmp_buffer_size = 38768;
+    total_time=test_buffer(buffer, tmp_buffer_size, TOTALACCESSES);
 
-    buffer_size = 65536;
-    total_time=test_buffer(buffer, buffer_size, TOTALACCESSES);
-    buffer_size = 131072;
-    total_time=test_buffer(buffer, buffer_size, TOTALACCESSES);
-    buffer_size = 262144;
-    total_time=test_buffer(buffer, buffer_size, TOTALACCESSES);
-    buffer_size = 524288;
-    total_time=test_buffer(buffer, buffer_size, TOTALACCESSES);
-    buffer_size = 1048576;
-    total_time=test_buffer(buffer, buffer_size, TOTALACCESSES);
+    tmp_buffer_size = 65536;
+    total_time=test_buffer(buffer, tmp_buffer_size, TOTALACCESSES);
+    tmp_buffer_size = 131072;
+    total_time=test_buffer(buffer, tmp_buffer_size, TOTALACCESSES);
+    tmp_buffer_size = 262144;
+    total_time=test_buffer(buffer, tmp_buffer_size, TOTALACCESSES);
+    tmp_buffer_size = 524288;
+    total_time=test_buffer(buffer, tmp_buffer_size, TOTALACCESSES);
+    tmp_buffer_size = 1048576;
+    total_time=test_buffer(buffer, tmp_buffer_size, TOTALACCESSES);
 
-    buffer_size = 1848576;
-    total_time=test_buffer(buffer, buffer_size, TOTALACCESSES);
-    buffer_size = 2097152;
-    total_time=test_buffer(buffer, buffer_size, TOTALACCESSES);
-    buffer_size = 2297152;
-    total_time=test_buffer(buffer, buffer_size, TOTALACCESSES);
+    tmp_buffer_size = 1848576;
+    total_time=test_buffer(buffer, tmp_buffer_size, TOTALACCESSES);
+    tmp_buffer_size = 2097152;
+    total_time=test_buffer(buffer, tmp_buffer_size, TOTALACCESSES);
+    tmp_buffer_size = 2297152;
+    total_time=test_buffer(buffer, tmp_buffer_size, TOTALACCESSES);
 
-    buffer_size = 4194304;
-    total_time=test_buffer(buffer, buffer_size, TOTALACCESSES);    
-    buffer_size = 8388608;
-    total_time=test_buffer(buffer, buffer_size, TOTALACCESSES);    
-    buffer_size = 16777216;
-    total_time=test_buffer(buffer, buffer_size, TOTALACCESSES);
+    tmp_buffer_size = 4194304;
+    total_time=test_buffer(buffer, tmp_buffer_size, TOTALACCESSES);    
+    tmp_buffer_size = 8388608;
+    total_time=test_buffer(buffer, tmp_buffer_size, TOTALACCESSES);    
+    tmp_buffer_size = 16777216;
+    total_time=test_buffer(buffer, tmp_buffer_size, TOTALACCESSES);
+
+    munmap(buf, buf_size);
 }
+
+void test_cache_timings(){
+    wait(1E9);
+    Node *tmp=NULL;    // to hold tmp Nodes
+    u64 index=0;    // holds index
+    u64 size_stride=0; // holds current stride size in index value (size_stride*64 = X in Bytes)
+    u64 offset =105; // arbitrary offset
+    // TODO init buffer
+    u64 buf_size = 8*PAGESIZE;     
+    Node *buf= (Node *) mmap(NULL, buf_size, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB, -1, 0);
+    // setup and init
+    if (madvise(buf, PAGESIZE, MADV_HUGEPAGE) == -1){
+        printf("madvise failed!\n");
+        return;
+    }
+    buffer_ptr=&buf;
+    list_init(buf, buf_size);  
+    evsets = realloc(evsets, 16*sizeof(Node *));
+    
+
+    // create evsets manually and test them with targets
+
+    conf = config_init(8, 4096, 64, 85, 32768, 1, 1); // L1
+    size_stride = 128;
+    index = 120*size_stride + offset;
+
+    Node *target = list_take(buffer_ptr, &index);
+
+    printf("[!] target %p\n", target);
+    Node **head1 = malloc(sizeof(Node *)); // refs to first element of evset
+
+    // add 1st elem
+    index = 7*size_stride+offset;
+    tmp=list_take(buffer_ptr, &index);
+    list_append(head1, tmp);
+
+    // add more elems
+    for(int i=6; i >= 0; i--){
+        index = i*size_stride + offset;
+        tmp=list_take(buffer_ptr, &index);
+        list_append(head1, tmp);
+    }
+
+    list_shuffle(head1);
+    list_print(head1);
+
+    u64 *msrmnt1=malloc(1000*sizeof(u64));
+
+    msrmnt1[0] = probe_evset_chase(*head1);
+    msrmnt1[1] = probe_evset_chase(*head1);
+    // msrmnt1[2] = probe(target);
+    // msrmnt1[3] = probe(target);
+    __asm__ volatile("lfence;mov rax, [%0];"::"r" (target): "rax", "memory");
+    __asm__ volatile("mov rax, [%0];"::"r" (target): "rax", "memory");
+    __asm__ volatile("mov rax, [%0];"::"r" (target): "rax", "memory");
+    __asm__ volatile("mov rax, [%0];lfence;"::"r" (target): "rax", "memory");
+    msrmnt1[4] = probe_evset_chase(*head1);
+    msrmnt1[5] = probe_evset_chase(*head1);
+
+    access(target);
+    access(target);
+    access(target);
+    access(target);
+    msrmnt1[13] = probe_evset_chase(*head1);
+
+
+    for(int i=0;i<14;i++) printf("[+] msrmnt %i %lu\n", i, msrmnt1[i]);
+    
+
+    free(conf);
+    conf = config_init(16, 131072, 64, 70, 2097152, 1, 1); // L2
+
+
+
+    close_evsets();
+}
+
 
 int main(int ac, char **av) {
 
@@ -173,8 +254,9 @@ int main(int ac, char **av) {
 
     CU_pSuite suite = CU_add_suite("Test Suite evict_baseline", NULL, NULL);
 
-    CU_add_test(suite, "Test test_node", test_node);
-    CU_add_test(suite, "Test test_cache_size", test_cache_size);
+    // CU_add_test(suite, "Test test_node", test_node);
+    // CU_add_test(suite, "Test test_cache_size", test_cache_size);
+    CU_add_test(suite, "Test test_cache_timings", test_cache_timings);
 
     CU_basic_run_tests();
     CU_cleanup_registry();

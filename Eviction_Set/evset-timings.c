@@ -10,6 +10,8 @@
 
 // header
 #define u64 uint64_t
+#define PAGESIZE 2097152
+#define NODESIZE 64
 
 typedef struct config {
 	u64 ways; // cache ways 
@@ -47,12 +49,11 @@ static u64 msrmts[1000];
 // Utils #################################################
 /* wait for cycles cycles and activate cache            */
 static void wait(u64 cycles);
-
 static void flush(void *adrs);
-
 static void access(void *adrs);
-static void fenced_access(void *adrs);
-static u64 rdtscpfence();
+static uint64_t median_uint64(uint64_t *array, size_t size);
+// static void fenced_access(void *adrs);
+// static u64 rdtscpfence();
 
 
 // Node functions ########################################
@@ -91,12 +92,11 @@ static void init_evset(Config *conf_ptr);
 static Node **find_evset(Config *conf_ptr, void *target_adrs);
 static Node **get_evset(Config *conf_ptr);
 static void close_evsets();
-static void generate_conflict_set();
+// static void generate_conflict_set();
 static void traverse_list(Node *ptr);
 static u64 test(Node *ptr, void *target);
 static u64 test_intern(Node *ptr, void *target);
 static u64 probe_evset(Node *ptr);
-static void timings();
 
 // --- utils ---
 // Comparison function for qsort
@@ -124,11 +124,11 @@ static uint64_t median_uint64(uint64_t *array, size_t size) {
 static void access(void *adrs){
 	__asm__ volatile("mov rax, [%0];"::"r" (adrs): "rax", "memory");
 }
-static void fenced_access(void *adrs){
-	__asm__ volatile(
-    "lfence; "
-    "mov rax, [%0];"::"r" (adrs): "rax", "memory");
-}
+// static void fenced_access(void *adrs){
+// 	__asm__ volatile(
+//     "lfence; "
+//     "mov rax, [%0];"::"r" (adrs): "rax", "memory");
+// }
 
 static void flush(void *adrs){
 	__asm__ volatile("clflush [%0]" ::"r" (adrs));
@@ -160,21 +160,23 @@ static u64 probe_chase_loop(void *addr, u64 reps) {
 		"rdtscp;"
 		"mov rsi, rax;"
         // high precision
-        "shl rdx, 32;"
-		"or rsi, rdx;"
+        // "shl rdx, 32;"
+		// "or rsi, rdx;"
 		// BEGIN - probe address
         "mov rax, %1;"
         "mov rdx, %2;"
         "loop:"
+		"lfence;"
 		"mov rax, [rax];"
         "dec rdx;"
+        "lfence;"
         "jnz loop;"
 		// END - probe address
 		"lfence;"
 		"rdtscp;"
         // start - high precision
-        "shl rdx, 32;"
-        "or rax, rdx;"
+        // "shl rdx, 32;"
+        // "or rax, rdx;"
         // end - high precision
 		"sub rax, rsi;"
 		: "=a" (time)
@@ -211,7 +213,7 @@ static u64 probe_evset_chase(const void *addr) {
         // end - high precision
 		"sub rax, rsi;"
 		: "=a" (time)
-		: "b" (addr), "r" (conf->ways)
+		: "b" (addr), "r" (conf->ways+1)
 		: "rcx", "rsi", "rdx"
 	);
 	return time;
@@ -296,7 +298,7 @@ static void list_init(Node *src, u64 size) {
         src[i].next=NULL;
         src[i].delta = 0; 
         intArray = (int *)src[i].pad;
-        for(int i=0;i<i;i++){
+        for(int i=0;i<10;i++){
             intArray[i]=rand();
         }
     }
@@ -415,6 +417,7 @@ static void list_print(Node **head){
     int ctr=0;
     for(tmp=*head;tmp;tmp=tmp->next){
         printf("[%i] %p %p\n", ++ctr, tmp, tmp->next);
+        if(ctr>=conf->ways) break;
     }
 }
 
@@ -426,8 +429,7 @@ int main(int ac, char **av){
 }
 #endif
 
-#define PAGESIZE 2097152
-#define NODESIZE 64
+
 
 static void init_evset(Config *conf_ptr){
     wait(1E9);
@@ -504,25 +506,26 @@ static Node **get_evset(Config *conf_ptr){
 static void close_evsets(){
     if (evsets) free(evsets);
     if (buffer) munmap(buffer, buffer_size);
+    if (conf) free(conf);
 }
 
-static void generate_conflict_set(Config *conf_ptr, char *target){
-    if(!evsets) return;
-    if(!pool){
-        printf("generate_conflict_set: pool is uninitialized! Trying to initialize...\n");
-        init_evset(conf_ptr);
-    }
-    if(!pool){
-        printf("generate_conflict_set: pool still NULL, requirements not met!\n");   
-        return;        
-    }
+// static void generate_conflict_set(Config *conf_ptr, char *target){
+//     if(!evsets) return;
+//     if(!pool){
+//         printf("generate_conflict_set: pool is uninitialized! Trying to initialize...\n");
+//         init_evset(conf_ptr);
+//     }
+//     if(!pool){
+//         printf("generate_conflict_set: pool still NULL, requirements not met!\n");   
+//         return;        
+//     }
     
-    u64 pool_elems = pool_size/sizeof(Node);
-    u64 lfsr = lfsr_create();
+//     u64 pool_elems = pool_size/sizeof(Node);
+//     u64 lfsr = lfsr_create();
     
-    // evsets <- {} // otherweise returned
-    // WIP
-}
+//     // evsets <- {} // otherweise returned
+//     // WIP
+// }
 
 // static void traverse_list(Node *ptr){
 //     access((void *) ptr);
@@ -542,13 +545,13 @@ static void generate_conflict_set(Config *conf_ptr, char *target){
 //     access((void *) ptr);
 // }
 
-static void traverse_list0(Node *ptr){
-    for(Node *tmp=ptr;tmp;tmp=tmp->next){
-        access(tmp);
-    }    
-}
+// static void traverse_list0(Node *ptr){
+//     for(Node *tmp=ptr;tmp;tmp=tmp->next){
+//         access(tmp);
+//     }    
+// }
 
-static void traverse_list0_limited(Node *ptr){
+static void traverse_list0(Node *ptr){
     u64 i=0;
     for(Node *tmp=ptr;i++<conf->ways;tmp=tmp->next){
         access(tmp);
