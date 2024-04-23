@@ -627,26 +627,24 @@ static u64 static_accesses_random(Node **buffer, u64 total_size, u64 reps){
     printf("post shuffle\n");
     tmp=*head;
     
+    for(int i=1;i*64<total_size;i++){
+        // access(tmp);
+        flush(tmp);
+        tmp=tmp->next;
+    }
+    tmp->next=*head;
+    tmp=*head;
+    
+    // probe_chase_loop(tmp, total_size);
+    // probe_chase_loop(tmp, total_size);
     // for(int i=1;i*64<total_size;i++){
     //     access(tmp);
     //     tmp=tmp->next;
     // }
-    // tmp->next=*head;
     // tmp=*head;
-    // for(int i=1;i*64<total_size;i++){
-    //     access(tmp);
-    //     access(tmp->next);
-    //     access(tmp);
-    //     access(tmp->next);
-    //     tmp=tmp->next;
-    // }
-    // tmp=*head;
-    
-    // for(int i=0;i<reps;i++){
-    //     msrmts[i]=probe(tmp);
-    //     tmp=tmp->next;         
-    // }
-    
+    for(int i=0;i<reps;i++){
+        msrmts[i]=probe_chase_loop(tmp, total_size);        
+    }   
     
     // tmp=*head;
     for(int i=1;i*64<total_size;i++){
@@ -656,11 +654,11 @@ static u64 static_accesses_random(Node **buffer, u64 total_size, u64 reps){
     if (next) next->prev=tmp;
     *buffer=*head;
     // printf("[!] msrmts\n");
-    // for(int i=0;i<reps;i++){
-    //     total_time+=msrmts[i];
+    for(int i=0;i<reps;i++){
+            total_time+=msrmts[i];
     //     printf("%lu; ", msrmts[i]);
-    // }    
-    printf("\n[+] Results for buffer size %lu: total time %lu, avg %lu, median %lu\n", total_size, total_time, total_time/reps, median_uint64(msrmts, reps));    
+    }    
+    printf("\n[+] Results for buffer size %lu: total time %lu, avg %lu, median %lu, median avg %lu\n", total_size, total_time, total_time/total_size, median_uint64(msrmts, reps), median_uint64(msrmts, reps)/total_size);    
     free(msrmts);
     return total_time;
 }
@@ -819,158 +817,3 @@ static void timings(){
     
     
 }
-
-// static Node *create_minimal_eviction_set(void **candidate_set, u64 candidate_set_size, Node* evict_set, void *target_adrs, Config *conf){
-    // if (conf==NULL){
-		// printf("create_minimal_eviction_set: Conf is NULL!\n");
-		// return NULL;
-	// }
-	
-	// // if candidate set is empty, no eviction set can be created
-	// if (candidate_set==NULL){
-		// printf("create_minimal_eviction_set: candidate_set is NULL!\n");
-		// return NULL;
-	// }
-	
-	// if (candidate_set_size==0){
-		// printf("create_minimal_eviction_set: candidate_set_size is 0!\n");
-		// return NULL;
-	// }
-	
-	// clock_t track_start = clock();
-    // // init lfsr, variable c stores currently picked candidate integer/index value
-    // u64 lfsr = lfsr_create(), c, cnt_e=0; 
-	// int64_t c_tmp;
-	
-	// // create current candidate set containing the indexes of unchecked candidates and initialize with all indexes
-    // Node* cand_ind_set = initLinkedList();
-    // for (u64 i=0; i<candidate_set_size-1;i+=8) cand_ind_set = addElement(cand_ind_set, i); 
-    
-    // // while |R| < a and cind still contains possible and unchecked candidates
-    // while(cand_ind_set!=NULL /*&& test(candidate_set, candidate_set_size, evict_set, target_adrs, conf) !=1*/){        
-        // // c <- pick(S) pick candidate index c from candidate set S/cand_ind_set
-		// do{
-			// c_tmp=pick(cand_ind_set, candidate_set_size, &lfsr);
-		// }
-        // while(c_tmp==-1 || containsValue(evict_set, (u64) c_tmp) || !containsValue(cand_ind_set, (u64) c_tmp)); // prevent picking duplicate candidates and continuing on error
-				
-		// c = (u64) c_tmp;
-		// // remove c from S S <- S\{c}
-		// cand_ind_set = deleteElement(cand_ind_set, c);         
-
-        // // R union S\{c}
-        // Node *combined_set = unionLists(cand_ind_set, evict_set);
-
-        // // if not TEST(R union S\{c}), x)  
-		// // if removing c results in not evicting x anymore, add c to current eviction set    	
-		// if(test(candidate_set, candidate_set_size, combined_set, target_adrs, conf)==0 && test(candidate_set, candidate_set_size, evict_set, target_adrs, conf)==0){
-            // evict_set = addElement(evict_set, c);
-            // cnt_e++; // added elem to evict set -> if enough, evict_set complete   
-        // }
-    // }
-    // printf("cind set contains still %i elements\n", count(cand_ind_set));
-    // if (cand_ind_set==NULL && cnt_e < conf->ways) printf("create_minimal_eviction_set: not successful, eviction set contains less elements than cache ways!\n");
-    
-    // /* baseline algorithm */
-	// printList(evict_set);
-	
-	// // measure time needed for this algorithm
-	// double  cpu_time_used = ((double) (clock() - track_start)) / CLOCKS_PER_SEC;
-    // // Print the measured time
-    // printf("Time taken by myFunction: %.6f seconds\n", cpu_time_used);
-	
-	// printf("test of evict set %li\n", test(candidate_set, candidate_set_size, evict_set, target_adrs, conf));
-	// return evict_set;
-// }
-
-
-
-
-
-
-// static void create_pointer_chase(void **candidate_set, u64 c_size, Node* set){
-// #ifdef TEST_EVICT_BASELINE
-	// clock_t start = clock();
-// #endif
-	// if (set == NULL) {
-		// printf("create_pointer_chase: set is NULL!\n");
-		// return; // no pointer chase 
-	// }
-
-    // // create pointer chase between set elements
-    // Node* cur_no;  // current index (from set)
-    // for (cur_no=set;cur_no->next !=NULL; cur_no=cur_no->next){
-        // if (cur_no->next->value >= c_size){
-            // printf("create_pointer_chase: current index from set greater than size! Element not contained in candidate_set!\n");
-            // return;
-        // } 
-        // // set pointer to next element cur_no holds current index, cur_no->next holds next index, &addr[cur_no->next->value] is ptr to respective elem
-        // candidate_set[cur_no->value] = &candidate_set[cur_no->next->value];    
-    // }
-    // candidate_set[cur_no->value] = &candidate_set[set->value]; // set pointer from last element to first element
-
-// #ifdef TESTCASE
-	// clock_t end = clock();
-	// double  cpu_time_used = ((double) (end - start)) / CLOCKS_PER_SEC;
-	// printf("create_pointer_chase: took %.6f seconds to finish\n", cpu_time_used);
-// #endif	
-
-// }
-
-// static int64_t pick(Node* candidate_set, u64 base_size, u64 *lfsr) {
-    // // uninitialized parameters
-    // if (lfsr==NULL){
-		// printf("pick: lfsr is NULL!\n");
-		// return -1;
-	// } 
-	// if (candidate_set==NULL){
-		// printf("pick: candidate_set is NULL!\n");
-		// return -1;
-	// } 
-	// if (base_size==0){
-		// printf("pick: base_size is 0!\n");
-		// return -1;
-	// } 
-	
-    // u64 c=0, j, c_size; // c picked candidate, j index in candidate_set, c_size current candidate set size
-
-    // // pick a random number, compute modulo amount of elements left in candidate set and take the value from the node element at the resulting position
-    // c_size = (u64) count(candidate_set);
-    // Node *cur_node = candidate_set;
-    // j = lfsr_rand(lfsr) % c_size;
-    // do{
-        // if (c==j) break;
-        // c++;
-        // cur_node = cur_node->next;
-    // }
-    // while(cur_node->next != NULL);
-
-    // return (int64_t) cur_node->value;
-// }
-
-
-
-
-// static int64_t test(void **candidate_set, u64 candidate_set_size, Node *test_index_set, void *target_adrs, Config *conf){
-	// // // empty candidate set, no array to create pointer chase on    
-    // // if (candidate_set==NULL){
-		// // printf("test: candidate_set is NULL!\n");
-		// // return -1;
-	// // } 
-	// // if (candidate_set_size==0){
-		// // printf("test: candidate_set_size is 0!\n");
-		// // return -1;
-	// // } 
-	// // if (test_index_set==NULL){
-		// // return 0;
-	// // } // toggle/use if debugging
-		
-	// // prepare pointer chase between elements from candidate_set indexed by test_index_set 
-	// create_pointer_chase(candidate_set, candidate_set_size, test_index_set);
-	
-	// // test 
-	// int64_t ret = test_intern(candidate_set[test_index_set->value], count(test_index_set), target_adrs);
-	
-	
-	// return ret;
-// }
