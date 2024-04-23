@@ -2,6 +2,8 @@
 #include <CUnit/CUnit.h>
 #include <CUnit/Basic.h>
 
+#define PAGESIZE 2097152 // hugepage 2 MB
+
 void test_node(){
     Node *nodes= (Node *) mmap(NULL, 5000*sizeof(Node), PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB, -1, 0); 
 
@@ -50,6 +52,70 @@ void test_node(){
 }
 
 
+void test_cache_size(){
+    wait(1E9);
+    // allocate 
+    Node *buf= (Node *) mmap(NULL, 8*PAGESIZE, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB, -1, 0);
+    if(buf==MAP_FAILED){
+        printf("mmap failed\n");
+        return;
+    }
+    
+    if (madvise(buf, 8*PAGESIZE, MADV_HUGEPAGE) ==-1){
+        printf("advise failed!\n");
+        return;
+    }
+    list_init(buf, 8*PAGESIZE);
+    Node *tmp;
+    u64 total_time=0;
+    u64 buffer_size;
+    Node **buffer=&buf;
+    
+    buffer_size = 16384;
+    total_time=static_accesses_random(buffer, buffer_size, TOTALACCESSES);  
+
+    buffer_size = 24384;
+    total_time=static_accesses_random(buffer, buffer_size, TOTALACCESSES);
+    buffer_size = 26384;
+    total_time=static_accesses_random(buffer, buffer_size, TOTALACCESSES);    
+    buffer_size = 28384;
+    total_time=static_accesses_random(buffer, buffer_size, TOTALACCESSES);
+    buffer_size = 30384;
+    total_time=static_accesses_random(buffer, buffer_size, TOTALACCESSES);
+    buffer_size = 32768;
+    total_time=static_accesses_random(buffer, buffer_size, TOTALACCESSES);    
+    buffer_size = 34768;
+    total_time=static_accesses_random(buffer, buffer_size, TOTALACCESSES);    
+    buffer_size = 36768;
+    total_time=static_accesses_random(buffer, buffer_size, TOTALACCESSES);    
+    buffer_size = 38768;
+    total_time=static_accesses_random(buffer, buffer_size, TOTALACCESSES);
+
+    buffer_size = 65536;
+    total_time=static_accesses_random(buffer, buffer_size, TOTALACCESSES);
+    buffer_size = 131072;
+    total_time=static_accesses_random(buffer, buffer_size, TOTALACCESSES);
+    buffer_size = 262144;
+    total_time=static_accesses_random(buffer, buffer_size, TOTALACCESSES);
+    buffer_size = 524288;
+    total_time=static_accesses_random(buffer, buffer_size, TOTALACCESSES);
+    buffer_size = 1048576;
+    total_time=static_accesses_random(buffer, buffer_size, TOTALACCESSES);
+
+    buffer_size = 1848576;
+    total_time=static_accesses_random(buffer, buffer_size, TOTALACCESSES);
+    buffer_size = 2097152;
+    total_time=static_accesses_random(buffer, buffer_size, TOTALACCESSES);
+    buffer_size = 2297152;
+    total_time=static_accesses_random(buffer, buffer_size, TOTALACCESSES);
+
+    buffer_size = 4194304;
+    total_time=static_accesses_random(buffer, buffer_size, TOTALACCESSES);    
+    buffer_size = 8388608;
+    total_time=static_accesses_random(buffer, buffer_size, TOTALACCESSES);    
+    buffer_size = 16777216;
+    total_time=static_accesses_random(buffer, buffer_size, TOTALACCESSES);
+}
 
 int main(int ac, char **av) {
 
@@ -58,6 +124,7 @@ int main(int ac, char **av) {
 
     CU_pSuite suite = CU_add_suite("Test Suite evict_baseline", NULL, NULL);
 
+    CU_add_test(suite, "Test test_node", test_node);
     CU_add_test(suite, "Test test_node", test_node);
 
     CU_basic_run_tests();

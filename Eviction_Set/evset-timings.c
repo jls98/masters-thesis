@@ -421,30 +421,13 @@ static void list_print(Node **head){
 // --- algorithms ---
 #ifndef NOMAIN
 int main(int ac, char **av){
-    // wait(1E9);
-    // printf("starting...\n");
-    // // Config *con=config_init(8, 4096, 64, 47, 32768, 1, 1);
-    // Config *con=config_init(16, 131072, 64, 70, 2097152, 1, 1);
-    // u64 *target=malloc(sizeof(u64));
-    // init_evset(con);
-    // printf("init done\n");
-    // Node **head=find_evset(con, target);
-    // if(head){
-        // printf("find done %p", head);
-        // if(*head) printf(" %p %p %p", *head, (*head)->prev, (*head)->next);
-    // }
-    // printf("\n");
-    // printf("taget %p \n", target);
-    // list_print(head);
-    // printf("m: %lu\n", test_intern(*head, (void *)target));
-    
-    timings();
+
     return 0;
 }
 #endif
 
 #define PAGESIZE 2097152
-#define NODESIZE 32
+#define NODESIZE 64
 
 static void init_evset(Config *conf_ptr){
     wait(1E9);
@@ -660,88 +643,4 @@ static u64 static_accesses_random(Node **buffer, u64 total_size, u64 reps){
     free(msrmts);
     
     return total_time;
-}
-
-static void timings(){
-    wait(1E9);
-    // allocate 
-    Node *buf= (Node *) mmap(NULL, 8*PAGESIZE, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB, -1, 0);
-    if(buf==MAP_FAILED){
-        printf("mmap failed\n");
-        return;
-    }
-    
-    if (madvise(buf, 8*PAGESIZE, MADV_HUGEPAGE) ==-1){
-        printf("advise failed!\n");
-        return;
-    }
-    list_init(buf, 8*PAGESIZE);
-    Node *tmp;
-    u64 total_time=0;
-    u64 total_size;
-    Node **buffer=&buf;
-    
-    total_size = 16384;
-    total_time=static_accesses_random(buffer, total_size, TOTALACCESSES);
-    
-    total_size = 24384;
-    total_time=static_accesses_random(buffer, total_size, TOTALACCESSES);
-
-    total_size = 26384;
-    total_time=static_accesses_random(buffer, total_size, TOTALACCESSES);
-    
-    total_size = 28384;
-    total_time=static_accesses_random(buffer, total_size, TOTALACCESSES);
-
-    total_size = 30384;
-    total_time=static_accesses_random(buffer, total_size, TOTALACCESSES); 
-    
-    total_size = 32768;
-    total_time=static_accesses_random(buffer, total_size, TOTALACCESSES);
-    
-    total_size = 34768;
-    total_time=static_accesses_random(buffer, total_size, TOTALACCESSES);
-    
-    total_size = 36768;
-    total_time=static_accesses_random(buffer, total_size, TOTALACCESSES);
-    
-    total_size = 38768;
-    total_time=static_accesses_random(buffer, total_size, TOTALACCESSES);
-    
-    total_size = 65536;
-    total_time=static_accesses_random(buffer, total_size, TOTALACCESSES);
-
-    total_size = 131072;
-    total_time=static_accesses_random(buffer, total_size, TOTALACCESSES);
-
-    total_size = 262144;
-    total_time=static_accesses_random(buffer, total_size, TOTALACCESSES);
-
-    total_size = 524288;
-    total_time=static_accesses_random(buffer, total_size, TOTALACCESSES);
-
-    total_size = 1048576;
-    total_time=static_accesses_random(buffer, total_size, TOTALACCESSES);
-
-    total_size = 1848576;
-    total_time=static_accesses_random(buffer, total_size, TOTALACCESSES);
-
-    total_size = 2097152;
-    total_time=static_accesses_random(buffer, total_size, TOTALACCESSES);
-
-    total_size = 2297152;
-    total_time=static_accesses_random(buffer, total_size, TOTALACCESSES);
-
-    total_size = 4194304;
-    total_time=static_accesses_random(buffer, total_size, TOTALACCESSES);
-    
-    total_size = 8388608;
-    total_time=static_accesses_random(buffer, total_size, TOTALACCESSES);
-    
-    total_size = 16777216;
-    total_time=static_accesses_random(buffer, total_size, TOTALACCESSES);
-
-
-    
-    
 }
