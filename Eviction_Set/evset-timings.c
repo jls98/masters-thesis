@@ -151,14 +151,13 @@ static u64 probe(void *adrs){
 	return time;
 }
 
-static u64 probe_chase_loop(const void *addr, const u64 reps) {
+static u64 probe_chase_loop(void *addr, u64 reps) {
 	volatile u64 time;
 	
 	asm __volatile__ (
         // measure
 		"mfence;"
 		"rdtscp;"
-		"lfence;"
 		"mov rsi, rax;"
         // high precision
         "shl rdx, 32;"
@@ -179,21 +178,19 @@ static u64 probe_chase_loop(const void *addr, const u64 reps) {
         // end - high precision
 		"sub rax, rsi;"
 		: "=a" (time)
-		: "c" (addr), "r" (reps)
-		: "ecx", "esi", "edx"
+		: "b" (addr), "r" (reps)
+		: "rcx", "rsi", "rdx"
 	);
 	return time;
 }
+	// TODO segfault 4MB, TODO weird measurement
 
 static u64 probe_evset_chase(const void *addr) {
 	volatile u64 time;
-	
 	asm __volatile__ (
         // measure
 		"mfence;"
-		"lfence;"
-		"rdtsc;"
-		"lfence;"
+		"rdtscp;"
 		"mov rsi, rax;"
         // high precision
         "shl rdx, 32;"
@@ -207,15 +204,15 @@ static u64 probe_evset_chase(const void *addr) {
         "jnz loop2;"
 		// END - probe address
 		"lfence;"
-		"rdtsc;"
+		"rdtscp;"
         // start - high precision
         "shl rdx, 32;"
         "or rax, rdx;"
         // end - high precision
 		"sub rax, rsi;"
 		: "=a" (time)
-		: "c" (addr), "r" (conf->ways)
-		: "esi", "edx"
+		: "b" (addr), "r" (conf->ways)
+		: "rcx", "rsi", "rdx"
 	);
 	return time;
 }
@@ -642,13 +639,18 @@ static u64 static_accesses_random(Node **buffer, u64 total_size, u64 reps){
         msrmts[i]=probe_chase_loop(tmp, total_size);        
     }   
     
-    // tmp=*head;
-    for(int i=1;i*64<total_size;i++){
-        tmp=tmp->next;
-    }    
-    tmp->next=next;
-    if (next) next->prev=tmp;
+    // return to old state, last element points to next, first is new head and reset prev
+    tmp->prev->next=next;
     *buffer=*head;
+    (*head)->prev=NULL;
+
+    // tmp=*head;
+    // for(int i=1;i*64<total_size;i++){
+    //     tmp=tmp->next;
+    // }    
+    // tmp->next=next;
+    // if (next) next->prev=tmp;
+    // *buffer=*head;
     // printf("[!] msrmts\n");
     for(int i=0;i<reps;i++){
             total_time+=msrmts[i];
@@ -656,6 +658,7 @@ static u64 static_accesses_random(Node **buffer, u64 total_size, u64 reps){
     }    
     printf("\n[+] Results for buffer size %lu: total time %lu, avg %lu, median %lu, median avg %lu\n", total_size, total_time, total_time/total_size, median_uint64(msrmts, reps), median_uint64(msrmts, reps)/total_size);    
     free(msrmts);
+    
     return total_time;
 }
 
