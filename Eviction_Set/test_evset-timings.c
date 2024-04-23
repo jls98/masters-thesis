@@ -196,6 +196,8 @@ void test_cache_timings(){
     index = 120*size_stride + offset;
 
     Node *target = list_take(buffer_ptr, &index);
+    target->next=target;
+    target->prev=target;
 
     printf("[!] target %p\n", target);
     Node **head1 = malloc(sizeof(Node *)); // refs to first element of evset
@@ -221,17 +223,15 @@ void test_cache_timings(){
     msrmnt1[1] = probe_evset_chase(*head1);
     // msrmnt1[2] = probe(target);
     // msrmnt1[3] = probe(target);
-    __asm__ volatile("lfence;mov rax, [%0];"::"r" (target): "rax", "memory");
-    __asm__ volatile("mov rax, [%0];"::"r" (target): "rax", "memory");
-    __asm__ volatile("mov rax, [%0];"::"r" (target): "rax", "memory");
-    __asm__ volatile("mov rax, [%0];lfence;"::"r" (target): "rax", "memory");
+    access(target);
     msrmnt1[4] = probe_evset_chase(*head1);
+    access(target);
+    access(target);
     msrmnt1[5] = probe_evset_chase(*head1);
 
-    access(target);
-    access(target);
-    access(target);
-    access(target);
+    msrmnt1[6] =probe(target);
+    msrmnt1[7] =probe(target);
+    msrmnt1[8] =probe(target);
     msrmnt1[13] = probe_evset_chase(*head1);
 
 
