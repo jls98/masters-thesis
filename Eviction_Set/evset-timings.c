@@ -157,7 +157,6 @@ static u64 probe_chase_loop(const void *addr, const u64 reps) {
 	asm __volatile__ (
         // measure
 		"mfence;"
-		"lfence;"
 		"rdtsc;"
 		"lfence;"
 		"mov rsi, rax;"
@@ -181,6 +180,41 @@ static u64 probe_chase_loop(const void *addr, const u64 reps) {
 		"sub rax, rsi;"
 		: "=a" (time)
 		: "c" (addr), "r" (reps)
+		: "esi", "edx"
+	);
+	return time;
+}
+
+static u64 probe_evset_chase(const void *addr) {
+	volatile u64 time;
+	
+	asm __volatile__ (
+        // measure
+		"mfence;"
+		"lfence;"
+		"rdtsc;"
+		"lfence;"
+		"mov rsi, rax;"
+        // high precision
+        "shl rdx, 32;"
+		"or rsi, rdx;"
+		// BEGIN - probe address
+        "mov rax, %1;"
+        "mov rdx, %2;"
+        "loop2:"
+		"mov rax, [rax];"
+        "dec rdx;"
+        "jnz loop2;"
+		// END - probe address
+		"lfence;"
+		"rdtsc;"
+        // start - high precision
+        "shl rdx, 32;"
+        "or rax, rdx;"
+        // end - high precision
+		"sub rax, rsi;"
+		: "=a" (time)
+		: "c" (addr), "r" (conf->ways)
 		: "esi", "edx"
 	);
 	return time;
@@ -366,6 +400,13 @@ static void list_shuffle(Node **head){
         index = lfsr_rand(&lfsr)%size--;
         list_append(new_head, list_take(head, &index));
     }
+    // connect tail to head
+    Node *tmp;
+    for(tmp=*new_head;tmp->next;tmp=tmp->next){
+        access(tmp);
+    }
+    tmp->next=*new_head;
+    (*new_head)->prev=tmp;
     *head = *new_head;  
 }
 
@@ -572,43 +613,43 @@ static u64 probe_evset(Node *ptr){
 
 #define TOTALACCESSES 100
 
-static u64 static_accesses(Node **buffer, u64 total_size, u64 reps){
-    Node *tmp=*buffer;
-    Node *next;
-    u64 total_time=0;
-    u64 *msrmts = malloc(reps*sizeof(u64));
-    for(int i=1;i*64<total_size;i++){
-        access(tmp);
-        tmp=tmp->next;
-    }
-    next=tmp->next;
-    tmp->next=*buffer;
-    tmp=*buffer;
+// static u64 static_accesses(Node **buffer, u64 total_size, u64 reps){
+//     Node *tmp=*buffer;
+//     Node *next;
+//     u64 total_time=0;
+//     u64 *msrmts = malloc(reps*sizeof(u64));
+//     for(int i=1;i*64<total_size;i++){
+//         access(tmp);
+//         tmp=tmp->next;
+//     }
+//     next=tmp->next;
+//     tmp->next=*buffer;
+//     tmp=*buffer;
     
-    for(int i=0;i*64<total_size;i++){
-        access(tmp);
-        tmp=tmp->next;
-    }
-    tmp=*buffer;
+//     for(int i=0;i*64<total_size;i++){
+//         access(tmp);
+//         tmp=tmp->next;
+//     }
+//     tmp=*buffer;
     
-    for(int i=0;i<reps;i++){
-        msrmts[i]=probe(tmp);
-        tmp=tmp->next;         
-    }
+//     for(int i=0;i<reps;i++){
+//         msrmts[i]=probe(tmp);
+//         tmp=tmp->next;         
+//     }
     
-    tmp=*buffer;
-    for(int i=1;i*64<total_size;i++){
-        tmp=tmp->next;
-    }    
-    tmp->next=next;
+//     tmp=*buffer;
+//     for(int i=1;i*64<total_size;i++){
+//         tmp=tmp->next;
+//     }    
+//     tmp->next=next;
     
-    // printf("msrmts\n");
-    for(int i=0;i<reps;i++){
-        total_time+=msrmts[i];
-        // printf("%lu; ", msrmts[i]);
-    }    
-    return total_time;
-}
+//     // printf("msrmts\n");
+//     for(int i=0;i<reps;i++){
+//         total_time+=msrmts[i];
+//         // printf("%lu; ", msrmts[i]);
+//     }    
+//     return total_time;
+// }
 
 static u64 static_accesses_random(Node **buffer, u64 total_size, u64 reps){
     Node *tmp=*buffer;
@@ -622,27 +663,20 @@ static u64 static_accesses_random(Node **buffer, u64 total_size, u64 reps){
     }
     next=tmp->next;
     tmp->next=NULL;    
-    printf("pre shuffle\n");
+    printf("pre shuffle");
     list_shuffle(head);
-    printf("post shuffle\n");
+    printf(" post shufflee\n");
     tmp=*head;
     
-    for(int i=1;i*64<total_size;i++){
-        // access(tmp);
-        flush(tmp);
+    for(int i=1;i*64<2*total_size;i++){
+        access(tmp);
+        access(tmp->next);
+        access(tmp);
+        access(tmp->next);
         tmp=tmp->next;
     }
-    tmp->next=*head;
     tmp=*head;
-    
-    // probe_chase_loop(tmp, total_size);
-    // probe_chase_loop(tmp, total_size);
-    // for(int i=1;i*64<total_size;i++){
-    //     access(tmp);
-    //     tmp=tmp->next;
-    // }
-    // tmp=*head;
-    for(int i=0;i<reps;i++){
+    for(int i=0;i<reps;i++){ // unstable TODO
         msrmts[i]=probe_chase_loop(tmp, total_size);        
     }   
     
