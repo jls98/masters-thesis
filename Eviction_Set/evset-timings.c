@@ -100,14 +100,14 @@ static void timings();
 
 // --- utils ---
 // Comparison function for qsort
-int compare_uint64(const void *a, const void *b) {
+static int compare_uint64(const void *a, const void *b) {
     uint64_t ua = *(const uint64_t *)a;
     uint64_t ub = *(const uint64_t *)b;
     return (ua > ub) - (ua < ub);
 }
 
 // Function to compute the median of an array of uint64_t values
-uint64_t median_uint64(uint64_t *array, size_t size) {
+static uint64_t median_uint64(uint64_t *array, size_t size) {
     // Sort the array
     qsort(array, size, sizeof(uint64_t), compare_uint64);
 
@@ -224,17 +224,17 @@ static void wait(u64 cycles) {
 	while (__rdtscp(&ignore) - start < cycles);
 }
 
-// eax lsb, edx msb
-static u64 rdtscpfence(){
-    unsigned a, d;
-    __asm__ volatile(
-    "lfence;"
-    "rdtscp\n"
-    "lfence;"
-	: "=a" (a), "=d" (d)
-	:: "rcx");
-	return ((u64)d << 32) | a;
-}
+// // eax lsb, edx msb
+// static u64 rdtscpfence(){
+//     unsigned a, d;
+//     __asm__ volatile(
+//     "lfence;"
+//     "rdtscp\n"
+//     "lfence;"
+// 	: "=a" (a), "=d" (d)
+// 	:: "rcx");
+// 	return ((u64)d << 32) | a;
+// }
 
 #define FEEDBACK 0x80000000000019E2ULL
 static u64 lfsr_create(void) {
@@ -524,36 +524,43 @@ static void generate_conflict_set(Config *conf_ptr, char *target){
     // WIP
 }
 
-static void traverse_list(Node *ptr){
-    access((void *) ptr);
-    access((void *) ptr);
-    access((void *) ptr->next);
-    while(ptr && ptr->next && ptr->next->next){
-        access((void *) ptr);
-        access((void *) ptr->next);
-        access((void *) ptr->next->next);
-        access((void *) ptr);
-        access((void *) ptr->next);
-        access((void *) ptr->next->next);
-        ptr=ptr->next;
-    }
-    access((void *) ptr);
-    access((void *) ptr->next);   
-    access((void *) ptr);
-}
+// static void traverse_list(Node *ptr){
+//     access((void *) ptr);
+//     access((void *) ptr);
+//     access((void *) ptr->next);
+//     while(ptr && ptr->next && ptr->next->next){
+//         access((void *) ptr);
+//         access((void *) ptr->next);
+//         access((void *) ptr->next->next);
+//         access((void *) ptr);
+//         access((void *) ptr->next);
+//         access((void *) ptr->next->next);
+//         ptr=ptr->next;
+//     }
+//     access((void *) ptr);
+//     access((void *) ptr->next);   
+//     access((void *) ptr);
+// }
 
 static void traverse_list0(Node *ptr){
     for(Node *tmp=ptr;tmp;tmp=tmp->next){
-        access((void *) tmp);
+        access(tmp);
     }    
 }
 
-static void traverse_list_fenced(Node *ptr){
-    for(Node *tmp=ptr;tmp;tmp=tmp->next){
-        fenced_access((void *) tmp);
+static void traverse_list0_limited(Node *ptr){
+    u64 i=0;
+    for(Node *tmp=ptr;i++<conf->ways;tmp=tmp->next){
+        access(tmp);
+        
     }    
 }
 
+// static void traverse_list_fenced(Node *ptr){
+//     for(Node *tmp=ptr;tmp;tmp=tmp->next){
+//         fenced_access((void *) tmp);
+//     }    
+// }
 
 static u64 test_intern(Node *ptr, void *target){
     access(target);
@@ -571,8 +578,6 @@ static u64 test_intern(Node *ptr, void *target){
     return msrmts[msr_index-1];
 }
 
-
-
 static u64 test(Node *ptr, void *target){
     if(ptr ==NULL || target ==NULL){
         return 0;
@@ -580,67 +585,13 @@ static u64 test(Node *ptr, void *target){
     return test_intern(ptr, target) > conf->threshold;
 }
 
-static u64 probe_evset(Node *ptr){
-    if(!ptr) return 0;
-    u64 start, delta;
+// static u64 probe_evset(Node *ptr){
+//     if(!ptr) return 0;
+//     u64 start, delta;
     
-    start = rdtscpfence();
-    traverse_list_fenced(ptr);
-    delta = rdtscpfence() - start;
-    return delta;
+//     start = rdtscpfence();
+//     traverse_list_fenced(ptr);
+//     delta = rdtscpfence() - start;
+//     return delta;
     
-}
-
-#define TOTALACCESSES 100
-
-static u64 static_accesses_random(Node **buffer, u64 total_size, u64 reps){
-    Node *tmp=*buffer;
-    Node **head=buffer;
-    Node *next;
-    u64 total_time=0;
-    u64 *msrmts = malloc(reps*sizeof(u64));
-    for(int i=1;i*64<total_size;i++){
-        access(tmp);
-        tmp=tmp->next;
-    }
-    next=tmp->next;
-    tmp->next=NULL;    
-    printf("pre shuffle");
-    list_shuffle(head);
-    printf(" post shufflee\n");
-    tmp=*head;
-    
-    for(int i=1;i*64<2*total_size;i++){
-        access(tmp);
-        access(tmp->next);
-        access(tmp);
-        access(tmp->next);
-        tmp=tmp->next;
-    }
-    tmp=*head;
-    for(int i=0;i<reps;i++){ // unstable TODO
-        msrmts[i]=probe_chase_loop(tmp, total_size);        
-    }   
-    
-    // return to old state, last element points to next, first is new head and reset prev
-    tmp->prev->next=next;
-    *buffer=*head;
-    (*head)->prev=NULL;
-
-    // tmp=*head;
-    // for(int i=1;i*64<total_size;i++){
-    //     tmp=tmp->next;
-    // }    
-    // tmp->next=next;
-    // if (next) next->prev=tmp;
-    // *buffer=*head;
-    // printf("[!] msrmts\n");
-    for(int i=0;i<reps;i++){
-            total_time+=msrmts[i];
-    //     printf("%lu; ", msrmts[i]);
-    }    
-    printf("\n[+] Results for buffer size %lu: total time %lu, avg %lu, median %lu, median avg %lu\n", total_size, total_time, total_time/total_size, median_uint64(msrmts, reps), median_uint64(msrmts, reps)/total_size);    
-    free(msrmts);
-    
-    return total_time;
-}
+// }
