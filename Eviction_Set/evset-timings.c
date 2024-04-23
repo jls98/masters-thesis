@@ -157,7 +157,7 @@ static u64 probe_chase_loop(const void *addr, const u64 reps) {
 	asm __volatile__ (
         // measure
 		"mfence;"
-		"rdtsc;"
+		"rdtscp;"
 		"lfence;"
 		"mov rsi, rax;"
         // high precision
@@ -172,7 +172,7 @@ static u64 probe_chase_loop(const void *addr, const u64 reps) {
         "jnz loop;"
 		// END - probe address
 		"lfence;"
-		"rdtsc;"
+		"rdtscp;"
         // start - high precision
         "shl rdx, 32;"
         "or rax, rdx;"
@@ -180,7 +180,7 @@ static u64 probe_chase_loop(const void *addr, const u64 reps) {
 		"sub rax, rsi;"
 		: "=a" (time)
 		: "c" (addr), "r" (reps)
-		: "esi", "edx"
+		: "ecx", "esi", "edx"
 	);
 	return time;
 }
@@ -613,44 +613,6 @@ static u64 probe_evset(Node *ptr){
 
 #define TOTALACCESSES 100
 
-// static u64 static_accesses(Node **buffer, u64 total_size, u64 reps){
-//     Node *tmp=*buffer;
-//     Node *next;
-//     u64 total_time=0;
-//     u64 *msrmts = malloc(reps*sizeof(u64));
-//     for(int i=1;i*64<total_size;i++){
-//         access(tmp);
-//         tmp=tmp->next;
-//     }
-//     next=tmp->next;
-//     tmp->next=*buffer;
-//     tmp=*buffer;
-    
-//     for(int i=0;i*64<total_size;i++){
-//         access(tmp);
-//         tmp=tmp->next;
-//     }
-//     tmp=*buffer;
-    
-//     for(int i=0;i<reps;i++){
-//         msrmts[i]=probe(tmp);
-//         tmp=tmp->next;         
-//     }
-    
-//     tmp=*buffer;
-//     for(int i=1;i*64<total_size;i++){
-//         tmp=tmp->next;
-//     }    
-//     tmp->next=next;
-    
-//     // printf("msrmts\n");
-//     for(int i=0;i<reps;i++){
-//         total_time+=msrmts[i];
-//         // printf("%lu; ", msrmts[i]);
-//     }    
-//     return total_time;
-// }
-
 static u64 static_accesses_random(Node **buffer, u64 total_size, u64 reps){
     Node *tmp=*buffer;
     Node **head=buffer;
@@ -715,69 +677,6 @@ static void timings(){
     u64 total_time=0;
     u64 total_size;
     Node **buffer=&buf;
-
-    // total_size = 16777216;
-    // printf("\ntotal size %lu\n", total_size);
-    // total_time=static_accesses(buffer, total_size, TOTALACCESSES);
-
-    // printf("total time %lu, avg %lu\n", total_time, total_time/TOTALACCESSES);
-    
-    // total_size = 8388608;
-    // printf("\ntotal size %lu\n", total_size);
-    // total_time=static_accesses(buffer, total_size, TOTALACCESSES);
-
-    // printf("total time %lu, avg %lu\n", total_time, total_time/TOTALACCESSES);
-    
-    
-    
-    // total_size = 4194304;
-    // printf("\ntotal size %lu\n", total_size);
-    // total_time=static_accesses(buffer, total_size, TOTALACCESSES);
-
-    
-    
-    
-    // total_size = 2097152;
-    // printf("\ntotal size %lu\n", total_size);
-    // total_time=static_accesses(buffer, total_size, TOTALACCESSES);
-
-    
-    // total_size = 1048576;
-    // printf("\ntotal size %lu\n", total_size);
-    // total_time=static_accesses(buffer, total_size, TOTALACCESSES);
-
-
-
-    // total_size = 524288;
-    // printf("\ntotal size %lu\n", total_size);
-    // total_time=static_accesses(buffer, total_size, TOTALACCESSES);
-
-
-
-    // total_size = 262144;
-    // printf("\ntotal size %lu\n", total_size);
-    // total_time=static_accesses(buffer, total_size, TOTALACCESSES);
-
-
-
-    // total_size = 131072;
-    // printf("\ntotal size %lu\n", total_size);
-    // total_time=static_accesses(buffer, total_size, TOTALACCESSES);
-
-
-    // total_size = 65536;
-    // printf("\ntotal size %lu\n", total_size);
-    // total_time=static_accesses(buffer, total_size, TOTALACCESSES);
-
-    // total_size = 32768;
-    // printf("\ntotal size %lu\n", total_size);
-    // total_time=static_accesses(buffer, total_size, TOTALACCESSES);
-
-    // total_size = 16384;
-    // printf("\ntotal size %lu\n", total_size);
-    // total_time=static_accesses(buffer, total_size, TOTALACCESSES);
-
-
     
     total_size = 16384;
     total_time=static_accesses_random(buffer, total_size, TOTALACCESSES);
@@ -811,22 +710,8 @@ static void timings(){
 
     total_size = 131072;
     total_time=static_accesses_random(buffer, total_size, TOTALACCESSES);
-    total_size = 161072;
-    total_time=static_accesses_random(buffer, total_size, TOTALACCESSES);
-    total_size = 191072;
-    total_time=static_accesses_random(buffer, total_size, TOTALACCESSES);
-    total_size = 221072;
-    total_time=static_accesses_random(buffer, total_size, TOTALACCESSES);
-    total_size = 241072;
-    total_time=static_accesses_random(buffer, total_size, TOTALACCESSES);
 
     total_size = 262144;
-    total_time=static_accesses_random(buffer, total_size, TOTALACCESSES);
-    total_size = 281072;
-    total_time=static_accesses_random(buffer, total_size, TOTALACCESSES);
-    total_size = 301072;
-    total_time=static_accesses_random(buffer, total_size, TOTALACCESSES);
-    total_size = 321072;
     total_time=static_accesses_random(buffer, total_size, TOTALACCESSES);
 
     total_size = 524288;
@@ -835,7 +720,13 @@ static void timings(){
     total_size = 1048576;
     total_time=static_accesses_random(buffer, total_size, TOTALACCESSES);
 
+    total_size = 1848576;
+    total_time=static_accesses_random(buffer, total_size, TOTALACCESSES);
+
     total_size = 2097152;
+    total_time=static_accesses_random(buffer, total_size, TOTALACCESSES);
+
+    total_size = 2297152;
     total_time=static_accesses_random(buffer, total_size, TOTALACCESSES);
 
     total_size = 4194304;
