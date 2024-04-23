@@ -195,21 +195,23 @@ static u64 probe_evset_chase(const void *addr) {
 		"rdtscp;"
 		"mov rsi, rax;"
         // high precision
-        "shl rdx, 32;"
-		"or rsi, rdx;"
+        // "shl rdx, 32;"
+		// "or rsi, rdx;"
 		// BEGIN - probe address
         "mov rax, %1;"
         "mov rdx, %2;"
         "loop2:"
+        "lfence;"
 		"mov rax, [rax];"
         "dec rdx;"
+        "lfence;"
         "jnz loop2;"
 		// END - probe address
 		"lfence;"
 		"rdtscp;"
         // start - high precision
-        "shl rdx, 32;"
-        "or rax, rdx;"
+        // "shl rdx, 32;"
+        // "or rax, rdx;"
         // end - high precision
 		"sub rax, rsi;"
 		: "=a" (time)
