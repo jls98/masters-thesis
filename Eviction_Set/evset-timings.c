@@ -557,6 +557,7 @@ static void close_evsets(){
 static void traverse_list0(Node *ptr){
     u64 i=0;
     for(Node *tmp=ptr;i++<conf->ways;tmp=tmp->next){
+        __asm__ volatile("lfence; ");
         access(tmp);
         
     }    
