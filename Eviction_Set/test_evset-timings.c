@@ -229,12 +229,12 @@ void test_cache_timings1(){
     msrmnt1[6] = probe_evset_chase(*head1); // hit
     msrmnt1[7] = probe_evset_chase(*head1); // hit
 
-    // msrmnt1[10] =probe_chase_loop(target, 1); // miss
-    // msrmnt1[11] =probe_chase_loop(target, 1); // hit
-    // msrmnt1[12] =probe_chase_loop(target, 1); // hit
-    msrmnt1[10] =probe_evset_chase(target); // miss
-    msrmnt1[11] =probe_evset_chase(target); // hit
-    msrmnt1[12] =probe_evset_chase(target); // hit
+    msrmnt1[10] =probe_chase_loop(target, 1); // miss (probe_chase_loop more realistic since usually no control over targets content)
+    msrmnt1[11] =probe_chase_loop(target, 1); // hit
+    msrmnt1[12] =probe_chase_loop(target, 1); // hit
+    // msrmnt1[10] =probe_evset_chase(target); // miss
+    // msrmnt1[11] =probe_evset_chase(target); // hit
+    // msrmnt1[12] =probe_evset_chase(target); // hit
     msrmnt1[13] = probe_evset_chase(*head1); // miss
 
 
@@ -248,7 +248,7 @@ void test_cache_timings2(){
     u64 index=0;    // holds index
     u64 size_stride=0; // holds current stride size in index value (size_stride*64 = X in Bytes)
     u64 offset =105; // arbitrary offset
-    // TODO init buffer
+    // init buffer
     u64 buf_size = 8*PAGESIZE;     
     Node *buf= (Node *) mmap(NULL, buf_size, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB, -1, 0);
     // setup and init
@@ -301,12 +301,12 @@ void test_cache_timings2(){
     msrmnt1[6] = probe_evset_chase(*head1); // hit
     msrmnt1[7] = probe_evset_chase(*head1); // hit
 
-    // msrmnt1[10] =probe_chase_loop(target, 1); // miss
-    // msrmnt1[11] =probe_chase_loop(target, 1); // hit
-    // msrmnt1[12] =probe_chase_loop(target, 1); // hit
-    msrmnt1[10] =probe_evset_chase(target); // miss
-    msrmnt1[11] =probe_evset_chase(target); // hit
-    msrmnt1[12] =probe_evset_chase(target); // hit
+    msrmnt1[10] =probe_chase_loop(target, 1); // miss
+    msrmnt1[11] =probe_chase_loop(target, 1); // hit
+    msrmnt1[12] =probe_chase_loop(target, 1); // hit
+    // msrmnt1[10] = probe_evset_chase(target); // miss
+    // msrmnt1[11] = probe_evset_chase(target); // hit
+    // msrmnt1[12] = probe_evset_chase(target); // hit
     msrmnt1[13] = probe_evset_chase(*head1); // miss
 
 

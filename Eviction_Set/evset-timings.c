@@ -43,7 +43,7 @@ static u64 buffer_size = 0;
 static Node **buffer_ptr;
 static u64 lfsr;
 static u64 msr_index=0;
-static u64 msrmts[1000];
+static u64 *msrmts;
 
 
 // Utils #################################################
@@ -134,22 +134,22 @@ static void flush(void *adrs){
 	__asm__ volatile("clflush [%0]" ::"r" (adrs));
 }
  
-static u64 probe(void *adrs){
-	volatile u64 time;  
-	__asm__ volatile (
-        " mfence            \n"
-        " rdtscp             \n"
-        " mov r8, rax 		\n"
-        " mov rax, [%1]		\n"
-        " lfence            \n"
-        " rdtscp             \n"
-        " sub rax, r8 		\n"
-        : "=&a" (time)
-        : "r" (adrs)
-        : "ecx", "rdx", "r8", "memory"
-	);
-	return time;
-}
+// static u64 probe(void *adrs){
+// 	volatile u64 time;  
+// 	__asm__ volatile (
+//         " mfence            \n"
+//         " rdtscp             \n"
+//         " mov r8, rax 		\n"
+//         " mov rax, [%1]		\n"
+//         " lfence            \n"
+//         " rdtscp             \n"
+//         " sub rax, r8 		\n"
+//         : "=&a" (time)
+//         : "r" (adrs)
+//         : "ecx", "rdx", "r8", "memory"
+// 	);
+// 	return time;
+// }
 
 static u64 probe_chase_loop(void *addr, u64 reps) {
 	volatile u64 time;
@@ -438,6 +438,12 @@ static void init_evset(Config *conf_ptr){
 }    
 
 static Node **find_evset(Config *conf_ptr, void *target_adrs){
+    if (msrmts){
+        free(msrmts);
+        msrmts=NULL;
+    }
+    msrmts=realloc(msrmts, 1000*sizeof(u64));
+
     if (!buffer || !evsets){
         printf("find_evset: reset\n");
         close_evsets();
@@ -572,7 +578,7 @@ static u64 test_intern(Node *ptr, void *target){
     // access(target-222);
     
     // measure
-    msrmts[msr_index++]=probe(target);
+    msrmts[msr_index++]=probe_chase_loop(target, 1);
     // printf("%lu ", msrmts[msr_index-1]);
     return msrmts[msr_index-1];
 }
