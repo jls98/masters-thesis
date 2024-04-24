@@ -639,42 +639,42 @@ void replacement_L1(){
     intern_access(head1, my_evset, msrmnt7);
     intern_access(head1, my_evset, msrmnt8);
 
-    printf("0: median %lu high %lu low %lu\n", median_uint64(msrmnt0, 100), findMax(msrmnt0, 100), findMin(msrmnt0, 100));
     for(int i=0;i<100;i++) printf("%lu; ", msrmnt0[i]);
     printf("\n\n");
+    printf("0: median %lu high %lu low %lu\n", median_uint64(msrmnt0, 100), findMax(msrmnt0, 100), findMin(msrmnt0, 100));
 
-    printf("1: median %lu high %lu low %lu\n", median_uint64(msrmnt1, 100), findMax(msrmnt1, 100), findMin(msrmnt1, 100));
     for(int i=0;i<100;i++) printf("%lu; ", msrmnt1[i]);
     printf("\n\n");
+    printf("1: median %lu high %lu low %lu\n", median_uint64(msrmnt1, 100), findMax(msrmnt1, 100), findMin(msrmnt1, 100));
 
-    printf("2: median %lu high %lu low %lu\n", median_uint64(msrmnt2, 100), findMax(msrmnt2, 100), findMin(msrmnt2, 100));
     for(int i=0;i<100;i++) printf("%lu; ", msrmnt2[i]);
     printf("\n\n");
+    printf("2: median %lu high %lu low %lu\n", median_uint64(msrmnt2, 100), findMax(msrmnt2, 100), findMin(msrmnt2, 100));
 
-    printf("3: median %lu high %lu low %lu\n", median_uint64(msrmnt3, 100), findMax(msrmnt3, 100), findMin(msrmnt3, 100));
     for(int i=0;i<100;i++) printf("%lu; ", msrmnt3[i]);
     printf("\n\n");
+    printf("3: median %lu high %lu low %lu\n", median_uint64(msrmnt3, 100), findMax(msrmnt3, 100), findMin(msrmnt3, 100));
 
-    printf("4: median %lu high %lu low %lu\n", median_uint64(msrmnt4, 100), findMax(msrmnt4, 100), findMin(msrmnt4, 100));
     for(int i=0;i<100;i++) printf("%lu; ", msrmnt4[i]);
     printf("\n\n");
+    printf("4: median %lu high %lu low %lu\n", median_uint64(msrmnt4, 100), findMax(msrmnt4, 100), findMin(msrmnt4, 100));
 
-    printf("5: median %lu high %lu low %lu\n", median_uint64(msrmnt5, 100), findMax(msrmnt5, 100), findMin(msrmnt5, 100));
     for(int i=0;i<100;i++) printf("%lu; ", msrmnt5[i]);
     printf("\n\n");
+    printf("5: median %lu high %lu low %lu\n", median_uint64(msrmnt5, 100), findMax(msrmnt5, 100), findMin(msrmnt5, 100));
 
-    printf("6: median %lu high %lu low %lu\n", median_uint64(msrmnt6, 100), findMax(msrmnt6, 100), findMin(msrmnt6, 100));
     for(int i=0;i<100;i++) printf("%lu; ", msrmnt6[i]);
     printf("\n\n");
+    printf("6: median %lu high %lu low %lu\n", median_uint64(msrmnt6, 100), findMax(msrmnt6, 100), findMin(msrmnt6, 100));
 
-    printf("7: median %lu high %lu low %lu\n", median_uint64(msrmnt7, 100), findMax(msrmnt7, 100), findMin(msrmnt7, 100));
     for(int i=0;i<100;i++) printf("%lu; ", msrmnt7[i]);
     printf("\n\n");
+    printf("7: median %lu high %lu low %lu\n", median_uint64(msrmnt7, 100), findMax(msrmnt7, 100), findMin(msrmnt7, 100));
 
-    printf("8: median %lu high %lu low %lu\n", median_uint64(msrmnt8, 100), findMax(msrmnt8, 100), findMin(msrmnt8, 100));
     for(int i=0;i<100;i++) printf("%lu; ", msrmnt8[i]);
     printf("\n\n");
-    
+    printf("8: median %lu high %lu low %lu\n", median_uint64(msrmnt8, 100), findMax(msrmnt8, 100), findMin(msrmnt8, 100));
+    printf("\n");    
     
 
      
