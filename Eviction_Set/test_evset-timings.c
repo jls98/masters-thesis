@@ -415,7 +415,7 @@ void test_evset_state(){
     // create evsets manually and test them with targets
 
     conf = config_init(9, 4096, 64, 95, 32768, 1, 1); // L1
-    size_stride = 128;
+    size_stride = 64;
     index = 120*size_stride + offset;
 
     Node *target = list_take(buffer_ptr, &index);
@@ -448,6 +448,7 @@ void test_evset_state(){
     msrmnt1[1] = probe_evset_chase(*head1); // hit
     msrmnt2[0] =probe_chase_loop(my_evset[0], 1);
     msrmnt2[1] =probe_chase_loop(my_evset[0], 1);
+    flush(my_evset[0]);
     msrmnt2[2] =probe_chase_loop(my_evset[0], 1);
     flush(my_evset[0]);
     msrmnt1[2] = probe_evset_chase(*head1); // hit
