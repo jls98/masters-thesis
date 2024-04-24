@@ -157,17 +157,18 @@ static u64 probe_chase_loop(void *addr, u64 reps) {
 	volatile u64 time;
 	
 	asm __volatile__ (
+        "mov r8, %1;"
+        "mov r9, %2;"
         // measure
 		"mfence;"
 		"rdtscp;"
 		"mov rsi, rax;"
 		// BEGIN - probe address
-        "mov rax, %1;"
-        "mov rdx, %2;"
+
         "loop:"
 		"lfence;"
-		"mov rax, [rax];"
-        "dec rdx;"
+		"mov r8, [r8];"
+        "dec r9;"
         "lfence;"
         "jnz loop;"
 		// END - probe address
@@ -176,7 +177,7 @@ static u64 probe_chase_loop(void *addr, u64 reps) {
 		"sub rax, rsi;"
 		: "=a" (time)
 		: "b" (addr), "r" (reps)
-		: "rcx", "rsi", "rdx"
+		: "rcx", "rsi", "rdx", "r8", "r9"
 	);
 	return time;
 }
@@ -185,17 +186,18 @@ static u64 probe_chase_loop(void *addr, u64 reps) {
 static u64 probe_evset_chase(const void *addr) {
 	volatile u64 time;
 	asm __volatile__ (
+        "mov r8, %1;"
+        "mov r9, %2;"
         // measure
 		"mfence;"
 		"rdtscp;"
 		"mov rsi, rax;"
 		// BEGIN - probe address
-        "mov rax, %1;"
-        "mov rdx, %2;"
+
         "loop2:"
         "lfence;" // when toggled I cannot see difference on L1 timings
-		"mov rax, [rax];"
-        "dec rdx;"
+		"mov r8, [r8];"
+        "dec r9;"
         "lfence;"
         "jnz loop2;"
 		// END - probe address
@@ -205,7 +207,7 @@ static u64 probe_evset_chase(const void *addr) {
 		"sub rax, rsi;"
 		: "=a" (time)
 		: "b" (addr), "r" (conf->ways+1)
-		: "rcx", "rsi", "rdx"
+		: "rcx", "rsi", "rdx", "r8", "r9"
 	);
 	return time;
 }
@@ -603,7 +605,7 @@ static void calibrate(){
     }
     Node **cal_buf_ptr = &calibration_buffer;
     list_init(calibration_buffer, buf_size);
-    
+
 
 
     // unmap and delete

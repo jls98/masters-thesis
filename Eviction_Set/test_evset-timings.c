@@ -414,7 +414,7 @@ void test_evset_state(){
 
     // create evsets manually and test them with targets
 
-    conf = config_init(9, 4096, 64, 95, 32768, 1, 1); // L1
+    conf = config_init(8, 4096, 64, 95, 32768, 1, 1); // L1
     size_stride = 64;
     index = 120*size_stride + offset;
 
@@ -441,55 +441,70 @@ void test_evset_state(){
     list_shuffle(head1);
     list_print(head1);
 
-    u64 *msrmnt1=malloc(1000*sizeof(u64));
-    u64 *msrmnt2=malloc(1000*sizeof(u64));
+    u64 *msrmnt1=malloc(100*sizeof(u64));
+    u64 *msrmnt2=malloc(100*sizeof(u64));
 
     msrmnt1[0] = probe_evset_chase(*head1); // miss miss
     msrmnt1[1] = probe_evset_chase(*head1); // hit
+    access(target);
     msrmnt2[0] =probe_chase_loop(my_evset[0], 1);
     msrmnt2[1] =probe_chase_loop(my_evset[0], 1);
-    flush(my_evset[0]);
     msrmnt2[2] =probe_chase_loop(my_evset[0], 1);
-    flush(my_evset[0]);
     msrmnt1[2] = probe_evset_chase(*head1); // hit
     msrmnt1[3] = probe_evset_chase(*head1); // hit
+    access(target);
     msrmnt2[3] =probe_chase_loop(my_evset[1], 1);
     msrmnt2[4] =probe_chase_loop(my_evset[1], 1);
     msrmnt2[5] =probe_chase_loop(my_evset[1], 1);
     msrmnt1[4] = probe_evset_chase(*head1); // hit
     msrmnt1[5] = probe_evset_chase(*head1); // hit
+    access(target);
     msrmnt2[6] =probe_chase_loop(my_evset[2], 1);
     msrmnt2[7] =probe_chase_loop(my_evset[2], 1);
     msrmnt2[8] =probe_chase_loop(my_evset[2], 1);
     msrmnt1[6] = probe_evset_chase(*head1); // hit 
     msrmnt1[7] = probe_evset_chase(*head1); // miss
+    access(target);
     msrmnt2[9] =probe_chase_loop(my_evset[3], 1);
     msrmnt2[10] =probe_chase_loop(my_evset[3], 1);
     msrmnt2[11] =probe_chase_loop(my_evset[3], 1);
     msrmnt1[8] = probe_evset_chase(*head1); // hit
     msrmnt1[9] = probe_evset_chase(*head1); // hit
+    access(target);
     msrmnt2[12] =probe_chase_loop(my_evset[4], 1);
     msrmnt2[13] =probe_chase_loop(my_evset[4], 1);
     msrmnt2[14] =probe_chase_loop(my_evset[4], 1);
     msrmnt1[10] = probe_evset_chase(*head1); // miss
     msrmnt1[11] = probe_evset_chase(*head1); // miss
+    access(target);
     msrmnt2[15] =probe_chase_loop(my_evset[5], 1);
     msrmnt2[16] =probe_chase_loop(my_evset[5], 1);
     msrmnt2[17] =probe_chase_loop(my_evset[5], 1);
     msrmnt1[12] = probe_evset_chase(*head1); // miss
     msrmnt1[13] = probe_evset_chase(*head1); // miss
+    access(target);
     msrmnt2[18] =probe_chase_loop(my_evset[6], 1);
     msrmnt2[19] =probe_chase_loop(my_evset[6], 1);
     msrmnt2[20] =probe_chase_loop(my_evset[6], 1);
     msrmnt1[14] = probe_evset_chase(*head1); // miss
     msrmnt1[15] = probe_evset_chase(*head1); // miss
+    access(target);
     msrmnt2[21] =probe_chase_loop(my_evset[7], 1);
     msrmnt2[22] =probe_chase_loop(my_evset[7], 1);
     msrmnt2[23] =probe_chase_loop(my_evset[7], 1);
     msrmnt1[16] = probe_evset_chase(*head1); // miss
+    msrmnt1[17] = probe_chase_loop(target, 1); // miss
+    msrmnt1[18] = probe_chase_loop(target, 1); // miss
+    traverse_list0(*head1);
+    traverse_list0(*head1);
+    traverse_list0(*head1);
+    traverse_list0(*head1);
+    traverse_list0(*head1);
+    traverse_list0(*head1);
+    traverse_list0(*head1);
+    msrmnt1[19] = probe_chase_loop(target, 1); // miss
 
-
-    for(int i=0;i<17;i++) printf("[+] msrmnt1 %2d %lu\n", i, msrmnt1[i]);
+    for(int i=0;i<20;i++) printf("[+] msrmnt1 %2d %lu\n", i, msrmnt1[i]);
     for(int i=0;i<24;i++) printf("[+] msrmnt2 %2d %lu\n", i, msrmnt2[i]);
     close_evsets();
     free(my_evset);
