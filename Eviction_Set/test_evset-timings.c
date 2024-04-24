@@ -221,8 +221,6 @@ void test_cache_timings1(){
 
     msrmnt1[0] = probe_evset_chase(*head1); // miss miss
     msrmnt1[1] = probe_evset_chase(*head1); // hit
-    // msrmnt1[2] = probe(target);
-    // msrmnt1[3] = probe(target);
     access(target);
     msrmnt1[4] = probe_evset_chase(*head1); // miss
     access(target);
@@ -231,9 +229,12 @@ void test_cache_timings1(){
     msrmnt1[6] = probe_evset_chase(*head1); // hit
     msrmnt1[7] = probe_evset_chase(*head1); // hit
 
-    msrmnt1[10] =probe_chase_loop(target, 1); // miss
-    msrmnt1[11] =probe_chase_loop(target, 1); // hit
-    msrmnt1[12] =probe_chase_loop(target, 1); // hit
+    // msrmnt1[10] =probe_chase_loop(target, 1); // miss
+    // msrmnt1[11] =probe_chase_loop(target, 1); // hit
+    // msrmnt1[12] =probe_chase_loop(target, 1); // hit
+    msrmnt1[10] =probe_evset_chase(target); // miss
+    msrmnt1[11] =probe_evset_chase(target); // hit
+    msrmnt1[12] =probe_evset_chase(target); // hit
     msrmnt1[13] = probe_evset_chase(*head1); // miss
 
 
@@ -292,8 +293,6 @@ void test_cache_timings2(){
 
     msrmnt1[0] = probe_evset_chase(*head1); // miss miss
     msrmnt1[1] = probe_evset_chase(*head1); // hit
-    // msrmnt1[2] = probe(target);
-    // msrmnt1[3] = probe(target);
     access(target);
     msrmnt1[4] = probe_evset_chase(*head1); // miss
     access(target);
@@ -302,9 +301,12 @@ void test_cache_timings2(){
     msrmnt1[6] = probe_evset_chase(*head1); // hit
     msrmnt1[7] = probe_evset_chase(*head1); // hit
 
-    msrmnt1[10] =probe_chase_loop(target, 1); // miss
-    msrmnt1[11] =probe_chase_loop(target, 1); // hit
-    msrmnt1[12] =probe_chase_loop(target, 1); // hit
+    // msrmnt1[10] =probe_chase_loop(target, 1); // miss
+    // msrmnt1[11] =probe_chase_loop(target, 1); // hit
+    // msrmnt1[12] =probe_chase_loop(target, 1); // hit
+    msrmnt1[10] =probe_evset_chase(target); // miss
+    msrmnt1[11] =probe_evset_chase(target); // hit
+    msrmnt1[12] =probe_evset_chase(target); // hit
     msrmnt1[13] = probe_evset_chase(*head1); // miss
 
 

@@ -191,7 +191,7 @@ static u64 probe_evset_chase(const void *addr) {
         "mov rax, %1;"
         "mov rdx, %2;"
         "loop2:"
-        "lfence;"
+        "lfence;" // when toggled I cannot see difference on L1 timings
 		"mov rax, [rax];"
         "dec rdx;"
         "lfence;"
@@ -493,9 +493,16 @@ static Node **get_evset(Config *conf_ptr){
 }
 
 static void close_evsets(){
-    if (evsets) free(evsets);
+    if (evsets) {
+        free(evsets);
+        evsets=NULL;
+    }
     if (buffer) munmap(buffer, buffer_size);
-    if (conf) free(conf);
+    if (conf){
+        free(conf);
+        conf=NULL;
+    } 
+    
 }
 
 // static void generate_conflict_set(Config *conf_ptr, char *target){
