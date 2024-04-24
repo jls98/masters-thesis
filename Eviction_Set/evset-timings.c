@@ -44,6 +44,8 @@ static Node **buffer_ptr;
 static u64 lfsr;
 static u64 msr_index=0;
 static u64 *msrmts;
+static u64 threshold;
+
 
 
 // Utils #################################################
@@ -588,6 +590,23 @@ static u64 test(Node *ptr, void *target){
         return 0;
     }
     return test_intern(ptr, target) > conf->threshold;
+}
+
+static void calibrate(){
+    // TODO check if buffer size is large enough 
+    u64 buf_size = 4*PAGESIZE;
+    // map memory
+    Node *calibration_buffer = (Node *) mmap(NULL, buf_size, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB, -1, 0);
+    if (madvise(calibration_buffer, PAGESIZE, MADV_HUGEPAGE) == -1){
+        printf("madvise failed!\n");
+        return;
+    }
+    Node **cal_buf_ptr = &calibration_buffer;
+    list_init(calibration_buffer, buf_size);
+    
+
+
+    // unmap and delete
 }
 
 // static u64 probe_evset(Node *ptr){

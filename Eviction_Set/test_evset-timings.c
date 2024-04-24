@@ -160,10 +160,10 @@ void test_cache_size(){
 
     tmp_buffer_size = 4194304;
     total_time=test_buffer(buffer, tmp_buffer_size, TOTALACCESSES);    
-    tmp_buffer_size = 8388608;
-    total_time=test_buffer(buffer, tmp_buffer_size, TOTALACCESSES);    
-    tmp_buffer_size = 16777216;
-    total_time=test_buffer(buffer, tmp_buffer_size, TOTALACCESSES);
+    // tmp_buffer_size = 8388608;
+    // total_time=test_buffer(buffer, tmp_buffer_size, TOTALACCESSES);    
+    // tmp_buffer_size = 16777216;
+    // total_time=test_buffer(buffer, tmp_buffer_size, TOTALACCESSES);
 
     munmap(buf, buf_size);
 }
@@ -184,7 +184,6 @@ void test_cache_timings1(){
     }
     buffer_ptr=&buf;
     list_init(buf, buf_size);  
-    evsets = realloc(evsets, 16*sizeof(Node *));
     
 
     // create evsets manually and test them with targets
@@ -219,13 +218,16 @@ void test_cache_timings1(){
 
     msrmnt1[0] = probe_evset_chase(*head1); // miss miss
     msrmnt1[1] = probe_evset_chase(*head1); // hit
-    access(target);
+    // access(target);
+    msrmnt1[2] =probe_chase_loop(target, 1);
     msrmnt1[4] = probe_evset_chase(*head1); // miss
-    access(target);
-    access(target);
-    msrmnt1[5] = probe_evset_chase(*head1); // miss
-    msrmnt1[6] = probe_evset_chase(*head1); // hit
-    msrmnt1[7] = probe_evset_chase(*head1); // hit
+    msrmnt1[5] =probe_chase_loop(target, 1);
+    msrmnt1[6] =probe_chase_loop(target, 1);
+    // access(target);
+    // access(target);
+    msrmnt1[7] = probe_evset_chase(*head1); // miss
+    msrmnt1[8] = probe_evset_chase(*head1); // hit
+    msrmnt1[9] = probe_evset_chase(*head1); // hit
 
     msrmnt1[10] =probe_chase_loop(target, 1); // miss (probe_chase_loop more realistic since usually no control over targets content)
     msrmnt1[11] =probe_chase_loop(target, 1); // hit
@@ -256,7 +258,6 @@ void test_cache_timings2(){
     }
     buffer_ptr=&buf;
     list_init(buf, buf_size);  
-    evsets = realloc(evsets, 16*sizeof(Node *));
     
 
     // create evsets manually and test them with targets
