@@ -52,9 +52,9 @@ void test_node(){
     // later TODO init 
 }
 
-static u64 test_buffer(Node **buffer, u64 total_size, u64 reps){
-    Node *tmp=*buffer;
-    Node **head=buffer;
+static u64 test_buffer(Node **buf, u64 total_size, u64 reps){
+    Node *tmp=*buf;
+    Node **head=buf;
     Node *next;
     u64 total_time=0;
     u64 *msrmt = malloc(reps*sizeof(u64));
@@ -86,18 +86,16 @@ static u64 test_buffer(Node **buffer, u64 total_size, u64 reps){
     
     // return to old state, last element points to next, first is new head and reset prev
     tmp->prev->next=next;
-    *buffer=*head;
+    *buf=*head;
     (*head)->prev=NULL;
 
-    // printf("[!] msrmt\n");
     for(int i=0;i<reps;i++){
             total_time+=msrmt[i];
-    //     printf("%lu; ", msrmt[i]);
     }    
-    printf("\n[+] Results for buffer size %lu: total time %lu, avg %lu, median %lu, median avg %lu\n", total_size, total_time, total_time/total_size, median_uint64(msrmts, reps), median_uint64(msrmts, reps)/total_size);    
+    u64 median=median_uint64(msrmt, reps);
+    printf("\n[+] Results for buffer size %lu: total time %lu, avg %lu, median %lu, median avg %lu\n", total_size, total_time, total_time/total_size, median, median/total_size);    
     free(msrmt);
-    close_evsets();
-    
+    msrmt=NULL;    
     return total_time;
 }
 
@@ -321,8 +319,8 @@ int main(int ac, char **av) {
 
     CU_pSuite suite = CU_add_suite("Test Suite evict_baseline", NULL, NULL);
 
-    // CU_add_test(suite, "Test test_node", test_node);
-    // CU_add_test(suite, "Test test_cache_size", test_cache_size);
+    CU_add_test(suite, "Test test_node", test_node);
+    CU_add_test(suite, "Test test_cache_size", test_cache_size);
     CU_add_test(suite, "Test test_cache_timings1", test_cache_timings1);
     CU_add_test(suite, "Test test_cache_timings2", test_cache_timings2);
 
