@@ -309,12 +309,10 @@ static void list_push(Node **head, Node *e) {
 
 // add to end
 static void list_append(Node **head, Node *e){
-    // printf("append\n");
     if(!e) return;
     if(!head) {
         e->next=NULL;
         e->prev=NULL;
-        // printf("oh\n");
         *head=e;        
         return;
     }
@@ -325,7 +323,6 @@ static void list_append(Node **head, Node *e){
         return;
     }    
     Node *tmp=*head;
-    // printf("list_append %p %p\n", tmp, tmp->next);
     while(tmp->next){ // iterate to end
         tmp=tmp->next;    
     }
