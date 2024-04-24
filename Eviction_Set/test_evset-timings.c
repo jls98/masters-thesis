@@ -240,6 +240,7 @@ void test_cache_timings1(){
 
     for(int i=0;i<14;i++) printf("[+] msrmnt %i %lu\n", i, msrmnt1[i]);
     close_evsets();
+    free(msrmnt1);
 }
 
 void test_cache_timings2(){
@@ -311,6 +312,188 @@ void test_cache_timings2(){
 
     for(int i=0;i<14;i++) printf("[+] msrmnt %i %lu\n", i, msrmnt1[i]);
     close_evsets();
+    free(msrmnt1);
+}
+
+void test_L1_evset(){
+    wait(1E9);
+    Node *tmp=NULL;    // to hold tmp Nodes
+    u64 index=0;    // holds index
+    u64 size_stride=0; // holds current stride size in index value (size_stride*64 = X in Bytes)
+    u64 offset =105; // arbitrary offset
+    // TODO init buffer
+    u64 buf_size = 8*PAGESIZE;     
+    Node *buf= (Node *) mmap(NULL, buf_size, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB, -1, 0);
+    // setup and init
+    if (madvise(buf, PAGESIZE, MADV_HUGEPAGE) == -1){
+        printf("madvise failed!\n");
+        return;
+    }
+    buffer_ptr=&buf;
+    list_init(buf, buf_size);  
+    
+
+    // create evsets manually and test them with targets
+
+    conf = config_init(8, 4096, 64, 85, 32768, 1, 1); // L1
+    size_stride = 64;
+    index = 120*size_stride + offset;
+
+    Node *target = list_take(buffer_ptr, &index);
+    target->next=target;
+    target->prev=target;
+
+    printf("[!] target %p\n", target);
+    Node **head1 = malloc(sizeof(Node *)); // refs to first element of evset
+
+    // add 1st elem
+    index = 7*size_stride+offset;
+    tmp=list_take(buffer_ptr, &index);
+    list_append(head1, tmp);
+
+    // add more elems
+    for(int i=6; i >= 0; i--){
+        index = i*size_stride + offset;
+        tmp=list_take(buffer_ptr, &index);
+        list_append(head1, tmp);
+    }
+
+    list_shuffle(head1);
+    list_print(head1);
+
+    u64 *msrmnt1=malloc(1000*sizeof(u64));
+
+    msrmnt1[0] = probe_evset_chase(*head1); // miss miss
+    msrmnt1[1] = probe_evset_chase(*head1); // hit
+    // access(target);
+    msrmnt1[2] =probe_chase_loop(target, 1);
+    msrmnt1[4] = probe_evset_chase(*head1); // miss
+    msrmnt1[5] =probe_chase_loop(target, 1);
+    msrmnt1[6] =probe_chase_loop(target, 1);
+    // access(target);
+    // access(target);
+    msrmnt1[7] = probe_evset_chase(*head1); // miss
+    msrmnt1[8] = probe_evset_chase(*head1); // hit
+    msrmnt1[9] = probe_evset_chase(*head1); // hit
+
+    msrmnt1[10] =probe_chase_loop(target, 1); // miss (probe_chase_loop more realistic since usually no control over targets content)
+    msrmnt1[11] =probe_chase_loop(target, 1); // hit
+    msrmnt1[12] =probe_chase_loop(target, 1); // hit
+    // msrmnt1[10] =probe_evset_chase(target); // miss
+    // msrmnt1[11] =probe_evset_chase(target); // hit
+    // msrmnt1[12] =probe_evset_chase(target); // hit
+    msrmnt1[13] = probe_evset_chase(*head1); // miss
+
+
+    for(int i=0;i<14;i++) printf("[+] msrmnt %i %lu\n", i, msrmnt1[i]);
+    close_evsets();
+    free(msrmnt1);
+}
+
+void test_L2_evset(){
+
+}
+
+void test_evset_state(){
+    wait(1E9);
+    Node *tmp=NULL;    // to hold tmp Nodes
+    u64 index=0;    // holds index
+    u64 size_stride=0; // holds current stride size in index value (size_stride*64 = X in Bytes)
+    u64 offset =105; // arbitrary offset
+    // TODO init buffer
+    u64 buf_size = 8*PAGESIZE;     
+    Node *buf= (Node *) mmap(NULL, buf_size, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB, -1, 0);
+    // setup and init
+    if (madvise(buf, PAGESIZE, MADV_HUGEPAGE) == -1){
+        printf("madvise failed!\n");
+        return;
+    }
+    buffer_ptr=&buf;
+    list_init(buf, buf_size);  
+    Node **my_evset = (Node *) malloc(8*sizeof(Node *));
+
+    // create evsets manually and test them with targets
+
+    conf = config_init(9, 4096, 64, 95, 32768, 1, 1); // L1
+    size_stride = 128;
+    index = 120*size_stride + offset;
+
+    Node *target = list_take(buffer_ptr, &index);
+    target->next=target;
+    target->prev=target;
+
+    printf("[!] target %p\n", target);
+    Node **head1 = malloc(sizeof(Node *)); // refs to first element of evset
+
+    // add 1st elem
+    index = 7*size_stride+offset;
+    tmp=list_take(buffer_ptr, &index);
+    list_append(head1, tmp);
+    my_evset[7] = tmp;
+    // add more elems
+    for(int i=6; i >= 0; i--){
+        index = i*size_stride + offset;
+        tmp=list_take(buffer_ptr, &index);
+        list_append(head1, tmp);
+        my_evset[i]=tmp;
+    }
+
+    list_shuffle(head1);
+    list_print(head1);
+
+    u64 *msrmnt1=malloc(1000*sizeof(u64));
+    u64 *msrmnt2=malloc(1000*sizeof(u64));
+
+    msrmnt1[0] = probe_evset_chase(*head1); // miss miss
+    msrmnt1[1] = probe_evset_chase(*head1); // hit
+    msrmnt2[0] =probe_chase_loop(my_evset[0], 1);
+    msrmnt2[1] =probe_chase_loop(my_evset[0], 1);
+    msrmnt2[2] =probe_chase_loop(my_evset[0], 1);
+    flush(my_evset[0]);
+    msrmnt1[2] = probe_evset_chase(*head1); // hit
+    msrmnt1[3] = probe_evset_chase(*head1); // hit
+    msrmnt2[3] =probe_chase_loop(my_evset[1], 1);
+    msrmnt2[4] =probe_chase_loop(my_evset[1], 1);
+    msrmnt2[5] =probe_chase_loop(my_evset[1], 1);
+    msrmnt1[4] = probe_evset_chase(*head1); // hit
+    msrmnt1[5] = probe_evset_chase(*head1); // hit
+    msrmnt2[6] =probe_chase_loop(my_evset[2], 1);
+    msrmnt2[7] =probe_chase_loop(my_evset[2], 1);
+    msrmnt2[8] =probe_chase_loop(my_evset[2], 1);
+    msrmnt1[6] = probe_evset_chase(*head1); // hit 
+    msrmnt1[7] = probe_evset_chase(*head1); // miss
+    msrmnt2[9] =probe_chase_loop(my_evset[3], 1);
+    msrmnt2[10] =probe_chase_loop(my_evset[3], 1);
+    msrmnt2[11] =probe_chase_loop(my_evset[3], 1);
+    msrmnt1[8] = probe_evset_chase(*head1); // hit
+    msrmnt1[9] = probe_evset_chase(*head1); // hit
+    msrmnt2[12] =probe_chase_loop(my_evset[4], 1);
+    msrmnt2[13] =probe_chase_loop(my_evset[4], 1);
+    msrmnt2[14] =probe_chase_loop(my_evset[4], 1);
+    msrmnt1[10] = probe_evset_chase(*head1); // miss
+    msrmnt1[11] = probe_evset_chase(*head1); // miss
+    msrmnt2[15] =probe_chase_loop(my_evset[5], 1);
+    msrmnt2[16] =probe_chase_loop(my_evset[5], 1);
+    msrmnt2[17] =probe_chase_loop(my_evset[5], 1);
+    msrmnt1[12] = probe_evset_chase(*head1); // miss
+    msrmnt1[13] = probe_evset_chase(*head1); // miss
+    msrmnt2[18] =probe_chase_loop(my_evset[6], 1);
+    msrmnt2[19] =probe_chase_loop(my_evset[6], 1);
+    msrmnt2[20] =probe_chase_loop(my_evset[6], 1);
+    msrmnt1[14] = probe_evset_chase(*head1); // miss
+    msrmnt1[15] = probe_evset_chase(*head1); // miss
+    msrmnt2[21] =probe_chase_loop(my_evset[7], 1);
+    msrmnt2[22] =probe_chase_loop(my_evset[7], 1);
+    msrmnt2[23] =probe_chase_loop(my_evset[7], 1);
+    msrmnt1[16] = probe_evset_chase(*head1); // miss
+
+
+    for(int i=0;i<17;i++) printf("[+] msrmnt1 %2d %lu\n", i, msrmnt1[i]);
+    for(int i=0;i<24;i++) printf("[+] msrmnt2 %2d %lu\n", i, msrmnt2[i]);
+    close_evsets();
+    free(my_evset);
+    free(msrmnt1);
+    free(msrmnt2);
 }
 
 int main(int ac, char **av) {
@@ -320,10 +503,13 @@ int main(int ac, char **av) {
 
     CU_pSuite suite = CU_add_suite("Test Suite evict_baseline", NULL, NULL);
 
-    CU_add_test(suite, "Test test_node", test_node);
-    CU_add_test(suite, "Test test_cache_size", test_cache_size);
-    CU_add_test(suite, "Test test_cache_timings1", test_cache_timings1);
-    CU_add_test(suite, "Test test_cache_timings2", test_cache_timings2);
+    // CU_add_test(suite, "Test test_node", test_node);
+    // CU_add_test(suite, "Test test_cache_size", test_cache_size);
+    // CU_add_test(suite, "Test test_cache_timings1", test_cache_timings1);
+    // CU_add_test(suite, "Test test_cache_timings2", test_cache_timings2);
+    // CU_add_test(suite, "Test test_L1_evset", test_L1_evset);
+    // CU_add_test(suite, "Test test_L2_evset", test_L2_evset);
+    CU_add_test(suite, "Test test_evset_state", test_evset_state);
 
     CU_basic_run_tests();
     CU_cleanup_registry();
