@@ -401,7 +401,7 @@ void test_evset_state(){
     u64 size_stride=0; // holds current stride size in index value (size_stride*64 = X in Bytes)
     u64 offset =105; // arbitrary offset
     // TODO init buffer
-    u64 buf_size = 8*PAGESIZE;     
+    u64 buf_size = 20*PAGESIZE;     
     Node *buf= (Node *) mmap(NULL, buf_size, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB, -1, 0);
     // setup and init
     if (madvise(buf, PAGESIZE, MADV_HUGEPAGE) == -1){
@@ -504,8 +504,8 @@ void test_evset_state(){
     traverse_list0(*head1);
     msrmnt1[19] = probe_chase_loop(target, 1); // miss
 
-    for(int i=0;i<20;i++) printf("[+] msrmnt1 %2d %lu\n", i, msrmnt1[i]);
-    for(int i=0;i<24;i++) printf("[+] msrmnt2 %2d %lu\n", i, msrmnt2[i]);
+    for(int i=0;i<20;i++) printf("[+] msrmnt1 %2d %3lu\n", i, msrmnt1[i]);
+    for(int i=0;i<24;i++) printf("[+] msrmnt2 %2d %3lu\n", i, msrmnt2[i]);
     close_evsets();
     free(my_evset);
     free(msrmnt1);
