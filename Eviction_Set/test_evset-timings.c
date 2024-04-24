@@ -512,7 +512,7 @@ void test_evset_state(){
     free(msrmnt2);
 }
 
-void intern_access(Node **head1, Node **my_evset, u64 *msrmnt_){
+void intern_access(Node **head1, Node **my_evset, u64 *msrmnt_, u64 index){
     for(int c=0;c<100;c++){
         
         // flush evset    
@@ -522,7 +522,7 @@ void intern_access(Node **head1, Node **my_evset, u64 *msrmnt_){
         // probe_evset_chase(*head1);
         traverse_list0(*head1);
         // measure access time for one entry
-        msrmnt_[c]=probe_chase_loop(my_evset[0], 1);       
+        msrmnt_[c]=probe_chase_loop(my_evset[index], 1);       
     }
 }
 
@@ -629,15 +629,15 @@ void replacement_L1(){
     
     
     // multiple measurements
-    intern_access(head1, my_evset, msrmnt0);
-    intern_access(head1, my_evset, msrmnt1);
-    intern_access(head1, my_evset, msrmnt2);
-    intern_access(head1, my_evset, msrmnt3);
-    intern_access(head1, my_evset, msrmnt4);
-    intern_access(head1, my_evset, msrmnt5);
-    intern_access(head1, my_evset, msrmnt6);
-    intern_access(head1, my_evset, msrmnt7);
-    intern_access(head1, my_evset, msrmnt8);
+    intern_access(head1, my_evset, msrmnt0, 0);
+    intern_access(head1, my_evset, msrmnt1, 1);
+    intern_access(head1, my_evset, msrmnt2, 2);
+    intern_access(head1, my_evset, msrmnt3, 3);
+    intern_access(head1, my_evset, msrmnt4, 4);
+    intern_access(head1, my_evset, msrmnt5, 5);
+    intern_access(head1, my_evset, msrmnt6, 6);
+    intern_access(head1, my_evset, msrmnt7, 7);
+    intern_access(head1, my_evset, msrmnt8, 8);
 
     for(int i=0;i<100;i++) printf("%lu; ", msrmnt0[i]);
     printf("\n\n");
