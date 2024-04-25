@@ -1003,6 +1003,85 @@ void replacement_L2_only_L2(){
     munmap(buf, buf_size);
 }
 
+
+void replacement_L2_only_L2_mmap_file(){
+    wait(1E9);
+    Node *tmp=NULL;    // to hold tmp Nodes
+    u64 index=0;    // holds index
+    u64 size_stride_L2=2048; // holds current stride size in index value (size_stride*64 = X in Bytes)
+    u64 offset =32768; // arbitrary offset, 32768*64 = 2 MB
+    // init buffer
+    u64 buf_size = 20*PAGESIZE;     
+    Node *buf= (Node *) mmap(NULL, buf_size, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB, -1, 0);
+    // setup and init
+    if (madvise(buf, PAGESIZE, MADV_HUGEPAGE) == -1){
+        printf("madvise failed!\n");
+        return;
+    }
+    Node **buf_ptr=&buf;
+    list_init(buf, buf_size);  
+    Node **my_evset = (Node *) malloc(EVSET_L2_NEW*sizeof(Node *));
+    *my_evset=NULL;
+    // create evsets manually and test them with targets
+
+    conf = config_init(EVSET_L2_NEW, 4096, 64, 120, 2097152, 1, 1); // L1
+    index = 120*size_stride_L2 + offset;
+
+    Node *target = list_take(buf_ptr, &index);
+    target->next=target;
+    target->prev=target;
+
+    printf("[!] target %p\n", target);
+    Node **head1 = malloc(sizeof(Node *)); // refs to first element of evset
+    *head1 =NULL;
+    // add 1st elem
+    index = (EVSET_L2_NEW-1)*size_stride_L2+offset; // -1
+    tmp=list_take(buf_ptr, &index);
+    list_append(head1, tmp);
+
+    my_evset[EVSET_L2_NEW-1] = tmp;
+    // add 14 L2 elems
+    for(int i=EVSET_L2_NEW-2; i >=0; i--){ // > EVSET_L1 to add all L1 elems and last L2 elem
+        index = i*size_stride_L2 + offset;
+        tmp=list_take(buf_ptr, &index);
+        list_append(head1, tmp);
+        my_evset[i]=tmp;
+    }
+
+    list_print(head1);
+    list_shuffle(head1);
+
+    // init buffer to store measurements
+    u64 *msrmnt0=malloc(MSRMNT_CNT*sizeof(u64));
+    // preparation done
+
+    // u64 aaaaa=0;
+    // for(tmp=*head1;aaaaa++<conf->ways;tmp=tmp->next){
+    //     for(int bbbb=0;bbbb<EVSET_TARGETS;bbbb++){
+    //         if(tmp==my_evset[bbbb]) printf("%2d %p\n", bbbb, tmp);
+    //     }        
+    // }   
+    
+    // multiple measurements
+    intern_access_new(head1, my_evset, msrmnt0, target);
+
+
+    printf("target timings:\n");
+    int j=0;
+    for(int i=0;i<MSRMNT_CNT;i++) printf("%lu; ", msrmnt0[i+j*MSRMNT_CNT]);
+    printf("\n");
+    printf("median %lu high %lu low %lu\n", median_uint64(msrmnt0+j*MSRMNT_CNT, MSRMNT_CNT), findMax(msrmnt0+j*MSRMNT_CNT, MSRMNT_CNT), findMin(msrmnt0+j*MSRMNT_CNT, MSRMNT_CNT));
+    printf("\n\n");
+
+    
+
+    close_evsets();
+    free(my_evset);
+    free(msrmnt0);
+    free(head1);
+    munmap(buf, buf_size);
+}
+
 int main(int ac, char **av) {
 
 	wait(1E9);
