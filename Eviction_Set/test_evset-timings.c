@@ -742,19 +742,9 @@ void replacement_L2(){
     }
 
     list_shuffle(head1);
-    printf("a");
 
     u64 *msrmnt0=malloc(MSRMNT_CNT*EVSET_TARGETS*sizeof(u64));
-    // u64 *msrmnt1=malloc(MSRMNT_CNT*sizeof(u64));
-    // u64 *msrmnt2=malloc(MSRMNT_CNT*sizeof(u64));
-    // u64 *msrmnt3=malloc(MSRMNT_CNT*sizeof(u64));
-    // u64 *msrmnt4=malloc(MSRMNT_CNT*sizeof(u64));
-    // u64 *msrmnt5=malloc(MSRMNT_CNT*sizeof(u64));
-    // u64 *msrmnt6=malloc(MSRMNT_CNT*sizeof(u64));
-    // u64 *msrmnt7=malloc(MSRMNT_CNT*sizeof(u64));
-    // u64 *msrmnt8=malloc(MSRMNT_CNT*sizeof(u64));
     // preparation done
-    printf("a");
 
     u64 aaaaa=0;
     for(tmp=*head1;aaaaa++<conf->ways;tmp=tmp->next){
@@ -762,21 +752,12 @@ void replacement_L2(){
             if(tmp==my_evset[bbbb]) printf("%2d %p\n", bbbb, tmp);
         }        
     }   
-    printf("a");
     
     // multiple measurements
     for (int i=0;i<EVSET_TARGETS;i++){
         intern_access(head1, my_evset, msrmnt0+MSRMNT_CNT*i, i);
     }
-    // intern_access(head1, my_evset, msrmnt2, 2);
-    // intern_access(head1, my_evset, msrmnt3, 3);
-    // intern_access(head1, my_evset, msrmnt4, 4);
-    // intern_access(head1, my_evset, msrmnt5, 5);
-    // intern_access(head1, my_evset, msrmnt6, 6);
-    // intern_access(head1, my_evset, msrmnt7, 7);
-    // intern_access(head1, my_evset, msrmnt8, 8);
 
-    printf("a");
     for(int j=0;j<EVSET_TARGETS;j++){
         printf("%2d:\n", j);
         for(int i=0;i<MSRMNT_CNT;i++) printf("%lu; ", msrmnt0[i+j*MSRMNT_CNT]);
@@ -785,24 +766,10 @@ void replacement_L2(){
         printf("\n\n");
 
     }
-    printf("a");
 
-
-    // msrmnt1[0] = probe_evset_chase(*head1); // miss miss
-    // for(int i=0;i<8;i++) flush(my_evset[i]);
-    // msrmnt1[1] = probe_evset_chase(*head1); // hit
-    // access(target);
-    // msrmnt2[0] =probe_chase_loop(my_evset[0], 1);
-    // msrmnt2[1] =probe_chase_loop(my_evset[0], 1);
-    // msrmnt2[2] =probe_chase_loop(my_evset[0], 1);
-
-
-    // for(int i=0;i<5;i++) printf("[+] msrmnt1 %2d %3lu\n", i, msrmnt1[i]);
-    // for(int i=0;i<5;i++) printf("[+] msrmnt2 %2d %3lu\n", i, msrmnt2[i]);
     close_evsets();
     free(my_evset);
     free(msrmnt0);
-    // free(msrmnt2);
 }
 
 int main(int ac, char **av) {
@@ -823,7 +790,6 @@ int main(int ac, char **av) {
 
     CU_basic_run_tests();
     CU_cleanup_registry();
-    // test_evset_state();
     replacement_L2();
     return 0;
 }
