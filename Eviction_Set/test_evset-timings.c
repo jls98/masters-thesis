@@ -534,22 +534,31 @@ void intern_access(Node **head1, Node **my_evset, u64 *msrmnt_, u64 index){
 void intern_access_tar(Node **head1, Node **head2, Node **my_evset1, Node **my_evset2, u64 *msrmnt_, u64 index, void *target){
     for(int c=0;c<MSRMNT_CNT;c++){
         
-        // flush evset    
-        // for(int i=0;i<EVSET_L1;i++) flush(my_evset1[i]);
-        // for(int i=0;i<EVSET_L2;i++) flush(my_evset2[i]);
 
-        // access whole evset +1 (9 elems)
-        // probe_evset_chase(*head1);
         access(target);
         access(target);
         access(target);
         access(target);
         access(target);
         traverse_list0(*head2);
-        // traverse_list0(*head2);
-        // traverse_list0(*head1);
         traverse_list0(*head1);
         access(target+222);
+        // measure access time for one entry
+        msrmnt_[c]=probe_chase_loop(target, 1);       
+    }
+}
+
+void intern_access_new(Node **head1, Node **my_evset, u64 *msrmnt_, void * target){
+    for(int c=0;c<MSRMNT_CNT;c++){
+        access(target);
+        access(target);
+        access(target);
+        access(target);
+        access(target);       
+        traverse_list0(*head1);
+        traverse_list0(*head1);
+        access(target+222);
+
         // measure access time for one entry
         msrmnt_[c]=probe_chase_loop(target, 1);       
     }
@@ -891,36 +900,16 @@ void replacement_L2_2(){
 
 
 
-    u64 *msrmnt0=malloc(MSRMNT_CNT*EVSET_TARGETS*sizeof(u64));
-    // preparation done
+    u64 *msrmnt0=malloc(MSRMNT_CNT*sizeof(u64));
 
-    // printing maybe not neccessary
-    // u64 aaaaa=0;
-    // for(tmp=*head1;aaaaa++<8;tmp=tmp->next){ // ways L1
-        
-    //     // find the respective entry w address in array and print index and address for order 
-    //     for(int bbbb=0;bbbb<8;bbbb++){
-    //         if(tmp==my_evset1[bbbb]) printf("%2d %p\n", bbbb, tmp);
-    //     }        
-    // }   
-    
-    // multiple measurements
-    // for (int i=0;i<EVSET_TARGETS;i++){
     intern_access_tar(head1, head2, my_evset1, my_evset2, msrmnt0, 0, target);
-    // }
+
     printf("target:\n");
     for(int i=0;i<MSRMNT_CNT;i++) printf("%lu; ", msrmnt0[i]);
     printf("\n");
     printf("median %lu high %lu low %lu\n", median_uint64(msrmnt0, MSRMNT_CNT), findMax(msrmnt0, MSRMNT_CNT), findMin(msrmnt0, MSRMNT_CNT));
     printf("\n\n");
-    // for(int j=0;j<EVSET_TARGETS;j++){
-    //     printf("%2d:\n", j);
-    //     for(int i=0;i<MSRMNT_CNT;i++) printf("%lu; ", msrmnt0[i+j*MSRMNT_CNT]);
-    //     printf("\n");
-    //     printf("median %lu high %lu low %lu\n", median_uint64(msrmnt0+j*MSRMNT_CNT, MSRMNT_CNT), findMax(msrmnt0+j*MSRMNT_CNT, MSRMNT_CNT), findMin(msrmnt0+j*MSRMNT_CNT, MSRMNT_CNT));
-    //     printf("\n\n");
 
-    // }
 
     close_evsets();
     free(my_evset1);
@@ -928,6 +917,89 @@ void replacement_L2_2(){
     free(head1);
     free(head2);
     free(msrmnt0);
+    munmap(buf, buf_size);
+}
+
+/* assumption all hugepages are allocated contiguously, so if I take elements for my evset from multiple hugepages, 
+ * they will still have the same delta*x on their physical addresses, so taking 24 elements with offset 2048*64 Bytes 
+ * over at least two hugepages will still evict a respective target ^.^
+ */
+#define EVSET_L2_NEW 24
+void replacement_L2_only_L2(){
+    wait(1E9);
+    Node *tmp=NULL;    // to hold tmp Nodes
+    u64 index=0;    // holds index
+    u64 size_stride_L2=2048; // holds current stride size in index value (size_stride*64 = X in Bytes)
+    u64 offset =32768; // arbitrary offset, 32768*64 = 2 MB
+    // init buffer
+    u64 buf_size = 20*PAGESIZE;     
+    Node *buf= (Node *) mmap(NULL, buf_size, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB, -1, 0);
+    // setup and init
+    if (madvise(buf, PAGESIZE, MADV_HUGEPAGE) == -1){
+        printf("madvise failed!\n");
+        return;
+    }
+    Node **buf_ptr=&buf;
+    list_init(buf, buf_size);  
+    Node **my_evset = (Node *) malloc(EVSET_L2_NEW*sizeof(Node *));
+    *my_evset=NULL;
+    // create evsets manually and test them with targets
+
+    conf = config_init(EVSET_L2_NEW, 4096, 64, 120, 2097152, 1, 1); // L1
+    index = 120*size_stride_L2 + offset;
+
+    Node *target = list_take(buf_ptr, &index);
+    target->next=target;
+    target->prev=target;
+
+    printf("[!] target %p\n", target);
+    Node **head1 = malloc(sizeof(Node *)); // refs to first element of evset
+    *head1 =NULL;
+    // add 1st elem
+    index = (EVSET_L2_NEW-1)*size_stride_L2+offset; // -1
+    tmp=list_take(buf_ptr, &index);
+    list_append(head1, tmp);
+
+    my_evset[EVSET_L2_NEW-1] = tmp;
+    // add 14 L2 elems
+    for(int i=EVSET_L2_NEW-2; i >=0; i--){ // > EVSET_L1 to add all L1 elems and last L2 elem
+        index = i*size_stride_L2 + offset;
+        tmp=list_take(buf_ptr, &index);
+        list_append(head1, tmp);
+        my_evset[i]=tmp;
+    }
+
+    list_print(head1);
+    list_shuffle(head1);
+
+    // init buffer to store measurements
+    u64 *msrmnt0=malloc(MSRMNT_CNT*sizeof(u64));
+    // preparation done
+
+    // u64 aaaaa=0;
+    // for(tmp=*head1;aaaaa++<conf->ways;tmp=tmp->next){
+    //     for(int bbbb=0;bbbb<EVSET_TARGETS;bbbb++){
+    //         if(tmp==my_evset[bbbb]) printf("%2d %p\n", bbbb, tmp);
+    //     }        
+    // }   
+    
+    // multiple measurements
+    intern_access_new(head1, my_evset, msrmnt0, target);
+
+
+    printf("target timings:\n");
+    int j=0;
+    for(int i=0;i<MSRMNT_CNT;i++) printf("%lu; ", msrmnt0[i+j*MSRMNT_CNT]);
+    printf("\n");
+    printf("median %lu high %lu low %lu\n", median_uint64(msrmnt0+j*MSRMNT_CNT, MSRMNT_CNT), findMax(msrmnt0+j*MSRMNT_CNT, MSRMNT_CNT), findMin(msrmnt0+j*MSRMNT_CNT, MSRMNT_CNT));
+    printf("\n\n");
+
+    
+
+    close_evsets();
+    free(my_evset);
+    free(msrmnt0);
+    free(head1);
     munmap(buf, buf_size);
 }
 
@@ -949,6 +1021,7 @@ int main(int ac, char **av) {
 
     CU_basic_run_tests();
     CU_cleanup_registry();
-    replacement_L2_2();
+    // replacement_L2_2();
+    replacement_L2_only_L2();
     return 0;
 }
