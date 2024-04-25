@@ -516,7 +516,7 @@ void intern_access(Node **head1, Node **my_evset, u64 *msrmnt_, u64 index){
 void intern_access_tar(Node **head1, Node **head2, Node **my_evset1, Node **my_evset2, u64 *msrmnt_, u64 index, void *target){
     for(int c=0;c<MSRMNT_CNT;c++){
         
-
+        // TODO figure out why L2_2 remains kinda unreliable
         access(target);
         access(target);
         access(target);
