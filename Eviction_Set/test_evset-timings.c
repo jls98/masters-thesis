@@ -512,11 +512,13 @@ void test_evset_state(){
     free(msrmnt2);
 }
 
+#define MSRMNT_CNT 100
+#define EVSET_TARGETS 25
 void intern_access(Node **head1, Node **my_evset, u64 *msrmnt_, u64 index){
-    for(int c=0;c<100;c++){
+    for(int c=0;c<MSRMNT_CNT;c++){
         
         // flush evset    
-        for(int i=0;i<9;i++) flush(my_evset[i]);
+        for(int i=0;i<EVSET_TARGETS;i++) flush(my_evset[i]);
 
         // access whole evset +1 (9 elems)
         // probe_evset_chase(*head1);
@@ -560,7 +562,7 @@ uint64_t findMax(const uint64_t *array, size_t n) {
     return max;
 }
 
-#define MSRMNT_CNT 100
+
 
 void replacement_L1(){
     wait(1E9);
@@ -692,6 +694,117 @@ void replacement_L1(){
     free(msrmnt2);
 }
 
+
+
+void replacement_L2(){
+    wait(1E9);
+    Node *tmp=NULL;    // to hold tmp Nodes
+    u64 index=0;    // holds index
+    u64 size_stride=0; // holds current stride size in index value (size_stride*64 = X in Bytes)
+    u64 offset =105; // arbitrary offset
+    // init buffer
+    u64 buf_size = 20*PAGESIZE;     
+    Node *buf= (Node *) mmap(NULL, buf_size, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB, -1, 0);
+    // setup and init
+    if (madvise(buf, PAGESIZE, MADV_HUGEPAGE) == -1){
+        printf("madvise failed!\n");
+        return;
+    }
+    Node **buf_ptr=&buf;
+    list_init(buf, buf_size);  
+    Node **my_evset = (Node *) malloc(EVSET_TARGETS*sizeof(Node *));
+    *my_evset=NULL;
+    // create evsets manually and test them with targets
+
+    conf = config_init(25, 4096, 64, 95, 32768, 1, 1); // L1
+    size_stride = 64;
+    index = 120*size_stride + offset;
+
+    Node *target = list_take(buf_ptr, &index);
+    target->next=target;
+    target->prev=target;
+
+    printf("[!] target %p\n", target);
+    Node **head1 = malloc(sizeof(Node *)); // refs to first element of evset
+    *head1 =NULL;
+    // add 1st elem
+    index = 24*size_stride+offset;
+    tmp=list_take(buf_ptr, &index);
+    
+    list_append(head1, tmp);
+    my_evset[24] = tmp;
+    // add more elems
+    for(int i=23; i >= 0; i--){
+        index = i*size_stride + offset;
+        tmp=list_take(buf_ptr, &index);
+        list_append(head1, tmp);
+        my_evset[i]=tmp;
+    }
+
+    list_shuffle(head1);
+    printf("a");
+
+    u64 *msrmnt0=malloc(MSRMNT_CNT*EVSET_TARGETS*sizeof(u64));
+    // u64 *msrmnt1=malloc(MSRMNT_CNT*sizeof(u64));
+    // u64 *msrmnt2=malloc(MSRMNT_CNT*sizeof(u64));
+    // u64 *msrmnt3=malloc(MSRMNT_CNT*sizeof(u64));
+    // u64 *msrmnt4=malloc(MSRMNT_CNT*sizeof(u64));
+    // u64 *msrmnt5=malloc(MSRMNT_CNT*sizeof(u64));
+    // u64 *msrmnt6=malloc(MSRMNT_CNT*sizeof(u64));
+    // u64 *msrmnt7=malloc(MSRMNT_CNT*sizeof(u64));
+    // u64 *msrmnt8=malloc(MSRMNT_CNT*sizeof(u64));
+    // preparation done
+    printf("a");
+
+    u64 aaaaa=0;
+    for(tmp=*head1;aaaaa++<conf->ways;tmp=tmp->next){
+        for(int bbbb=0;bbbb<EVSET_TARGETS;bbbb++){
+            if(tmp==my_evset[bbbb]) printf("%2d %p\n", bbbb, tmp);
+        }        
+    }   
+    printf("a");
+    
+    // multiple measurements
+    for (int i=0;i<EVSET_TARGETS;i++){
+        intern_access(head1, my_evset, msrmnt0+MSRMNT_CNT*i, i);
+    }
+    // intern_access(head1, my_evset, msrmnt2, 2);
+    // intern_access(head1, my_evset, msrmnt3, 3);
+    // intern_access(head1, my_evset, msrmnt4, 4);
+    // intern_access(head1, my_evset, msrmnt5, 5);
+    // intern_access(head1, my_evset, msrmnt6, 6);
+    // intern_access(head1, my_evset, msrmnt7, 7);
+    // intern_access(head1, my_evset, msrmnt8, 8);
+
+    printf("a");
+    for(int j=0;j<EVSET_TARGETS;j++){
+        printf("%2d:\n", j);
+        for(int i=0;i<MSRMNT_CNT;i++) printf("%lu; ", msrmnt0[i+j*MSRMNT_CNT]);
+        printf("\n");
+        printf("median %lu high %lu low %lu\n", median_uint64(msrmnt0+j*MSRMNT_CNT, MSRMNT_CNT), findMax(msrmnt0+j*MSRMNT_CNT, MSRMNT_CNT), findMin(msrmnt0+j*MSRMNT_CNT, MSRMNT_CNT));
+        printf("\n\n");
+
+    }
+    printf("a");
+
+
+    // msrmnt1[0] = probe_evset_chase(*head1); // miss miss
+    // for(int i=0;i<8;i++) flush(my_evset[i]);
+    // msrmnt1[1] = probe_evset_chase(*head1); // hit
+    // access(target);
+    // msrmnt2[0] =probe_chase_loop(my_evset[0], 1);
+    // msrmnt2[1] =probe_chase_loop(my_evset[0], 1);
+    // msrmnt2[2] =probe_chase_loop(my_evset[0], 1);
+
+
+    // for(int i=0;i<5;i++) printf("[+] msrmnt1 %2d %3lu\n", i, msrmnt1[i]);
+    // for(int i=0;i<5;i++) printf("[+] msrmnt2 %2d %3lu\n", i, msrmnt2[i]);
+    close_evsets();
+    free(my_evset);
+    free(msrmnt0);
+    // free(msrmnt2);
+}
+
 int main(int ac, char **av) {
 
 	wait(1E9);
@@ -711,6 +824,6 @@ int main(int ac, char **av) {
     CU_basic_run_tests();
     CU_cleanup_registry();
     // test_evset_state();
-    replacement_L1();
+    replacement_L2();
     return 0;
 }
