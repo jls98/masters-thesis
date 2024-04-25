@@ -559,13 +559,16 @@ uint64_t findMax(const uint64_t *array, size_t n) {
     
     return max;
 }
+
+#define MSRMNT_CNT 100
+
 void replacement_L1(){
     wait(1E9);
     Node *tmp=NULL;    // to hold tmp Nodes
     u64 index=0;    // holds index
     u64 size_stride=0; // holds current stride size in index value (size_stride*64 = X in Bytes)
     u64 offset =105; // arbitrary offset
-    // TODO init buffer
+    // init buffer
     u64 buf_size = 20*PAGESIZE;     
     Node *buf= (Node *) mmap(NULL, buf_size, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB, -1, 0);
     // setup and init
@@ -605,17 +608,16 @@ void replacement_L1(){
     }
 
     list_shuffle(head1);
-    list_print(head1);
 
-    u64 *msrmnt0=malloc(100*sizeof(u64));
-    u64 *msrmnt1=malloc(100*sizeof(u64));
-    u64 *msrmnt2=malloc(100*sizeof(u64));
-    u64 *msrmnt3=malloc(100*sizeof(u64));
-    u64 *msrmnt4=malloc(100*sizeof(u64));
-    u64 *msrmnt5=malloc(100*sizeof(u64));
-    u64 *msrmnt6=malloc(100*sizeof(u64));
-    u64 *msrmnt7=malloc(100*sizeof(u64));
-    u64 *msrmnt8=malloc(100*sizeof(u64));
+    u64 *msrmnt0=malloc(MSRMNT_CNT*sizeof(u64));
+    u64 *msrmnt1=malloc(MSRMNT_CNT*sizeof(u64));
+    u64 *msrmnt2=malloc(MSRMNT_CNT*sizeof(u64));
+    u64 *msrmnt3=malloc(MSRMNT_CNT*sizeof(u64));
+    u64 *msrmnt4=malloc(MSRMNT_CNT*sizeof(u64));
+    u64 *msrmnt5=malloc(MSRMNT_CNT*sizeof(u64));
+    u64 *msrmnt6=malloc(MSRMNT_CNT*sizeof(u64));
+    u64 *msrmnt7=malloc(MSRMNT_CNT*sizeof(u64));
+    u64 *msrmnt8=malloc(MSRMNT_CNT*sizeof(u64));
     // preparation done
 
     u64 aaaaa=0;
@@ -623,10 +625,7 @@ void replacement_L1(){
         for(int bbbb=0;bbbb<9;bbbb++){
             if(tmp==my_evset[bbbb]) printf("%i %p\n", bbbb, tmp);
         }        
-    }    
-    
-    
-    
+    }   
     
     // multiple measurements
     intern_access(head1, my_evset, msrmnt0, 0);
@@ -639,47 +638,42 @@ void replacement_L1(){
     intern_access(head1, my_evset, msrmnt7, 7);
     intern_access(head1, my_evset, msrmnt8, 8);
 
-    for(int i=0;i<100;i++) printf("%lu; ", msrmnt0[i]);
+    for(int i=0;i<MSRMNT_CNT;i++) printf("%lu; ", msrmnt0[i]);
     printf("\n\n");
-    printf("0: median %lu high %lu low %lu\n", median_uint64(msrmnt0, 100), findMax(msrmnt0, 100), findMin(msrmnt0, 100));
+    printf("0: median %lu high %lu low %lu\n", median_uint64(msrmnt0, MSRMNT_CNT), findMax(msrmnt0, MSRMNT_CNT), findMin(msrmnt0, MSRMNT_CNT));
 
-    for(int i=0;i<100;i++) printf("%lu; ", msrmnt1[i]);
+    for(int i=0;i<MSRMNT_CNT;i++) printf("%lu; ", msrmnt1[i]);
     printf("\n\n");
-    printf("1: median %lu high %lu low %lu\n", median_uint64(msrmnt1, 100), findMax(msrmnt1, 100), findMin(msrmnt1, 100));
+    printf("1: median %lu high %lu low %lu\n", median_uint64(msrmnt1, MSRMNT_CNT), findMax(msrmnt1, MSRMNT_CNT), findMin(msrmnt1, MSRMNT_CNT));
 
-    for(int i=0;i<100;i++) printf("%lu; ", msrmnt2[i]);
+    for(int i=0;i<MSRMNT_CNT;i++) printf("%lu; ", msrmnt2[i]);
     printf("\n\n");
-    printf("2: median %lu high %lu low %lu\n", median_uint64(msrmnt2, 100), findMax(msrmnt2, 100), findMin(msrmnt2, 100));
+    printf("2: median %lu high %lu low %lu\n", median_uint64(msrmnt2, MSRMNT_CNT), findMax(msrmnt2, MSRMNT_CNT), findMin(msrmnt2, MSRMNT_CNT));
 
-    for(int i=0;i<100;i++) printf("%lu; ", msrmnt3[i]);
+    for(int i=0;i<MSRMNT_CNT;i++) printf("%lu; ", msrmnt3[i]);
     printf("\n\n");
-    printf("3: median %lu high %lu low %lu\n", median_uint64(msrmnt3, 100), findMax(msrmnt3, 100), findMin(msrmnt3, 100));
+    printf("3: median %lu high %lu low %lu\n", median_uint64(msrmnt3, MSRMNT_CNT), findMax(msrmnt3, MSRMNT_CNT), findMin(msrmnt3, MSRMNT_CNT));
 
-    for(int i=0;i<100;i++) printf("%lu; ", msrmnt4[i]);
+    for(int i=0;i<MSRMNT_CNT;i++) printf("%lu; ", msrmnt4[i]);
     printf("\n\n");
-    printf("4: median %lu high %lu low %lu\n", median_uint64(msrmnt4, 100), findMax(msrmnt4, 100), findMin(msrmnt4, 100));
+    printf("4: median %lu high %lu low %lu\n", median_uint64(msrmnt4, MSRMNT_CNT), findMax(msrmnt4, MSRMNT_CNT), findMin(msrmnt4, MSRMNT_CNT));
 
-    for(int i=0;i<100;i++) printf("%lu; ", msrmnt5[i]);
+    for(int i=0;i<MSRMNT_CNT;i++) printf("%lu; ", msrmnt5[i]);
     printf("\n\n");
-    printf("5: median %lu high %lu low %lu\n", median_uint64(msrmnt5, 100), findMax(msrmnt5, 100), findMin(msrmnt5, 100));
+    printf("5: median %lu high %lu low %lu\n", median_uint64(msrmnt5, MSRMNT_CNT), findMax(msrmnt5, MSRMNT_CNT), findMin(msrmnt5, MSRMNT_CNT));
 
-    for(int i=0;i<100;i++) printf("%lu; ", msrmnt6[i]);
+    for(int i=0;i<MSRMNT_CNT;i++) printf("%lu; ", msrmnt6[i]);
     printf("\n\n");
-    printf("6: median %lu high %lu low %lu\n", median_uint64(msrmnt6, 100), findMax(msrmnt6, 100), findMin(msrmnt6, 100));
+    printf("6: median %lu high %lu low %lu\n", median_uint64(msrmnt6, MSRMNT_CNT), findMax(msrmnt6, MSRMNT_CNT), findMin(msrmnt6, MSRMNT_CNT));
 
-    for(int i=0;i<100;i++) printf("%lu; ", msrmnt7[i]);
+    for(int i=0;i<MSRMNT_CNT;i++) printf("%lu; ", msrmnt7[i]);
     printf("\n\n");
-    printf("7: median %lu high %lu low %lu\n", median_uint64(msrmnt7, 100), findMax(msrmnt7, 100), findMin(msrmnt7, 100));
+    printf("7: median %lu high %lu low %lu\n", median_uint64(msrmnt7, MSRMNT_CNT), findMax(msrmnt7, MSRMNT_CNT), findMin(msrmnt7, MSRMNT_CNT));
 
-    for(int i=0;i<100;i++) printf("%lu; ", msrmnt8[i]);
+    for(int i=0;i<MSRMNT_CNT;i++) printf("%lu; ", msrmnt8[i]);
     printf("\n\n");
-    printf("8: median %lu high %lu low %lu\n", median_uint64(msrmnt8, 100), findMax(msrmnt8, 100), findMin(msrmnt8, 100));
+    printf("8: median %lu high %lu low %lu\n", median_uint64(msrmnt8, MSRMNT_CNT), findMax(msrmnt8, MSRMNT_CNT), findMin(msrmnt8, MSRMNT_CNT));
     printf("\n");    
-    
-
-     
-
-
 
     // msrmnt1[0] = probe_evset_chase(*head1); // miss miss
     // for(int i=0;i<8;i++) flush(my_evset[i]);
