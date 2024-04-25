@@ -717,7 +717,7 @@ void replacement_L2(){
     // create evsets manually and test them with targets
 
     conf = config_init(25, 4096, 64, 95, 32768, 1, 1); // L1
-    size_stride = 64;
+    size_stride = 128;
     index = 120*size_stride + offset;
 
     Node *target = list_take(buf_ptr, &index);
