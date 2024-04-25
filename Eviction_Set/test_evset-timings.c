@@ -517,7 +517,7 @@ void intern_access_tar(Node **head1, Node **head2, Node **my_evset1, Node **my_e
     for(int c=0;c<MSRMNT_CNT;c++){
         
 
-        // access(target);
+        access(target);
         access(target);
         access(target);
         access(target);
