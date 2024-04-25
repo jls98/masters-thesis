@@ -517,10 +517,10 @@ void intern_access_tar(Node **head1, Node **head2, Node **my_evset1, Node **my_e
     for(int c=0;c<MSRMNT_CNT;c++){
         
 
-        access(target);
-        access(target);
-        access(target);
-        access(target);
+        // access(target);
+        // access(target);
+        // access(target);
+        // access(target);
         access(target);
         traverse_list0(*head2);
         traverse_list0(*head1);
@@ -532,12 +532,12 @@ void intern_access_tar(Node **head1, Node **head2, Node **my_evset1, Node **my_e
 
 void intern_access_new(Node **head1, Node **my_evset, u64 *msrmnt_, void * target){
     for(int c=0;c<MSRMNT_CNT;c++){
-        access(target);
-        access(target);
-        access(target);
-        access(target);
+        // access(target);
+        // access(target);
+        // access(target);
+        // access(target);
         access(target);       
-        traverse_list0(*head1);
+        // traverse_list0(*head1);
         traverse_list0(*head1);
         access(target+222);
 
