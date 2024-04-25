@@ -519,7 +519,7 @@ void intern_access_tar(Node **head1, Node **head2, Node **my_evset1, Node **my_e
 
         // access(target);
         // access(target);
-        // access(target);
+        access(target);
         access(target);
         access(target);
         traverse_list0(*head2);
