@@ -68,14 +68,6 @@ static u64 test_buffer(Node **buf, u64 total_size, u64 reps){
     list_shuffle(head);
     printf(" post shufflee\n");
     tmp=*head;
-    
-    // for(int i=1;i*64<2*total_size;i++){
-    //     access(tmp);
-    //     access(tmp->next);
-    //     access(tmp);
-    //     access(tmp->next);
-    //     tmp=tmp->next;
-    // }
 
     traverse_list0(tmp);
     traverse_list0(tmp);
@@ -218,13 +210,10 @@ void test_cache_timings1(){
 
     msrmnt1[0] = probe_evset_chase(*head1); // miss miss
     msrmnt1[1] = probe_evset_chase(*head1); // hit
-    // access(target);
     msrmnt1[2] =probe_chase_loop(target, 1);
     msrmnt1[4] = probe_evset_chase(*head1); // miss
     msrmnt1[5] =probe_chase_loop(target, 1);
     msrmnt1[6] =probe_chase_loop(target, 1);
-    // access(target);
-    // access(target);
     msrmnt1[7] = probe_evset_chase(*head1); // miss
     msrmnt1[8] = probe_evset_chase(*head1); // hit
     msrmnt1[9] = probe_evset_chase(*head1); // hit
@@ -232,9 +221,6 @@ void test_cache_timings1(){
     msrmnt1[10] =probe_chase_loop(target, 1); // miss (probe_chase_loop more realistic since usually no control over targets content)
     msrmnt1[11] =probe_chase_loop(target, 1); // hit
     msrmnt1[12] =probe_chase_loop(target, 1); // hit
-    // msrmnt1[10] =probe_evset_chase(target); // miss
-    // msrmnt1[11] =probe_evset_chase(target); // hit
-    // msrmnt1[12] =probe_evset_chase(target); // hit
     msrmnt1[13] = probe_evset_chase(*head1); // miss
 
 
@@ -304,9 +290,6 @@ void test_cache_timings2(){
     msrmnt1[10] =probe_chase_loop(target, 1); // miss
     msrmnt1[11] =probe_chase_loop(target, 1); // hit
     msrmnt1[12] =probe_chase_loop(target, 1); // hit
-    // msrmnt1[10] = probe_evset_chase(target); // miss
-    // msrmnt1[11] = probe_evset_chase(target); // hit
-    // msrmnt1[12] = probe_evset_chase(target); // hit
     msrmnt1[13] = probe_evset_chase(*head1); // miss
 
 
@@ -524,7 +507,6 @@ void intern_access(Node **head1, Node **my_evset, u64 *msrmnt_, u64 index){
         for(int i=0;i<EVSET_TARGETS;i++) flush(my_evset[i]);
 
         // access whole evset +1 (9 elems)
-        // probe_evset_chase(*head1);
         traverse_list0(*head1);
         // measure access time for one entry
         msrmnt_[c]=probe_chase_loop(my_evset[index], 1);       
@@ -565,40 +547,22 @@ void intern_access_new(Node **head1, Node **my_evset, u64 *msrmnt_, void * targe
 }
 
 uint64_t findMin(const uint64_t *array, size_t n) {
-    if (n == 0) {
-        // Handle empty array case
-        return 0; // Or any other appropriate value
-    }
-    
+    // Handle empty array case
+    if (n == 0) return 0; // Or any other appropriate value
+
     uint64_t min = array[0];
-    
-    for (size_t i = 1; i < n; ++i) {
-        if (array[i] < min) {
-            min = array[i];
-        }
-    }
-    
+    for (size_t i = 1; i < n; ++i) if (array[i] < min) min = array[i];
     return min;
 }
 
 uint64_t findMax(const uint64_t *array, size_t n) {
-    if (n == 0) {
-        // Handle empty array case
-        return 0; // Or any other appropriate value
-    }
+    // Handle empty array case
+    if (n == 0) return 0; // Or any other appropriate value  
     
     uint64_t max = array[0];
-    
-    for (size_t i = 1; i < n; ++i) {
-        if (array[i] > max) {
-            max = array[i];
-        }
-    }
-    
+    for (size_t i = 1; i < n; ++i) if (array[i] > max) max = array[i];
     return max;
 }
-
-
 
 void replacement_L1(){
     wait(1E9);
@@ -713,17 +677,6 @@ void replacement_L1(){
     printf("8: median %lu high %lu low %lu\n", median_uint64(msrmnt8, MSRMNT_CNT), findMax(msrmnt8, MSRMNT_CNT), findMin(msrmnt8, MSRMNT_CNT));
     printf("\n");    
 
-    // msrmnt1[0] = probe_evset_chase(*head1); // miss miss
-    // for(int i=0;i<8;i++) flush(my_evset[i]);
-    // msrmnt1[1] = probe_evset_chase(*head1); // hit
-    // access(target);
-    // msrmnt2[0] =probe_chase_loop(my_evset[0], 1);
-    // msrmnt2[1] =probe_chase_loop(my_evset[0], 1);
-    // msrmnt2[2] =probe_chase_loop(my_evset[0], 1);
-
-
-    // for(int i=0;i<5;i++) printf("[+] msrmnt1 %2d %3lu\n", i, msrmnt1[i]);
-    // for(int i=0;i<5;i++) printf("[+] msrmnt2 %2d %3lu\n", i, msrmnt2[i]);
     close_evsets();
     free(my_evset);
     free(msrmnt1);
@@ -898,8 +851,6 @@ void replacement_L2_2(){
     list_shuffle(head1);
     list_shuffle(head2);
 
-
-
     u64 *msrmnt0=malloc(MSRMNT_CNT*sizeof(u64));
 
     intern_access_tar(head1, head2, my_evset1, my_evset2, msrmnt0, 0, target);
@@ -976,13 +927,6 @@ void replacement_L2_only_L2(){
     u64 *msrmnt0=malloc(MSRMNT_CNT*sizeof(u64));
     // preparation done
 
-    // u64 aaaaa=0;
-    // for(tmp=*head1;aaaaa++<conf->ways;tmp=tmp->next){
-    //     for(int bbbb=0;bbbb<EVSET_TARGETS;bbbb++){
-    //         if(tmp==my_evset[bbbb]) printf("%2d %p\n", bbbb, tmp);
-    //     }        
-    // }   
-    
     // multiple measurements
     intern_access_new(head1, my_evset, msrmnt0, target);
 
@@ -993,8 +937,6 @@ void replacement_L2_only_L2(){
     printf("\n");
     printf("median %lu high %lu low %lu\n", median_uint64(msrmnt0+j*MSRMNT_CNT, MSRMNT_CNT), findMax(msrmnt0+j*MSRMNT_CNT, MSRMNT_CNT), findMin(msrmnt0+j*MSRMNT_CNT, MSRMNT_CNT));
     printf("\n\n");
-
-    
 
     close_evsets();
     free(my_evset);
@@ -1100,7 +1042,8 @@ int main(int ac, char **av) {
 
     CU_basic_run_tests();
     CU_cleanup_registry();
-    // replacement_L2_2();
+    replacement_L2();
+    replacement_L2_2();
     replacement_L2_only_L2();
     return 0;
 }
