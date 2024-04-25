@@ -520,7 +520,7 @@ void intern_access_tar(Node **head1, Node **head2, Node **my_evset1, Node **my_e
         // access(target);
         // access(target);
         // access(target);
-        // access(target);
+        access(target);
         access(target);
         traverse_list0(*head2);
         traverse_list0(*head1);
@@ -535,7 +535,7 @@ void intern_access_new(Node **head1, Node **my_evset, u64 *msrmnt_, void * targe
         // access(target);
         // access(target);
         // access(target);
-        // access(target);
+        access(target);
         access(target);       
         // traverse_list0(*head1);
         traverse_list0(*head1);
