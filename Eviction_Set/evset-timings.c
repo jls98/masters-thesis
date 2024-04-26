@@ -408,6 +408,7 @@ static void init_evset(Config *conf_ptr){
 }    
 
 static Node **find_evset(Config *conf_ptr, void *target_adrs){
+    printf("a");
     if (msrmts){
         free(msrmts);
         msrmts=NULL;

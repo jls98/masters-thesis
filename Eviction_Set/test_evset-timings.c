@@ -1022,6 +1022,7 @@ void test_evset_algorithm(){
     void *target = malloc(4);
     printf("[+] target adrs %p\n", target);
     init_evset(con);
+    printf("a");
     Node **my_evset = find_evset(con, target);
     list_print(my_evset);
 
