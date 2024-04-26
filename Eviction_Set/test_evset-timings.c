@@ -1019,6 +1019,12 @@ void replacement_L2_only_L2_mmap_file(){
     munmap(buf, buf_size);
 }
 
+
+void test_evset_algorithm(){
+    
+}
+
+
 int main(int ac, char **av) {
 
 	wait(1E9);
@@ -1037,8 +1043,8 @@ int main(int ac, char **av) {
 
     CU_basic_run_tests();
     CU_cleanup_registry();
-    replacement_L2();
-    replacement_L2_2();
-    replacement_L2_only_L2();
+    // replacement_L2();
+    // replacement_L2_2();
+    // replacement_L2_only_L2();
     return 0;
 }
