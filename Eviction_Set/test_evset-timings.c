@@ -991,13 +991,6 @@ void replacement_L2_only_L2_mmap_file(){
     // init buffer to store measurements
     u64 *msrmnt0=malloc(MSRMNT_CNT*sizeof(u64));
     // preparation done
-
-    // u64 aaaaa=0;
-    // for(tmp=*head1;aaaaa++<conf->ways;tmp=tmp->next){
-    //     for(int bbbb=0;bbbb<EVSET_TARGETS;bbbb++){
-    //         if(tmp==my_evset[bbbb]) printf("%2d %p\n", bbbb, tmp);
-    //     }        
-    // }   
     
     // multiple measurements
     intern_access_new(head1, my_evset, msrmnt0, target);
@@ -1022,11 +1015,11 @@ void test_evset_algorithm(){
     void *target = malloc(4);
     printf("[+] target adrs %p\n", target);
     init_evset(con);
-    printf("a");
     Node **my_evset = find_evset(con, target);
     list_print(my_evset);
 
     u64 *my_msrmnt = malloc(100*sizeof(u64));
+
 
     intern_access_new(my_evset, my_evset, my_msrmnt, target);
     printf("target timings:\n");

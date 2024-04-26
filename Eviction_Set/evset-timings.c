@@ -404,21 +404,16 @@ static void init_evset(Config *conf_ptr){
     
     evsets = realloc(evsets, conf->ways*sizeof(Node *));
     
-    printf("init_evset finished, evsets %p, buffer %p\n", evsets, buffer);
-    printf("a"\n);
-
+    printf("[+] init_evset complete, evsets %p, buffer %p\n", evsets, buffer);
 }    
 
 static Node **find_evset(Config *conf_ptr, void *target_adrs){
-    printf("a");
     if (msrmts){
         free(msrmts);
         msrmts=NULL;
     }
-    printf("a");
     msrmts=realloc(msrmts, 1000*sizeof(u64));
 
-    printf("a");
     if (!buffer || !evsets){
         printf("find_evset: reset\n");
         close_evsets();
@@ -431,31 +426,24 @@ static Node **find_evset(Config *conf_ptr, void *target_adrs){
     // iterate over every cacheline
     u64 index;
     Node *tmp;
-    printf("a");
-    list_print(evsets);
     // for(u64 offset=0;offset<(conf->cache_size/conf->cache_line_size);offset++){
-    for(u64 offset=0;offset<EVSET_STRIDE;offset++){
+    for(int offset=EVSET_STRIDE-1;offset>=0;offset--){        
         // create evset with offset as index of Node-array
-        for(u64 i=conf->ways-1;i>=0;i--){
-            index=offset + i*EVSET_STRIDE; // take elements from buffer from up to down for easier index calculation
+        for(int i= (int) conf->ways-1;i>=0;i--){
+
+            index=offset + ((u64)i)*EVSET_STRIDE-i*(EVSET_STRIDE-1-offset); // take elements from buffer from up to down for easier index calculation
             tmp = list_take(buffer_ptr, &index);
             list_append(evsets, tmp);
         }
-
         list_shuffle(evsets);
         if(msr_index>990) msr_index=0;
         // test if it is applicable, if yes yehaaw if not, proceed and reset evset pointer 
         
-        if(test(*evsets, target_adrs)){
-            return evsets;
-        } 
-        if(test(*evsets, target_adrs)) if(test(*evsets, target_adrs)) break;
-        if(test(*evsets, target_adrs)) if(test(*evsets, target_adrs)) break;
-        if(test(*evsets, target_adrs)) if(test(*evsets, target_adrs)) break;
         
+        if(test(*evsets, target_adrs)) if(test(*evsets, target_adrs)) break;        
         // remove elems from evsets and prepare next iteration
         while(*evsets) list_pop(evsets);       
-    }    
+    }   
     return evsets;
 }
 
