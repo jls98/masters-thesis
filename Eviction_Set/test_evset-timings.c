@@ -1002,15 +1002,12 @@ void replacement_L2_only_L2_mmap_file(){
     // multiple measurements
     intern_access_new(head1, my_evset, msrmnt0, target);
 
-
     printf("target timings:\n");
     int j=0;
     for(int i=0;i<MSRMNT_CNT;i++) printf("%lu; ", msrmnt0[i+j*MSRMNT_CNT]);
     printf("\n");
     printf("median %lu high %lu low %lu\n", median_uint64(msrmnt0+j*MSRMNT_CNT, MSRMNT_CNT), findMax(msrmnt0+j*MSRMNT_CNT, MSRMNT_CNT), findMin(msrmnt0+j*MSRMNT_CNT, MSRMNT_CNT));
     printf("\n\n");
-
-    
 
     close_evsets();
     free(my_evset);
@@ -1021,7 +1018,25 @@ void replacement_L2_only_L2_mmap_file(){
 
 
 void test_evset_algorithm(){
-    
+    Config *con = config_init(16, 2048, 64, 105, 2097152, 1, 1);
+    void *target = malloc(4);
+    printf("[+] target adrs %p\n", target);
+    init_evset(con);
+    Node **my_evset = find_evset(con, target);
+    list_print(my_evset);
+
+    u64 *my_msrmnt = malloc(100*sizeof(u64));
+
+    intern_access_new(my_evset, my_evset, my_msrmnt, target);
+    printf("target timings:\n");
+    int j=0;
+    for(int i=0;i<MSRMNT_CNT;i++) printf("%lu; ", my_msrmnt[i+j*MSRMNT_CNT]);
+    printf("\n");
+    printf("median %lu high %lu low %lu\n", median_uint64(my_msrmnt+j*MSRMNT_CNT, MSRMNT_CNT), findMax(my_msrmnt+j*MSRMNT_CNT, MSRMNT_CNT), findMin(my_msrmnt+j*MSRMNT_CNT, MSRMNT_CNT));
+    printf("\n\n");    
+    free(my_msrmnt);
+    close_evsets();
+
 }
 
 
@@ -1046,5 +1061,6 @@ int main(int ac, char **av) {
     // replacement_L2();
     // replacement_L2_2();
     // replacement_L2_only_L2();
+    test_evset_algorithm();
     return 0;
 }
