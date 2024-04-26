@@ -412,8 +412,10 @@ static Node **find_evset(Config *conf_ptr, void *target_adrs){
         free(msrmts);
         msrmts=NULL;
     }
+    printf("a");
     msrmts=realloc(msrmts, 1000*sizeof(u64));
 
+    printf("a");
     if (!buffer || !evsets){
         printf("find_evset: reset\n");
         close_evsets();
@@ -426,6 +428,7 @@ static Node **find_evset(Config *conf_ptr, void *target_adrs){
     // iterate over every cacheline
     u64 index;
     Node *tmp;
+    printf("a");
     list_print(evsets);
     // for(u64 offset=0;offset<(conf->cache_size/conf->cache_line_size);offset++){
     for(u64 offset=0;offset<EVSET_STRIDE;offset++){
