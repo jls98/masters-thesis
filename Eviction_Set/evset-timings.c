@@ -405,7 +405,7 @@ static void init_evset(Config *conf_ptr){
     evsets = realloc(evsets, conf->ways*sizeof(Node *));
     
     printf("init_evset finished, evsets %p, buffer %p\n", evsets, buffer);
-    printf("a");
+    printf("a"\n);
 
 }    
 
