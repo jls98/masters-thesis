@@ -2,6 +2,13 @@
     "files.associations": {
         "random": "c",
         "limits": "c",
-        "algorithm": "c"
+        "algorithm": "c",
+        "fcntl.h": "c",
+        "stat.h": "c",
+        "types.h": "c",
+        "functional": "c",
+        "stdlib.h": "c",
+        "unistd.h": "c",
+        "mman.h": "c"
     }
 }

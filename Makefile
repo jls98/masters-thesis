@@ -1,6 +1,6 @@
 CC = gcc
 CFLAGS = -Wall -Wextra -masm=intel -O0 -fPIC
-TARGETS = evset-timings test_evset-timings victim
+TARGETS = evset-timings test_evset-timings attacker_evset-timings victim
 
 all: $(TARGETS)
 
@@ -21,6 +21,9 @@ evset-timings: Eviction_Set/evset-timings.c
 
 test_evset-timings: Eviction_Set/test_evset-timings.c
 	$(CC) $(CFLAGS) -o build/test_evset-timings -DNOMAIN Eviction_Set/test_evset-timings.c Eviction_Set/evset-timings.c -lcunit
+
+attacker_evset-timings: Eviction_Set/attacker_evset-timings.c
+	$(CC) $(CFLAGS) -o build/attacker_evset-timings -DNOMAIN Eviction_Set/attacker_evset-timings.c Eviction_Set/evset-timings.c
 
 victim: Eviction_Set/victim.c 
 	$(CC) $(CFLAGS) -o build/victim Eviction_Set/victim.c

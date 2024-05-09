@@ -16,7 +16,7 @@
 #define EVSET_STRIDE 2048 // hardcoded for alder lake gracemont: *2048* x 64 Bytes
 
 typedef struct config {
-	u64 ways; // cache ways 
+	u64 evset_size; // cache ways 
     u64 sets;
 	u64 cache_line_size; // cache line size (usually 64)
 	u64 threshold; // threshold for cache (eg ~45 for L1 on i7)
@@ -38,8 +38,6 @@ typedef struct node {
 
 static Config *conf;
 static Node **evsets = NULL;
-static Node *pool = NULL;
-static u64 pool_size = 0;
 static Node *buffer = NULL;
 static u64 buffer_size = 0;
 static Node **buffer_ptr;
@@ -54,7 +52,7 @@ static u64 threshold;
 /* wait for cycles cycles and activate cache            */
 static void wait(u64 cycles);
 static void flush(void *adrs);
-static void access(void *adrs);
+static void my_access(void *adrs);
 static uint64_t median_uint64(uint64_t *array, size_t size);
 // static void fenced_access(void *adrs);
 // static u64 rdtscpfence();
@@ -73,10 +71,10 @@ static void list_print(Node **head);
 
 //Config functions #######################################
 /* init Config */
-static Config *config_init(u64 ways, u64 sets, u64 cache_line_size, u64 threshold, u64 cache_size, u64 test_reps, u64 hugepages);
+static Config *config_init(u64 evset_size, u64 sets, u64 cache_line_size, u64 threshold, u64 cache_size, u64 test_reps, u64 hugepages);
 
 /* configure Config */
-static void config_update(Config *con, u64 ways, u64 sets, u64 cache_line_size, u64 threshold, u64 cache_size, u64 test_reps, u64 hugepages);
+static void config_update(Config *con, u64 evset_size, u64 sets, u64 cache_line_size, u64 threshold, u64 cache_size, u64 test_reps, u64 hugepages);
 
 
 // PRG ###################################################
@@ -94,13 +92,13 @@ static u64 lfsr_step(u64 lfsr);
 
 static void init_evset(Config *conf_ptr);
 static Node **find_evset(Config *conf_ptr, void *target_adrs);
-static Node **get_evset(Config *conf_ptr);
+static Node **get_evset();
 static void close_evsets();
 // static void generate_conflict_set();
-static void traverse_list(Node *ptr);
+// static void traverse_list(Node *ptr);
 static u64 test(Node *ptr, void *target);
 static u64 test_intern(Node *ptr, void *target);
-static u64 probe_evset(Node *ptr);
+// static u64 probe_evset(Node *ptr);
 
 // --- utils ---
 // Comparison function for qsort
@@ -125,7 +123,7 @@ static uint64_t median_uint64(uint64_t *array, size_t size) {
     }
 }
 
-static void access(void *adrs){
+static void my_access(void *adrs){
 	__asm__ volatile("mov rax, [%0];"::"r" (adrs): "rax", "memory");
 }
 
@@ -185,7 +183,7 @@ static u64 probe_evset_chase(const void *addr) {
         // end - high precision
 		"sub rax, rsi;"
 		: "=a" (time)
-		: "b" (addr), "r" (conf->ways+1)
+		: "b" (addr), "r" (conf->evset_size+1)
 		: "rcx", "rsi", "rdx", "r8", "r9"
 	);
 	return time;
@@ -224,15 +222,15 @@ static u64 lfsr_step(u64 lfsr) {
 
 
 // --- config ---
-static Config *config_init(u64 ways, u64 sets, u64 cache_line_size, u64 threshold, u64 cache_size, u64 test_reps, u64 hugepages){
+static Config *config_init(u64 evset_size, u64 sets, u64 cache_line_size, u64 threshold, u64 cache_size, u64 test_reps, u64 hugepages){
 	Config *con = malloc(sizeof(Config));
-	config_update(con, ways, sets, cache_line_size, threshold, cache_size, test_reps, hugepages);
+	config_update(con, evset_size, sets, cache_line_size, threshold, cache_size, test_reps, hugepages);
 	return con;
 }
 
-static void config_update(Config *con, u64 ways, u64 sets, u64 cache_line_size, u64 threshold, u64 cache_size, u64 test_reps, u64 hugepages){
-	// con->ways=ways;
-	con->ways=EVSET_SIZE; // TODO make nicer, hardcoded settings
+static void config_update(Config *con, u64 evset_size, u64 sets, u64 cache_line_size, u64 threshold, u64 cache_size, u64 test_reps, u64 hugepages){
+	con->evset_size=evset_size;
+	// con->evset_size=EVSET_SIZE; // TODO make nicer, hardcoded settings
 	con->sets=sets;
 	con->cache_line_size=cache_line_size;
 	con->threshold=threshold;
@@ -360,7 +358,7 @@ static void list_shuffle(Node **head){
     // connect tail to head
     Node *tmp;
     for(tmp=*new_head;tmp->next;tmp=tmp->next){
-        access(tmp);
+        my_access(tmp);
     }
     tmp->next=*new_head;
     (*new_head)->prev=tmp;
@@ -372,10 +370,10 @@ static void list_print(Node **head){
     if(*head==NULL) return;
     printf("[+] printing adrs of list:\n");
     Node *tmp;
-    int ctr=0;
+    u64 ctr=0;
     for(tmp=*head;tmp;tmp=tmp->next){
-        printf("[%i] %p %p\n", ++ctr, tmp, tmp->next);
-        if(ctr>=conf->ways) break;
+        printf("[%lu] %p %p\n", ++ctr, tmp, tmp->next);
+        if(ctr>=conf->evset_size) break;
     }
 }
 
@@ -386,8 +384,6 @@ int main(int ac, char **av){
     return 0;
 }
 #endif
-
-
 
 static void init_evset(Config *conf_ptr){
     wait(1E9);
@@ -402,7 +398,7 @@ static void init_evset(Config *conf_ptr){
     list_init(buffer, buffer_size);    
     // init buffer for evset elements
     
-    evsets = realloc(evsets, conf->ways*sizeof(Node *));
+    evsets = realloc(evsets, conf->evset_size*sizeof(Node *));
     *evsets = NULL;
     
     printf("[+] init_evset complete, evsets %p, buffer %p\n", evsets, buffer);
@@ -430,7 +426,7 @@ static Node **find_evset(Config *conf_ptr, void *target_adrs){
     // for(u64 offset=0;offset<(conf->cache_size/conf->cache_line_size);offset++){
     for(int offset=EVSET_STRIDE-1;offset>=0;offset--){        
         // create evset with offset as index of Node-array
-        for(int i= (int) conf->ways-1;i>=0;i--){
+        for(int i= (int) conf->evset_size-1;i>=0;i--){
             index=offset + ((u64)i)*EVSET_STRIDE-i*(EVSET_STRIDE-1-offset); // take elements from buffer from up to down for easier index calculation
             tmp = list_take(buffer_ptr, &index);
             list_append(evsets, tmp);
@@ -452,7 +448,7 @@ static void del_evset(){
     while(*evsets) list_pop(evsets);  
 }
 
-static Node **get_evset(Config *conf_ptr){
+static Node **get_evset(){
     if(!evsets){
         return NULL;
     }
@@ -474,21 +470,21 @@ static void close_evsets(){
 
 static void traverse_list0(Node *ptr){
     u64 i=0;
-    for(Node *tmp=ptr;i++<conf->ways;tmp=tmp->next){
+    for(Node *tmp=ptr;i++<conf->evset_size;tmp=tmp->next){
         __asm__ volatile("lfence; ");
-        access(tmp);
+        my_access(tmp);
         
     }    
 }
 
 static u64 test_intern(Node *ptr, void *target){
-    access(target);
+    my_access(target);
     // __asm__ volatile ("lfence;");
     traverse_list0(ptr);
     // traverse_list0(ptr);
     
     // page walk
-    access(target+222);
+    my_access(target+222);
     // access(target-222);
     
     // measure
@@ -504,19 +500,19 @@ static u64 test(Node *ptr, void *target){
     return test_intern(ptr, target) > conf->threshold;
 }
 
-static void calibrate(){
-    // TODO check if buffer size is large enough 
-    u64 buf_size = 4*PAGESIZE;
-    // map memory
-    Node *calibration_buffer = (Node *) mmap(NULL, buf_size, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB, -1, 0);
-    if (madvise(calibration_buffer, PAGESIZE, MADV_HUGEPAGE) == -1){
-        printf("madvise failed!\n");
-        return;
-    }
-    Node **cal_buf_ptr = &calibration_buffer;
-    list_init(calibration_buffer, buf_size);
+// static void calibrate(){
+//     // TODO check if buffer size is large enough 
+//     u64 buf_size = 4*PAGESIZE;
+//     // map memory
+//     Node *calibration_buffer = (Node *) mmap(NULL, buf_size, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB, -1, 0);
+//     if (madvise(calibration_buffer, PAGESIZE, MADV_HUGEPAGE) == -1){
+//         printf("madvise failed!\n");
+//         return;
+//     }
+//     Node **cal_buf_ptr = &calibration_buffer;
+//     list_init(calibration_buffer, buf_size);
 
 
 
-    // unmap and delete
-}
+//     // unmap and delete
+// }

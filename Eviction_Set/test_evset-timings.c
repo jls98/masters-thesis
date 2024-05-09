@@ -59,7 +59,7 @@ static u64 test_buffer(Node **buf, u64 total_size, u64 reps){
     u64 total_time=0;
     u64 *msrmt = malloc(reps*sizeof(u64));
     for(int i=1;i*64<total_size;i++){
-        access(tmp);
+        my_access(tmp);
         tmp=tmp->next;
     }
     next=tmp->next;
@@ -279,10 +279,10 @@ void test_cache_timings2(){
 
     msrmnt1[0] = probe_evset_chase(*head1); // miss miss
     msrmnt1[1] = probe_evset_chase(*head1); // hit
-    access(target);
+    my_access(target);
     msrmnt1[4] = probe_evset_chase(*head1); // miss
-    access(target);
-    access(target);
+    my_access(target);
+    my_access(target);
     msrmnt1[5] = probe_evset_chase(*head1); // miss
     msrmnt1[6] = probe_evset_chase(*head1); // hit
     msrmnt1[7] = probe_evset_chase(*head1); // hit
@@ -348,13 +348,13 @@ void test_L1_evset(){
 
     msrmnt1[0] = probe_evset_chase(*head1); // miss miss
     msrmnt1[1] = probe_evset_chase(*head1); // hit
-    // access(target);
+    // my_access(target);
     msrmnt1[2] =probe_chase_loop(target, 1);
     msrmnt1[4] = probe_evset_chase(*head1); // miss
     msrmnt1[5] =probe_chase_loop(target, 1);
     msrmnt1[6] =probe_chase_loop(target, 1);
-    // access(target);
-    // access(target);
+    // my_access(target);
+    // my_access(target);
     msrmnt1[7] = probe_evset_chase(*head1); // miss
     msrmnt1[8] = probe_evset_chase(*head1); // hit
     msrmnt1[9] = probe_evset_chase(*head1); // hit
@@ -429,49 +429,49 @@ void test_evset_state(){
 
     msrmnt1[0] = probe_evset_chase(*head1); // miss miss
     msrmnt1[1] = probe_evset_chase(*head1); // hit
-    access(target);
+    my_access(target);
     msrmnt2[0] =probe_chase_loop(my_evset[0], 1);
     msrmnt2[1] =probe_chase_loop(my_evset[0], 1);
     msrmnt2[2] =probe_chase_loop(my_evset[0], 1);
     msrmnt1[2] = probe_evset_chase(*head1); // hit
     msrmnt1[3] = probe_evset_chase(*head1); // hit
-    access(target);
+    my_access(target);
     msrmnt2[3] =probe_chase_loop(my_evset[1], 1);
     msrmnt2[4] =probe_chase_loop(my_evset[1], 1);
     msrmnt2[5] =probe_chase_loop(my_evset[1], 1);
     msrmnt1[4] = probe_evset_chase(*head1); // hit
     msrmnt1[5] = probe_evset_chase(*head1); // hit
-    access(target);
+    my_access(target);
     msrmnt2[6] =probe_chase_loop(my_evset[2], 1);
     msrmnt2[7] =probe_chase_loop(my_evset[2], 1);
     msrmnt2[8] =probe_chase_loop(my_evset[2], 1);
     msrmnt1[6] = probe_evset_chase(*head1); // hit 
     msrmnt1[7] = probe_evset_chase(*head1); // miss
-    access(target);
+    my_access(target);
     msrmnt2[9] =probe_chase_loop(my_evset[3], 1);
     msrmnt2[10] =probe_chase_loop(my_evset[3], 1);
     msrmnt2[11] =probe_chase_loop(my_evset[3], 1);
     msrmnt1[8] = probe_evset_chase(*head1); // hit
     msrmnt1[9] = probe_evset_chase(*head1); // hit
-    access(target);
+    my_access(target);
     msrmnt2[12] =probe_chase_loop(my_evset[4], 1);
     msrmnt2[13] =probe_chase_loop(my_evset[4], 1);
     msrmnt2[14] =probe_chase_loop(my_evset[4], 1);
     msrmnt1[10] = probe_evset_chase(*head1); // miss
     msrmnt1[11] = probe_evset_chase(*head1); // miss
-    access(target);
+    my_access(target);
     msrmnt2[15] =probe_chase_loop(my_evset[5], 1);
     msrmnt2[16] =probe_chase_loop(my_evset[5], 1);
     msrmnt2[17] =probe_chase_loop(my_evset[5], 1);
     msrmnt1[12] = probe_evset_chase(*head1); // miss
     msrmnt1[13] = probe_evset_chase(*head1); // miss
-    access(target);
+    my_access(target);
     msrmnt2[18] =probe_chase_loop(my_evset[6], 1);
     msrmnt2[19] =probe_chase_loop(my_evset[6], 1);
     msrmnt2[20] =probe_chase_loop(my_evset[6], 1);
     msrmnt1[14] = probe_evset_chase(*head1); // miss
     msrmnt1[15] = probe_evset_chase(*head1); // miss
-    access(target);
+    my_access(target);
     msrmnt2[21] =probe_chase_loop(my_evset[7], 1);
     msrmnt2[22] =probe_chase_loop(my_evset[7], 1);
     msrmnt2[23] =probe_chase_loop(my_evset[7], 1);
@@ -517,14 +517,14 @@ void intern_access_tar(Node **head1, Node **head2, Node **my_evset1, Node **my_e
     for(int c=0;c<MSRMNT_CNT;c++){
         
         // TODO figure out why L2_2 remains kinda unreliable
-        access(target);
-        access(target);
-        access(target);
-        access(target);
-        access(target);
+        my_access(target);
+        my_access(target);
+        my_access(target);
+        my_access(target);
+        my_access(target);
         traverse_list0(*head2);
         traverse_list0(*head1);
-        access(target+222);
+        my_access(target+222);
         // measure access time for one entry
         msrmnt_[c]=probe_chase_loop(target, 1);       
     }
@@ -532,9 +532,9 @@ void intern_access_tar(Node **head1, Node **head2, Node **my_evset1, Node **my_e
 
 void intern_access_new(Node **head1, Node **my_evset, u64 *msrmnt_, void * target){
     for(int c=0;c<MSRMNT_CNT;c++){
-        access(target);       
+        my_access(target);       
         traverse_list0(*head1);
-        access(target+222);
+        my_access(target+222);
 
         // measure access time for one entry
         msrmnt_[c]=probe_chase_loop(target, 1);       
@@ -575,7 +575,7 @@ void replacement_L1(){
     }
     Node **buf_ptr=&buf;
     list_init(buf, buf_size);  
-    Node **my_evset = (Node *) malloc(9*sizeof(Node *));
+    Node **my_evset = (Node **) malloc(9*sizeof(Node *));
     *my_evset=NULL;
     // create evsets manually and test them with targets
 
@@ -588,7 +588,7 @@ void replacement_L1(){
     target->prev=target;
 
     printf("[!] target %p\n", target);
-    Node **head1 = malloc(sizeof(Node *)); // refs to first element of evset
+    Node **head1 = (Node **) malloc(sizeof(Node *)); // refs to first element of evset
     *head1 =NULL;
     // add 1st elem
     index = 8*size_stride+offset;
@@ -618,7 +618,7 @@ void replacement_L1(){
     // preparation done
 
     u64 aaaaa=0;
-    for(tmp=*head1;aaaaa++<conf->ways;tmp=tmp->next){
+    for(tmp=*head1;aaaaa++<conf->evset_size;tmp=tmp->next){
         for(int bbbb=0;bbbb<9;bbbb++){
             if(tmp==my_evset[bbbb]) printf("%i %p\n", bbbb, tmp);
         }        
@@ -697,7 +697,7 @@ void replacement_L2(){
     }
     Node **buf_ptr=&buf;
     list_init(buf, buf_size);  
-    Node **my_evset = (Node *) malloc(EVSET_TARGETS*sizeof(Node *));
+    Node **my_evset = (Node **) malloc(EVSET_TARGETS*sizeof(Node *));
     *my_evset=NULL;
     // create evsets manually and test them with targets
 
@@ -711,7 +711,7 @@ void replacement_L2(){
     target->prev=target;
 
     printf("[!] target %p\n", target);
-    Node **head1 = malloc(sizeof(Node *)); // refs to first element of evset
+    Node **head1 = (Node **) malloc(sizeof(Node *)); // refs to first element of evset
     *head1 =NULL;
     // add 1st elem
     index = (EVSET_L2-1+1)*size_stride_L2+offset; // -1 to be in 1 block, +1 for test 1 more
@@ -744,7 +744,7 @@ void replacement_L2(){
     // preparation done
 
     u64 aaaaa=0;
-    for(tmp=*head1;aaaaa++<conf->ways;tmp=tmp->next){
+    for(tmp=*head1;aaaaa++<conf->evset_size;tmp=tmp->next){
         for(int bbbb=0;bbbb<EVSET_TARGETS;bbbb++){
             if(tmp==my_evset[bbbb]) printf("%2d %p\n", bbbb, tmp);
         }        
@@ -788,8 +788,8 @@ void replacement_L2_2(){
     }
     Node **buf_ptr=&buf;
     list_init(buf, buf_size);  
-    Node **my_evset1 = (Node *) malloc(EVSET_L1*sizeof(Node *));
-    Node **my_evset2 = (Node *) malloc(EVSET_L2*sizeof(Node *));
+    Node **my_evset1 = (Node **) malloc(EVSET_L1*sizeof(Node *));
+    Node **my_evset2 = (Node **) malloc(EVSET_L2*sizeof(Node *));
     *my_evset1=NULL;
     *my_evset2=NULL;
     // create evsets manually and test them with targets
@@ -804,8 +804,8 @@ void replacement_L2_2(){
     target->prev=target;
 
     printf("[!] target %p\n", target);
-    Node **head1 = malloc(sizeof(Node *)); // refs to first element of evset
-    Node **head2 = malloc(sizeof(Node *)); // refs to first element of evset
+    Node **head1 = (Node **) malloc(sizeof(Node *)); // refs to first element of evset
+    Node **head2 = (Node **) malloc(sizeof(Node *)); // refs to first element of evset
     *head1 =NULL;
     *head2 =NULL;
 
@@ -887,7 +887,7 @@ void replacement_L2_only_L2(){
     }
     Node **buf_ptr=&buf;
     list_init(buf, buf_size);  
-    Node **my_evset = (Node *) malloc(EVSET_L2_NEW*sizeof(Node *));
+    Node **my_evset = (Node **) malloc(EVSET_L2_NEW*sizeof(Node *));
     *my_evset=NULL;
     // create evsets manually and test them with targets
 
@@ -899,7 +899,7 @@ void replacement_L2_only_L2(){
     target->prev=target;
 
     printf("[!] target %p\n", target);
-    Node **head1 = malloc(sizeof(Node *)); // refs to first element of evset
+    Node **head1 = (Node **) malloc(sizeof(Node *)); // refs to first element of evset
     *head1 =NULL;
     // add 1st elem
     index = (EVSET_L2_NEW-1)*size_stride_L2+offset; // -1
@@ -957,7 +957,7 @@ void replacement_L2_only_L2_mmap_file(){
     }
     Node **buf_ptr=&buf;
     list_init(buf, buf_size);  
-    Node **my_evset = (Node *) malloc(EVSET_L2_NEW*sizeof(Node *));
+    Node **my_evset = (Node **) malloc(EVSET_L2_NEW*sizeof(Node *));
     *my_evset=NULL;
     // create evsets manually and test them with targets
 
@@ -969,7 +969,7 @@ void replacement_L2_only_L2_mmap_file(){
     target->prev=target;
 
     printf("[!] target %p\n", target);
-    Node **head1 = malloc(sizeof(Node *)); // refs to first element of evset
+    Node **head1 = (Node **) malloc(sizeof(Node *)); // refs to first element of evset
     *head1 =NULL;
     // add 1st elem
     index = (EVSET_L2_NEW-1)*size_stride_L2+offset; // -1
