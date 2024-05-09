@@ -16,28 +16,34 @@ static int map_len;
 // load probe adresses from file
 void *target_loader(char *file_path)
 {
+    printf("a\n");
     FILE *fp = fopen(file_path, "r");
     char *line = NULL;
     size_t len = 0;
     ssize_t read;
 
+    printf("a\n");
     if (fp == NULL)
     {
         perror("Error reading adress file (fopen)!\n");
         exit(EXIT_FAILURE);
     }
     
+    printf("a\n");
     // init linked list
     void *spy_target;
     // https://linux.die.net/man/3/getline
     // read line for line and parse linewise read string to pointers
     while ((read = getline(&line, &len, fp)) != -1) {
         
+    printf("a\n");
         (&line)[strlen(line)-1] = "\0"; //delete "\n"
-        spy_target = (char *)strtol(line, NULL, 16); // make read string to pointer
+        spy_target = (void *)strtol(line, NULL, 16); // make read string to pointer
                
+    printf("a\n");
     }
 
+    printf("a\n");
     fclose(fp);
     free(line);
 
@@ -59,14 +65,17 @@ void victim_reader(char *filepath){
 }
 
 void init_spy(char *victim_filepath, void *spy_target){
-
+    printf("init spy\n");
     // load victim 
     victim_reader(victim_filepath);
+    printf("victim read\n");
 
     // prepare evset
     Config *spy_conf= config_init(24, 2048, 64, 105, 2097152, 1, 1);
     init_evset(spy_conf);
+    printf("init evset done\n");
     spy_evsets = find_evset(spy_conf, spy_target);
+    printf("find evset done\n");
     
     printf("[+] spy evset for target adrs %p\n", spy_target);
     list_print(list_print);
@@ -107,9 +116,17 @@ void my_monitor(void *spy_target){
 
 void spy(char *victim_filepath, void *spy_target){
     init_spy(victim_filepath, spy_target);
+    printf("[+] spy init complete, monitoring %p now...\n", spy_target);
     my_monitor(spy_target);
 }
 
-int main(int ac, char **av){    
-    spy(av[1], target_loader(av[2]));
+int main(int ac, char **av){  
+    printf("%s\n", av[1]);
+    printf("%s\n", av[2]);
+    void *my_target = 0x1d94; 
+    //0x1174;
+    my_access(my_target);
+    printf("%p\n", my_target);
+    // printf("%p\n", target_loader(av[2]));
+    spy(av[1], my_target);
 }

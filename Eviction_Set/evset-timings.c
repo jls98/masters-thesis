@@ -410,7 +410,7 @@ static Node **find_evset(Config *conf_ptr, void *target_adrs){
         msrmts=NULL;
     }
     msrmts=realloc(msrmts, 1000*sizeof(u64));
-
+    printf("a\n");
     if (!buffer || !evsets){
         printf("find_evset: reset\n");
         close_evsets();
@@ -418,6 +418,7 @@ static Node **find_evset(Config *conf_ptr, void *target_adrs){
     }
     // find out which adrs offset works
     wait(1E9);
+    printf("a\n");
     
     // loop over each cache line
     // iterate over every cacheline
@@ -426,20 +427,25 @@ static Node **find_evset(Config *conf_ptr, void *target_adrs){
     // for(u64 offset=0;offset<(conf->cache_size/conf->cache_line_size);offset++){
     for(int offset=EVSET_STRIDE-1;offset>=0;offset--){        
         // create evset with offset as index of Node-array
+        printf("b\n");
         for(int i= (int) conf->evset_size-1;i>=0;i--){
             index=offset + ((u64)i)*EVSET_STRIDE-i*(EVSET_STRIDE-1-offset); // take elements from buffer from up to down for easier index calculation
             tmp = list_take(buffer_ptr, &index);
             list_append(evsets, tmp);
         }
+        printf("c\n");
         list_shuffle(evsets);
+        printf("d\n");
         if(msr_index>990) msr_index=0;
         // test if it is applicable, if yes yehaaw if not, proceed and reset evset pointer 
         
 
+        printf("e\n");
         if(test(*evsets, target_adrs)) if(test(*evsets, target_adrs)) break;        
         // remove elems from evsets and prepare next iteration
         while(*evsets) list_pop(evsets);       
     }   
+    printf("a\n");
     return evsets;
 }
 
@@ -490,6 +496,7 @@ static u64 test_intern(Node *ptr, void *target){
     // measure
     msrmts[msr_index++]=probe_chase_loop(target, 1);
     // printf("%lu ", msrmts[msr_index-1]);
+    printf("msrmts\n");
     return msrmts[msr_index-1];
 }
 
@@ -497,6 +504,7 @@ static u64 test(Node *ptr, void *target){
     if(ptr ==NULL || target ==NULL){
         return 0;
     }
+    printf("test\n");
     return test_intern(ptr, target) > conf->threshold;
 }
 
