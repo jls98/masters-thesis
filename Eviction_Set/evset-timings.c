@@ -403,6 +403,7 @@ static void init_evset(Config *conf_ptr){
     // init buffer for evset elements
     
     evsets = realloc(evsets, conf->ways*sizeof(Node *));
+    *evsets = NULL;
     
     printf("[+] init_evset complete, evsets %p, buffer %p\n", evsets, buffer);
 }    
@@ -430,7 +431,6 @@ static Node **find_evset(Config *conf_ptr, void *target_adrs){
     for(int offset=EVSET_STRIDE-1;offset>=0;offset--){        
         // create evset with offset as index of Node-array
         for(int i= (int) conf->ways-1;i>=0;i--){
-
             index=offset + ((u64)i)*EVSET_STRIDE-i*(EVSET_STRIDE-1-offset); // take elements from buffer from up to down for easier index calculation
             tmp = list_take(buffer_ptr, &index);
             list_append(evsets, tmp);
@@ -439,7 +439,7 @@ static Node **find_evset(Config *conf_ptr, void *target_adrs){
         if(msr_index>990) msr_index=0;
         // test if it is applicable, if yes yehaaw if not, proceed and reset evset pointer 
         
-        
+
         if(test(*evsets, target_adrs)) if(test(*evsets, target_adrs)) break;        
         // remove elems from evsets and prepare next iteration
         while(*evsets) list_pop(evsets);       

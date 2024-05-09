@@ -1017,9 +1017,7 @@ void test_evset_algorithm(){
     init_evset(con);
     Node **my_evset = find_evset(con, target);
     list_print(my_evset);
-
     u64 *my_msrmnt = malloc(100*sizeof(u64));
-
 
     intern_access_new(my_evset, my_evset, my_msrmnt, target);
     printf("target timings:\n");
@@ -1052,9 +1050,9 @@ int main(int ac, char **av) {
 
     CU_basic_run_tests();
     CU_cleanup_registry();
-    // replacement_L2();
-    // replacement_L2_2();
-    // replacement_L2_only_L2();
+    replacement_L2();
+    replacement_L2_2();
+    replacement_L2_only_L2();
     test_evset_algorithm();
     return 0;
 }
