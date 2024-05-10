@@ -9,6 +9,7 @@
         "functional": "c",
         "stdlib.h": "c",
         "unistd.h": "c",
-        "mman.h": "c"
+        "mman.h": "c",
+        "stdio.h": "c"
     }
 }
