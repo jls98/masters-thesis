@@ -838,7 +838,7 @@ void replacement_L2_2(){
     tmp=list_take(buf_ptr, &index);
     list_append(head2, tmp);
     my_evset2[0] = tmp;
-   // add last L2 elem (0)
+    // add last L2 elem (0)
 
 
     list_print(head1);
@@ -1011,7 +1011,7 @@ void replacement_L2_only_L2_mmap_file(){
 
 
 void test_evset_algorithm(){
-    Config *con = config_init(16, 2048, 64, 105, 2097152, 1, 1);
+    Config *con = config_init(24, 2048, 64, 105, 2097152, 1, 1);
     void *target = malloc(4);
     printf("[+] target adrs %p\n", target);
     init_evset(con);
@@ -1026,6 +1026,31 @@ void test_evset_algorithm(){
     printf("\n");
     printf("median %lu high %lu low %lu\n", median_uint64(my_msrmnt+j*MSRMNT_CNT, MSRMNT_CNT), findMax(my_msrmnt+j*MSRMNT_CNT, MSRMNT_CNT), findMin(my_msrmnt+j*MSRMNT_CNT, MSRMNT_CNT));
     printf("\n\n");    
+
+    // measure whole evset access
+    int index = 0;
+
+    uint64_t *evset_cached = malloc(100*sizeof(uint64_t));
+    uint64_t *evset_uncached = malloc(100*sizeof(uint64_t));
+
+    for(int i=0;i<100;i++){
+        evset_cached[i]=probe_chase_loop(my_evset, conf->evset_size);
+    }
+
+    for(int i=0;i<100;i++){
+        __asm__ volatile("mfence");
+        probe_chase_loop(target, 1);
+        // access(target);
+        __asm__ volatile("lfence");
+        evset_uncached[i]=probe_chase_loop(my_evset, conf->evset_size);
+    }
+
+
+    printf("cached vals: ");
+    for(int i=0;i<100;i++) printf("%lu; ", evset_cached[i]);
+    printf("\nuncached vals: ");
+    for(int i=0;i<100;i++) printf("%lu; ", evset_uncached[i]);
+    printf("\n");
     free(my_msrmnt);
     close_evsets();
 
