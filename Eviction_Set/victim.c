@@ -110,7 +110,7 @@ void victim_call3(){
     victim_call0();
 }
 
-void main(){
+int main(){
     victim_call2();
     victim_call2();
     victim_call2();

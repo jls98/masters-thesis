@@ -44,7 +44,6 @@ static Node **buffer_ptr;
 static u64 lfsr;
 static u64 msr_index=0;
 static u64 *msrmts;
-static u64 threshold;
 
 
 
@@ -379,7 +378,7 @@ static void list_print(Node **head){
 
 // --- algorithms ---
 #ifndef NOMAIN
-int main(int ac, char **av){
+int main(){
 
     return 0;
 }

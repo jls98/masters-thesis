@@ -58,7 +58,7 @@ static u64 test_buffer(Node **buf, u64 total_size, u64 reps){
     Node *next;
     u64 total_time=0;
     u64 *msrmt = malloc(reps*sizeof(u64));
-    for(int i=1;i*64<total_size;i++){
+    for(u64 i=1;i*64<total_size;i++){
         my_access(tmp);
         tmp=tmp->next;
     }
@@ -72,7 +72,7 @@ static u64 test_buffer(Node **buf, u64 total_size, u64 reps){
     traverse_list0(tmp);
     traverse_list0(tmp);
     tmp=*head;
-    for(int i=0;i<reps;i++){ // unstable TODO
+    for(u64 i=0;i<reps;i++){ // unstable TODO
         msrmt[i]=probe_chase_loop(tmp, total_size);        
     }   
     
@@ -81,7 +81,7 @@ static u64 test_buffer(Node **buf, u64 total_size, u64 reps){
     *buf=*head;
     (*head)->prev=NULL;
 
-    for(int i=0;i<reps;i++){
+    for(u64 i=0;i<reps;i++){
             total_time+=msrmt[i];
     }    
     u64 median=median_uint64(msrmt, reps);
@@ -107,8 +107,7 @@ void test_cache_size(){
         return;
     }
     list_init(buf, buf_size);
-    Node *tmp;
-    u64 total_time=0;
+    u64 total_time;
     u64 tmp_buffer_size;
     Node **buffer=&buf;
     
@@ -393,7 +392,7 @@ void test_evset_state(){
     }
     buffer_ptr=&buf;
     list_init(buf, buf_size);  
-    Node **my_evset = (Node *) malloc(8*sizeof(Node *));
+    Node **my_evset = malloc(8*sizeof(Node *));
 
     // create evsets manually and test them with targets
 
@@ -575,7 +574,7 @@ void replacement_L1(){
     }
     Node **buf_ptr=&buf;
     list_init(buf, buf_size);  
-    Node **my_evset = (Node **) malloc(9*sizeof(Node *));
+    Node **my_evset = malloc(9*sizeof(Node *));
     *my_evset=NULL;
     // create evsets manually and test them with targets
 
@@ -588,7 +587,7 @@ void replacement_L1(){
     target->prev=target;
 
     printf("[!] target %p\n", target);
-    Node **head1 = (Node **) malloc(sizeof(Node *)); // refs to first element of evset
+    Node **head1 = malloc(sizeof(Node *)); // refs to first element of evset
     *head1 =NULL;
     // add 1st elem
     index = 8*size_stride+offset;
@@ -697,7 +696,7 @@ void replacement_L2(){
     }
     Node **buf_ptr=&buf;
     list_init(buf, buf_size);  
-    Node **my_evset = (Node **) malloc(EVSET_TARGETS*sizeof(Node *));
+    Node **my_evset = malloc(EVSET_TARGETS*sizeof(Node *));
     *my_evset=NULL;
     // create evsets manually and test them with targets
 
@@ -711,7 +710,7 @@ void replacement_L2(){
     target->prev=target;
 
     printf("[!] target %p\n", target);
-    Node **head1 = (Node **) malloc(sizeof(Node *)); // refs to first element of evset
+    Node **head1 = malloc(sizeof(Node *)); // refs to first element of evset
     *head1 =NULL;
     // add 1st elem
     index = (EVSET_L2-1+1)*size_stride_L2+offset; // -1 to be in 1 block, +1 for test 1 more
@@ -788,8 +787,8 @@ void replacement_L2_2(){
     }
     Node **buf_ptr=&buf;
     list_init(buf, buf_size);  
-    Node **my_evset1 = (Node **) malloc(EVSET_L1*sizeof(Node *));
-    Node **my_evset2 = (Node **) malloc(EVSET_L2*sizeof(Node *));
+    Node **my_evset1 = malloc(EVSET_L1*sizeof(Node *));
+    Node **my_evset2 = malloc(EVSET_L2*sizeof(Node *));
     *my_evset1=NULL;
     *my_evset2=NULL;
     // create evsets manually and test them with targets
@@ -804,8 +803,8 @@ void replacement_L2_2(){
     target->prev=target;
 
     printf("[!] target %p\n", target);
-    Node **head1 = (Node **) malloc(sizeof(Node *)); // refs to first element of evset
-    Node **head2 = (Node **) malloc(sizeof(Node *)); // refs to first element of evset
+    Node **head1 = malloc(sizeof(Node *)); // refs to first element of evset
+    Node **head2 = malloc(sizeof(Node *)); // refs to first element of evset
     *head1 =NULL;
     *head2 =NULL;
 
@@ -887,7 +886,7 @@ void replacement_L2_only_L2(){
     }
     Node **buf_ptr=&buf;
     list_init(buf, buf_size);  
-    Node **my_evset = (Node **) malloc(EVSET_L2_NEW*sizeof(Node *));
+    Node **my_evset = malloc(EVSET_L2_NEW*sizeof(Node *));
     *my_evset=NULL;
     // create evsets manually and test them with targets
 
@@ -899,7 +898,7 @@ void replacement_L2_only_L2(){
     target->prev=target;
 
     printf("[!] target %p\n", target);
-    Node **head1 = (Node **) malloc(sizeof(Node *)); // refs to first element of evset
+    Node **head1 = malloc(sizeof(Node *)); // refs to first element of evset
     *head1 =NULL;
     // add 1st elem
     index = (EVSET_L2_NEW-1)*size_stride_L2+offset; // -1
@@ -957,7 +956,7 @@ void replacement_L2_only_L2_mmap_file(){
     }
     Node **buf_ptr=&buf;
     list_init(buf, buf_size);  
-    Node **my_evset = (Node **) malloc(EVSET_L2_NEW*sizeof(Node *));
+    Node **my_evset = malloc(EVSET_L2_NEW*sizeof(Node *));
     *my_evset=NULL;
     // create evsets manually and test them with targets
 
@@ -969,7 +968,7 @@ void replacement_L2_only_L2_mmap_file(){
     target->prev=target;
 
     printf("[!] target %p\n", target);
-    Node **head1 = (Node **) malloc(sizeof(Node *)); // refs to first element of evset
+    Node **head1 = malloc(sizeof(Node *)); // refs to first element of evset
     *head1 =NULL;
     // add 1st elem
     index = (EVSET_L2_NEW-1)*size_stride_L2+offset; // -1
@@ -1028,8 +1027,6 @@ void test_evset_algorithm(){
     printf("\n\n");    
 
     // measure whole evset access
-    int index = 0;
-
     uint64_t *evset_cached = malloc(100*sizeof(uint64_t));
     uint64_t *evset_uncached = malloc(100*sizeof(uint64_t));
 
@@ -1057,24 +1054,24 @@ void test_evset_algorithm(){
 }
 
 
-int main(int ac, char **av) {
+int main() {
 
 	wait(1E9);
-    CU_initialize_registry();
+    // CU_initialize_registry();
 
-    CU_pSuite suite = CU_add_suite("Test Suite evict_baseline", NULL, NULL);
+    // CU_pSuite suite = CU_add_suite("Test Suite evict_baseline", NULL, NULL);
 
-    // CU_add_test(suite, "Test test_node", test_node);
-    // CU_add_test(suite, "Test test_cache_size", test_cache_size);
-    // CU_add_test(suite, "Test test_cache_timings1", test_cache_timings1);
-    // CU_add_test(suite, "Test test_cache_timings2", test_cache_timings2);
-    // CU_add_test(suite, "Test test_L1_evset", test_L1_evset);
-    // CU_add_test(suite, "Test test_L2_evset", test_L2_evset);
-    // CU_add_test(suite, "Test test_evset_state", test_evset_state);
-    // CU_add_test(suite, "Test replacement_L1", replacement_L1);
+    // // CU_add_test(suite, "Test test_node", test_node);
+    // // CU_add_test(suite, "Test test_cache_size", test_cache_size);
+    // // CU_add_test(suite, "Test test_cache_timings1", test_cache_timings1);
+    // // CU_add_test(suite, "Test test_cache_timings2", test_cache_timings2);
+    // // CU_add_test(suite, "Test test_L1_evset", test_L1_evset);
+    // // CU_add_test(suite, "Test test_L2_evset", test_L2_evset);
+    // // CU_add_test(suite, "Test test_evset_state", test_evset_state);
+    // // CU_add_test(suite, "Test replacement_L1", replacement_L1);
 
-    CU_basic_run_tests();
-    CU_cleanup_registry();
+    // CU_basic_run_tests();
+    // CU_cleanup_registry();
     replacement_L2();
     replacement_L2_2();
     replacement_L2_only_L2();
