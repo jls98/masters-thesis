@@ -1057,9 +1057,8 @@ void test_evset_algorithm(){
 int main() {
 
 	wait(1E9);
-    // CU_initialize_registry();
-
-    // CU_pSuite suite = CU_add_suite("Test Suite evict_baseline", NULL, NULL);
+    CU_initialize_registry();
+    CU_pSuite suite = CU_add_suite("Test Suite evict_baseline", NULL, NULL);
 
     // // CU_add_test(suite, "Test test_node", test_node);
     // // CU_add_test(suite, "Test test_cache_size", test_cache_size);
@@ -1067,11 +1066,11 @@ int main() {
     // // CU_add_test(suite, "Test test_cache_timings2", test_cache_timings2);
     // // CU_add_test(suite, "Test test_L1_evset", test_L1_evset);
     // // CU_add_test(suite, "Test test_L2_evset", test_L2_evset);
-    // // CU_add_test(suite, "Test test_evset_state", test_evset_state);
+    CU_add_test(suite, "Test test_evset_state", test_evset_state);
     // // CU_add_test(suite, "Test replacement_L1", replacement_L1);
 
-    // CU_basic_run_tests();
-    // CU_cleanup_registry();
+    CU_basic_run_tests();
+    CU_cleanup_registry();
     replacement_L2();
     replacement_L2_2();
     replacement_L2_only_L2();

