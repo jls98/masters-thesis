@@ -68,14 +68,16 @@ void my_monitor(){
     unsigned long long old_tsc, tsc = rdtsc();
     probe_chase_loop(victim_copy, 1);
     probe_chase_loop(victim, 1);
-    probe_evset_chase(*spy_evsets);
-    probe_evset_chase(*spy_evsets);
+    // probe_evset_chase(*spy_evsets);
+    // probe_evset_chase(*spy_evsets);
     // void *my_victim = map("./build/victim", 0x11a8);
 
+    flush(victim);
+    flush(victim_copy);
 
     int timing1 = probe_chase_loop(victim, 1);
     int timing2 = probe_chase_loop(victim, 1);
-    probe_evset_chase(*spy_evsets);
+    probe_evset_chase(victim);
     int timing3 = probe_chase_loop(victim_copy, 1);
     int timing4 = probe_chase_loop(victim, 1);
 
