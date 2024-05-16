@@ -34,4 +34,21 @@ int main(){
     void *my_victim = map("./build/victim", 0x118a);
     printf("my victim is located at %p\n", my_victim);
     probe_chase_loop(my_victim, 1);
+    probe_chase_loop(my_victim, 1);
+    probe_chase_loop(my_victim, 1);
+    probe_chase_loop(my_victim, 1);
+    probe_chase_loop(my_victim, 1);
+    probe_chase_loop(my_victim, 1);
+    probe_chase_loop(my_victim, 1);
+    probe_chase_loop(my_victim, 1);
+    probe_chase_loop(my_victim, 1);
+    probe_chase_loop(my_victim, 1);
+    probe_chase_loop(my_victim, 1);
+    probe_chase_loop(my_victim, 1);
+    probe_chase_loop(my_victim, 1);
+    probe_chase_loop(my_victim, 1);
+    probe_chase_loop(my_victim, 1);
+    probe_chase_loop(my_victim, 1);
+    probe_chase_loop(my_victim, 1);
+    probe_chase_loop(my_victim, 1);
 }
