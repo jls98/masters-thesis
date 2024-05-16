@@ -494,7 +494,7 @@ void test_evset_state(){
     free(msrmnt2);
 }
 
-#define MSRMNT_CNT 100
+#define MSRMNT_CNT 1000000
 #define EVSET_TARGETS 25
 #define EVSET_L2 16
 #define EVSET_L1 8
@@ -1007,47 +1007,58 @@ void replacement_L2_only_L2_mmap_file(){
     free(head1);
     munmap(buf, buf_size);
 }
+static __inline__ unsigned long long rdtsc(void)
+{
+    unsigned long long int x;
+    __asm__ __volatile__ ("rdtsc" : "=A" (x));
+    return x;
+}
 
 
 void test_evset_algorithm(){
-    Config *con = config_init(24, 2048, 64, 105, 2097152, 1, 1);
+    Config *con = config_init(24, 2048, 64, 115, 2097152, 1, 1);
     void *target = malloc(4);
     printf("[+] target adrs %p\n", target);
     init_evset(con);
     Node **my_evset = find_evset(con, target);
     list_print(my_evset);
-    u64 *my_msrmnt = malloc(100*sizeof(u64));
+    u64 *my_msrmnt = malloc(MSRMNT_CNT*sizeof(u64));
 
     intern_access_new(my_evset, my_evset, my_msrmnt, target);
     printf("target timings:\n");
     int j=0;
-    for(int i=0;i<MSRMNT_CNT;i++) printf("%lu; ", my_msrmnt[i+j*MSRMNT_CNT]);
+    int counter=0;
+    for(int i=0;i<MSRMNT_CNT;i++){
+        printf("%lu; ", my_msrmnt[i+j*MSRMNT_CNT]);
+        if(my_msrmnt[i+j*MSRMNT_CNT] < conf->threshold) counter++;
+    } 
     printf("\n");
-    printf("median %lu high %lu low %lu\n", median_uint64(my_msrmnt+j*MSRMNT_CNT, MSRMNT_CNT), findMax(my_msrmnt+j*MSRMNT_CNT, MSRMNT_CNT), findMin(my_msrmnt+j*MSRMNT_CNT, MSRMNT_CNT));
+    printf("median %lu high %lu low %lu, L2 counter %i\n", median_uint64(my_msrmnt+j*MSRMNT_CNT, MSRMNT_CNT), findMax(my_msrmnt+j*MSRMNT_CNT, MSRMNT_CNT), findMin(my_msrmnt+j*MSRMNT_CNT, MSRMNT_CNT), counter);
     printf("\n\n");    
+    counter=0;
+    unsigned long long old_tsc, tsc = rdtsc();
+    u64 msrmt, msrmt_e;
+    
+    flush(target);
+    for(int i = 0; i<MSRMNT_CNT; i++){
+        old_tsc = tsc;
+        tsc=rdtsc();
+        while (tsc - old_tsc < 2500) // TODO why 2500/500 cycles per slot now, depending on printf
+        {
+            tsc = rdtsc();
+        }
 
-    // measure whole evset access
-    uint64_t *evset_cached = malloc(100*sizeof(uint64_t));
-    uint64_t *evset_uncached = malloc(100*sizeof(uint64_t));
+        
+        msrmt_e = probe_evset_chase(my_evset);
+        msrmt = probe_chase_loop(target, 1);
+        if(msrmt < conf->threshold) {
+            counter++;
+            // printf("[!] my_monitor: victim acitivity detected! cycles %lu, ctr %d, evset_probetime %lu\n", msrmt, msrmt_e);
+        }
 
-    for(int i=0;i<100;i++){
-        evset_cached[i]=probe_chase_loop(my_evset, conf->evset_size);
     }
 
-    for(int i=0;i<100;i++){
-        __asm__ volatile("mfence");
-        probe_chase_loop(target, 1);
-        // access(target);
-        __asm__ volatile("lfence");
-        evset_uncached[i]=probe_chase_loop(my_evset, conf->evset_size);
-    }
-
-
-    printf("cached vals: ");
-    for(int i=0;i<100;i++) printf("%lu; ", evset_cached[i]);
-    printf("\nuncached vals: ");
-    for(int i=0;i<100;i++) printf("%lu; ", evset_uncached[i]);
-    printf("\n");
+    printf("counter %i\n", counter);
     free(my_msrmnt);
     close_evsets();
 
@@ -1057,23 +1068,24 @@ void test_evset_algorithm(){
 int main() {
 
 	wait(1E9);
-    CU_initialize_registry();
-    CU_pSuite suite = CU_add_suite("Test Suite evict_baseline", NULL, NULL);
+    // CU_initialize_registry();
+    // CU_pSuite suite = CU_add_suite("Test Suite evict_baseline", NULL, NULL);
 
-    // // CU_add_test(suite, "Test test_node", test_node);
-    // // CU_add_test(suite, "Test test_cache_size", test_cache_size);
-    // // CU_add_test(suite, "Test test_cache_timings1", test_cache_timings1);
-    // // CU_add_test(suite, "Test test_cache_timings2", test_cache_timings2);
-    // // CU_add_test(suite, "Test test_L1_evset", test_L1_evset);
-    // // CU_add_test(suite, "Test test_L2_evset", test_L2_evset);
-    CU_add_test(suite, "Test test_evset_state", test_evset_state);
-    // // CU_add_test(suite, "Test replacement_L1", replacement_L1);
-
-    CU_basic_run_tests();
-    CU_cleanup_registry();
-    replacement_L2();
-    replacement_L2_2();
-    replacement_L2_only_L2();
+    // // // CU_add_test(suite, "Test test_node", test_node);
+    // // // CU_add_test(suite, "Test test_cache_size", test_cache_size);
+    // // // CU_add_test(suite, "Test test_cache_timings1", test_cache_timings1);
+    // // // CU_add_test(suite, "Test test_cache_timings2", test_cache_timings2);
+    // // // CU_add_test(suite, "Test test_L1_evset", test_L1_evset);
+    // // // CU_add_test(suite, "Test test_L2_evset", test_L2_evset);
+    // CU_add_test(suite, "Test test_evset_state", test_evset_state);
+    // // // CU_add_test(suite, "Test replacement_L1", replacement_L1);
+    // 1000000
+    //   50000
+    // CU_basic_run_tests();
+    // CU_cleanup_registry();
+    // replacement_L2();
+    // replacement_L2_2();
+    // replacement_L2_only_L2();
     test_evset_algorithm();
     return 0;
 }
