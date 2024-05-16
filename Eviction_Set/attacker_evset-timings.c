@@ -114,9 +114,10 @@ int main(int ac, char **av){
     // int my_target = 0x15cb;
     if(ac!=3) return 0;
     // int my_target = 0xd57ed; 
-    int my_target = 0x11a8;
+    int my_target = 0x118a;
     //0x116f-0x11b4 victim_loop2, loop itself 0x118a - 0x11a8, take 0x118a alder lake
     //0xd57ed madgpg sqr, 0xd571f mul
+    // loop2 skylake 0x118a
     // my_access(my_target);
     // printf("%d\n", my_target);
     // printf("%p\n", target_loader(av[2]));
