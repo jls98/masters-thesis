@@ -11,35 +11,6 @@ void victim_loop(){
         i-=4;
         i/=2;
     }
-    int length = strlen(str);
-    for (int i = 0; i < length; ++i) {
-        if (str[i] >= 'a' && str[i] <= 'z') {
-            str[i] = 'a' + (str[i] - 'a' + SHIFT_AMOUNT) % 26;
-        } else if (str[i] >= 'A' && str[i] <= 'Z') {
-            str[i] = 'A' + (str[i] - 'A' + SHIFT_AMOUNT) % 26;
-        }
-    }
-    for (int i = 0; i < length; ++i) {
-        if (str[i] >= 'a' && str[i] <= 'z') {
-            str[i] = 'a' + (str[i] - 'a' + SHIFT_AMOUNT) % 26;
-        } else if (str[i] >= 'A' && str[i] <= 'Z') {
-            str[i] = 'A' + (str[i] - 'A' + SHIFT_AMOUNT) % 26;
-        }
-    }
-    for (int i = 0; i < length; ++i) {
-        if (str[i] >= 'a' && str[i] <= 'z') {
-            str[i] = 'a' + (str[i] - 'a' + SHIFT_AMOUNT) % 26;
-        } else if (str[i] >= 'A' && str[i] <= 'Z') {
-            str[i] = 'A' + (str[i] - 'A' + SHIFT_AMOUNT) % 26;
-        }
-    }
-    for (int i = 0; i < length; ++i) {
-        if (str[i] >= 'a' && str[i] <= 'z') {
-            str[i] = 'a' + (str[i] - 'a' + SHIFT_AMOUNT) % 26;
-        } else if (str[i] >= 'A' && str[i] <= 'Z') {
-            str[i] = 'A' + (str[i] - 'A' + SHIFT_AMOUNT) % 26;
-        }
-    }
 }
 
 void victim_loop2(){
@@ -50,35 +21,6 @@ void victim_loop2(){
         i*=2;
         i-=4;
         i/=2;
-    }
-    int length = strlen(str);
-    for (int i = 0; i < length; ++i) {
-        if (str[i] >= 'a' && str[i] <= 'z') {
-            str[i] = 'a' + (str[i] - 'a' + SHIFT_AMOUNT) % 26;
-        } else if (str[i] >= 'A' && str[i] <= 'Z') {
-            str[i] = 'A' + (str[i] - 'A' + SHIFT_AMOUNT) % 26;
-        }
-    }
-    for (int i = 0; i < length; ++i) {
-        if (str[i] >= 'a' && str[i] <= 'z') {
-            str[i] = 'a' + (str[i] - 'a' + SHIFT_AMOUNT) % 26;
-        } else if (str[i] >= 'A' && str[i] <= 'Z') {
-            str[i] = 'A' + (str[i] - 'A' + SHIFT_AMOUNT) % 26;
-        }
-    }
-    for (int i = 0; i < length; ++i) {
-        if (str[i] >= 'a' && str[i] <= 'z') {
-            str[i] = 'a' + (str[i] - 'a' + SHIFT_AMOUNT) % 26;
-        } else if (str[i] >= 'A' && str[i] <= 'Z') {
-            str[i] = 'A' + (str[i] - 'A' + SHIFT_AMOUNT) % 26;
-        }
-    }
-    for (int i = 0; i < length; ++i) {
-        if (str[i] >= 'a' && str[i] <= 'z') {
-            str[i] = 'a' + (str[i] - 'a' + SHIFT_AMOUNT) % 26;
-        } else if (str[i] >= 'A' && str[i] <= 'Z') {
-            str[i] = 'A' + (str[i] - 'A' + SHIFT_AMOUNT) % 26;
-        }
     }
 }
 

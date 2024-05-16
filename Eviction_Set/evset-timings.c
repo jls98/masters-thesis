@@ -390,7 +390,7 @@ static void init_evset(Config *conf_ptr){
     buffer_size = 2*PAGESIZE;
     buffer = (Node *) mmap(NULL, buffer_size, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB, -1, 0);
     if (madvise(buffer, PAGESIZE, MADV_HUGEPAGE) == -1){
-        printf("madvise failed!\n");
+        printf("[!] madvise failed!\n");
         return;
     }
     buffer_ptr=&buffer;
