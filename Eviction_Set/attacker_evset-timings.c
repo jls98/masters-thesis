@@ -77,7 +77,7 @@ void my_monitor(){
 
     int timing1 = probe_chase_loop(victim, 1);
     int timing2 = probe_chase_loop(victim, 1);
-    probe_evset_chase(victim);
+    flush(victim);
     int timing3 = probe_chase_loop(victim_copy, 1);
     int timing4 = probe_chase_loop(victim, 1);
 
