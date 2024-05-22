@@ -43,7 +43,7 @@ memory_management: Experiments/memory_management.c
 # 	$(CC) $(CFLAGS) -o build/task2 Cache_Reversing/task2.c
 
 task1: Cache_Reversing/task1.c
- 	$(CC) $(CFLAGS) -o build/task1 Cache_Reversing/task1.c
+	$(CC) $(CFLAGS) -o build/task1 Cache_Reversing/task1.c
 
 # file_generator: utils/file_generator.c
 # 	$(CC) $(CFLAGS) -o build/file_generator utils/file_generator.c
