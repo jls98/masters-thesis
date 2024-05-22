@@ -1086,6 +1086,7 @@ int main() {
     // replacement_L2();
     // replacement_L2_2();
     // replacement_L2_only_L2();
-    test_evset_algorithm();
+    test_cache_size();
+    // test_evset_algorithm();
     return 0;
 }
