@@ -57,8 +57,10 @@ static u64 test_buffer(Node **buf, u64 total_size, u64 reps){
     Node **head=buf;
     Node *next;
     u64 total_time=0;
+    u64 total_entries=total_size/conf->cache_line_size;
+    // printf("%lu total entries, %lu total size, %lu line size\n ", total_entries, total_size, conf->cache_line_size);
     u64 *msrmt = malloc(reps*sizeof(u64));
-    for(u64 i=1;i*64<total_size;i++){
+    for(u64 i=1;i<total_entries;i++){
         my_access(tmp);
         tmp=tmp->next;
     }
@@ -72,7 +74,7 @@ static u64 test_buffer(Node **buf, u64 total_size, u64 reps){
     traverse_list0(tmp);
     tmp=*head;
     for(u64 i=0;i<reps;i++){ // unstable TODO
-        msrmt[i]=probe_chase_loop(tmp, total_size);        
+        msrmt[i]=probe_chase_loop(tmp, total_entries);        
     }   
     
     // return to old state, last element points to next, first is new head and reset prev
@@ -85,7 +87,7 @@ static u64 test_buffer(Node **buf, u64 total_size, u64 reps){
     }    
     u64 median=median_uint64(msrmt, reps);
     //printf("\n[+] Results for buffer size %lu: total time %lu, avg %lu, median %lu, median avg %lu\n", total_size, total_time, total_time/total_size, median, median/total_size);    
-    printf("%lu %lu\n", total_size, median/total_size);
+    printf("%lu %lu\n", total_size, median/(total_size/conf->cache_line_size));
     free(msrmt);
     msrmt=NULL;    
     return total_time;
@@ -95,7 +97,7 @@ void test_cache_size(){
     wait(1E9);
     // allocate
     conf = config_init(16, 131072, 64, 70, 2097152, 1, 1);
-    u64 buf_size = 8*PAGESIZE; 
+    u64 buf_size = 20*PAGESIZE; 
     Node *buf= (Node *) mmap(NULL, buf_size, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB, -1, 0);
     if(buf==MAP_FAILED){
         printf("mmap failed\n");
@@ -164,8 +166,15 @@ void test_cache_size(){
 
     tmp_buffer_size = 4194304;
     total_time=test_buffer(buffer, tmp_buffer_size, TOTALACCESSES);    
-    tmp_buffer_size = 8388608;
+    tmp_buffer_size = 7388608;
     total_time=test_buffer(buffer, tmp_buffer_size, TOTALACCESSES);    
+    tmp_buffer_size = 8388608;
+    total_time=test_buffer(buffer, tmp_buffer_size, TOTALACCESSES); 
+    tmp_buffer_size = 9388608;
+    total_time=test_buffer(buffer, tmp_buffer_size, TOTALACCESSES);    
+    tmp_buffer_size = 10388608;
+    total_time=test_buffer(buffer, tmp_buffer_size, TOTALACCESSES);    
+       
     tmp_buffer_size = 16777216;
     total_time=test_buffer(buffer, tmp_buffer_size, TOTALACCESSES);
     tmp_buffer_size = 18777216;
