@@ -135,13 +135,26 @@ void test_cache_size(){
     total_time=test_buffer(buffer, tmp_buffer_size, TOTALACCESSES);
     tmp_buffer_size = 131072;
     total_time=test_buffer(buffer, tmp_buffer_size, TOTALACCESSES);
+    tmp_buffer_size = 221072;
+    total_time=test_buffer(buffer, tmp_buffer_size, TOTALACCESSES);
+    tmp_buffer_size = 241072;
+    total_time=test_buffer(buffer, tmp_buffer_size, TOTALACCESSES);
     tmp_buffer_size = 262144;
+    total_time=test_buffer(buffer, tmp_buffer_size, TOTALACCESSES);
+    tmp_buffer_size = 281072;
+    total_time=test_buffer(buffer, tmp_buffer_size, TOTALACCESSES);
+    tmp_buffer_size = 301072;
     total_time=test_buffer(buffer, tmp_buffer_size, TOTALACCESSES);
     tmp_buffer_size = 524288;
     total_time=test_buffer(buffer, tmp_buffer_size, TOTALACCESSES);
     tmp_buffer_size = 1048576;
     total_time=test_buffer(buffer, tmp_buffer_size, TOTALACCESSES);
-
+    tmp_buffer_size = 1148576;
+    total_time=test_buffer(buffer, tmp_buffer_size, TOTALACCESSES);
+    tmp_buffer_size = 1248576;
+    total_time=test_buffer(buffer, tmp_buffer_size, TOTALACCESSES);
+    tmp_buffer_size = 1348576;
+    total_time=test_buffer(buffer, tmp_buffer_size, TOTALACCESSES);
     tmp_buffer_size = 1848576;
     total_time=test_buffer(buffer, tmp_buffer_size, TOTALACCESSES);
     tmp_buffer_size = 2097152;
@@ -151,11 +164,14 @@ void test_cache_size(){
 
     tmp_buffer_size = 4194304;
     total_time=test_buffer(buffer, tmp_buffer_size, TOTALACCESSES);    
-    // tmp_buffer_size = 8388608;
-    // total_time=test_buffer(buffer, tmp_buffer_size, TOTALACCESSES);    
-    // tmp_buffer_size = 16777216;
-    // total_time=test_buffer(buffer, tmp_buffer_size, TOTALACCESSES);
-
+    tmp_buffer_size = 8388608;
+    total_time=test_buffer(buffer, tmp_buffer_size, TOTALACCESSES);    
+    tmp_buffer_size = 16777216;
+    total_time=test_buffer(buffer, tmp_buffer_size, TOTALACCESSES);
+    tmp_buffer_size = 18777216;
+    total_time=test_buffer(buffer, tmp_buffer_size, TOTALACCESSES);
+    tmp_buffer_size = 20777216;
+    total_time=test_buffer(buffer, tmp_buffer_size, TOTALACCESSES);
     munmap(buf, buf_size);
 }
 
