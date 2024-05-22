@@ -64,9 +64,8 @@ static u64 test_buffer(Node **buf, u64 total_size, u64 reps){
     }
     next=tmp->next;
     tmp->next=NULL;    
-    printf("pre shuffle");
     list_shuffle(head);
-    printf(" post shufflee\n");
+    // printf("[+] set shuffled\n");
     tmp=*head;
 
     traverse_list0(tmp);
@@ -85,7 +84,8 @@ static u64 test_buffer(Node **buf, u64 total_size, u64 reps){
             total_time+=msrmt[i];
     }    
     u64 median=median_uint64(msrmt, reps);
-    printf("\n[+] Results for buffer size %lu: total time %lu, avg %lu, median %lu, median avg %lu\n", total_size, total_time, total_time/total_size, median, median/total_size);    
+    //printf("\n[+] Results for buffer size %lu: total time %lu, avg %lu, median %lu, median avg %lu\n", total_size, total_time, total_time/total_size, median, median/total_size);    
+    printf("%lu %lu\n", total_size, median/total_size);
     free(msrmt);
     msrmt=NULL;    
     return total_time;
