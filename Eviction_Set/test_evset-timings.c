@@ -131,25 +131,25 @@ void test_cache_size(){
     // total_time=test_buffer(buffer, tmp_buffer_size, TOTALACCESSES);    
     // tmp_buffer_size = 36768;
     // total_time=test_buffer(buffer, tmp_buffer_size, TOTALACCESSES);    
-    tmp_buffer_size = 38768;
+    tmp_buffer_size = 32768+3*2024;
     total_time=test_buffer(buffer, tmp_buffer_size, TOTALACCESSES);
-    tmp_buffer_size = 40768;
+    tmp_buffer_size = 32768+4*2024;
     total_time=test_buffer(buffer, tmp_buffer_size, TOTALACCESSES);
-    tmp_buffer_size = 42768;
+    tmp_buffer_size = 32768+5*2024;
     total_time=test_buffer(buffer, tmp_buffer_size, TOTALACCESSES);
-    tmp_buffer_size = 44768;
+    tmp_buffer_size = 32768+6*2024;
     total_time=test_buffer(buffer, tmp_buffer_size, TOTALACCESSES);
-    tmp_buffer_size = 46768;
+    tmp_buffer_size = 32768+7*2024;
     total_time=test_buffer(buffer, tmp_buffer_size, TOTALACCESSES);
-    tmp_buffer_size = 48768;
+    tmp_buffer_size = 32768+8*2024;
     total_time=test_buffer(buffer, tmp_buffer_size, TOTALACCESSES);
-    tmp_buffer_size = 50768;
+    tmp_buffer_size = 32768+9*2024;
     total_time=test_buffer(buffer, tmp_buffer_size, TOTALACCESSES);
-    tmp_buffer_size = 52768;
+    tmp_buffer_size = 32768+10*2024;
     total_time=test_buffer(buffer, tmp_buffer_size, TOTALACCESSES);
-    tmp_buffer_size = 54768;
+    tmp_buffer_size = 32768+11*2024;
     total_time=test_buffer(buffer, tmp_buffer_size, TOTALACCESSES);
-    tmp_buffer_size = 56768;
+    tmp_buffer_size = 32768+12*2024;
     total_time=test_buffer(buffer, tmp_buffer_size, TOTALACCESSES);
 
     tmp_buffer_size = 65536;
@@ -170,15 +170,15 @@ void test_cache_size(){
     total_time=test_buffer(buffer, tmp_buffer_size, TOTALACCESSES);
     tmp_buffer_size = 1048576;
     total_time=test_buffer(buffer, tmp_buffer_size, TOTALACCESSES);
-    tmp_buffer_size = 1148576;
+    tmp_buffer_size = 1048576+131072;
     total_time=test_buffer(buffer, tmp_buffer_size, TOTALACCESSES);
-    tmp_buffer_size = 1248576;
+    tmp_buffer_size = 1048576+2*131072;
     total_time=test_buffer(buffer, tmp_buffer_size, TOTALACCESSES);
-    tmp_buffer_size = 1348576;
+    tmp_buffer_size = 1048576+3*131072;
     total_time=test_buffer(buffer, tmp_buffer_size, TOTALACCESSES);
-    tmp_buffer_size = 1448576;
+    tmp_buffer_size = 1048576+4*131072;
     total_time=test_buffer(buffer, tmp_buffer_size, TOTALACCESSES);
-    tmp_buffer_size = 1548576;
+    tmp_buffer_size = 1048576+5*131072;
     total_time=test_buffer(buffer, tmp_buffer_size, TOTALACCESSES);
     
     
@@ -199,17 +199,17 @@ void test_cache_size(){
     // total_time=test_buffer(buffer, tmp_buffer_size, TOTALACCESSES);    
     tmp_buffer_size = 10388608;
     total_time=test_buffer(buffer, tmp_buffer_size, TOTALACCESSES);    
-    tmp_buffer_size = 12388608;
+    tmp_buffer_size = 10388608+2097152;
     total_time=test_buffer(buffer, tmp_buffer_size, TOTALACCESSES);    
        
-    tmp_buffer_size = 16777216;
+    tmp_buffer_size = 10388608+3*2097152;
     total_time=test_buffer(buffer, tmp_buffer_size, TOTALACCESSES);
-    tmp_buffer_size = 18777216;
+    tmp_buffer_size = 10388608+4*2097152;
     total_time=test_buffer(buffer, tmp_buffer_size, TOTALACCESSES);
     
-    tmp_buffer_size = 19777216;
+    tmp_buffer_size = 10388608+9*1048576;
     total_time=test_buffer(buffer, tmp_buffer_size, TOTALACCESSES);
-    tmp_buffer_size = 20777216;
+    tmp_buffer_size = 10388608+10*1048576;
     total_time=test_buffer(buffer, tmp_buffer_size, TOTALACCESSES);
     munmap(buf, buf_size);
 }
