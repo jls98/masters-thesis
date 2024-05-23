@@ -60,6 +60,7 @@ static u64 test_buffer(Node **buf, u64 total_size, u64 reps){
     u64 total_entries=total_size/conf->cache_line_size;
     // printf("%lu total entries, %lu total size, %lu line size\n ", total_entries, total_size, conf->cache_line_size);
     u64 *msrmt = malloc(reps*sizeof(u64));
+    for(int i=0;i<reps;i++) msrmt[i]=0;
     for(u64 i=1;i<total_entries;i++){
         my_access(tmp);
         tmp=tmp->next;
