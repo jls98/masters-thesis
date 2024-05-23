@@ -57,7 +57,7 @@ static u64 test_buffer(Node **buf, u64 total_size, u64 reps){
     Node **head=buf;
     Node *next;
     u64 total_time=0;
-    u64 total_entries = total_size/64;
+    u64 total_entries = total_size/sizeof(Node);
     u64 *msrmt = malloc(reps*sizeof(u64));
     for(int i=0;i<reps;i++) msrmt[i]=0;
 
@@ -99,17 +99,17 @@ void test_cache_size(){
     wait(1E9);
     // allocate
     conf = config_init(16, 131072, 64, 70, 2097152, 1, 1);
-    u64 buf_size = 8*PAGESIZE; 
+    u64 buf_size = 20*PAGESIZE; 
     Node *buf= (Node *) mmap(NULL, buf_size, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB, -1, 0);
     if(buf==MAP_FAILED){
         printf("mmap failed\n");
         return;
     }
     
-    if (madvise(buf, buf_size, MADV_HUGEPAGE) ==-1){
-        printf("advise failed!\n");
-        return;
-    }
+    // if (madvise(buf, buf_size, MADV_HUGEPAGE) ==-1){
+    //     printf("advise failed!\n");
+    //     return;
+    // }
     list_init(buf, buf_size);
     u64 total_time;
     u64 tmp_buffer_size;
@@ -184,6 +184,138 @@ void test_cache_size(){
     // total_time=test_buffer(buffer, tmp_buffer_size, TOTALACCESSES);
 
     munmap(buf, buf_size);
+}
+
+
+static u64 test_buffer2(u64 total_size, u64 reps){
+
+    Node *tmp =(Node *) mmap(NULL, total_size, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);
+    if(tmp==MAP_FAILED){
+        printf("mmap failed\n");
+        return;
+    }
+    u64 total_entries = total_size/sizeof(Node);
+    list_init(tmp, total_size);
+
+    Node **head=&tmp;
+    Node *next;
+    u64 total_time=0;
+
+    u64 *msrmt = malloc(reps*sizeof(u64));
+    for(int i=0;i<reps;i++) msrmt[i]=0;
+
+    for(u64 i=1;i<total_entries;i++){
+        my_access(tmp);
+        tmp=tmp->next;
+    }
+    next=tmp->next;
+    tmp->next=NULL;    
+    // printf("pre shuffle");
+    list_shuffle(head);
+    // printf(" post shufflee\n");
+    tmp=*head;
+
+    traverse_list0(tmp);
+    traverse_list0(tmp);
+    tmp=*head;
+    for(u64 i=0;i<reps;i++){ // unstable TODO
+        msrmt[i]=probe_chase_loop(tmp, total_entries);        
+    }   
+    
+    // return to old state, last element points to next, first is new head and reset prev
+    tmp->prev->next=next;
+    tmp=*head;
+    (*head)->prev=NULL;
+
+    for(u64 i=0;i<reps;i++){
+            total_time+=msrmt[i];
+    }    
+    u64 median=median_uint64(msrmt, reps);
+    // printf("\n[+] Results for buffer size %lu: total time %lu, avg %lu, median %lu, median avg %lu\n", total_size, total_time, total_time/total_size, median, median/total_size);    
+    printf("%lu %lu %lu\n", total_size, msrmt[66]/total_entries, total_time/(reps*total_entries));
+    free(msrmt);
+    msrmt=NULL;    
+
+    munmap(tmp, total_size);
+    return total_time;
+}
+
+
+void test_cache_size2(){
+    wait(1E9);
+    // allocate
+    conf = config_init(16, 131072, 64, 70, 2097152, 1, 1);
+
+    u64 total_time;
+    u64 tmp_buffer_size;
+    
+    tmp_buffer_size = 16384;
+    total_time=test_buffer2(tmp_buffer_size, TOTALACCESSES);  
+
+    tmp_buffer_size = 16384+15*1024;
+    total_time=test_buffer2(tmp_buffer_size, TOTALACCESSES);  
+    tmp_buffer_size = 32768;
+    total_time=test_buffer2(tmp_buffer_size, TOTALACCESSES);    
+    tmp_buffer_size = 32768+1*1024;
+    total_time=test_buffer2(tmp_buffer_size, TOTALACCESSES);    
+    tmp_buffer_size = 32768+2*1024;
+    total_time=test_buffer2(tmp_buffer_size, TOTALACCESSES);    
+    tmp_buffer_size = 32768+3*1024;
+    total_time=test_buffer2(tmp_buffer_size, TOTALACCESSES);  
+    tmp_buffer_size = 32768+4*1024;
+    total_time=test_buffer2(tmp_buffer_size, TOTALACCESSES);  
+
+    tmp_buffer_size = 32768+15*1024;
+    total_time=test_buffer2(tmp_buffer_size, TOTALACCESSES);  
+    tmp_buffer_size = 32768+16*1024;
+    total_time=test_buffer2(tmp_buffer_size, TOTALACCESSES);  
+    tmp_buffer_size = 32768+17*1024;
+    total_time=test_buffer2(tmp_buffer_size, TOTALACCESSES);  
+    tmp_buffer_size = 32768+18*1024;
+    total_time=test_buffer2(tmp_buffer_size, TOTALACCESSES);  
+    tmp_buffer_size = 32768+19*1024;
+    total_time=test_buffer2(tmp_buffer_size, TOTALACCESSES);  
+
+    tmp_buffer_size = 65536;
+    total_time=test_buffer2(tmp_buffer_size, TOTALACCESSES);  
+    tmp_buffer_size = 131072;
+    total_time=test_buffer2(tmp_buffer_size, TOTALACCESSES);  
+    tmp_buffer_size = 262144;
+    total_time=test_buffer2(tmp_buffer_size, TOTALACCESSES);  
+    tmp_buffer_size = 524288;
+    total_time=test_buffer2(tmp_buffer_size, TOTALACCESSES);  
+    tmp_buffer_size = 1048576;
+    total_time=test_buffer2(tmp_buffer_size, TOTALACCESSES);  
+    tmp_buffer_size = 1048576+131072;
+    total_time=test_buffer2(tmp_buffer_size, TOTALACCESSES);  
+    tmp_buffer_size = 1048576+2*131072;
+    total_time=test_buffer2(tmp_buffer_size, TOTALACCESSES);  
+    tmp_buffer_size = 1048576+3*131072;
+    total_time=test_buffer2(tmp_buffer_size, TOTALACCESSES);  
+    tmp_buffer_size = 1048576+4*131072;
+    total_time=test_buffer2(tmp_buffer_size, TOTALACCESSES);  
+    tmp_buffer_size = 1048576+5*131072;
+    total_time=test_buffer2(tmp_buffer_size, TOTALACCESSES);  
+
+    tmp_buffer_size = 2097152-131072;
+    total_time=test_buffer2(tmp_buffer_size, TOTALACCESSES);  
+    tmp_buffer_size = 2097152;
+    total_time=test_buffer2(tmp_buffer_size, TOTALACCESSES);  
+    tmp_buffer_size = 2097152+262144;
+    total_time=test_buffer2(tmp_buffer_size, TOTALACCESSES);  
+    tmp_buffer_size = 2097152+2*262144;
+    total_time=test_buffer2(tmp_buffer_size, TOTALACCESSES);  
+    tmp_buffer_size = 2097152+3*262144;
+    total_time=test_buffer2(tmp_buffer_size, TOTALACCESSES);  
+
+    tmp_buffer_size = 4194304;
+    total_time=test_buffer2(tmp_buffer_size, TOTALACCESSES);    
+    tmp_buffer_size = 8388608;
+    total_time=test_buffer2(tmp_buffer_size, TOTALACCESSES);   
+    tmp_buffer_size = 8388608+1048576;
+    total_time=test_buffer2(tmp_buffer_size, TOTALACCESSES);      
+    // tmp_buffer_size = 16777216;
+    // total_time=test_buffer(buffer, tmp_buffer_size, TOTALACCESSES);
 }
 
 void test_cache_timings1(){
