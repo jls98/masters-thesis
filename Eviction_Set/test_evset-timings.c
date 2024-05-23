@@ -57,23 +57,26 @@ static u64 test_buffer(Node **buf, u64 total_size, u64 reps){
     Node **head=buf;
     Node *next;
     u64 total_time=0;
+    u64 total_entries = total_size/64;
     u64 *msrmt = malloc(reps*sizeof(u64));
-    for(u64 i=1;i*64<total_size;i++){
+    for(int i=0;i<reps;i++) msrmt[i]=0;
+
+    for(u64 i=1;i<total_entries;i++){
         my_access(tmp);
         tmp=tmp->next;
     }
     next=tmp->next;
     tmp->next=NULL;    
-    printf("pre shuffle");
+    // printf("pre shuffle");
     list_shuffle(head);
-    printf(" post shufflee\n");
+    // printf(" post shufflee\n");
     tmp=*head;
 
     traverse_list0(tmp);
     traverse_list0(tmp);
     tmp=*head;
     for(u64 i=0;i<reps;i++){ // unstable TODO
-        msrmt[i]=probe_chase_loop(tmp, total_size);        
+        msrmt[i]=probe_chase_loop(tmp, total_entries);        
     }   
     
     // return to old state, last element points to next, first is new head and reset prev
@@ -85,7 +88,8 @@ static u64 test_buffer(Node **buf, u64 total_size, u64 reps){
             total_time+=msrmt[i];
     }    
     u64 median=median_uint64(msrmt, reps);
-    printf("\n[+] Results for buffer size %lu: total time %lu, avg %lu, median %lu, median avg %lu\n", total_size, total_time, total_time/total_size, median, median/total_size);    
+    // printf("\n[+] Results for buffer size %lu: total time %lu, avg %lu, median %lu, median avg %lu\n", total_size, total_time, total_time/total_size, median, median/total_size);    
+    printf("%lu %lu %lu\n", total_size, msrmt[66]/total_entries, total_time/(reps*total_entries));
     free(msrmt);
     msrmt=NULL;    
     return total_time;
@@ -114,21 +118,28 @@ void test_cache_size(){
     tmp_buffer_size = 16384;
     total_time=test_buffer(buffer, tmp_buffer_size, TOTALACCESSES);  
 
-    tmp_buffer_size = 24384;
-    total_time=test_buffer(buffer, tmp_buffer_size, TOTALACCESSES);
-    tmp_buffer_size = 26384;
-    total_time=test_buffer(buffer, tmp_buffer_size, TOTALACCESSES);    
-    tmp_buffer_size = 28384;
-    total_time=test_buffer(buffer, tmp_buffer_size, TOTALACCESSES);
-    tmp_buffer_size = 30384;
+    tmp_buffer_size = 16384+15*1024;
     total_time=test_buffer(buffer, tmp_buffer_size, TOTALACCESSES);
     tmp_buffer_size = 32768;
     total_time=test_buffer(buffer, tmp_buffer_size, TOTALACCESSES);    
-    tmp_buffer_size = 34768;
+    tmp_buffer_size = 32768+1*1024;
     total_time=test_buffer(buffer, tmp_buffer_size, TOTALACCESSES);    
-    tmp_buffer_size = 36768;
+    tmp_buffer_size = 32768+2*1024;
     total_time=test_buffer(buffer, tmp_buffer_size, TOTALACCESSES);    
-    tmp_buffer_size = 38768;
+    tmp_buffer_size = 32768+3*1024;
+    total_time=test_buffer(buffer, tmp_buffer_size, TOTALACCESSES);
+    tmp_buffer_size = 32768+4*1024;
+    total_time=test_buffer(buffer, tmp_buffer_size, TOTALACCESSES);
+
+    tmp_buffer_size = 32768+15*1024;
+    total_time=test_buffer(buffer, tmp_buffer_size, TOTALACCESSES);
+    tmp_buffer_size = 32768+16*1024;
+    total_time=test_buffer(buffer, tmp_buffer_size, TOTALACCESSES);
+    tmp_buffer_size = 32768+17*1024;
+    total_time=test_buffer(buffer, tmp_buffer_size, TOTALACCESSES);
+    tmp_buffer_size = 32768+18*1024;
+    total_time=test_buffer(buffer, tmp_buffer_size, TOTALACCESSES);
+    tmp_buffer_size = 32768+19*1024;
     total_time=test_buffer(buffer, tmp_buffer_size, TOTALACCESSES);
 
     tmp_buffer_size = 65536;
@@ -141,12 +152,26 @@ void test_cache_size(){
     total_time=test_buffer(buffer, tmp_buffer_size, TOTALACCESSES);
     tmp_buffer_size = 1048576;
     total_time=test_buffer(buffer, tmp_buffer_size, TOTALACCESSES);
+    tmp_buffer_size = 1048576+131072;
+    total_time=test_buffer(buffer, tmp_buffer_size, TOTALACCESSES);
+    tmp_buffer_size = 1048576+2*131072;
+    total_time=test_buffer(buffer, tmp_buffer_size, TOTALACCESSES);
+    tmp_buffer_size = 1048576+3*131072;
+    total_time=test_buffer(buffer, tmp_buffer_size, TOTALACCESSES);
+    tmp_buffer_size = 1048576+4*131072;
+    total_time=test_buffer(buffer, tmp_buffer_size, TOTALACCESSES);
+    tmp_buffer_size = 1048576+5*131072;
+    total_time=test_buffer(buffer, tmp_buffer_size, TOTALACCESSES);
 
-    tmp_buffer_size = 1848576;
+    tmp_buffer_size = 2097152-131072;
     total_time=test_buffer(buffer, tmp_buffer_size, TOTALACCESSES);
     tmp_buffer_size = 2097152;
     total_time=test_buffer(buffer, tmp_buffer_size, TOTALACCESSES);
-    tmp_buffer_size = 2297152;
+    tmp_buffer_size = 2097152+262144;
+    total_time=test_buffer(buffer, tmp_buffer_size, TOTALACCESSES);
+    tmp_buffer_size = 2097152+2*262144;
+    total_time=test_buffer(buffer, tmp_buffer_size, TOTALACCESSES);
+    tmp_buffer_size = 2097152+3*262144;
     total_time=test_buffer(buffer, tmp_buffer_size, TOTALACCESSES);
 
     tmp_buffer_size = 4194304;
@@ -370,10 +395,6 @@ void test_L1_evset(){
     for(int i=0;i<14;i++) printf("[+] msrmnt %i %lu\n", i, msrmnt1[i]);
     close_evsets();
     free(msrmnt1);
-}
-
-void test_L2_evset(){
-
 }
 
 void test_evset_state(){
@@ -1068,24 +1089,24 @@ void test_evset_algorithm(){
 int main() {
 
 	wait(1E9);
-    // CU_initialize_registry();
-    // CU_pSuite suite = CU_add_suite("Test Suite evict_baseline", NULL, NULL);
+    CU_initialize_registry();
+    CU_pSuite suite = CU_add_suite("Test Suite evict_baseline", NULL, NULL);
 
-    // // // CU_add_test(suite, "Test test_node", test_node);
-    // // // CU_add_test(suite, "Test test_cache_size", test_cache_size);
-    // // // CU_add_test(suite, "Test test_cache_timings1", test_cache_timings1);
-    // // // CU_add_test(suite, "Test test_cache_timings2", test_cache_timings2);
-    // // // CU_add_test(suite, "Test test_L1_evset", test_L1_evset);
-    // // // CU_add_test(suite, "Test test_L2_evset", test_L2_evset);
+    // CU_add_test(suite, "Test test_node", test_node);
+    CU_add_test(suite, "Test test_cache_size", test_cache_size);
+    // CU_add_test(suite, "Test test_cache_timings1", test_cache_timings1);
+    // CU_add_test(suite, "Test test_cache_timings2", test_cache_timings2);
+    // CU_add_test(suite, "Test test_L1_evset", test_L1_evset);
+    // CU_add_test(suite, "Test test_L2_evset", test_L2_evset);
     // CU_add_test(suite, "Test test_evset_state", test_evset_state);
-    // // // CU_add_test(suite, "Test replacement_L1", replacement_L1);
+    // CU_add_test(suite, "Test replacement_L1", replacement_L1);
     // 1000000
     //   50000
-    // CU_basic_run_tests();
-    // CU_cleanup_registry();
+    CU_basic_run_tests();
+    CU_cleanup_registry();
     // replacement_L2();
     // replacement_L2_2();
     // replacement_L2_only_L2();
-    test_evset_algorithm();
+    // test_evset_algorithm();
     return 0;
 }
