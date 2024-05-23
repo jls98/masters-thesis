@@ -494,7 +494,7 @@ void test_evset_state(){
     free(msrmnt2);
 }
 
-#define MSRMNT_CNT 1000000
+#define MSRMNT_CNT 100
 #define EVSET_TARGETS 25
 #define EVSET_L2 16
 #define EVSET_L1 8
@@ -1083,9 +1083,9 @@ int main() {
     //   50000
     // CU_basic_run_tests();
     // CU_cleanup_registry();
-    // replacement_L2();
-    // replacement_L2_2();
-    // replacement_L2_only_L2();
+    replacement_L2();
+    replacement_L2_2();
+    replacement_L2_only_L2();
     test_evset_algorithm();
     return 0;
 }
