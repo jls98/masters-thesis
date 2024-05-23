@@ -176,8 +176,10 @@ void test_cache_size(){
 
     tmp_buffer_size = 4194304;
     total_time=test_buffer(buffer, tmp_buffer_size, TOTALACCESSES);    
-    // tmp_buffer_size = 8388608;
-    // total_time=test_buffer(buffer, tmp_buffer_size, TOTALACCESSES);    
+    tmp_buffer_size = 8388608;
+    total_time=test_buffer(buffer, tmp_buffer_size, TOTALACCESSES); 
+    tmp_buffer_size = 8388608+1048576;
+    total_time=test_buffer(buffer, tmp_buffer_size, TOTALACCESSES);    
     // tmp_buffer_size = 16777216;
     // total_time=test_buffer(buffer, tmp_buffer_size, TOTALACCESSES);
 
