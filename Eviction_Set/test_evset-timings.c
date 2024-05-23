@@ -494,7 +494,7 @@ void test_evset_state(){
     free(msrmnt2);
 }
 
-#define MSRMNT_CNT 100
+#define MSRMNT_CNT 10
 #define EVSET_TARGETS 25
 #define EVSET_L2 16
 #define EVSET_L1 8
@@ -709,13 +709,13 @@ void replacement_L2(){
     target->next=target;
     target->prev=target;
 
-    printf("[!] target %p\n", target);
+    // printf("[!] target %p\n", target);
     Node **head1 = malloc(sizeof(Node *)); // refs to first element of evset
     *head1 =NULL;
     // add 1st elem
     index = (EVSET_L2-1+1)*size_stride_L2+offset; // -1 to be in 1 block, +1 for test 1 more
     tmp=list_take(buf_ptr, &index);
-    printf("highest val %p\n", tmp);
+    // printf("highest val %p\n", tmp);
     list_append(head1, tmp);
     my_evset[EVSET_TARGETS-1] = tmp;
     // add 14 L2 elems
@@ -733,35 +733,42 @@ void replacement_L2(){
         list_append(head1, tmp);
         my_evset[i]=tmp;
     }    
-    printf("lowest val %p\n", tmp);
+    // printf("lowest val %p\n", tmp);
 
     // add last L2 elem (0)
-    list_print(head1);
+    // list_print(head1);
     list_shuffle(head1);
 
     u64 *msrmnt0=malloc(MSRMNT_CNT*EVSET_TARGETS*sizeof(u64));
     // preparation done
 
     u64 aaaaa=0;
-    for(tmp=*head1;aaaaa++<conf->evset_size;tmp=tmp->next){
-        for(int bbbb=0;bbbb<EVSET_TARGETS;bbbb++){
-            if(tmp==my_evset[bbbb]) printf("%2d %p\n", bbbb, tmp);
-        }        
-    }   
+    // for(tmp=*head1;aaaaa++<conf->evset_size;tmp=tmp->next){
+    //     for(int bbbb=0;bbbb<EVSET_TARGETS;bbbb++){
+    //         if(tmp==my_evset[bbbb]) printf("%2d %p\n", bbbb, tmp);
+    //     }        
+    // }   
     
     // multiple measurements
     for (int i=0;i<EVSET_TARGETS;i++){
         intern_access(head1, my_evset, msrmnt0+MSRMNT_CNT*i, i);
     }
 
-    for(int j=0;j<EVSET_TARGETS;j++){
-        printf("%2d:\n", j);
-        for(int i=0;i<MSRMNT_CNT;i++) printf("%lu; ", msrmnt0[i+j*MSRMNT_CNT]);
-        printf("\n");
-        printf("median %lu high %lu low %lu\n", median_uint64(msrmnt0+j*MSRMNT_CNT, MSRMNT_CNT), findMax(msrmnt0+j*MSRMNT_CNT, MSRMNT_CNT), findMin(msrmnt0+j*MSRMNT_CNT, MSRMNT_CNT));
-        printf("\n\n");
+    // for(int j=0;j<EVSET_TARGETS;j++){
+    //     printf("%2d:\n", j);
+    //     for(int i=0;i<MSRMNT_CNT;i++) printf("%lu; ", msrmnt0[i+j*MSRMNT_CNT]);
+    //     printf("\n");
+    //     printf("median %lu high %lu low %lu\n", median_uint64(msrmnt0+j*MSRMNT_CNT, MSRMNT_CNT), findMax(msrmnt0+j*MSRMNT_CNT, MSRMNT_CNT), findMin(msrmnt0+j*MSRMNT_CNT, MSRMNT_CNT));
+    //     printf("\n\n");
 
-    }
+    // }
+
+    aaaaa=0;
+    for(tmp=*head1;aaaaa++<conf->evset_size;tmp=tmp->next){
+        for(int bbbb=0;bbbb<EVSET_TARGETS;bbbb++){
+            if(tmp==my_evset[bbbb]) printf("%2d %p %lu\n", bbbb, tmp, median_uint64(msrmnt0+bbbb*MSRMNT_CNT, MSRMNT_CNT)); // index, pointer, measured median
+        }        
+    }  
 
     close_evsets();
     free(my_evset);
@@ -1084,8 +1091,8 @@ int main() {
     // CU_basic_run_tests();
     // CU_cleanup_registry();
     replacement_L2();
-    replacement_L2_2();
-    replacement_L2_only_L2();
-    test_evset_algorithm();
+    // replacement_L2_2();
+    // replacement_L2_only_L2();
+    // test_evset_algorithm();
     return 0;
 }
