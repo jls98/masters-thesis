@@ -503,7 +503,7 @@ void intern_access(Node **head1, Node **my_evset, u64 *msrmnt_, u64 index){
     for(int c=0;c<MSRMNT_CNT;c++){
         
         // flush evset    
-        for(int i=0;i<17;i++) flush(my_evset[i]); // change back to EVSET_TARGETS/25 if needed
+        for(int i=0;i<19;i++) flush(my_evset[i]); // change back to EVSET_TARGETS/25 if needed
 
         // access whole evset +1 (9 elems)
         traverse_list0(*head1);
@@ -1044,7 +1044,7 @@ void replacement_L2_only_L2(){
     munmap(buf, buf_size);
 }
 
-#define EVSET_L2_size 16
+#define EVSET_L2_size 18
 void replacement_L2_only_L2_complete(){
     wait(1E9);
     Node *tmp=NULL;    // to hold tmp Nodes

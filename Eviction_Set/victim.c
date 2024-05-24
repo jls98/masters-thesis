@@ -1,18 +1,20 @@
 void victim_loop1(){
-    int i=5;
-    i+=2;
-    i*=2;
-    i-=4;
-    i/=2;
+    for(int i=0;i<10;i++){
+        i+=2;
+        i*=2;
+        i-=4;
+        i/=2;
+    }
     
 }
 
 void victim_loop2(){
-    int i=5;
-    i+=2;
-    i*=2;
-    i-=4;
-    i/=2;
+    for(int i=0;i<10;i++){
+        i+=2;
+        i*=2;
+        i-=4;
+        i/=2;
+    }
 }
 
 // void victim_call0(){
