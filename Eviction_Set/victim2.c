@@ -31,24 +31,8 @@ void *map(char *file_name, uint64_t offset)
 
 int main(){
     // victim that loads data 
-    void *my_victim = map("./build/victim", 0x118a);
+    void *my_victim = map("./build/victim", 0x1134);
     printf("my victim is located at %p\n", my_victim);
-    probe_chase_loop(my_victim, 1);
-    probe_chase_loop(my_victim, 1);
-    probe_chase_loop(my_victim, 1);
-    probe_chase_loop(my_victim, 1);
-    probe_chase_loop(my_victim, 1);
-    probe_chase_loop(my_victim, 1);
-    probe_chase_loop(my_victim, 1);
-    probe_chase_loop(my_victim, 1);
-    probe_chase_loop(my_victim, 1);
-    probe_chase_loop(my_victim, 1);
-    probe_chase_loop(my_victim, 1);
-    probe_chase_loop(my_victim, 1);
-    probe_chase_loop(my_victim, 1);
-    probe_chase_loop(my_victim, 1);
-    probe_chase_loop(my_victim, 1);
-    probe_chase_loop(my_victim, 1);
     probe_chase_loop(my_victim, 1);
     probe_chase_loop(my_victim, 1);
 }

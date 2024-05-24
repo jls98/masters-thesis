@@ -503,7 +503,7 @@ void intern_access(Node **head1, Node **my_evset, u64 *msrmnt_, u64 index){
     for(int c=0;c<MSRMNT_CNT;c++){
         
         // flush evset    
-        for(int i=0;i<17;i++) flush(my_evset[i]);
+        for(int i=0;i<17;i++) flush(my_evset[i]); // change back to EVSET_TARGETS/25 if needed
 
         // access whole evset +1 (9 elems)
         traverse_list0(*head1);
