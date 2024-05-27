@@ -44,7 +44,7 @@ void init_spy(char *target_filepath, int offset_target){
     // printf("victim read\n");
 
     // prepare evset
-    Config *spy_conf= config_init(24, 2048, 64, 106, 2097152, 1, 1);
+    Config *spy_conf= config_init(27, 2048, 64, 106, 2097152, 1, 1);
     init_evset(spy_conf);
     printf("[+] spy: init evset done\n");
     spy_evsets = find_evset(spy_conf, victim);
