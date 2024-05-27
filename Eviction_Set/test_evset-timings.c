@@ -3,7 +3,7 @@
 #include <CUnit/Basic.h>
 
 #define PAGESIZE 2097152 // hugepage 2 MB
-#define TOTALACCESSES 100
+#define TOTALACCESSES 1
 
 void test_node(){
     Node *nodes= (Node *) mmap(NULL, 5000*sizeof(Node), PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB, -1, 0); 
@@ -75,6 +75,7 @@ static u64 test_buffer(Node **buf, u64 total_size, u64 reps){
     traverse_list0(tmp);
     tmp=*head;
     for(u64 i=0;i<reps;i++){ // unstable TODO
+        asm __volatile__("mfence");
         msrmt[i]=probe_chase_loop(tmp, total_entries);        
     }   
     
