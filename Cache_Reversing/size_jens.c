@@ -44,6 +44,13 @@ int main(int ac, char **av) {
     access(16384+28*1024);
     access(16384+29*1024);
     access(16384+30*1024);
+    access(16384+31*1024);
+    access(16384+32*1024);
+    access(16384+33*1024);
+    access(16384+34*1024);
+    access(16384+35*1024);
+    access(16384+36*1024);
+    access(16384+37*1024);
 
     access(65536);
     access(65536*2);
