@@ -1,6 +1,6 @@
 CC = gcc
 CFLAGS = -Wall -Wextra -masm=intel -O0 -fPIC
-TARGETS = test_evset evset
+TARGETS = test_evset evset test_evict_baseline
 
 all: $(TARGETS)
 
