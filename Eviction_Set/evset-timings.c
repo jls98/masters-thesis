@@ -188,6 +188,35 @@ static u64 probe_evset_chase(const void *addr) {
 	return time;
 }
 
+static u64 probe_evset_chase_once(const void *addr) {
+	volatile u64 time;
+	asm __volatile__ (
+        "mov r8, %1;"
+        "mov r9, %2;"
+        // measure
+		"mfence;"
+		"rdtscp;"
+		"mov rsi, rax;"
+		// BEGIN - probe address
+
+        "loop_o:"
+        "lfence;" // when toggled I cannot see difference on L1 timings
+		"mov r8, [r8];"
+        "dec r9;"
+        "lfence;"
+        "jnz loop_o;"
+		// END - probe address
+		"lfence;"
+		"rdtscp;"
+        // end - high precision
+		"sub rax, rsi;"
+		: "=a" (time)
+		: "b" (addr), "r" (conf->evset_size)
+		: "rcx", "rsi", "rdx", "r8", "r9"
+	);
+	return time;
+}
+
 // say hi to cache
 static void wait(u64 cycles) {
 	unsigned int ignore;

@@ -274,7 +274,7 @@ static struct Node *create_minimal_eviction_set(void **candidate_set, uint64_t c
     // init lfsr, variable c stores currently picked candidate integer/index value
     uint64_t lfsr = lfsr_create(), c, cnt_e=0; 
 	int64_t c_tmp;
-	
+
 	// create current candidate set containing the indexes of unchecked candidates and initialize with all indexes
     struct Node* cand_ind_set = initLinkedList();
     for (uint64_t i=0; i<candidate_set_size-1;i+=8) cand_ind_set = addElement(cand_ind_set, i); 
