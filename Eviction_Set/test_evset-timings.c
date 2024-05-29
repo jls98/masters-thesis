@@ -1264,25 +1264,94 @@ void test_evset_algorithm(){
 
 }
 
+void test_evset(Config *conf, void *target){
+    wait(1E9);
+    
+    // setup and find evset
+    init_evset(conf);
+    Node **evset = NULL;
+    while(evset==NULL || *evset==NULL) evset = find_evset(conf, target);
+
+    // setup measurements
+    msrmts=realloc(msrmts, conf->test_reps*sizeof(u64));
+    msr_index=0;
+
+    // multiple measurements
+    // intern_access_new(head1, my_evset, msrmnt0, target);
+    for (int i=0;i<conf->test_reps;i++) test(*evset, target);
+    u64 above=0;
+    u64 below=0;
+    for (int i=0;i<conf->test_reps;i++) {
+        // CU_ASSERT_TRUE(msrmts[i] > conf->threshold);
+        if(msrmts[i] < conf->threshold)below++; 
+        else above++;
+    }
+    printf("below %lu, above %lu\n", below, above);
+    close_evsets();    
+}
+
+void test_no_evset(Config *conf, void *target){
+    init_evset(conf);
+    Node **no_evset = find_evset(conf, target);
+    CU_ASSERT_PTR_NULL(*no_evset);
+    close_evsets();
+}
+
+void test_find_evset(){
+    uint64_t *target = malloc(8);
+    *target=0xffffffff;
+    int reps = 10000000;
+    for (int i=0; i<100; i++) test_no_evset(config_init(15, 2048, 64, 106,2091752, 100, 1), target);
+    // printf("evset size 16\n");
+    // test_evset(config_init(16, 2048, 64, 106,2091752, reps, 1), target);
+    // printf("evset size 27\n");
+    // for(int i=0;i<5;i++){
+    //     target = realloc(target, 8);
+    //     *target=0xffffffff;
+    //     test_evset(config_init(27, 2048, 64, 106,2091752, reps, 1), target);
+    // }     
+    // printf("evset size 28\n");
+    // for(int i=0;i<5;i++) test_evset(config_init(28, 2048, 64, 106,2091752, reps, 1), target);
+    // printf("evset size 29\n");
+    // for(int i=0;i<5;i++) test_evset(config_init(29, 2048, 64, 106,2091752, reps, 1), target);
+    // printf("evset size 30\n");
+    // for(int i=0;i<5;i++) test_evset(config_init(30, 2048, 64, 106,2091752, reps, 1), target);
+    // printf("evset size 31\n");
+    // for(int i=0;i<5;i++) test_evset(config_init(31, 2048, 64, 106,2091752, reps, 1), target);
+    // printf("evset size 32\n");
+    // for(int i=0;i<5;i++) test_evset(config_init(32, 2048, 64, 106,2091752, reps, 1), target);
+    // free(target);
+}
+
+void foo(){
+    uint64_t test=0xffffffff;    
+    uint64_t a=0xfffffffe;
+    __asm__ volatile("clflush [%0];mfence;" ::"r" (&test));
+    probe_chase_loop(&a, 1); 
+    uint64_t val1 = probe_chase_loop(&test, 1);      
+    uint64_t val2 = probe_chase_loop(&test, 1);      
+    printf("uncached %lu, cached %lu\n", val1, val2);
+}
 
 int main(int ac, char** av) {
 
 	wait(1E9);
-    // CU_initialize_registry();
-    // CU_pSuite suite = CU_add_suite("Test Suite evict_baseline", NULL, NULL);
+    CU_initialize_registry();
+    CU_pSuite suite = CU_add_suite("Test Suite evict_baseline", NULL, NULL);
+    CU_add_test(suite, "Test test_node", test_find_evset);
 
-    // // // CU_add_test(suite, "Test test_node", test_node);
-    // // // CU_add_test(suite, "Test test_cache_size", test_cache_size);
-    // // // CU_add_test(suite, "Test test_cache_timings1", test_cache_timings1);
-    // // // CU_add_test(suite, "Test test_cache_timings2", test_cache_timings2);
-    // // // CU_add_test(suite, "Test test_L1_evset", test_L1_evset);
-    // // // CU_add_test(suite, "Test test_L2_evset", test_L2_evset);
-    // CU_add_test(suite, "Test test_evset_state", test_evset_state);
-    // // // CU_add_test(suite, "Test replacement_L1", replacement_L1);
-    // 1000000
-    //   50000
-    // CU_basic_run_tests();
-    // CU_cleanup_registry();
+    // // // // CU_add_test(suite, "Test test_node", test_node);
+    // // // // CU_add_test(suite, "Test test_cache_size", test_cache_size);
+    // // // // CU_add_test(suite, "Test test_cache_timings1", test_cache_timings1);
+    // // // // CU_add_test(suite, "Test test_cache_timings2", test_cache_timings2);
+    // // // // CU_add_test(suite, "Test test_L1_evset", test_L1_evset);
+    // // // // CU_add_test(suite, "Test test_L2_evset", test_L2_evset);
+    // // CU_add_test(suite, "Test test_evset_state", test_evset_state);
+    // // // // CU_add_test(suite, "Test replacement_L1", replacement_L1);
+    // // 1000000
+    // //   50000
+    CU_basic_run_tests();
+    CU_cleanup_registry();
     // replacement_L2();
     // printf("---\n");
     // replacement_L2();
@@ -1294,11 +1363,13 @@ int main(int ac, char** av) {
     // replacement_L2();
     // replacement_L2_2();
     // replacement_L2_only_L2();
-    u64 ret =106;
-    while(ret > 105){
-        ret = replacement_L2_only_L2_complete(atoi(av[1]));
-    }
-    printf("%lu\n", ret);
+    // u64 ret =106;
+    // while(ret > 105){
+    //     ret = replacement_L2_only_L2_complete(atoi(av[1]));
+    // }
+    // printf("%lu\n", ret);
     // test_evset_algorithm();
+    // test_find_evset();
+    // foo();
     return 0;
 }

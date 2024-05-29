@@ -141,9 +141,8 @@ static u64 probe_chase_loop(void *addr, u64 reps) {
 		"rdtscp;"
 		"mov rsi, rax;"
 		// BEGIN - probe address
-
-        "loop:"
-		"lfence;"
+        "lfence;"
+        "loop:"		
 		"mov r8, [r8];"
         "dec r9;"
         "lfence;"
@@ -470,8 +469,7 @@ static void traverse_list0(Node *ptr){
     u64 i=0;
     for(Node *tmp=ptr;i++<conf->evset_size;tmp=tmp->next){
         __asm__ volatile("lfence; ");
-        my_access(tmp);
-        
+        my_access(tmp);        
     }    
 }
 
@@ -483,7 +481,7 @@ static u64 test_intern(Node *ptr, void *target){
     
     // page walk
     my_access(target+222);
-    // access(target-222);
+    my_access(target-222);
     
     // measure
     msrmts[msr_index++]=probe_chase_loop(target, 1);
@@ -495,6 +493,7 @@ static u64 test(Node *ptr, void *target){
     if(ptr ==NULL || target ==NULL){
         return 0;
     }
+    asm __inline__("mfence");
     return test_intern(ptr, target) > conf->threshold;
 }
 
