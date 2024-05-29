@@ -4,7 +4,8 @@
 #include <sys/mman.h>
 #include <x86intrin.h>
 
-#define PROBE_REPS (1<<25)
+#define PROBE_REPS (1<<27)
+#define PROBE_REPS2 (1<<25)
 
 static void wait(const uint64_t cycles);
 static uint64_t lfsr_create(void);
@@ -16,6 +17,7 @@ static void create_pointer_chase(void** addr, const uint64_t size);
 static void access(int size){
         void* *buffer = mmap(NULL, size, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);
         create_pointer_chase(buffer, size / sizeof(void*));
+        probe_chase_loop(buffer, PROBE_REPS2);
         uint64_t millicycles = probe_chase_loop(buffer, PROBE_REPS);
         printf("%2d %7.3f\n", size, (double)millicycles/(1<<10));
 
