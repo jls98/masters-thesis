@@ -18,7 +18,6 @@ void *map(char *file_name, uint64_t offset)
     struct stat st_buf;
     if (fstat(file_descriptor, &st_buf) == -1) return NULL;
     size_t map_len = st_buf.st_size;
-    printf("debug size map_len %d\n", map_len);
 	void *mapping = mmap(NULL, map_len, PROT_READ, MAP_SHARED, file_descriptor, 0);
 	if (mapping == MAP_FAILED){
 		printf("[!] map: mmap fail with errno %d\n", errno); // fix problems with mmap
