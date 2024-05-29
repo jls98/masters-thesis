@@ -5,12 +5,11 @@
 #include <x86intrin.h>
 #include <math.h>
 
-#define PROBE_REPS (1<<25)
+#define PROBE_REPS (1<<20)
 #define MEMSIZE_EXP_MIN 14
 #define MEMSIZE_EXP_MAX 23
 #define CACHE_SIZE_DEFAULT_L1 32768 // ecore
 #define CACHE_SIZE_DEFAULT_L2 2097152 // ecore 2MB
-
 
 static void wait(const uint64_t cycles);
 static uint64_t lfsr_create(void);
@@ -22,7 +21,7 @@ static void create_pointer_stride_chase(void** addr, const uint64_t size, const 
 int get_ways_sqr(int cache_size);
 int get_ways_lin(int cache_size);
 int main(int ac, char **av){
-    ac==2 ? get_ways_sqr(atoi(av[1])) : get_ways_sqr(CACHE_SIZE_DEFAULT_L2);
+    ac==2 ? get_ways_sqr(atoi(av[1])) : get_ways_sqr(CACHE_SIZE_DEFAULT_L1);
 }
 
 uint64_t log_2(uint64_t val) {
@@ -45,9 +44,9 @@ int get_ways_sqr(int cache_size) {
         create_pointer_stride_chase(buffer, buffer_size, stride);  
         //uint64_t reps = double_cache_size % stride == 0? buffer_size/stride : buffer_size/stride +1;
 		//printf("s %lu, stride %lu, reps %lu, size of pointer chase %lu\n", s, stride, buffer_size, buffer_size/stride);
-        double millicycles = probe_stride_loop_c(buffer, buffer_size);
+        double millicycles = probe_stride_loop(buffer, PROBE_REPS);
         //printf("stride: %5d; time: %7.3f cycles\n", (1<<stride), millicycles);
-        printf("%7ld %7.3f\n", 8*stride, millicycles);
+        printf("%7ld %7.3f\n", 8*stride, (double) millicycles/(1<<5));
 		
         munmap(buffer, double_cache_size);
     }
@@ -119,7 +118,7 @@ static double probe_stride_loop(void *addr, uint64_t reps) {
 		: "c" (addr), "r" (reps)
 		: "esi", "edx"
 	);
-	return (double)time / (double)reps;
+	return (double)time / (uint64_t)(reps >> 5);
 }
 
 static uint64_t probe(void *adrs){

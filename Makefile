@@ -1,6 +1,6 @@
 CC = gcc
 CFLAGS = -Wall -Wextra -masm=intel -O0 -fPIC
-TARGETS = evset-timings test_evset-timings attacker_evset-timings victim victim2 memory_management task1 size_jens
+TARGETS = evset-timings test_evset-timings attacker_evset-timings victim victim2 memory_management task1 size_jens task2
 
 all: $(TARGETS)
 
@@ -39,8 +39,8 @@ memory_management: Experiments/memory_management.c
 # workshop3: Cache_Reversing/workshop3.c
 # 	$(CC) $(CFLAGS) -o build/workshop3 Cache_Reversing/workshop3.c
     
-# task2: Cache_Reversing/task2.c
-# 	$(CC) $(CFLAGS) -o build/task2 Cache_Reversing/task2.c
+task2: Cache_Reversing/task2.c
+	$(CC) $(CFLAGS) -o build/task2 Cache_Reversing/task2.c
 
 task1: Cache_Reversing/task1.c
 	$(CC) $(CFLAGS) -o build/task1 Cache_Reversing/task1.c
