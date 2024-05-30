@@ -1,6 +1,6 @@
 CC = gcc
 CFLAGS = -Wall -Wextra -masm=intel -O0 -fPIC
-TARGETS = evset-timings test_evset-timings attacker_evset-timings victim victim2 memory_management task1 size_jens task2
+TARGETS = cache_size
 
 all: $(TARGETS)
 
@@ -47,6 +47,15 @@ task1: Cache_Reversing/task1.c
 
 size_jens: Cache_Reversing/size_jens.c
 	$(CC) $(CFLAGS) -o build/size_jens Cache_Reversing/size_jens.c
+
+size_jens: Cache_Reversing/size_jens.c
+	$(CC) $(CFLAGS) -o build/size_jens Cache_Reversing/size_jens.c
+
+
+
+cache_size: src/chap_3_0_cache_size.c
+	$(CC) $(CFLAGS) -o build/cache_size src/chap_3_0_cache_size.c
+
 
 # file_generator: utils/file_generator.c
 # 	$(CC) $(CFLAGS) -o build/file_generator utils/file_generator.c
