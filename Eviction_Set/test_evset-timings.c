@@ -1152,6 +1152,30 @@ void test_evset_algorithm(){
 
 }
 
+void test_cache_line_size(){
+    wait(1E9);
+    int len_arr = 16777216*2;
+    uint8_t *arr = malloc(len_arr*sizeof(uint8_t));
+    u64 *diffs = malloc(12*sizeof(u64));
+    u64 start; 
+    u64 end;
+    for(int i=0;i<12;i++) diffs[i]=0;
+    for(int i=0;i<len_arr;i++){
+        arr[i] = 0xff;
+    }
+
+    for(int K=1;K<13;K++){
+        __asm__ __volatile__ ("mfence; rdtsc" : "=A" (start));
+        for (int i = 0; i < len_arr; i += 1<<K) arr[i] *= 3;
+        __asm__ __volatile__ ("mfence; rdtsc" : "=A" (end));
+        diffs[K] = end-start;
+    }
+    printf("stride|  total | avg\n");
+    for(int i=0;i<12;i++) printf(" %4d %9lu %3.3f \n", 1<<i, diffs[i], (double)diffs[i]/(len_arr/(1<<i)));
+
+
+
+}
 
 int main() {
 
@@ -1174,7 +1198,8 @@ int main() {
     // replacement_L2();
     // replacement_L2_2();
     // replacement_L2_only_L2();
-    test_cache_size();
+    // test_cache_size();
     // test_evset_algorithm();
+    test_cache_line_size();
     return 0;
 }
