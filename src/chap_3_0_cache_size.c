@@ -174,11 +174,8 @@ static uint64_t probe_chase_loop(const void *addr, const uint64_t reps) {
 }
 
 static void create_pointer_chase(void** addr, const uint64_t size) {
-    for (uint64_t i = 0; i < size; i++) {
-        addr[i] = NULL;
-    }
-    uint64_t lfsr = lfsr_create();
-    uint64_t offset, curr = 0;
+    for (uint64_t i = 0; i < size; i++) addr[i] = NULL;
+    uint64_t lfsr = lfsr_create(), offset, curr = 0;
 
     // Find elements in addr that are not assigned yet.
     for (uint64_t i = 0; i < size - 1; i++) {

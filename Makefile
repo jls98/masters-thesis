@@ -1,9 +1,21 @@
 CC = gcc
 CFLAGS = -Wall -Wextra -masm=intel -O0 -fPIC
-TARGETS = cache_size cache_line_size
+TARGETS = cache_size cache_line_size cache_ways_sets
 
 all: $(TARGETS)
 
+
+
+
+cache_size: src/chap_3_0_cache_size.c
+	$(CC) $(CFLAGS) -o build/cache_size src/chap_3_0_cache_size.c
+
+cache_line_size: src/chap_3_1_cache_line_size.c
+	$(CC) $(CFLAGS) -o build/cache_line_size src/chap_3_1_cache_line_size.c
+
+cache_ways_sets: src/chap_3_2_cache_sets_ways.c
+	$(CC) $(CFLAGS) -o build/cache_ways_sets src/chap_3_2_cache_sets_ways.c
+	
 # file_generator: utils/file_generator.c
 #	# $(CC) $(CFLAGS) -o build/file_generator utils/file_generator.c
 
@@ -51,13 +63,6 @@ size_jens: Cache_Reversing/size_jens.c
 size_jens: Cache_Reversing/size_jens.c
 	$(CC) $(CFLAGS) -o build/size_jens Cache_Reversing/size_jens.c
 
-
-
-cache_size: src/chap_3_0_cache_size.c
-	$(CC) $(CFLAGS) -o build/cache_size src/chap_3_0_cache_size.c
-
-cache_line_size: src/chap_3_1_cache_line_size.c
-	$(CC) $(CFLAGS) -o build/cache_line_size src/chap_3_1_cache_line_size.c
 
 
 # file_generator: utils/file_generator.c
