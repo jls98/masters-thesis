@@ -1,6 +1,6 @@
 CC = gcc
 CFLAGS = -Wall -Wextra -masm=intel -O0 -fPIC
-TARGETS = cache_size
+TARGETS = cache_size cache_line_size
 
 all: $(TARGETS)
 
@@ -55,6 +55,9 @@ size_jens: Cache_Reversing/size_jens.c
 
 cache_size: src/chap_3_0_cache_size.c
 	$(CC) $(CFLAGS) -o build/cache_size src/chap_3_0_cache_size.c
+
+cache_line_size: src/chap_3_1_cache_line_size.c
+	$(CC) $(CFLAGS) -o build/cache_line_size src/chap_3_1_cache_line_size.c
 
 
 # file_generator: utils/file_generator.c
