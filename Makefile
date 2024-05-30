@@ -1,8 +1,12 @@
 CC = gcc
 CFLAGS = -Wall -Wextra -masm=intel -O0 -fPIC
-TARGETS = evset-timings test_evset-timings attacker_evset-timings victim victim2 memory_management
+TARGETS = find_evset
 
 all: $(TARGETS)
+
+# maybe not at all? just lib like?
+find_evset: src/chap_3_3_find_evset.c
+	$(CC) $(CFLAGS) -o build/evset -DEVSETMAIN src/chap_3_3_find_evset.c
 
 # file_generator: utils/file_generator.c
 #	# $(CC) $(CFLAGS) -o build/file_generator utils/file_generator.c

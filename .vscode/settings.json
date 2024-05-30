@@ -10,6 +10,9 @@
         "stdlib.h": "c",
         "unistd.h": "c",
         "mman.h": "c",
-        "stdio.h": "c"
+        "stdio.h": "c",
+        "stdint.h": "c",
+        "*.tcc": "c",
+        "ostream": "c"
     }
 }
