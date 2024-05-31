@@ -201,7 +201,6 @@ static Node *list_pop(Node **head) {
 
 static Node *list_get(Node **head, u64 *index) {
     Node *tmp = *head;
-    
     if(!tmp) return NULL;
     u64 i=0;
     while (tmp && i<*index) {
@@ -297,22 +296,22 @@ static Node **find_evset(Config *conf, void *target_adrs){
     list_init(buffer, buf_size);    
     wait(1E9);
     
-    // loop over each cache line
-    // iterate over every cacheline
+    // Test every cache set. Iterate over the locations in the "first" stride.
+    for(int offset=conf->sets-1;offset>=0;offset--){     
 
-    for(int offset=conf->sets-1;offset>=0;offset--){      
-        // create evset with offset as index of Node-array
+        // Create evset based on current offset/cache set.
         for(u64 i= conf->evset_size-1;i+1>0;i--){
-            u64 index=offset + i*conf->sets-i*(conf->sets-1-offset); // take elements from buffer from up to down for easier index calculation
-            
+            // Take elements from buffer from high to low for easier index calculation, since we are removing elements from the buffer linked list.
+            u64 index=offset + i*conf->sets-i*(conf->sets-1-offset); 
             Node *tmp = list_take(buffer_ptr, &index);
             list_append(evsets, tmp);
         }
         list_shuffle(evsets);
-        // test if it is applicable, if yes yehaaw if not, proceed and reset evset pointer 
         
+        // Test twice to avoid noise.
         if(test(conf, *evsets, target_adrs)) if(test(conf, *evsets, target_adrs)) break;        
-        // remove elems from evsets and prepare next iteration
+        
+        // No evset! Remove elements from evset candidate.
         while(*evsets) list_pop(evsets);       
     }   
     return evsets;
@@ -343,6 +342,8 @@ static u64 test_intern(Config *conf, Node *ptr, void *target){
 
 static u64 test(Config *conf, Node *ptr, void *target){
     if(ptr ==NULL || target ==NULL) return 0; 
+
+    // Make sure measurements can be stored properly and we do not run into null pointers.
     if (!msrmts) msrmts = realloc(msrmts, 1000000 * sizeof(u64));
     if (msr_index >= 1000000) msr_index = 0;
     asm __inline__("mfence");
