@@ -6,90 +6,85 @@
 #include <time.h>
 #include <string.h>
 
-// #include "evset.h"
-
-// TODOOOOO
-
 // header
 #define u64 uint64_t
 #define PAGESIZE 2097152
-#define NODESIZE 64
-#define EVSET_SIZE 24 // hardcoded for alder lake gracemont
-#define EVSET_STRIDE 2048 // hardcoded for alder lake gracemont: *2048* x 64 Bytes
 
 typedef struct config {
-	u64 evset_size; // cache ways 
+	u64 evset_size; 
     u64 sets;
-	u64 cache_line_size; // cache line size (usually 64)
-	u64 threshold; // threshold for cache (eg ~45 for L1 on i7)
-	u64 cache_size; // cache size in bytes 
+	u64 cache_line_size; 
+	u64 threshold; // threshold, 95 for L1d, 110 for L2 Alder Lake
+	u64 cache_size; // 32768, 49152, 262144, 1310720, 2097152
 } Config;
 
-/* linked list containing an index and a pointer to     
- * prev and next element                    
- * if treated as (uint64_t *) or similar, it can be used as pointer chase when de-refed
- */
+// Node of size 64 bytes (like cache line)
 typedef struct node {
     struct node *next;
-    char pad[56];// offset to cache line size
+    char pad[56]; // offset to cache line size
 } Node;
 
+// contains measurements
 static u64 msr_index=0;
 static u64 *msrmts;
+
 static Node *buffer;
 
 // Utils #################################################
-/* wait for cycles cycles and activate cache            */
 static void wait(u64 cycles);
-static void flush(void *adrs);
 static void my_access(void *adrs);
 
+// lfsr
+static u64 lfsr_create(void);
+static u64 lfsr_rand(u64* lfsr);
+static u64 lfsr_step(u64 lfsr);
+
 // Node functions ########################################
-// TODO
+// Initialize linked list.
 static void list_init(Node *src, u64 size);
-// static void list_push(Node **head, Node *e);
+
+// Append e to end of list head.
 static void list_append(Node **head, Node *e);
+
+// Remove and return first element from list head.
 static Node *list_pop(Node **head);
+
+// Return element at index index from list head. If index is larger than size of head, it returns the size of list head.
 static Node *list_get(Node **head, u64 *index);
+
+// Remove element at index index from list head and return it.
 static Node *list_take(Node **head, u64 *index);
+
+// Shuffle elements in list head.
 static void list_shuffle(Node **head);
+
+// Print list head.
 static void list_print(Node **head);
 
 //Config functions #######################################
-/* init Config */
 static Config *config_init(u64 evset_size, u64 sets, u64 cache_line_size, u64 threshold, u64 cache_size);
 
-/* configure Config */
-static void config_update(Config *con, u64 evset_size, u64 sets, u64 cache_line_size, u64 threshold, u64 cache_size);
+// evset ############################################
 
-
-// PRG ###################################################
-/* create random seed.                                  */
-static u64 lfsr_create(void);
-    
-/* get pseudo randomly generated number.                */
-static u64 lfsr_rand(u64* lfsr);
-
-/* helper function for lfsr_rand to shift lfsr.         */
-static u64 lfsr_step(u64 lfsr);
-
-// algorithms ############################################
-
+// Find and return an eviction set for target_adrs.
 static Node **find_evset(Config *conf, void *target_adrs);
 static void close_evsets(Config *conf, Node **evset);
+
+// Test if list ptr is an eviction set for target. Return 1 if target is evicted.
 static u64 test(Config *conf, Node *ptr, void *target);
+
+// Measure timing of target after accessing ptr.
 static u64 test_intern(Config *conf, Node *ptr, void *target);
 static void traverse_list0(Config *conf, Node *ptr);
-// --- utils ---
 
+
+// --- utils ---
 static void my_access(void *adrs){
 	__asm__ volatile("mov rax, [%0];"::"r" (adrs): "rax", "memory");
 }
 
-static void flush(void *adrs){
-	__asm__ volatile("clflush [%0]" ::"r" (adrs));
-}
-
+// Probe pointer chase starting at addr and access reps many elements. 
+// Return execution time for pointer chase. 
 static u64 probe_chase_loop(void *addr, u64 reps) {
 	volatile u64 time;	
 	asm __volatile__ (
@@ -117,15 +112,16 @@ static u64 probe_chase_loop(void *addr, u64 reps) {
 	return time;
 }
 
+// Fixed pointer chase probe for eviction sets (access all elements twice).
 static u64 probe_evset_chase(Config *conf, void *addr) {
 	return probe_chase_loop(addr, conf->evset_size*2);
 }
 
+// Probe a single address1
 static u64 probe_evset_single(void *addr) {
 	return probe_chase_loop(addr, 1);
 }
 
-// say hi to cache
 static void wait(u64 cycles) {
 	unsigned int ignore;
 	u64 start = __rdtscp(&ignore);
@@ -153,17 +149,14 @@ static u64 lfsr_step(u64 lfsr) {
 // --- config ---
 static Config *config_init(u64 evset_size, u64 sets, u64 cache_line_size, u64 threshold, u64 cache_size){
 	Config *con = malloc(sizeof(Config));
-	config_update(con, evset_size, sets, cache_line_size, threshold, cache_size);
-	return con;
-}
-
-static void config_update(Config *con, u64 evset_size, u64 sets, u64 cache_line_size, u64 threshold, u64 cache_size){
 	con->evset_size=evset_size;
 	con->sets=sets;
 	con->cache_line_size=cache_line_size;
 	con->threshold=threshold;
 	con->cache_size=cache_size;
+	return con;
 }
+
 
 // --- node ---
 static void list_init(Node *src, u64 size) { 
@@ -192,8 +185,7 @@ static void list_append(Node **head, Node *e){
         return;
     }
     Node *tmp=*head;
-    while(tmp->next) tmp=tmp->next;    // iterate to end
-         
+    while(tmp->next) tmp=tmp->next;   
     tmp->next=e;
     e->next=NULL;
 }
@@ -209,17 +201,18 @@ static Node *list_pop(Node **head) {
 
 static Node *list_get(Node **head, u64 *index) {
     Node *tmp = *head;
-    u64 i=0;
+    
     if(!tmp) return NULL;
+    u64 i=0;
     while (tmp && i<*index) {
         tmp=tmp->next;
         i++;
     }
-    *index=i; // DEBUG purposes, toggle, to count list elements, use large index and retrieve value from pointer
+    *index=i;
     return tmp;
 }
 
-// remove when found
+// remove element at index and return when found
 static Node *list_take(Node **head, u64 *index) {
     Node *tmp = *head, *prev=NULL;
     if(!tmp) return NULL;
@@ -276,7 +269,6 @@ int main(){
     Node **evset = find_evset(conf, target);
     if (evset == NULL) return 0;
     list_print(evset);
-    flush(evset);
     probe_evset_chase(conf, *evset);
     close_evsets(conf, evset);
     return 0;
@@ -308,11 +300,10 @@ static Node **find_evset(Config *conf, void *target_adrs){
     // loop over each cache line
     // iterate over every cacheline
 
-    // for(u64 offset=0;offset<(conf->cache_size/conf->cache_line_size);offset++){
-    for(int offset=EVSET_STRIDE-1;offset>=0;offset--){      
+    for(int offset=conf->sets-1;offset>=0;offset--){      
         // create evset with offset as index of Node-array
         for(u64 i= conf->evset_size-1;i+1>0;i--){
-            u64 index=offset + i*EVSET_STRIDE-i*(EVSET_STRIDE-1-offset); // take elements from buffer from up to down for easier index calculation
+            u64 index=offset + i*conf->sets-i*(conf->sets-1-offset); // take elements from buffer from up to down for easier index calculation
             
             Node *tmp = list_take(buffer_ptr, &index);
             list_append(evsets, tmp);
