@@ -13,6 +13,7 @@
         "stdio.h": "c",
         "stdint.h": "c",
         "*.tcc": "c",
-        "ostream": "c"
+        "ostream": "c",
+        "cunit.h": "c"
     }
 }

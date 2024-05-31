@@ -1301,15 +1301,15 @@ void test_find_evset(){
     uint64_t *target = malloc(8);
     *target=0xffffffff;
     int reps = 10000000;
-    for (int i=0; i<100; i++) test_no_evset(config_init(15, 2048, 64, 106,2091752, 100, 1), target);
-    // printf("evset size 16\n");
-    // test_evset(config_init(16, 2048, 64, 106,2091752, reps, 1), target);
-    // printf("evset size 27\n");
-    // for(int i=0;i<5;i++){
-    //     target = realloc(target, 8);
-    //     *target=0xffffffff;
-    //     test_evset(config_init(27, 2048, 64, 106,2091752, reps, 1), target);
-    // }     
+    // for (int i=0; i<100; i++) test_no_evset(config_init(15, 2048, 64, 106,2091752, 100, 1), target);
+    printf("evset size 16\n");
+    test_evset(config_init(16, 2048, 64, 106,2091752, reps, 1), target);
+    printf("evset size 27\n");
+    for(int i=0;i<5;i++){
+        target = realloc(target, 8);
+        *target=0xffffffff;
+        test_evset(config_init(27, 2048, 64, 106,2091752, reps, 1), target);
+    }     
     // printf("evset size 28\n");
     // for(int i=0;i<5;i++) test_evset(config_init(28, 2048, 64, 106,2091752, reps, 1), target);
     // printf("evset size 29\n");
