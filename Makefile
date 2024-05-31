@@ -1,5 +1,5 @@
 CC = gcc
-CFLAGS = -Wall -Wextra -masm=intel -O0 -fPIC
+CFLAGS = -Wall -Wextra -masm=intel -O0 -fPIC -g
 TARGETS = find_evset
 
 all: $(TARGETS)

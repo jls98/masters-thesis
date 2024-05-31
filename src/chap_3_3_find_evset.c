@@ -23,8 +23,6 @@ typedef struct config {
 	u64 cache_line_size; // cache line size (usually 64)
 	u64 threshold; // threshold for cache (eg ~45 for L1 on i7)
 	u64 cache_size; // cache size in bytes 
-	u64 test_reps; // amount of repetitions in test function
-	u64 hugepages;
 } Config;
 
 /* linked list containing an index and a pointer to     
@@ -33,8 +31,7 @@ typedef struct config {
  */
 typedef struct node {
     struct node *next;
-    struct node *prev;
-    char pad[48];// offset to cache line size
+    char pad[56];// offset to cache line size
 } Node;
 
 static u64 msr_index=0;
@@ -60,10 +57,10 @@ static void list_print(Node **head);
 
 //Config functions #######################################
 /* init Config */
-static Config *config_init(u64 evset_size, u64 sets, u64 cache_line_size, u64 threshold, u64 cache_size, u64 test_reps, u64 hugepages);
+static Config *config_init(u64 evset_size, u64 sets, u64 cache_line_size, u64 threshold, u64 cache_size);
 
 /* configure Config */
-static void config_update(Config *con, u64 evset_size, u64 sets, u64 cache_line_size, u64 threshold, u64 cache_size, u64 test_reps, u64 hugepages);
+static void config_update(Config *con, u64 evset_size, u64 sets, u64 cache_line_size, u64 threshold, u64 cache_size);
 
 
 // PRG ###################################################
@@ -154,38 +151,33 @@ static u64 lfsr_step(u64 lfsr) {
 }
 
 // --- config ---
-static Config *config_init(u64 evset_size, u64 sets, u64 cache_line_size, u64 threshold, u64 cache_size, u64 test_reps, u64 hugepages){
+static Config *config_init(u64 evset_size, u64 sets, u64 cache_line_size, u64 threshold, u64 cache_size){
 	Config *con = malloc(sizeof(Config));
-	config_update(con, evset_size, sets, cache_line_size, threshold, cache_size, test_reps, hugepages);
+	config_update(con, evset_size, sets, cache_line_size, threshold, cache_size);
 	return con;
 }
 
-static void config_update(Config *con, u64 evset_size, u64 sets, u64 cache_line_size, u64 threshold, u64 cache_size, u64 test_reps, u64 hugepages){
+static void config_update(Config *con, u64 evset_size, u64 sets, u64 cache_line_size, u64 threshold, u64 cache_size){
 	con->evset_size=evset_size;
-	// con->evset_size=EVSET_SIZE; // TODO make nicer, hardcoded settings
 	con->sets=sets;
 	con->cache_line_size=cache_line_size;
 	con->threshold=threshold;
 	con->cache_size=cache_size;
-	con->test_reps=test_reps;
-	con->hugepages=hugepages;
 }
 
 // --- node ---
 static void list_init(Node *src, u64 size) { 
     srand(time(NULL)); // avoid pre fetchers by having different contents on the mem pages
-    src[0].prev=NULL;
     src[0].next=NULL;
     int *intArray = (int *)src[0].pad;
-    for(int i=0;i<12;i++){
+    for(int i=0;i<14;i++){
         intArray[i]=rand();
     }    
     for(u64 i=1;i<(size/sizeof(Node));i++){
-        src[i].prev = &src[i-1];
-        src[i].prev->next = &src[i];
+        src[i-1].next = &src[i];
         src[i].next=NULL;
         intArray = (int *)src[i].pad;
-        for(int i=0;i<12;i++){
+        for(int i=0;i<14;i++){
             intArray[i]=rand();
         }
     }
@@ -196,27 +188,22 @@ static void list_append(Node **head, Node *e){
     if(!e) return;
     if(!head || !*head) {
         e->next=NULL;
-        e->prev=NULL;
         *head=e;        
         return;
     }
     Node *tmp=*head;
-    while(tmp->next){ // iterate to end
-        tmp=tmp->next;    
-    }
+    while(tmp->next) tmp=tmp->next;    // iterate to end
+         
     tmp->next=e;
-    e->prev=tmp;
     e->next=NULL;
 }
 
-// remove e and return first element of list
+// remove and return first element of list
 static Node *list_pop(Node **head) {
     Node *tmp = (head)? *head : NULL;
     if (!tmp) return NULL;  // rm nothing
-    if (tmp->next) tmp->next->prev=NULL;
     *head = tmp->next;
     tmp->next=NULL;
-    tmp->prev=NULL;
     return tmp;
 }
 
@@ -234,22 +221,15 @@ static Node *list_get(Node **head, u64 *index) {
 
 // remove when found
 static Node *list_take(Node **head, u64 *index) {
-    Node *tmp = *head;
-    u64 i=0;
+    Node *tmp = *head, *prev=NULL;
     if(!tmp) return NULL;
-    while (tmp && i<*index) {
-        tmp=tmp->next;
-        i++;
-    }
+    for(u64 i=0;tmp && i<*index; i++){
+        prev=tmp;
+        tmp=tmp->next; 
+    } 
     if(!tmp) return NULL;
-    if(tmp->next) tmp->next->prev=tmp->prev;
-    if(tmp->prev) { // tmp->prev is not head
-        tmp->prev->next=tmp->next;         
-    }
-    else{ // tmp is head -> tmp-> next is new head
-        *head=tmp->next;
-    }
-    tmp->prev=NULL;
+    if(prev) prev->next=tmp->next;  // tmp->prev is not head    
+    else *head=tmp->next; // tmp is head -> tmp-> next is new head
     tmp->next=NULL;
     return tmp;
 }
@@ -273,25 +253,25 @@ static void list_shuffle(Node **head){
         my_access(tmp);
     }
     tmp->next=*new_head;
-    (*new_head)->prev=tmp;
     *head = *new_head;  
 }
 
 static void list_print(Node **head){
     if(head==NULL || *head==NULL) return;
     printf("[+] printing pointers of list elements:\n");
-    Node *tmp;
-    u64 ctr=0;
-    for(tmp=*head;tmp;tmp=tmp->next){
-        printf("[%lu] %p %p\n", ++ctr, tmp, tmp->next);
-        if(ctr > 1 && tmp==*head) break;
+    {
+        u64 ctr=0;
+        for(Node *tmp=*head;tmp;tmp=tmp->next){
+            printf("[%lu] %p %p\n", ++ctr, tmp, tmp->next);
+            if(ctr > 1 && tmp==*head) break;
+        }
     }
 }
 
 // --- algorithms ---
 #ifdef EVSETMAIN
 int main(){
-    Config *conf=config_init(27, 2048, 64, 106, 2097152, 1, 1);
+    Config *conf=config_init(27, 2048, 64, 106, 2097152);
     void *target =malloc(8);
     Node **evset = find_evset(conf, target);
     if (evset == NULL) return 0;
@@ -327,19 +307,18 @@ static Node **find_evset(Config *conf, void *target_adrs){
     
     // loop over each cache line
     // iterate over every cacheline
-    u64 index;
-    Node *tmp;
+
     // for(u64 offset=0;offset<(conf->cache_size/conf->cache_line_size);offset++){
-    for(int offset=EVSET_STRIDE-1;offset>=0;offset--){        
+    for(int offset=EVSET_STRIDE-1;offset>=0;offset--){      
         // create evset with offset as index of Node-array
-        for(int i= (int) conf->evset_size-1;i>=0;i--){
-            index=offset + ((u64)i)*EVSET_STRIDE-i*(EVSET_STRIDE-1-offset); // take elements from buffer from up to down for easier index calculation
-            tmp = list_take(buffer_ptr, &index);
+        for(u64 i= conf->evset_size-1;i+1>0;i--){
+            u64 index=offset + i*EVSET_STRIDE-i*(EVSET_STRIDE-1-offset); // take elements from buffer from up to down for easier index calculation
+            
+            Node *tmp = list_take(buffer_ptr, &index);
             list_append(evsets, tmp);
         }
         list_shuffle(evsets);
         // test if it is applicable, if yes yehaaw if not, proceed and reset evset pointer 
-        
         
         if(test(conf, *evsets, target_adrs)) if(test(conf, *evsets, target_adrs)) break;        
         // remove elems from evsets and prepare next iteration
@@ -349,10 +328,12 @@ static Node **find_evset(Config *conf, void *target_adrs){
 }
 
 static void traverse_list0(Config *conf, Node *ptr){
-    u64 i=0;
-    for(Node *tmp=ptr;i++<conf->evset_size;tmp=tmp->next){
-        __asm__ volatile("lfence; ");
-        my_access(tmp);        
+    {
+        u64 i=0;
+        for(Node *tmp=ptr;i++<conf->evset_size;tmp=tmp->next){
+            __asm__ volatile("lfence; ");
+            my_access(tmp);        
+        }
     }    
 }
 
@@ -365,16 +346,14 @@ static u64 test_intern(Config *conf, Node *ptr, void *target){
     my_access(target-222);
     
     // measure
-    msrmts[msr_index++]=probe_evset_single(target);
-    return msrmts[msr_index-1];
+    msrmts[msr_index]=probe_evset_single(target);
+    return msrmts[msr_index++];
 }
 
 static u64 test(Config *conf, Node *ptr, void *target){
-    if(ptr ==NULL || target ==NULL){
-        return 0;
-    }
+    if(ptr ==NULL || target ==NULL) return 0; 
     if (!msrmts) msrmts = realloc(msrmts, 1000000 * sizeof(u64));
-    if (msr_index >= 1000000) msr_index=0;
+    if (msr_index >= 1000000) msr_index = 0;
     asm __inline__("mfence");
     return test_intern(conf, ptr, target) > conf->threshold;
 }
