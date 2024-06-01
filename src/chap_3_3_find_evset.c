@@ -227,7 +227,7 @@ static Node *list_take(Node **head, u64 *index) {
 }
 
 static void list_shuffle(Node **head){
-    if (!*head) return;
+    if (!head || !*head) return;
     Node **new_head = malloc(sizeof(Node*));
     *new_head = NULL;
     u64 size=UINT64_MAX;
@@ -241,6 +241,7 @@ static void list_shuffle(Node **head){
     }
     // connect tail to head
     Node *tmp;
+    if (new_head==NULL) return;
     for(tmp=*new_head;tmp->next;tmp=tmp->next){
         my_access(tmp);
     }
@@ -284,12 +285,21 @@ static void close_evsets(Config *conf, Node **evset){
 }
 
 static Node **find_evset(Config *conf, void *target_adrs){
-    u64 buf_size = PAGESIZE < conf->cache_size ? 2*conf->cache_size : 2*PAGESIZE;
+    u64 buf_size = 4*PAGESIZE;
     Node **evsets = malloc(conf->evset_size*sizeof(Node *));
     msrmts = realloc(msrmts, 1000000 * sizeof(u64));
+    if(msrmts==NULL){
+        printf("[!] find_evset realloc failed!\n");
+        free(msrmts);
+        free(evsets);
+        return NULL;
+    }
     buffer = mmap(NULL, buf_size, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB, -1, 0);
-    if (madvise(buffer, PAGESIZE, MADV_HUGEPAGE) == -1){
+    if (madvise(buffer, buf_size, MADV_HUGEPAGE) == -1){
         printf("[!] madvise failed!\n");
+        free(msrmts);
+        free(evsets);
+        munmap(buffer, buf_size);
         return NULL;
     }
     Node **buffer_ptr=&buffer;
