@@ -287,13 +287,16 @@ static void close_evsets(Config *conf, Node **evset){
 static Node **find_evset(Config *conf, void *target_adrs){
     u64 buf_size = 4*PAGESIZE;
     Node **evsets = malloc(conf->evset_size*sizeof(Node *));
-    msrmts = realloc(msrmts, 1000000 * sizeof(u64));
-    if(msrmts==NULL){
+    *evsets =NULL;
+    u64 *new_msrmts = realloc(msrmts, 1000000 * sizeof(u64));
+    if(new_msrmts==NULL){
         printf("[!] find_evset realloc failed!\n");
         free(msrmts);
         free(evsets);
         return NULL;
     }
+    else msrmts=new_msrmts;
+    
     buffer = mmap(NULL, buf_size, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB, -1, 0);
     if (madvise(buffer, buf_size, MADV_HUGEPAGE) == -1){
         printf("[!] madvise failed!\n");
@@ -314,6 +317,10 @@ static Node **find_evset(Config *conf, void *target_adrs){
             // Take elements from buffer from high to low for easier index calculation, since we are removing elements from the buffer linked list.
             u64 index=offset + i*conf->sets-i*(conf->sets-1-offset); 
             Node *tmp = list_take(buffer_ptr, &index);
+            if(tmp==NULL) {
+                printf("[!] list take failed! \n");
+                return NULL;
+            }
             list_append(evsets, tmp);
         }
         list_shuffle(evsets);

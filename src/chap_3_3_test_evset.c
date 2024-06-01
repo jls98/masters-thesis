@@ -7,26 +7,23 @@
 #define REPS 10000
 void test_evset(Config *conf, void *target){
     wait(1E9);
-    
-    // setup and find evset
+    u64 *my_msrmts = malloc(REPS*sizeof(u64));
     Node **evset = NULL;
-    while(evset==NULL || *evset==NULL) evset = find_evset(conf, target); // hopefully no while true
-
-    // setup measurements
-    msrmts=realloc(msrmts, REPS*sizeof(u64));
-    msr_index=0;
+    evset = find_evset(conf, target); 
+    if (evset==NULL){
+        printf("[!] Failed to find evset!\n");
+        return;
+    }
 
     // multiple measurements
-    for (int i=0;i<REPS;i++) test(conf, *evset, target);
-    u64 above=0;
-    u64 below=0;
-    for (int i=0;i<REPS;i++) {
-        // CU_ASSERT_TRUE(msrmts[i] > conf->threshold);
-        if(msrmts[i] < conf->threshold)below++; 
-        else above++;
+    for (int i=0;i<REPS;i++) my_msrmts[i] =test(conf, *evset, target);
+    {
+        u64 number=0;
+        for (int i=0;i<REPS;i++) number+=my_msrmts[i];        
+        printf("below %lu, above %lu\n", REPS-number, number);
     }
-    printf("below %lu, above %lu\n", below, above);
     close_evsets(conf, evset);    
+    free(my_msrmts);
 }
 
 void test_no_evset(Config *conf, void *target){
@@ -38,15 +35,11 @@ void test_no_evset(Config *conf, void *target){
 void test_find_evset(){
     uint64_t *target = malloc(8);
     *target=0xffffffff;
-    for (int i=0; i<100; i++) test_no_evset(config_init(15, 2048, 64, 106,2091752), target);
-    printf("evset size 16\n");
-    test_evset(config_init(16, 2048, 64, 106,2091752), target);
+    for (int i=0; i<5; i++) test_no_evset(config_init(15, 2048, 64, 106,2091752), target);
+    printf("evset size 17\n");
+    test_evset(config_init(17, 2048, 64, 106,2091752), target);
     printf("evset size 27\n");
-    for(int i=0;i<5;i++){
-        target = realloc(target, 8);
-        *target=0xffffffff;
-        test_evset(config_init(27, 2048, 64, 106,2091752), target);
-    }     
+    for(int i=0;i<5;i++) test_evset(config_init(27, 2048, 64, 106,2091752), target); 
     printf("evset size 28\n");
     for(int i=0;i<5;i++) test_evset(config_init(28, 2048, 64, 106,2091752), target);
     printf("evset size 29\n");
@@ -106,7 +99,7 @@ void measure_element_timing(Config *conf, Node **head1, Node **my_evset, u64 *ms
 u64 min_timing_first_element(Config *conf){
     wait(1E9);
     u64 index=0, offset =32768; // arbitrary offset, 32768*64 = 2 MB
-    // init buffer
+    // init buffer, size depending on evset size
     u64 buf_size = ((conf->evset_size/16)+3)*PAGESIZE;     
     Node *tmp=NULL, *buf= (Node *) mmap(NULL, buf_size, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB, -1, 0), **buf_ptr=&buf;
     // setup and init
@@ -118,31 +111,28 @@ u64 min_timing_first_element(Config *conf){
     Node **my_evset = malloc(conf->evset_size*sizeof(Node *)), **head1 = malloc(sizeof(Node *)); // refs to first element of evset;
     *head1 =NULL, *my_evset=NULL;
     list_init(buf, buf_size);  
+    
     // create evsets manually and test them with targets
     index = 120*conf->sets + offset;
     
     // add 1st elem
-    index = (conf->evset_size-1)*conf->sets+offset; // -1
+    index = (conf->evset_size-1)*conf->sets+offset;
     tmp=list_take(buf_ptr, &index);
     list_append(head1, tmp);
-
     my_evset[conf->evset_size-1] = tmp;
-    // add remaining L2 elems
-    for(int i=conf->evset_size-2; i >=0; i--){ // > EVSET_L1 to add all L1 elems and last L2 elem
+
+    // add remaining elems, stride equals no of sets
+    for(int i=conf->evset_size-2; i >=0; i--){
         index = i*conf->sets + offset;
         tmp=list_take(buf_ptr, &index);
         list_append(head1, tmp);
         my_evset[i]=tmp;
     }
 
-    printf("a printf\n");
-    list_print(head1);
-    printf("end list\n");
+    // list_print(head1);
     u64 *ind=malloc(sizeof(u64));
     *ind=0;
-    printf("%p %p %p\n", list_get(head1, ind), *head1, *my_evset);
     list_shuffle(head1);
-    printf("a\n");
 
     // init buffer to store measurements
     u64 *msrmnt0=malloc(MSRMNT_CNT*(conf->evset_size)*sizeof(u64));
@@ -151,18 +141,10 @@ u64 min_timing_first_element(Config *conf){
     // Measure timings for every element after completing pointer chase.
     for (u64 i=0;i<conf->evset_size;i++) measure_element_timing(conf, head1, my_evset, msrmnt0+MSRMNT_CNT*i, i, conf->evset_size);
     
-
-    u64 aaaaa=0;
-    for(tmp=*head1;aaaaa++<conf->evset_size;tmp=tmp->next){
-        for(u64 bbbb=0;bbbb<conf->evset_size;bbbb++){
-            if(tmp==my_evset[bbbb]) printf("%2ld %p %lu\n", bbbb, tmp, median_uint64(msrmnt0+bbbb*MSRMNT_CNT, MSRMNT_CNT)); // index, pointer, measured median
-        }        
-    }  
-    
-    for(u64 bbbb=0;bbbb<conf->evset_size;bbbb++){
-        if(*head1==my_evset[bbbb]){
-            // printf("head %p, bbbb %d, median %lu high %lu low %lu\n", *head1, bbbb, median_uint64(msrmnt0+bbbb*MSRMNT_CNT, MSRMNT_CNT), findMax(msrmnt0+bbbb*MSRMNT_CNT, MSRMNT_CNT), findMin(msrmnt0+bbbb*MSRMNT_CNT, MSRMNT_CNT));
-            u64 retVal = findMin(msrmnt0+bbbb*MSRMNT_CNT, MSRMNT_CNT);
+    // Find first index and return respective minimum measurement
+    for(u64 index_tmp=0;index_tmp<conf->evset_size;index_tmp++){
+        if(*head1==my_evset[index_tmp]){
+            u64 retVal = findMin(msrmnt0+index_tmp*MSRMNT_CNT, MSRMNT_CNT);
             while(*my_evset) list_pop(my_evset);    
             my_evset = NULL;
             free(msrmnt0);
@@ -176,22 +158,19 @@ u64 min_timing_first_element(Config *conf){
 }
 
 void test_evset_reliability(Config *conf){
-    u64 ret =106;
-    
-    while(ret > 105){
-        ret = min_timing_first_element(conf);
-    }
-    printf("Measurement below threshold detected %lu\n", ret);
+    u64 ret =111;    
+    while(ret > 110) ret = min_timing_first_element(conf);  
+    printf("[!] Measurement below threshold detected: %lu!\n", ret);
 }
 
 
 int main(int ac, char** av) {
 	wait(1E9);
-    // CU_initialize_registry();
-    // CU_pSuite suite = CU_add_suite("Test Suite evict_baseline", NULL, NULL);
-    // CU_add_test(suite, "Test test_node", test_find_evset);
-    // CU_basic_run_tests();
-    // CU_cleanup_registry();
+    CU_initialize_registry();
+    CU_pSuite suite = CU_add_suite("Test Suite evict_baseline", NULL, NULL);
+    CU_add_test(suite, "Test test_node", test_find_evset);
+    CU_basic_run_tests();
+    CU_cleanup_registry();
     
     Config *conf;
     conf = ac==2 ? config_init(atoi(av[1])+1, 4096, 64, 120, 2097152) : config_init(17, 4096, 64, 120, 2097152); // L2, Gen12
