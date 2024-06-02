@@ -279,8 +279,8 @@ static void close_evsets(Config *conf, Node **evset){
         while(*evset) list_pop(evset);
         evset=NULL;
     }
-    munmap(buffer, (PAGESIZE < conf->cache_size) ? 2*conf->cache_size : 2*PAGESIZE);
-    buffer = NULL;
+    // munmap(buffer, (PAGESIZE < conf->cache_size) ? 2*conf->cache_size : 2*PAGESIZE);
+    // buffer = NULL;
 }
 
 static Node **find_evset(Config *conf, void *target_adrs){

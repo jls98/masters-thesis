@@ -3,11 +3,9 @@
 #include <stdlib.h>
 #include <sys/mman.h>
 #include <stdio.h>
-#include <stdlib.h>
 #include <stdint.h>
 #include <fcntl.h>
 #include <unistd.h>
-#include <x86intrin.h>
 #include <errno.h>
 
 typedef struct target{
@@ -25,8 +23,9 @@ typedef struct targets{
 } Targets;
 
 #define MSRMT_BUFFER 1000000
+#define MAX_TARGETS 5
 
-// Return the location of address offset in a file at path file_name.
+// Return the locations of address offsets in a file at path file_name. Sets adrs, mapping, map_len in Target.
 Target *map(char *file_name, uint64_t offset)
 {
     int file_descriptor = open(file_name, O_RDONLY); 
@@ -34,27 +33,26 @@ Target *map(char *file_name, uint64_t offset)
     struct stat st_buf;
     if (fstat(file_descriptor, &st_buf) == -1) return NULL;
     Target *target = malloc(sizeof(Target));
+    target->evset=NULL;
     target->map_len = st_buf.st_size;
     target->mapping = mmap(NULL, target->map_len, PROT_READ, MAP_SHARED, file_descriptor, 0);
     if (target->mapping == MAP_FAILED){
-        printf("[!] map: mmap fail with errno %d\n", errno); // fix problems with mmap
+        printf("[!] map: mmap fail with errno %d\n", errno);
         free(target);
         return NULL;
     }
     close(file_descriptor);
     target->adrs = (void *)(((uint64_t) target->mapping) + offset);
-    return target;
-    
+    return target;    
 }
 
-// load probe adresses from file
+// Loads probe adresses from offset_path for file at target_path. 
 Targets *load_targets(char *target_path, char *offset_path)
 {
     FILE *fp = fopen(offset_path, "r");
     char *line = NULL;
     size_t len = 0;
     ssize_t read;
-
     if (fp == NULL) {
         perror("Error reading adress file (fopen)!\n");
         exit(EXIT_FAILURE);
@@ -62,17 +60,16 @@ Targets *load_targets(char *target_path, char *offset_path)
     Targets *targets = malloc(sizeof(Targets *));
     targets->number=0;
 
-    u64 *offsets = malloc(20*sizeof(u64)); // support 20 different adrs
+    u64 *offsets = malloc(MAX_TARGETS*sizeof(u64)); // support 20 different adrs
 
-    // https://linux.die.net/man/3/getline
-    // read line for line and parse linewise read string to pointers, get number of targets
+    // read line for line and parse linewise read string to pointers to get offsets and get number of targets
     while ((read = getline(&line, &len, fp)) != -1) {
         (&line)[strlen(line)-1] = "\0"; //delete "\n"
         offsets[targets->number++] = strtol(line, NULL, 16); // make read string to pointer        
     }
     fclose(fp);
 
-    // insert values to return struct
+    // Apply offsets to return struct Targets
     targets->addresses = malloc(targets->number*sizeof(Target));
     for(size_t i=0; i<targets->number; i++){
         targets->addresses[i] = map(target_path, offsets[i]);
@@ -86,8 +83,7 @@ Targets *init_spy(Config *spy_conf, char *target_filepath, char *offset_target){
     printf("[+] spy: init spy\n");
 
     // prepare monitoring
-    Targets *targets= malloc(sizeof(Targets));
-    targets = load_targets(target_filepath, offset_target);
+    Targets *targets = load_targets(target_filepath, offset_target);
     for(size_t i=0; i<targets->number; i++){
         targets->addresses[i]->evset = find_evset(spy_conf, targets->addresses[i]->adrs);
         targets->addresses[i]->msrmts = malloc(MSRMT_BUFFER*sizeof(uint64_t));
@@ -114,11 +110,55 @@ void close_spy(Config *conf, Targets *targets){
     }
 }
 
+void append_output(Targets *targets, const char *file_path) {
+	FILE *file = fopen(file_path, "a");
+    if (file == NULL) {
+        printf("Error opening file\n");
+        return;
+    }
+
+    // Append the string to the file
+    // index (zeit in cycles) m1 m2 m3 ..
+    for(int i=0; i< MSRMT_BUFFER; i++){
+        char output[40], str_buf[16]; // hopefully enough
+        memset(output, 0, 40);
+        memset(str_buf, 0, 16);
+        sprintf(str_buf, "%i", i);        
+        strcpy(output, str_buf);
+        
+        // String handling in C = waste of life time
+        for(size_t j=0; j<targets->number; j++){
+            memset(str_buf, 0, 16);
+            sprintf(str_buf, " %lu", targets->addresses[j]->msrmts[i]); 
+            strcat(output, str_buf);
+        }
+        strcat(output, "\n");
+        if (fputs(output, file) == EOF) {
+            printf("Error writing to file\n");
+            fclose(file);
+            return;
+        }
+    }
+	fclose(file);
+}
+
+void create_empty_file(const char *filePath) {
+    FILE *file = fopen(filePath, "w");
+    if (file == NULL) {
+        printf("Error creating file\n");
+        return;
+    }
+    fclose(file);
+}
+
 void my_monitor(Config *spy_conf, Targets *targets){
     int ctr =0, *hit_ctr=malloc(targets->number*sizeof(int));
     for(size_t i=0; i<targets->number; i++) hit_ctr[i]=0;
     unsigned long long old_tsc, tsc;
     __asm__ __volatile__ ("rdtscp" : "=A" (tsc));
+    const char *output_filename = "./output_evict_time.log";
+    create_empty_file(output_filename);
+    int debug =targets->number;
     while(1)
     {
         old_tsc = tsc;
@@ -130,15 +170,23 @@ void my_monitor(Config *spy_conf, Targets *targets){
         }
 
         for(size_t i=0; i<targets->number; i++){
+            if(debug>0) printf("%lu, %lx, %p\n", i, targets->addresses[i]->offset, targets->addresses[i]->evset);
+            if(debug-->0) list_print(targets->addresses[i]->evset);
             probe_evset_chase(spy_conf, targets->addresses[i]->evset);
 
             // TODO find different solution
-            if(targets->addresses[i]->msrmts[ctr] < spy_conf->threshold) printf("[i] my_monitor: detected 0x%lx: ctr %d, hit ctr %d\n", targets->addresses[i]->offset, ctr, ++hit_ctr[i]);
+            // if(targets->addresses[i]->msrmts[ctr] < spy_conf->threshold) printf("[i] my_monitor: detected 0x%lx: ctr %d, hit ctr %d\n", targets->addresses[i]->offset, ctr, ++hit_ctr[i]);
         }        
 
-        if(ctr++ >= MSRMT_BUFFER) ctr=0;
+        if(ctr++ >= MSRMT_BUFFER) {
+            ctr=0;
+
+            // Write back results
+            append_output(targets, output_filename);
+            break;
+        }
     }
-    
+    printf("finished\n");
     // unreachable
     close_spy(spy_conf, targets);
 }
