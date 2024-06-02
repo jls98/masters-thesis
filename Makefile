@@ -1,6 +1,6 @@
 CC = gcc
 CFLAGS = -Wall -Wextra -masm=intel -O0 -fPIC -g
-TARGETS = find_evset test_evset evict_time victim
+TARGETS = find_evset test_evset evict_time
 
 all: $(TARGETS)
 

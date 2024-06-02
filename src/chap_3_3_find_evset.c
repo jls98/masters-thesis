@@ -77,7 +77,6 @@ static u64 test(Config *conf, Node *ptr, void *target);
 static u64 test_intern(Config *conf, Node *ptr, void *target);
 static void traverse_list0(Config *conf, Node *ptr);
 
-
 // --- utils ---
 static void my_access(void *adrs){
 	__asm__ volatile("mov rax, [%0];"::"r" (adrs): "rax", "memory");
