@@ -1,6 +1,6 @@
 CC = gcc
 CFLAGS = -Wall -Wextra -masm=intel -O0 -fPIC -g
-TARGETS = find_evset test_evset
+TARGETS = find_evset test_evset evict_time
 
 all: $(TARGETS)
 
@@ -10,6 +10,10 @@ find_evset: src/chap_3_3_find_evset.c
 
 test_evset: src/chap_3_3_test_evset.c
 	$(CC) $(CFLAGS) -o build/test_evset src/chap_3_3_test_evset.c src/chap_3_3_find_evset.c -lcunit
+
+evict_time: src/chap_4_0_evict_time.c
+	$(CC) $(CFLAGS) -o build/evict_time src/chap_4_0_evict_time.c src/evset-chap_3_3_test_evset.c
+
 
 # file_generator: utils/file_generator.c
 #	# $(CC) $(CFLAGS) -o build/file_generator utils/file_generator.c
@@ -23,23 +27,23 @@ test_evset: src/chap_3_3_test_evset.c
 # evset: Eviction_Set/evset.c
 # 	$(CC) $(CFLAGS) -o build/evset Eviction_Set/evset.c
     
-evset-timings: Eviction_Set/evset-timings.c
-	$(CC) $(CFLAGS) -o build/evset-timings Eviction_Set/evset-timings.c
+# evset-timings: Eviction_Set/evset-timings.c
+# 	$(CC) $(CFLAGS) -o build/evset-timings Eviction_Set/evset-timings.c
 
-test_evset-timings: Eviction_Set/test_evset-timings.c
-	$(CC) $(CFLAGS) -o build/test_evset-timings -DNOMAIN Eviction_Set/test_evset-timings.c Eviction_Set/evset-timings.c -lcunit
+# test_evset-timings: Eviction_Set/test_evset-timings.c
+# 	$(CC) $(CFLAGS) -o build/test_evset-timings -DNOMAIN Eviction_Set/test_evset-timings.c Eviction_Set/evset-timings.c -lcunit
 
-attacker_evset-timings: Eviction_Set/attacker_evset-timings.c
-	$(CC) $(CFLAGS) -o build/attacker_evset-timings -DNOMAIN Eviction_Set/attacker_evset-timings.c Eviction_Set/evset-timings.c
+# attacker_evset-timings: Eviction_Set/attacker_evset-timings.c
+# 	$(CC) $(CFLAGS) -o build/attacker_evset-timings -DNOMAIN Eviction_Set/attacker_evset-timings.c Eviction_Set/evset-timings.c
 
-victim: Eviction_Set/victim.c 
-	$(CC) $(CFLAGS) -o build/victim Eviction_Set/victim.c
+# victim: Eviction_Set/victim.c 
+# 	$(CC) $(CFLAGS) -o build/victim Eviction_Set/victim.c
 
-victim2: Eviction_Set/victim2.c 
-	$(CC) $(CFLAGS) -o build/victim2 -DNOMAIN Eviction_Set/victim2.c
+# victim2: Eviction_Set/victim2.c 
+# 	$(CC) $(CFLAGS) -o build/victim2 -DNOMAIN Eviction_Set/victim2.c
 
-memory_management: Experiments/memory_management.c
-	$(CC) $(CFLAGS) -o build/memory_management Experiments/memory_management.c
+# memory_management: Experiments/memory_management.c
+# 	$(CC) $(CFLAGS) -o build/memory_management Experiments/memory_management.c
 # test_evset: Eviction_Set/test_evset.c
 # 	$(CC) $(CFLAGS) -o build/test_evset -DNOMAIN Eviction_Set/test_evset.c Eviction_Set/evset.c -lcunit
 
