@@ -161,17 +161,21 @@ void close_spy(Config *conf, Targets *targets){
 // Monitor target addresses.
 void my_monitor(Config *spy_conf, Targets *targets){
     {
+        const char *output_filename = "./output_evict_time.log";
         int ctr=0, *hit_ctr=malloc(targets->number*sizeof(int));
         for(size_t i=0; i<targets->number; i++) hit_ctr[i]=0;
         unsigned long long old_tsc, tsc;
         __asm__ __volatile__ ("rdtscp" : "=A" (tsc));
-        
+
         // Print information on first iteration.
         int first=targets->number;
+
+        // wait 3000*no. of targets, eviction takes ~1900 cycles
+        unsigned long long diff = 3000*first;
         while(1){
             old_tsc=tsc;
             __asm__ __volatile__ ("rdtscp" : "=A" (tsc));
-            while (tsc - old_tsc < 2500) __asm__ __volatile__ ("rdtscp" : "=A" (tsc));// TODO why 2500/500 cycles per slot now, depending on printf
+            while (tsc - old_tsc < diff) __asm__ __volatile__ ("rdtscp" : "=A" (tsc));// ~2000 cycles for eviction, how choose distance?
 
             // probe
             for(size_t i=0; i<targets->number; i++){
