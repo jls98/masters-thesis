@@ -134,7 +134,7 @@ Targets *init_spy(Config *spy_conf, char *target_filepath, char *offset_target){
     }    
 
     // Make sure output file exists.
-    const char *output_filename = "./output_evict_time.log";
+    const char *output_filename = "./output_prime_probe.log";
     create_empty_file(output_filename);
 
     printf("[+] spy: find evset done\n");       
@@ -162,7 +162,7 @@ void close_spy(Config *conf, Targets *targets){
 // Monitor target addresses.
 void my_monitor(Config *spy_conf, Targets *targets){
     {
-        const char *output_filename = "./output_evict_time.log";
+        const char *output_filename = "./output_prime_probe.log";
         int ctr=0, *hit_ctr=malloc(targets->number*sizeof(int));
         for(size_t i=0; i<targets->number; i++) hit_ctr[i]=0;
         unsigned long long old_tsc, tsc;

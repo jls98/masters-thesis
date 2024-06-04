@@ -1,6 +1,9 @@
 build/*
 !build/
 
+output_evict_time.log
+output_prime_probe.log
+
 Eviction_Set/hist/*
 !Eviction_Set/hist/
 # Prerequisites
