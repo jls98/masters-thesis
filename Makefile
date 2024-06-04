@@ -1,6 +1,6 @@
 CC = gcc
 CFLAGS = -Wall -Wextra -masm=intel -O0 -fPIC -g
-TARGETS = prime_probe evict_time victim2
+TARGETS = prime_probe evict_time victim2 test_evict_time
 
 all: $(TARGETS)
 
@@ -16,6 +16,9 @@ evict_time: src/chap_4_0_evict_time.c
 
 prime_probe: src/chap_4_1_prime_probe.c
 	$(CC) $(CFLAGS) -o build/prime_probe src/chap_4_1_prime_probe.c src/chap_3_3_find_evset.c
+
+test_evict_time: src/chap_5_0_test_evict_time.c
+	$(CC) $(CFLAGS) -o build/test_evict_time src/chap_5_0_test_evict_time.c
 
 
 # file_generator: utils/file_generator.c

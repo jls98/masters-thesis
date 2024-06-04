@@ -14,6 +14,7 @@
         "stdint.h": "c",
         "*.tcc": "c",
         "ostream": "c",
-        "cunit.h": "c"
+        "cunit.h": "c",
+        "errno.h": "c"
     }
 }
