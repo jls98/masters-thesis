@@ -29,7 +29,8 @@ void *map(char *file_name, uint64_t offset)
 }
 
 #define TEST_REPS 1000
-#define TEST_CYCLES 777777
+#define TEST_CYCLES 3000000 // 3000
+#define TEST_CYCLES_SHORT 2000000 // 3000
 
 // Works very unreliable with loop (1 detection on 1000 reps).
 void test_victim(){
@@ -54,13 +55,14 @@ void test_victim_syscall(){
     for(int i=0;i<TEST_REPS;i++){
         old_tsc=tsc;
         __asm__ __volatile__ ("rdtscp" : "=A" (tsc));
-        while (tsc - old_tsc < TEST_CYCLES) __asm__ __volatile__ ("rdtscp" : "=A" (tsc));
-        system("./build/victim");
+        while (tsc - old_tsc < TEST_CYCLES_SHORT) __asm__ __volatile__ ("rdtscp" : "=A" (tsc));
+        system("./build/victim_new");
     }
 }
 
 
 int main(){
+    wait(1E9);
     // victim that loads data 
     test_victim_syscall();    
 }
