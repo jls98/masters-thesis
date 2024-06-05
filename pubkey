@@ -1,0 +1,63 @@
+Old: Public Key Packet(tag 6)(269 bytes)
+	Ver 4 - new
+	Public key creation time - Sat Jun  1 23:18:02 CEST 2024
+	Pub alg - RSA Encrypt or Sign(pub 1)
+	RSA n(2048 bits) - d4 e5 4f b9 50 cb 5e b1 e7 28 d3 8a 81 c8 a6 f2 f5 2e 08 08 7e c2 27 69 4f b5 91 06 54 ca 65 39 a5 bf 2e a9 d3 66 6a 69 17 20 51 4f ff ad b7 ec 06 61 16 9d ec 6c b7 eb 32 8a c9 50 25 38 5d 36 5e e2 f8 2c b2 b9 f8 d8 22 07 9d 3f 55 76 07 83 96 b0 be 36 b5 8d 46 ed 90 35 80 c1 d9 6f f4 ed 78 35 6e e2 a7 62 e3 c2 8d e9 41 90 79 a2 29 6d 11 7e 82 91 0d 89 15 ed 6a 21 5d a0 aa 69 7a 1c 14 c7 3f f5 d8 71 c6 00 7c 5d 09 e0 cf 52 ee b5 27 43 4d 98 5f 50 36 ba e0 c0 1e ef 2f 47 83 bd e5 d4 d7 1e b7 61 67 5e fc da a2 ba 16 67 c3 f3 d2 b9 1f 20 aa 85 c6 bd e7 ba 2c a0 0d ab bc 17 f2 8a 1b 64 6d 37 37 fb 18 4c 3b d6 8d df 5e e6 6c 0e 80 e9 6a dc 6c b4 79 e9 5a 1c 6e 2a d4 36 14 90 c6 45 a2 00 2d 86 9e ed 0b 0e 46 09 72 56 9a f9 c1 ee ca c2 b9 a4 8d 1e e0 c3 e1 bf 2d 5b 
+	RSA e(17 bits) - 01 00 01 
+Old: User ID Packet(tag 13)(27 bytes)
+	User ID - Jialin <Jia-Lin.Shi@rub.de>
+Old: Signature Packet(tag 2)(311 bytes)
+	Ver 4 - new
+	Sig type - Positive certification of a User ID and Public Key packet(0x13).
+	Pub alg - RSA Encrypt or Sign(pub 1)
+	Hash alg - SHA1(hash 2)
+	Hashed Sub: signature creation time(sub 2)(4 bytes)
+		Time - Sat Jun  1 23:18:02 CEST 2024
+	Hashed Sub: key flags(sub 27)(1 bytes)
+		Flag - This key may be used to certify other keys
+		Flag - This key may be used to sign data
+	Hashed Sub: preferred symmetric algorithms(sub 11)(5 bytes)
+		Sym alg - AES with 256-bit key(sym 9)
+		Sym alg - AES with 192-bit key(sym 8)
+		Sym alg - AES with 128-bit key(sym 7)
+		Sym alg - CAST5(sym 3)
+		Sym alg - Triple-DES(sym 2)
+	Hashed Sub: preferred hash algorithms(sub 21)(5 bytes)
+		Hash alg - SHA256(hash 8)
+		Hash alg - SHA1(hash 2)
+		Hash alg - SHA384(hash 9)
+		Hash alg - SHA512(hash 10)
+		Hash alg - SHA224(hash 11)
+	Hashed Sub: preferred compression algorithms(sub 22)(2 bytes)
+		Comp alg - ZLIB <RFC1950>(comp 2)
+		Comp alg - ZIP <RFC1951>(comp 1)
+	Hashed Sub: features(sub 30)(1 bytes)
+		Flag - Modification detection (packets 18 and 19)
+	Hashed Sub: key server preferences(sub 23)(1 bytes)
+		Flag - No-modify
+	Sub: issuer key ID(sub 16)(8 bytes)
+		Key ID - 0xD4B01120FFB53D55
+	Hash left 2 bytes - 4b ab 
+	RSA m^d mod n(2046 bits) - 2c 32 6c ea 97 1d 65 ee 35 ac 78 bc bb 5d 2a ac 32 32 a6 5e 17 fc 30 bc dd 38 c5 2c 60 1a a1 74 b7 f5 56 e1 79 ca b7 a4 15 fd 22 be c8 8a e1 0c cd 88 30 23 13 e3 08 91 ad a0 6b 21 9a 79 64 4c 69 73 fd 17 5d ac d5 01 09 d5 02 11 cc 00 65 7c 20 1e 6a 2e a4 83 07 1c dc ec 47 08 21 64 b4 cf 4e b9 e0 0f 9a ab 5d c6 83 ef 21 4f e5 5f b9 1a 08 1b 90 d3 04 2a 10 e5 50 0a 96 0c 7c d7 dd 21 cb b8 fd 89 dd e8 9d bd 05 89 ec f2 95 cc 38 35 91 96 71 f5 88 57 d5 2d 31 42 c7 e6 c5 2b c6 c0 05 3e 2f 6f cd fd a5 eb 3a f6 26 8c 51 41 74 46 9c f3 83 c9 de 7e 37 98 ff b2 20 38 18 5f c2 dc 32 2d cf 7e 6b 45 76 f2 04 f3 5f 27 e4 6e dc bd 04 5e 85 4b 5e aa 71 68 ef cd 04 f6 c6 97 03 21 7f 47 85 dd 3e ee 54 3a d7 63 65 62 51 6d ff 02 72 e4 39 b5 2c c6 31 66 60 83 2a b7 8f 42 70 0b 
+		-> PKCS-1
+Old: Public Subkey Packet(tag 14)(269 bytes)
+	Ver 4 - new
+	Public key creation time - Sat Jun  1 23:18:02 CEST 2024
+	Pub alg - RSA Encrypt or Sign(pub 1)
+	RSA n(2048 bits) - d3 2a 40 43 4d 58 34 15 42 81 29 d3 55 9e d5 d0 dd 33 0c 59 20 05 e2 b6 c4 db 46 b1 21 aa df cf ba 9e 30 e5 cb 58 a4 67 2c d2 1a a7 d7 77 fd ac 8a 86 20 f5 fc b8 31 38 06 5c 9a 1f a5 7e f9 bf a1 67 52 c3 09 1b b7 52 9c 24 7d e8 ae 53 0e 81 73 8e 3f fa 7c ed 7b 8e 7c 41 10 4a 9b a6 10 79 1c 45 be ae 21 af dc 9b b7 70 08 e5 96 2e f6 85 25 92 2f 40 4b e5 fb 27 7c 37 aa 86 ad b7 fc 6b da af 8a 5b bc aa b0 92 7b 5f 36 62 62 0d 0d ce d3 d6 01 28 52 1a 84 bf 4c 96 83 89 e7 15 1f 75 c7 f4 eb 09 ca 70 92 28 d3 1a 0e 07 82 d8 21 3d 86 d9 40 e0 d8 89 83 a8 3f 9c 86 9f 08 0d 96 7c 9f cf 29 eb e0 f8 9c db ff 2a c0 d3 98 38 4c e2 c4 59 96 b9 10 c2 cf 47 76 5b 32 f6 f0 16 b5 40 0c 4b 52 24 9e d6 5c d8 bd f6 1c 77 91 a0 ad e4 80 8a 18 03 50 a4 ef e0 f6 23 09 92 dd 3e 77 27 
+	RSA e(17 bits) - 01 00 01 
+Old: Signature Packet(tag 2)(287 bytes)
+	Ver 4 - new
+	Sig type - Subkey Binding Signature(0x18).
+	Pub alg - RSA Encrypt or Sign(pub 1)
+	Hash alg - SHA1(hash 2)
+	Hashed Sub: signature creation time(sub 2)(4 bytes)
+		Time - Sat Jun  1 23:18:02 CEST 2024
+	Hashed Sub: key flags(sub 27)(1 bytes)
+		Flag - This key may be used to encrypt communications
+		Flag - This key may be used to encrypt storage
+	Sub: issuer key ID(sub 16)(8 bytes)
+		Key ID - 0xD4B01120FFB53D55
+	Hash left 2 bytes - e9 14 
+	RSA m^d mod n(2046 bits) - 3c 84 b3 31 5f 1d 05 50 59 24 43 62 c1 73 9b f6 0c 29 73 cf 9e 7f ab 2f e4 e8 e7 28 61 20 d5 8c 3b 7a 5f 63 01 4a 42 10 3c 29 9e a8 8c 43 e8 92 33 1e 0b 68 1a 31 84 c3 14 5c 83 66 09 94 cb eb fa 82 d6 36 4f a7 2e 95 75 9e 86 79 56 67 e7 6f 26 1d 87 9b 9e c2 ba 2b 34 9f 7c 38 b4 b5 7d b1 d3 93 eb 58 01 7c ee d1 a6 c5 d2 07 6c da b5 0b 59 ef 37 de 26 b2 58 88 d8 f6 2e 4d c0 d3 66 21 23 24 6c 14 d4 45 50 6f ca 03 3a 29 03 a7 52 66 d7 36 3e c4 39 ad 1f cb 12 bd e8 ac 78 b3 8b 2a ed b7 34 8d 71 bb fc af b3 6e 21 9f 1c b2 1f 41 b8 5c 80 1a 4e 48 d7 41 5f 24 94 5d 7f 71 4a 3e 66 7f ac c0 eb 53 69 f3 78 58 e5 72 7a 22 62 51 b3 74 52 07 76 50 ad 0f 3f cf bc c2 09 e6 e7 8d 4d af e3 a5 8e 2d 41 a2 58 49 d8 3e 51 66 44 96 3e a7 70 09 80 fe 8d 4d 60 86 75 6d a9 f1 b2 f7 
+		-> PKCS-1
