@@ -3,6 +3,8 @@ import matplotlib.pyplot as plt
 
 # Define the threshold
 threshold = 110
+plot_min = 0
+plot_max = 400
 
 # Function to parse the file
 def parse_file(filename):
@@ -14,14 +16,14 @@ def count_below_threshold(data, threshold):
     counts = []
     for col in range(1, data.shape[1]):
         count = 0
-        below_threshold = False
+        below_threshold = 3
         for i in range(len(data)):
             if data[i, col] < threshold:
-                if not below_threshold:
+                if below_threshold<0:
                     count += 1
-                    below_threshold = True
+                    below_threshold = 3
             else:
-                below_threshold = False
+                below_threshold -=1
         counts.append(count)
     return counts
 
@@ -44,6 +46,7 @@ def plot_measurements(data, threshold):
             end_index = min(len(data), below_indices[-1] + 10)
             plt.plot(data[start_index:end_index, 0], data[start_index:end_index, col], label=f'Column {col}')
     plt.axhline(y=threshold, color='r', linestyle='--', label='Threshold')
+    plt.ylim(plot_min, plot_max)
     plt.xlabel('Blocks')
     plt.ylabel('Measurements')
     plt.legend()
