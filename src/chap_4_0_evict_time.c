@@ -231,7 +231,6 @@ void spy(char *victim_filepath, char *offset_filepath){
         }
     }
     printf(" now...\n");
-    for(size_t i=0; i<targets->number; i++) list_print(targets->addresses[i]->evset);
     my_monitor(spy_conf, targets);
 }
 
