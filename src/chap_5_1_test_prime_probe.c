@@ -35,7 +35,7 @@ void *map(char *file_name, uint64_t offset)
 // Works very unreliable with loop (1 detection on 1000 reps).
 void test_victim(){
     void *my_victim = map("./build/victim", 0x1178);
-    printf("my victim is located at %p, holds value %lx\n", my_victim, *((uint64_t *) my_victim));
+    printf("my victim is located at %p, hold value %lx\n", my_victim, *((uint64_t *) my_victim));
     unsigned long long old_tsc, tsc;
     __asm__ __volatile__ ("rdtscp" : "=A" (tsc));
     for(int i=0;i<TEST_REPS;i++){
@@ -43,8 +43,8 @@ void test_victim(){
         __asm__ __volatile__ ("rdtscp" : "=A" (tsc));
         while (tsc - old_tsc < TEST_CYCLES) __asm__ __volatile__ ("rdtscp" : "=A" (tsc));
         probe_evset_single(my_victim);  
-        // probe_evset_single(my_victim);  
-        // probe_evset_single(my_victim);  
+        probe_evset_single(my_victim);  
+        probe_evset_single(my_victim);  
     }
 }
 
@@ -61,9 +61,8 @@ void test_victim_syscall(){
 }
 
 
-int main(int ac, char *av){
+int main(){
     wait(1E9);
     // victim that loads data 
-    if (ac==1) test_victim_syscall();    
-    else test_victim();
+    test_victim();    
 }

