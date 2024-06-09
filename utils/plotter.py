@@ -20,7 +20,7 @@ def plot_data_task2(data, opt):
     strides, cycles = data[:, 0], data[:, 1]
     plt.figure(figsize=(10, 6))
     plt.scatter(strides, cycles, label='cycles', marker='o', color='b')
-    plt.plot(strides, cycles, linestyle='-', color='b', linewidth=0.5)  # Thin line connecting the dots
+    plt.plot(strides, cycles, linestyle='-', color='b', linewidth=0.5, marker=None)  # Thin line connecting the dots
     plt.yscale('linear')  # Adjust the scale if needed
     plt.xscale('log', base=2)
     
@@ -46,7 +46,7 @@ def plot_data_task1(data, opt):
     strides, cycles = data[:, 0], data[:, 1]
     
     plt.figure(figsize=(10, 6))
-    plt.scatter(strides, cycles, label='cycles', marker='o', color='b')
+    plt.scatter(strides, cycles, label='cycles', marker="none", color='b')
     plt.plot(strides, cycles, linestyle='-', color='b', linewidth=0.5)  # Thin line connecting the dots
     plt.yscale('linear')  # Adjust the scale if needed
     plt.xscale('log', base=2)

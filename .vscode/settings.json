@@ -17,6 +17,7 @@
         "cunit.h": "c",
         "errno.h": "c",
         "stdint-gcc.h": "c",
-        "features.h": "c"
+        "features.h": "c",
+        "x86intrin.h": "c"
     }
 }

@@ -3,7 +3,7 @@
 #include <CUnit/Basic.h>
 
 #define PAGESIZE 2097152 // hugepage 2 MB
-#define TOTALACCESSES 100
+#define TOTALACCESSES 1
 
 void test_node(){
     Node *nodes= (Node *) mmap(NULL, 5000*sizeof(Node), PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB, -1, 0); 
@@ -57,23 +57,26 @@ static u64 test_buffer(Node **buf, u64 total_size, u64 reps){
     Node **head=buf;
     Node *next;
     u64 total_time=0;
+    u64 total_entries=total_size/conf->cache_line_size;
+    // printf("%lu total entries, %lu total size, %lu line size\n ", total_entries, total_size, conf->cache_line_size);
     u64 *msrmt = malloc(reps*sizeof(u64));
-    for(u64 i=1;i*64<total_size;i++){
+    for(int i=0;i<reps;i++) msrmt[i]=0;
+    for(u64 i=1;i<total_entries;i++){
         my_access(tmp);
         tmp=tmp->next;
     }
     next=tmp->next;
     tmp->next=NULL;    
-    printf("pre shuffle");
     list_shuffle(head);
-    printf(" post shufflee\n");
+    // printf("[+] set shuffled\n");
     tmp=*head;
 
     traverse_list0(tmp);
     traverse_list0(tmp);
     tmp=*head;
     for(u64 i=0;i<reps;i++){ // unstable TODO
-        msrmt[i]=probe_chase_loop(tmp, total_size);        
+        asm __volatile__("mfence");
+        msrmt[i]=probe_chase_loop(tmp, total_entries);        
     }   
     
     // return to old state, last element points to next, first is new head and reset prev
@@ -85,7 +88,8 @@ static u64 test_buffer(Node **buf, u64 total_size, u64 reps){
             total_time+=msrmt[i];
     }    
     u64 median=median_uint64(msrmt, reps);
-    printf("\n[+] Results for buffer size %lu: total time %lu, avg %lu, median %lu, median avg %lu\n", total_size, total_time, total_time/total_size, median, median/total_size);    
+    //printf("\n[+] Results for buffer size %lu: total time %lu, avg %lu, median %lu, median avg %lu\n", total_size, total_time, total_time/total_size, median, median/total_size);    
+    printf("%lu %lu %lu\n", total_size, median/(total_size/conf->cache_line_size), total_time/(reps*total_entries));
     free(msrmt);
     msrmt=NULL;    
     return total_time;
@@ -95,7 +99,7 @@ void test_cache_size(){
     wait(1E9);
     // allocate
     conf = config_init(16, 131072, 64, 70, 2097152, 1, 1);
-    u64 buf_size = 8*PAGESIZE; 
+    u64 buf_size = 20*PAGESIZE; 
     Node *buf= (Node *) mmap(NULL, buf_size, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB, -1, 0);
     if(buf==MAP_FAILED){
         printf("mmap failed\n");
@@ -114,48 +118,132 @@ void test_cache_size(){
     tmp_buffer_size = 16384;
     total_time=test_buffer(buffer, tmp_buffer_size, TOTALACCESSES);  
 
-    tmp_buffer_size = 24384;
-    total_time=test_buffer(buffer, tmp_buffer_size, TOTALACCESSES);
-    tmp_buffer_size = 26384;
-    total_time=test_buffer(buffer, tmp_buffer_size, TOTALACCESSES);    
-    tmp_buffer_size = 28384;
-    total_time=test_buffer(buffer, tmp_buffer_size, TOTALACCESSES);
-    tmp_buffer_size = 30384;
-    total_time=test_buffer(buffer, tmp_buffer_size, TOTALACCESSES);
+    // tmp_buffer_size = 24384;
+    // total_time=test_buffer(buffer, tmp_buffer_size, TOTALACCESSES);
+    // tmp_buffer_size = 26384;
+    // total_time=test_buffer(buffer, tmp_buffer_size, TOTALACCESSES);    
+    // tmp_buffer_size = 28384;
+    // total_time=test_buffer(buffer, tmp_buffer_size, TOTALACCESSES);
+    // tmp_buffer_size = 30384;
+    // total_time=test_buffer(buffer, tmp_buffer_size, TOTALACCESSES);
+    tmp_buffer_size = 16384+10*1024;
+    total_time=test_buffer(buffer, tmp_buffer_size, TOTALACCESSES); 
+    tmp_buffer_size = 16384+11*1024;
+    total_time=test_buffer(buffer, tmp_buffer_size, TOTALACCESSES); 
+    tmp_buffer_size = 16384+12*1024;
+    total_time=test_buffer(buffer, tmp_buffer_size, TOTALACCESSES); 
+    tmp_buffer_size = 16384+13*1024;
+    total_time=test_buffer(buffer, tmp_buffer_size, TOTALACCESSES); 
+    tmp_buffer_size = 16384+14*1024;
+    total_time=test_buffer(buffer, tmp_buffer_size, TOTALACCESSES); 
+    tmp_buffer_size = 16384+15*1024;
+    total_time=test_buffer(buffer, tmp_buffer_size, TOTALACCESSES); 
     tmp_buffer_size = 32768;
-    total_time=test_buffer(buffer, tmp_buffer_size, TOTALACCESSES);    
-    tmp_buffer_size = 34768;
-    total_time=test_buffer(buffer, tmp_buffer_size, TOTALACCESSES);    
-    tmp_buffer_size = 36768;
-    total_time=test_buffer(buffer, tmp_buffer_size, TOTALACCESSES);    
-    tmp_buffer_size = 38768;
+    total_time=test_buffer(buffer, tmp_buffer_size, TOTALACCESSES); 
+    tmp_buffer_size = 32768+1*1024;
+    total_time=test_buffer(buffer, tmp_buffer_size, TOTALACCESSES); 
+    tmp_buffer_size = 32768+2*1024;
+    total_time=test_buffer(buffer, tmp_buffer_size, TOTALACCESSES); 
+    tmp_buffer_size = 32768+3*1024;
+    total_time=test_buffer(buffer, tmp_buffer_size, TOTALACCESSES); 
+    tmp_buffer_size = 32768+4*1024;
+    total_time=test_buffer(buffer, tmp_buffer_size, TOTALACCESSES); 
+    tmp_buffer_size = 32768+5*1024;
+    total_time=test_buffer(buffer, tmp_buffer_size, TOTALACCESSES); 
+    tmp_buffer_size = 32768+6*1024;
+    total_time=test_buffer(buffer, tmp_buffer_size, TOTALACCESSES);   
+    // tmp_buffer_size = 34768;
+    // total_time=test_buffer(buffer, tmp_buffer_size, TOTALACCESSES);    
+    // tmp_buffer_size = 36768;
+    // total_time=test_buffer(buffer, tmp_buffer_size, TOTALACCESSES);    
+    tmp_buffer_size = 32768+3*2024;
+    total_time=test_buffer(buffer, tmp_buffer_size, TOTALACCESSES);
+    tmp_buffer_size = 32768+4*2024;
+    total_time=test_buffer(buffer, tmp_buffer_size, TOTALACCESSES);
+    tmp_buffer_size = 32768+5*2024;
+    total_time=test_buffer(buffer, tmp_buffer_size, TOTALACCESSES);
+    tmp_buffer_size = 32768+6*2024;
+    total_time=test_buffer(buffer, tmp_buffer_size, TOTALACCESSES);
+    tmp_buffer_size = 32768+7*2024;
+    total_time=test_buffer(buffer, tmp_buffer_size, TOTALACCESSES);
+    tmp_buffer_size = 32768+8*2024;
+    total_time=test_buffer(buffer, tmp_buffer_size, TOTALACCESSES);
+    tmp_buffer_size = 32768+9*2024;
+    total_time=test_buffer(buffer, tmp_buffer_size, TOTALACCESSES);
+    tmp_buffer_size = 32768+10*2024;
+    total_time=test_buffer(buffer, tmp_buffer_size, TOTALACCESSES);
+    tmp_buffer_size = 32768+11*2024;
+    total_time=test_buffer(buffer, tmp_buffer_size, TOTALACCESSES);
+    tmp_buffer_size = 32768+12*2024;
     total_time=test_buffer(buffer, tmp_buffer_size, TOTALACCESSES);
 
     tmp_buffer_size = 65536;
     total_time=test_buffer(buffer, tmp_buffer_size, TOTALACCESSES);
     tmp_buffer_size = 131072;
     total_time=test_buffer(buffer, tmp_buffer_size, TOTALACCESSES);
+    // tmp_buffer_size = 221072;
+    // total_time=test_buffer(buffer, tmp_buffer_size, TOTALACCESSES);
+    // tmp_buffer_size = 241072;
+    // total_time=test_buffer(buffer, tmp_buffer_size, TOTALACCESSES);
     tmp_buffer_size = 262144;
     total_time=test_buffer(buffer, tmp_buffer_size, TOTALACCESSES);
+    // tmp_buffer_size = 281072;
+    // total_time=test_buffer(buffer, tmp_buffer_size, TOTALACCESSES);
+    // tmp_buffer_size = 301072;
+    // total_time=test_buffer(buffer, tmp_buffer_size, TOTALACCESSES);
     tmp_buffer_size = 524288;
     total_time=test_buffer(buffer, tmp_buffer_size, TOTALACCESSES);
     tmp_buffer_size = 1048576;
     total_time=test_buffer(buffer, tmp_buffer_size, TOTALACCESSES);
-
-    tmp_buffer_size = 1848576;
+    // tmp_buffer_size = 1048576+131072;
+    // total_time=test_buffer(buffer, tmp_buffer_size, TOTALACCESSES);
+    // tmp_buffer_size = 1048576+2*131072;
+    // total_time=test_buffer(buffer, tmp_buffer_size, TOTALACCESSES);
+    // tmp_buffer_size = 1048576+3*131072;
+    // total_time=test_buffer(buffer, tmp_buffer_size, TOTALACCESSES);
+    // tmp_buffer_size = 1048576+4*131072;
+    // total_time=test_buffer(buffer, tmp_buffer_size, TOTALACCESSES);
+    // tmp_buffer_size = 1048576+5*131072;
+    // total_time=test_buffer(buffer, tmp_buffer_size, TOTALACCESSES);
+    
+    
+    // tmp_buffer_size = 1848576;
+    // total_time=test_buffer(buffer, tmp_buffer_size, TOTALACCESSES);
+    tmp_buffer_size = 2097152-131072;
     total_time=test_buffer(buffer, tmp_buffer_size, TOTALACCESSES);
     tmp_buffer_size = 2097152;
     total_time=test_buffer(buffer, tmp_buffer_size, TOTALACCESSES);
-    tmp_buffer_size = 2297152;
+    tmp_buffer_size = 2097152+131072;
     total_time=test_buffer(buffer, tmp_buffer_size, TOTALACCESSES);
+    tmp_buffer_size = 2097152+2*131072;
+    total_time=test_buffer(buffer, tmp_buffer_size, TOTALACCESSES);
+    tmp_buffer_size = 2097152+3*131072;
+    total_time=test_buffer(buffer, tmp_buffer_size, TOTALACCESSES);
+    tmp_buffer_size = 2097152+4*131072;
+    total_time=test_buffer(buffer, tmp_buffer_size, TOTALACCESSES);
+    // tmp_buffer_size = 2297152;
+    // total_time=test_buffer(buffer, tmp_buffer_size, TOTALACCESSES);
 
     tmp_buffer_size = 4194304;
     total_time=test_buffer(buffer, tmp_buffer_size, TOTALACCESSES);    
-    // tmp_buffer_size = 8388608;
+    // tmp_buffer_size = 7388608;
     // total_time=test_buffer(buffer, tmp_buffer_size, TOTALACCESSES);    
-    // tmp_buffer_size = 16777216;
-    // total_time=test_buffer(buffer, tmp_buffer_size, TOTALACCESSES);
-
+    tmp_buffer_size = 8388608;
+    total_time=test_buffer(buffer, tmp_buffer_size, TOTALACCESSES); 
+    // tmp_buffer_size = 9388608;
+    // total_time=test_buffer(buffer, tmp_buffer_size, TOTALACCESSES);    
+    tmp_buffer_size = 10388608;
+    total_time=test_buffer(buffer, tmp_buffer_size, TOTALACCESSES);    
+    tmp_buffer_size = 10388608+2097152;
+    total_time=test_buffer(buffer, tmp_buffer_size, TOTALACCESSES);    
+       
+    tmp_buffer_size = 10388608+4*2097152;
+    total_time=test_buffer(buffer, tmp_buffer_size, TOTALACCESSES);
+    
+    tmp_buffer_size = 10388608+9*1048576;
+    total_time=test_buffer(buffer, tmp_buffer_size, TOTALACCESSES);
+    tmp_buffer_size = 10388608+10*1048576;
+    total_time=test_buffer(buffer, tmp_buffer_size, TOTALACCESSES);
     munmap(buf, buf_size);
 }
 
@@ -1264,6 +1352,33 @@ void test_evset_algorithm(){
 
 }
 
+
+
+void test_cache_line_size(){
+    wait(1E9);
+    int len_arr = 16777216*2;
+    uint8_t *arr = malloc(len_arr*sizeof(uint8_t));
+    u64 *diffs = malloc(12*sizeof(u64));
+    u64 start; 
+    u64 end;
+    for(int i=0;i<12;i++) diffs[i]=0;
+    for(int i=0;i<len_arr;i++){
+        arr[i] = 0xff;
+    }
+
+    for(int K=1;K<13;K++){
+        __asm__ __volatile__ ("mfence; rdtsc" : "=A" (start));
+        for (int i = 0; i < len_arr; i += 1<<K) arr[i] *= 3;
+        __asm__ __volatile__ ("mfence; rdtsc" : "=A" (end));
+        diffs[K] = end-start;
+    }
+    printf("stride|  total | avg\n");
+    for(int i=0;i<12;i++) printf(" %4d %9lu %3.3f \n", 1<<i, diffs[i], (double)diffs[i]/(len_arr/(1<<i)));
+
+
+
+}
+
 void test_evset(Config *conf, void *target){
     wait(1E9);
     
@@ -1365,11 +1480,15 @@ int main(int ac, char** av) {
     // replacement_L2_only_L2();
     // u64 ret =106;
     // while(ret > 105){
-        ret = replacement_L2_only_L2_complete(atoi(av[1]));
+      //  ret = replacement_L2_only_L2_complete(atoi(av[1]));
     // }
     // printf("%lu\n", ret);
     // test_evset_algorithm();
     // test_find_evset();
     // foo();
+
+    // test_cache_size();
+    // test_evset_algorithm();
+    test_cache_line_size();
     return 0;
 }
