@@ -201,10 +201,8 @@ void my_monitor(Config *spy_conf, Targets *targets){
     u64 max=0;
     for(size_t i=0; i<targets->number; i++) hit_ctr[i]=0;
     for(int j=0; j<MSRMT_BUFFER; j++){
-        for(size_t i=0; i<targets->number; i++){
-            if(targets->addresses[i]->msrmts[j]>max && targets->addresses[i]->msrmts[j] < 10000) max =targets->addresses[i]->msrmts[j];
-            
-            if(targets->addresses[i]->msrmts[j] > PP_THRESHOLD_B && targets->addresses[i]->msrmts[j] < PP_THRESHOLD_T) printf("[i] my_monitor: detected 0x%lx: ctr %d, msrmt %lu, hit ctr %d\n", targets->addresses[i]->offset, j, targets->addresses[i]->msrmts[j], ++hit_ctr[i]);
+        for(size_t i=0; i<targets->number; i++){            
+            if(targets->addresses[i]->msrmts[j] > PP_THRESHOLD_B) printf("[i] my_monitor: detected 0x%lx: ctr %d, msrmt %lu, hit ctr %d\n", targets->addresses[i]->offset, j, targets->addresses[i]->msrmts[j], ++hit_ctr[i]);
         }
     }
 
