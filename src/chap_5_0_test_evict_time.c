@@ -61,7 +61,7 @@ void test_victim_syscall(){
 }
 
 
-int main(int ac, char *av){
+int main(int ac, char **av){
     wait(1E9);
     // victim that loads data 
     if (ac==1) test_victim_syscall();    

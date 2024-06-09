@@ -1,6 +1,6 @@
 CC = gcc
 CFLAGS = -Wall -Wextra -masm=intel -O0 -fPIC -g
-TARGETS = prime_probe evict_time victim2 test_evict_time victim_new cache_size cache_line_size cache_ways_sets
+TARGETS = prime_probe evict_time test_evict_time victim_new cache_size cache_line_size cache_ways_sets
 
 all: $(TARGETS)
 
